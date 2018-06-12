@@ -1,21 +1,39 @@
-<div class="col-md-12">
-    <div class="card">
-        <div class="card-header">
-            <strong class="card-title" v-if="headerText"><?php echo $contentTitle;?></strong>
+<!-- Page-Title -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <div class="btn-group pull-right">
+                <ol class="breadcrumb hide-phone p-0 m-0">
+                    <li class="breadcrumb-item"><a href="<?php echo base_url();?>">Dashboard</a></li>
+                    <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
+                </ol>
+            </div>
+            <h4 class="page-title"><?php echo $pageMenu;?></h4>
         </div>
+    </div>
+</div>
+<!-- end page title end breadcrumb -->
 
-        <div class="card-body">
-            <div class="typo-articles">
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
-                eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-                deserunt mollit anim id est laborum.
-            </p>
-            <p>
-                <strong>Login date <?php echo tgl_indo(date("Y-m-d"));?></strong>
-            </p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title" v-if="headerText"><?php echo $contentTitle;?></strong>
+            </div>
+
+            <div class="card-body">
+                <div class="typo-articles">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
+                    eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
+                    deserunt mollit anim id est laborum.
+                </p>
+                <p>
+                    <strong>Login date <?php echo $logtime;?></strong>
+                </p>
+                </div>
             </div>
         </div>
     </div>

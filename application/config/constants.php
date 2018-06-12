@@ -95,6 +95,7 @@ define('BASE_ADMIN','2');
 define('BASE_USER','3');
 
 define('APP_NAME','E-Logistic');
+define('PAGE_TITLE','');
 define('DEV_NAME','sigit.prayitno@service-division.com');
 define('DEV_PHONE','081290892393');
 

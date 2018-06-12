@@ -27,11 +27,14 @@ class Dashboard extends BaseController
     public function index()
     {
         $this->global['pageTitle'] = 'Dashboard :: '.APP_NAME;
+        $this->global['pageMenu'] = 'Dashboard';
         $this->global['contentHeader'] = 'Dashboard';
         $this->global['contentTitle'] = 'Welcome Engineer DN / Partner';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
 
-        $this->loadViews('front/v_dashboard', $this->global, NULL);
+        $data['logtime'] = tgl_indo(date("Y-m-d"));
+        
+        $this->loadViews('front/v_dashboard', $this->global, $data, NULL);
     }
 }

@@ -373,9 +373,9 @@ $config['encryption_key'] = 'RSlGOouy6XMi7^Bw1!uhyasd87&*GS5nF|V)PaOexfjM<:e*9RB
 */
 $config['sess_driver'] = 'files';
 $config['sess_use_database'] = FALSE;
-$config['sess_cookie_name'] = 'cmscl';
+$config['sess_cookie_name'] = 'eloqu';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = FCPATH . 'arks/cache/';
+$config['sess_save_path'] = FCPATH . 'chc/cache/';
 $config['sess_match_ip'] = TRUE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

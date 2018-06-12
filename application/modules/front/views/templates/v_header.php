@@ -92,7 +92,7 @@
             </div>
             <!-- end topbar-main -->
 
-            <div class="navbar-custom">
+            <div class="navbar-custom bg-primary">
                 <div class="container-fluid">
                     <div id="navigation">
                         <!-- Navigation Menu-->

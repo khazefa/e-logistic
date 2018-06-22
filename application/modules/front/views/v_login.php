@@ -4,8 +4,10 @@
         <meta charset="utf-8" />
         <title><?php echo APP_NAME;?> | Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta content="<?php echo APP_NAME;?>" name="description" />
-        <meta content="digifreneur.com" name="author" />
+        <meta name="description" content="<?php echo APP_NAME;?>" />
+        <meta name="author" content="sigit prayitno, cybergitt@gmail.com"/>
+        <meta name="designer" content="sigit prayitno, cybergitt@gmail.com">
+        <meta name="copyright" content="Diebold Nixdorf Indonesia"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <!-- App favicon -->

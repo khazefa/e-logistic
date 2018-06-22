@@ -8,41 +8,48 @@
  * @since : Mei 2017
  */
 class BaseController extends CI_Controller {
-	protected $vendorId = '';
-	protected $vendorUR = '';
-	protected $vendorPict = '';
-	protected $name = '';
-	protected $role = '';
-	protected $roleText = '';
-	protected $dept = '';
-	protected $deptText = '';
-	protected $calledName = '';
-	protected $global = array ();
+    protected $vendorId = '';
+    protected $vendorUR = '';
+    protected $vendorPict = '';
+    protected $name = '';
+    protected $role = '';
+    protected $roleText = '';
+    protected $repo = '';
+    
+    protected $comId = '';
+    protected $comUR = '';
+    protected $comPict = '';
+    protected $comName = '';
+    protected $comRole = '';
+    protected $comRoleText = '';
+    protected $comRepo = '';
+    
+    protected $global = array ();
 
-	/**
-     * This is default constructor of the class
-     */
+    /**
+    * This is default constructor of the class
+    */
     public function __construct()
     {
         parent::__construct();
     }
 	
     /**
-     * Takes mixed data and optionally a status code, then creates the response
-     *
-     * @access public
-     * @param array|NULL $data
-     *        	Data to output to the user
-     *        	running the script; otherwise, exit
-     */
+    * Takes mixed data and optionally a status code, then creates the response
+    *
+    * @access public
+    * @param array|NULL $data
+    *        	Data to output to the user
+    *        	running the script; otherwise, exit
+    */
     public function response($data = NULL) {
         $this->output->set_status_header ( 200 )->set_content_type ( 'application/json', 'utf-8' )->set_output ( json_encode ( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) )->_display ();
         exit ();
     }
 
     /**
-     * This function used to check the user is logged in or not
-     */
+    * This function used to check the user is logged in or not
+    */
     function isLoggedIn() {
         $isSessionFilled = $this->session->userdata ( 'isSessionFilled' );
 
@@ -54,31 +61,53 @@ class BaseController extends CI_Controller {
             $this->name = $this->session->userdata ( 'vendorName' );
             $this->role = $this->session->userdata ( 'role' );
             $this->roleText = $this->session->userdata ( 'roleText' );
+            $this->repo = $this->session->userdata ( 'vendorRepo' );
 
             $this->global ['name'] = $this->name;
             $this->global ['role'] = $this->role;
             $this->global ['role_text'] = $this->roleText;
+            $this->global ['repo'] = $this->repo;
         }
     }
     
     /**
-        * This function is used to logged out user from system
-        */
-       function logout_app() {
-           $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
-               ,'role','roleText');
-           $this->session->unset_userdata($sess_items);
-           redirect ( 'login' );
-       }
-
-    /**
-     * This function is used to check the access
+     * This function used to check the user is logged in or not
      */
-    function isAbove() {
-        if ($this->role == ROLE_ABOVE) {
-            return true;
+    function isLoggedIn_2() {
+        $isSessionGett = $this->session->userdata ( 'isSessionGett' );
+
+        if (! isset ( $isSessionGett ) || $isSessionGett != TRUE) {
+            redirect ( 'signin' );
         } else {
-            return false;
+            $this->comId = $this->session->userdata ( 'comId' );
+            $this->comUR = $this->session->userdata ( 'comUR' );
+            $this->comName = $this->session->userdata ( 'comName' );
+            $this->comRole = $this->session->userdata ( 'comRole' );
+            $this->comRoleText = $this->session->userdata ( 'comRoleText' );
+            $this->comRepo = $this->session->userdata ( 'comRepo' );
+
+            $this->global ['comName'] = $this->comName;
+            $this->global ['comRole'] = $this->comRole;
+            $this->global ['comRoleText'] = $this->comRoleText;
+            $this->global ['comRepo'] = $this->comRepo;
+        }
+    }
+    
+    /**
+    * This function is used to logged out user from system
+    */
+    function logout_app() {
+        if($this->isLoggedIn()){
+            $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
+                ,'isAdm','vendorRepo','role','roleText');
+            $this->session->unset_userdata($sess_items);
+            redirect ( 'login' );
+        }
+        if($this->isLoggedIn_2()){
+            $sess_items = array('isSessionGett','comId','comUR','comName'
+                ,'isAdm','comRepo','comRole','comRoleText');
+            $this->session->unset_userdata($sess_items);
+            redirect ( 'signin' );
         }
     }
 
@@ -107,30 +136,8 @@ class BaseController extends CI_Controller {
     /**
      * This function is used to check the access
      */
-    function isSuperAdmin() {
-        if ($this->role == ROLE_SUPERADMIN) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * This function is used to check the access
-     */
     function isUser() {
-        if ($this->role == ROLE_USER) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * This function is used to check the access
-     */
-    function isCourier() {
-        if ($this->role == BASE_KUR) {
+        if ($this->comRole == ROLE_USER) {
             return true;
         } else {
             return false;

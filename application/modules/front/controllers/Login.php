@@ -76,6 +76,8 @@ class Login extends CI_Controller
                     'vendorId'=>$res->accessId,         
                     'vendorUR'=>$res->accessUR,   
                     'vendorName'=>$res->accessName,          
+                    'isAdm'=>$res->isAdmin,          
+                    'vendorRepo'=>$res->accessRepo,          
                     'role'=>$res->role,
                     'roleText'=>$res->roleText,
                     'isSessionFilled' => TRUE

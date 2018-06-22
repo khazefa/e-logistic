@@ -75,7 +75,7 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block"> Login  </button>
                     </div> <!-- form-group// -->
-                    <p class="text-center"><a href="#" class="btn">Forgot password?</a></p>
+                    <p class="text-center"><a href="#" class="btn" data-toggle="modal" data-target="#modal-forgot">Forgot password?</a></p>
                 </form>
             </article>
             </div> <!-- card.// -->
@@ -83,6 +83,39 @@
         </div>
     </div>
     <!-- End page -->
+    
+    <!-- APP MODAL -->
+    <!-- Forgot password form -->
+    <div id="modal-forgot" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content login-form">
+            <!-- Form -->
+            <form class="modal-body" action="<?php echo base_url('login/reset_pass'); ?>" method="POST" class="form-validate" ecntype="application/x-www-form-urlencoded">
+                <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
+                <div class="text-center">
+                        <div class="icon-object border-warning text-warning"><i class="icon-spinner11"></i></div>
+                        <h5 class="content-group">Forgot Password </h5>
+                        <small class="display-block">We'll send you instructions in email</small>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                         </div>
+                        <input type="email" class="form-control" name="femail" placeholder="user@example.com" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+                <button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancel</button>
+            </form>
+            <!-- /form -->
+        </div>
+    </div>
+    </div>
+    <!-- /Forgot password form -->
+    <!-- END APP MODAL -->
     
     <!-- jQuery  -->
     <script src="<?php echo base_url();?>assets/public/js/jquery.min.js"></script>

@@ -66,8 +66,6 @@ class Login extends CI_Controller
                 "password"=>$this->security->xss_clean($password)
             );
             $res = send_curl($arrWhere, $this->config->item('api_auth'), 'POST', FALSE);
-
-//            var_dump($res);exit();
             
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){

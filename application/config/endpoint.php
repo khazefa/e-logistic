@@ -5,12 +5,15 @@ if(file_exists(FCPATH.'local.txt')) {
     // Local Server
 //    define('urlapi',   "https://localhost:8080/dn-logistic-api/");
     define('urlapi',   "http://localhost:8080/dn-logistic-api/");
+    $config['emailsender']  = "noreplyplease@service-division.com";
 }elseif(file_exists(FCPATH.'dev.txt')) {
     // Development Server
     define('urlapi',   "http://localhost:8080/dn-logistic-api/");
+    $config['emailsender']  = "noreplyplease@service-division.com";
 }else{
     // Live Server
     define('urlapi',   "http://localhost:8080/dn-logistic-api/");
+    $config['emailsender']  = "noreplyplease@service-division.com";
 }
 
 // ===========================
@@ -24,6 +27,9 @@ $config['dn-key'] = 'dn-key: 3f71d03f874bcd53cb5dc97472a59d3e'; //Key for API DN
 //		DN Controller
 // ===========================
 $config['api_auth'] = constant('urlapi').'api/auth/auth'; //POST
+$config['api_reset_pass'] = constant('urlapi').'api/auth/reset_pass/'; //POST
+$config['api_reset_pass_confirm'] = constant('urlapi').'api/auth/reset_pass_confirm/'; //POST
+$config['api_new_pass'] = constant('urlapi').'api/auth/create_pass/'; //POST
 $config['api_update_user'] = constant('urlapi').'api/users/update/'; //POST
 $config['api_get_user'] = constant('urlapi').'api/users/edit/'; //POST
 

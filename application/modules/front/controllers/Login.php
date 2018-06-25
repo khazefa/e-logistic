@@ -91,100 +91,97 @@ class Login extends CI_Controller
     }
 
     /**
-     * This function used to generate reset password request link
-     */
-     function reset_pass()
-     {
-         $status = '';
-         
-         $this->form_validation->set_rules('femail','Email','trim|required|valid_email');
-                 
-         if($this->form_validation->run() == FALSE)
-         {
-             $this->index();
-         }
-         else 
-         {
-             $email = $this->input->post('femail', TRUE);
-             
-             if($this->MLog->check_email_exist($email))
-             {
-                 $encoded_email = urlencode($email);
- 
-                 $data['email'] = $email;
-                 $data['activation_id'] = random_string('alnum',15);
-                 $data['createdDtm'] = date('Y-m-d H:i:s');
-                 $data['agent'] = getBrowserAgent();
-                 $data['client_ip'] = $this->input->ip_address();
-                 
-                 $save = $this->MLog->reset_password_user($data);                
-                 
-                 if($save)
-                 {
-                     $data1['reset_link'] = base_url() . "login/reset_pass_confirm/" . $data['activation_id'] . "/" . $encoded_email;
-                     $userInfo = $this->MLog->get_info_by_email($email);
-                     if(!empty($userInfo)){
-                         $data1["name"] = $userInfo[0]->cl_name;
-                         $data1["email"] = $userInfo[0]->cl_email;
-                         $data1["message"] = "Reset Your Password";
-                     }
- 
-                     $sendStatus = resetPasswordEmail($data1);
- 
-                     if($sendStatus){
-                         $status = "success";
-                         setFlashData($status, "Reset password link sent successfully, please check your email.");
-                     } else {
-                         $status = "error";
-                         setFlashData($status, "Email has been failed, try again.");
-                     }
-                 }
-                 else
-                 {
-                     $status = 'error';
-                     setFlashData($status, "It seems an error while sending your details, try again.");
-                 }
-             }
-             else
-             {
-                $ipaddress = $this->input->ip_address();
-                $uagent = $this->agent->agent_string();
-                $createddate = date('Y-m-d H:i:sa');
+    * This function used to generate reset password request link
+    */
+    function reset_pass()
+    {
+        $status = '';
 
-                $logInfo = array('la_user'=>$email, 'la_uname'=>$email,
-                    'la_log_ip'=> $ipaddress,'la_log_user_agent'=> $uagent, 'la_log_time'=>$createddate, 
-                    'la_status'=>'X', 'la_activity'=>'Asking for reset pass');
+        $this->form_validation->set_rules('femail','Email','trim|required|valid_email');
 
-                $reslogs = $this->MLogacc->insert_data($this->security->xss_clean($logInfo));
-                    
-                $status = 'error';
-                setFlashData($status, "This email is not registered with us.");
-             }
-             redirect('login');
-         }
-     }
+        if($this->form_validation->run() == FALSE)
+        {
+           $this->index();
+        }
+        else 
+        {
+           $email = $this->input->post('femail', TRUE);
+           //Parse Data for cURL
+           $arrWhere = array(
+               "email"=>$email
+           );
+           $res = send_curl($arrWhere, $this->config->item('api_reset_pass'), 'POST', FALSE);
+
+           //Check Result ( Get status TRUE or FALSE )
+           if($res->status){
+               $this->session->set_flashdata('success', $res->message);
+               redirect('login');
+           }
+           else{
+               $this->session->set_flashdata('error', $res->message);
+               redirect('login');
+           }
+        }
+    }
  
-     // This function used to reset the password 
-     function reset_pass_confirm($activation_id, $email)
-     {
-         // Get email and activation code from URL values at index 3-4
-         $email = urldecode($email);
-         
-         // Check activation id in database
-         $is_correct = $this->MLog->check_activation_details($email, $activation_id);
-         
-         $data['email'] = $email;
-         $data['activation_code'] = $activation_id;
-         
-         if ($is_correct == 1)
-         {
-             $this->load->view('front/auth/newPassword', $data);
-         }
-         else
-         {
-             redirect('login');
-         }
-     }
+    // This function used to reset the password 
+    function reset_pass_confirm($activation_id, $email)
+    {
+        // Get email and activation code from URL values at index 3-4
+        $email = urldecode($email);
+
+       //Parse Data for cURL
+       $arrWhere = array(
+           "email"=>$email, "activation_id"=>$activation_id
+       );
+       $res = send_curl($arrWhere, $this->config->item('api_reset_pass_confirm'), 'GET', FALSE);
+
+       //Check Result ( Get status TRUE or FALSE )
+       if($res->status){
+           $this->session->set_flashdata('success', $res->message);
+           $data['email'] = $res->email;
+           $data['activation_code'] = $res->activation_code;
+           $this->load->view('front/auth/newPassword', $data);
+       }
+       else{
+           $this->session->set_flashdata('error', $res->message);
+           redirect('login');
+       }
+    }
+    
+    // This function used to act to change the new password 
+    function change_new_password()
+    {
+        $this->form_validation->set_rules('femail','Email','trim|valid_email');
+
+        if($this->form_validation->run() == FALSE)
+        {
+           $this->index();
+        }
+        else 
+        {
+            $email = $this->input->post('femail', TRUE);
+            $activation_id = $this->input->post('activation_code', TRUE);
+            // Get email and activation code from URL values at index 3-4
+            $email = urldecode($email);
+
+            //Parse Data for cURL
+            $arrWhere = array(
+                "femail"=>$email, "activation_code"=>$activation_id
+            );
+            $res = send_curl($arrWhere, $this->config->item('api_new_pass'), 'POST', FALSE);
+
+            //Check Result ( Get status TRUE or FALSE )
+            if($res->status){
+                $this->session->set_flashdata('success', $res->message);
+                redirect('login');
+            }
+            else{
+                $this->session->set_flashdata('error', $res->message);
+                redirect('login');
+            }
+        }
+    }
 }
 
 ?>

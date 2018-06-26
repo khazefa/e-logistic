@@ -1,19 +1,3 @@
-<!-- Page-Title -->
-<div class="row">
-    <div class="col-sm-12">
-        <div class="page-title-box">
-            <div class="btn-group pull-right">
-                <ol class="breadcrumb hide-phone p-0 m-0">
-                    <li class="breadcrumb-item"><a href="<?php echo base_url();?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
-                </ol>
-            </div>
-            <h4 class="page-title"><?php echo $pageMenu;?></h4>
-        </div>
-    </div>
-</div>
-<!-- end page title end breadcrumb -->
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title><?php echo APP_NAME;?> | <?php PAGE_TITLE;?></title>
+        <title><?php echo APP_NAME;?> - End Point System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="description" content="<?php echo APP_NAME;?>" />
         <meta name="author" content="sigit prayitno, cybergitt@gmail.com"/>
@@ -104,12 +104,13 @@
                                 <a href="<?php echo base_url();?>"><i class="icon-speedometer"></i>Dashboard</a>
                             </li>
                             <li class="has-submenu">
-                                <a href="<?php echo base_url("front/tickets");?>"><i class="fa fa-ticket"></i>Tickets</a>
+                                <a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a>
                             </li>
 
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-wrench"></i>Parts</a>
+                                <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
+                                    <li><a href="<?php echo base_url("data-parts");?>">Parts</a></li>
                                     <li><a href="#">Warehouse</a></li>
                                     <li><a href="#">Supplier</a></li>
                                 </ul>
@@ -142,3 +143,18 @@
 
         <div class="wrapper">
             <div class="container-fluid">
+                <!-- Page-Title -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-title-box">
+                            <div class="btn-group pull-right">
+                                <ol class="breadcrumb hide-phone p-0 m-0">
+                                    <li class="breadcrumb-item"><a href="<?php echo base_url();?>">Dashboard</a></li>
+                                    <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Warehouse - <span id="glob_fsl"><?php echo $repo;?></span></h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title end breadcrumb -->

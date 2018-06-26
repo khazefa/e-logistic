@@ -1,0 +1,154 @@
+{
+  "data": [
+    {
+      "part_id": "1",
+      "part_number": "00050778000E",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "DEMO MONEY,$50",
+      "part_stock": "5421",
+      "part_type": "Type 1",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "2",
+      "part_number": "00100227000D",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "MDS FLOPPY DISK,BTP",
+      "part_stock": "5400",
+      "part_type": "Type 2",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "3",
+      "part_number": "00100880000L",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "LOCK,OPTION,COMB,DIAL,SILENT SIGNAL",
+      "part_stock": "827",
+      "part_type": "Type 2",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "4",
+      "part_number": "00100956000A",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "CONS PRNTR,35 COL(956)",
+      "part_stock": "421",
+      "part_type": "Type 1",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "5",
+      "part_number": "00101842000B",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "TRANSPORT, THRML RCPT",
+      "part_stock": "541",
+      "part_type": "Type 1",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "6",
+      "part_number": "00101861000K",
+      "parent_part_id": "2",
+      "part_id_sub": "",
+      "part_name": "CD RDR,TRK 1/2/3 RD/WRT,8 PIN,TYPE APVD",
+      "part_stock": "5481",
+      "part_type": "Type 1",
+      "fsl_code": "01"
+    },    
+    {
+      "part_id": "7",
+      "part_number": "00103323000B",
+      "parent_part_id": "4",
+      "part_id_sub": "8:9",
+      "part_name": "PRNTR,THRM RCPT,80,USB",
+      "part_stock": "571",
+      "part_type": "Type 5",
+      "fsl_code": "01"
+    },
+    {
+      "part_id": "8",
+      "part_number": "00103323000D",
+      "parent_part_id": "4",
+      "part_id_sub": "7:9",
+      "part_name": "PRNTR,THRM RCPT,80,USB",
+      "part_stock": "822",
+      "part_type": "Type 5",
+      "fsl_code": "02"
+    },
+    {
+      "part_id": "9",
+      "part_number": "00103323000E",
+      "parent_part_id": "4",
+      "part_id_sub": "7:8",
+      "part_name": "PRNTR,THRM RCPT,80,USB",
+      "part_stock": "842",
+      "part_type": "Type 5",
+      "fsl_code": "03"
+    },
+    {
+      "part_id": "10",
+      "part_number": "00103334000D",
+      "parent_part_id": "6",
+      "part_id_sub": "11:12",
+      "part_name": "AFD DIVERT CASSETTE, PLASTIC, CONV.",
+      "part_stock": "892",
+      "part_type": "Type 6",
+      "fsl_code": "01"
+    },
+    {
+      "part_id": "11",
+      "part_number": "00103334000E",
+      "parent_part_id": "6",
+      "part_id_sub": "12:13",
+      "part_name": "AFD DIVERT CASSETTE, PLASTIC, SECURE",
+      "part_stock": "422",
+      "part_type": "Type 6",
+      "fsl_code": "02"
+    },
+    {
+      "part_id": "12",
+      "part_number": "00103334000Q",
+      "parent_part_id": "6",
+      "part_id_sub": "11:13",
+      "part_name": "AFD DIVERT CASSETTE, PLASTIC, SECURE",
+      "part_stock": "22",
+      "part_type": "Type 6",
+      "fsl_code": "03"
+    },
+    {
+      "part_id": "13",
+      "part_number": "00104057000C",
+      "parent_part_id": "0",
+      "part_id_sub": "14",
+      "part_name": "THS,15IN",
+      "part_stock": "82",
+      "part_type": "Type 3",
+      "fsl_code": "01"
+    },
+    {
+      "part_id": "14",
+      "part_number": "00104057000L",
+      "parent_part_id": "0",
+      "part_id_sub": "13",
+      "part_name": "THS,15IN,PRV,OPT",
+      "part_stock": "86",
+      "part_type": "Type 3",
+      "fsl_code": "02"
+    },
+    {
+      "part_id": "15",
+      "part_number": "00104058000C",
+      "parent_part_id": "0",
+      "part_id_sub": "",
+      "part_name": "VNDL,SCRN,15IN",
+      "part_stock": "224",
+      "part_type": "Type 3",
+      "fsl_code": "03"
+    }
+  ]
+}

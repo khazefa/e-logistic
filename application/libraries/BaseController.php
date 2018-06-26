@@ -97,13 +97,16 @@ class BaseController extends CI_Controller {
     * This function is used to logged out user from system
     */
     function logout_app() {
-        if($this->isLoggedIn()){
+        $isSessionFilled = $this->session->userdata ( 'isSessionFilled' );
+        $isSessionGett = $this->session->userdata ( 'isSessionGett' );
+        
+        if ( isset ( $isSessionFilled ) || $isSessionFilled == TRUE) {
             $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
                 ,'isAdm','vendorRepo','role','roleText');
             $this->session->unset_userdata($sess_items);
             redirect ( 'login' );
         }
-        if($this->isLoggedIn_2()){
+        if ( isset ( $isSessionGett ) || $isSessionGett == TRUE) {
             $sess_items = array('isSessionGett','comId','comUR','comName'
                 ,'isAdm','comRepo','comRole','comRoleText');
             $this->session->unset_userdata($sess_items);

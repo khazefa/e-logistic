@@ -64,4 +64,7 @@ $route['login/reset_pass'] = 'front/login/reset_pass';
 $route['login/reset_pass_confirm'] = 'front/login/reset_pass_confirm';
 $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
+
+$route['tickets'] = 'front/tickets';
+$route['data-parts'] = 'front/cparts';
 /* END CLIENT CONTROLLER */

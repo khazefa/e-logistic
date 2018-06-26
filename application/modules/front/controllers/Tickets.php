@@ -6,7 +6,7 @@ require APPPATH . '/libraries/BaseController.php';
 /**
  * Class : Tickets (TicketsController)
  * Tickets Class to control Tickets.
- * @author : Khazefa
+ * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
@@ -27,6 +27,7 @@ class Tickets extends BaseController
     public function index()
     {
         $this->global['pageTitle'] = 'Tickets :: '.APP_NAME;
+        $this->global['pageMenu'] = 'Tickets';
         $this->global['contentHeader'] = 'Tickets';
         $this->global['contentTitle'] = 'Input Used Spareparts';
         $this->global ['role'] = $this->role;
@@ -46,10 +47,11 @@ class Tickets extends BaseController
     
     private function get_ticket_num(){
         $rs = array();
-        $arrWhere = array();
         
+        //Parameter Data for cURL
+        $arrWhere = "fparam=R&ffsl_code=".$this->repo;
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_ticket_num'), 'GET', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_ticket_num')."?".$arrWhere, 'GET', FALSE);
         $rs = $rs_data->status ? $rs_data->result : "";
         
         return $rs;
@@ -60,7 +62,7 @@ class Tickets extends BaseController
         $arrWhere = array();
         $ffsl_code = $this->input->post('ffsl', TRUE);
         
-        //Parse Data for cURL
+        //Parameter Data for cURL
         $arrWhere = array('ffsl_code'=>$ffsl_code);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);

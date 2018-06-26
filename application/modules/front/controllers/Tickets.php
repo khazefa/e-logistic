@@ -26,7 +26,7 @@ class Tickets extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'Tickets :: '.APP_NAME;
+        $this->global['pageTitle'] = 'Tickets - '.APP_NAME;
         $this->global['pageMenu'] = 'Tickets';
         $this->global['contentHeader'] = 'Tickets';
         $this->global['contentTitle'] = 'Input Used Spareparts';

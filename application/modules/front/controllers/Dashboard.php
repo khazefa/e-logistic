@@ -26,7 +26,7 @@ class Dashboard extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'Dashboard :: '.APP_NAME;
+        $this->global['pageTitle'] = 'Dashboard - '.APP_NAME;
         $this->global['pageMenu'] = 'Dashboard';
         $this->global['contentHeader'] = 'Dashboard';
         $this->global['contentTitle'] = 'Welcome Engineer DN / Partner';

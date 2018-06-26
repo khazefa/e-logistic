@@ -26,7 +26,7 @@ class CParts extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Sparepart :: '.APP_NAME;
+        $this->global['pageTitle'] = 'List Sparepart - '.APP_NAME;
         $this->global['pageMenu'] = 'List Sparepart';
         $this->global['contentHeader'] = 'List Sparepart';
         $this->global['contentTitle'] = 'List Sparepart';

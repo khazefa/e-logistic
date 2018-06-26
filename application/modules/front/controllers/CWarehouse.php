@@ -26,7 +26,7 @@ class CWarehouse extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Warehouse :: '.APP_NAME;
+        $this->global['pageTitle'] = 'List Warehouse - '.APP_NAME;
         $this->global['pageMenu'] = 'List Warehouse';
         $this->global['contentHeader'] = 'List Warehouse';
         $this->global['contentTitle'] = 'List Warehouse';
@@ -37,6 +37,9 @@ class CWarehouse extends BaseController
         $this->loadViews('front/warehouse/index', $this->global, NULL);
     }
     
+    /**
+     * This function is used to get data list
+     */
     public function get_list(){
         $rs = array();
         
@@ -45,7 +48,7 @@ class CWarehouse extends BaseController
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : "";
+        $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
@@ -74,7 +77,7 @@ class CWarehouse extends BaseController
     }
     
     /**
-     * This function is used to check username already exist
+     * This function is used to check data already exist
      */
     public function check_exist($str)
     {
@@ -96,12 +99,68 @@ class CWarehouse extends BaseController
      */
     function add()
     {
-        $this->global['pageTitle'] = "Add New :: ".APP_NAME;
-        $this->global['contentHeader'] = 'User Management';
-        $this->global['tableTitle'] = 'Detail Data';
-        $data['roles'] = $this->MUser->get_user_roles();
-        $data['departments'] = $this->MUser->get_departments();
+        $this->global['pageTitle'] = "Add New Warehouse - ".APP_NAME;
+        $this->global['pageMenu'] = 'Add New Warehouse';
+        $this->global['contentHeader'] = 'Add New Warehouse';
+        $this->global['contentTitle'] = 'Add New Warehouse';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        $this->global ['repo'] = $this->repo;
 
-        $this->loadViews('client/users/create', $this->global, $data);
+        $this->loadViews('client/users/create', $this->global, NULL);
+    }
+    
+    /**
+     * This function is used to add new data to the system
+     */
+    function create()
+    {
+        $this->form_validation->set_rules('fusername','Username','trim|required|max_length[50]|callback_username_check');
+        $this->form_validation->set_rules('fname','Full Name','trim|required|max_length[128]');
+        $this->form_validation->set_rules('femail','Email','trim|valid_email|max_length[128]');
+        $this->form_validation->set_rules('fpassword','Password','required|max_length[20]');
+        // $this->form_validation->set_rules('cpassword','Confirm Password','trim|required|matches[password]|max_length[20]');
+        $this->form_validation->set_rules('frole','Role','trim|required');
+        $this->form_validation->set_rules('fdept','Departments','trim|required');
+        $this->form_validation->set_rules('fmobile','Mobile Number','max_length[32]');
+            
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->add();
+        }
+        else
+        {            
+            $username = strtolower($this->input->post('fusername', TRUE));
+            $password = $this->input->post('fpassword', TRUE);
+            $email = $this->input->post('femail', TRUE);
+            $name = ucwords(strtolower($this->input->post('fname', TRUE)));
+            $mobile = $this->input->post('fmobile', TRUE);
+            $roleId = $this->input->post('frole');
+            $deptId = $this->input->post('fdept');
+            $createdby = $this->vendorId;
+            
+            $userInfo = array('cl_username'=>$username, 'cl_email'=>$email, 'cl_password'=>getHashedPassword($password), 
+            'cl_role_enc'=>$roleId, 'dept_id'=>$deptId,  'cl_name'=> $name, 'cl_mobile'=>$mobile, 'cl_createdBy'=>$createdby, 
+            'cl_createdDtm'=>date('Y-m-d H:i:sa'), 'cl_pict'=> $fpict);
+
+            $result = $this->MUser->insert_data($this->security->xss_clean($userInfo));
+            
+            if($result > 0)
+            {
+                if($this->send_registration_email($email, $username, $password, $name, $mobile)){
+                    $this->session->set_flashdata('success', 'Registration email has been sent.');
+                }else{
+                    $this->session->set_flashdata('error', 'Registration email has not been sent.');
+                }
+                $sessionArray = array('fvPict'=>$fpict);
+                $this->session->set_userdata($sessionArray);
+            }
+            else
+            {
+                $this->session->set_flashdata('error', 'Failed');
+            }
+            
+            redirect('client/users');
+        }
     }
 }

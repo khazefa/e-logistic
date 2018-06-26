@@ -134,23 +134,21 @@
     </div>
 
     <div class="col-md-3">
-        <div class="row">
-            <div class="card-box table-responsive">
-                <h4 class="m-t-0 header-title">List Parts</h4>
-                <table id="data_grid" class="table table-bordered table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th>Part Number</th>
-                        <th>Part Name</th>
-                        <th>Stock</th>
-                        <th>Part Type</th>
-                        <th>FSL</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+        <div class="card-box table-responsive">
+            <h4 class="m-t-0 header-title">List Parts</h4>
+            <table id="data_grid" class="table table-bordered table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>Part Number</th>
+                    <th>Part Name</th>
+                    <th>Stock</th>
+                    <th>Part Type</th>
+                    <th>FSL</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

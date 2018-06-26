@@ -605,7 +605,7 @@ if ( ! function_exists('glob_recursive'))
     }
 }
 
-if(!function_exists('file_handler'))
+if(!function_exists('human_filesize'))
 {
     function human_filesize($bytes, $decimals = 2)
     {
@@ -614,5 +614,6 @@ if(!function_exists('file_handler'))
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
     }
 }
+
 
 ?>

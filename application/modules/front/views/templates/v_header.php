@@ -20,6 +20,13 @@
 
         <script src="<?php echo base_url();?>assets/public/js/modernizr.min.js"></script>
 
+        <!-- jQuery  -->
+        <script src="<?php echo base_url();?>assets/public/js/jquery.min.js"></script>
+        <script src="<?php echo base_url();?>assets/public/js/popper.min.js"></script>
+        <script src="<?php echo base_url();?>assets/public/js/bootstrap.min.js"></script>
+        <script src="<?php echo base_url();?>assets/public/js/waves.js"></script>
+        <script src="<?php echo base_url();?>assets/public/js/jquery.slimscroll.js"></script>
+
     </head>
     <body>
 
@@ -110,7 +117,7 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-parts");?>">Parts</a></li>
+                                    <li><a href="<?php echo base_url("data-spareparts");?>">Spareparts</a></li>
                                     <li><a href="#">Warehouse</a></li>
                                     <li><a href="#">Supplier</a></li>
                                 </ul>

@@ -26,14 +26,40 @@ class CParts extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Part :: '.APP_NAME;
-        $this->global['pageMenu'] = 'List Part';
-        $this->global['contentHeader'] = 'List Part';
-        $this->global['contentTitle'] = 'List Part';
+        $this->global['pageTitle'] = 'List Sparepart :: '.APP_NAME;
+        $this->global['pageMenu'] = 'List Sparepart';
+        $this->global['contentHeader'] = 'List Sparepart';
+        $this->global['contentTitle'] = 'List Sparepart';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
         $this->loadViews('front/parts/index', $this->global, NULL);
+    }
+    
+    public function get_list(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : "";
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($data)
+        );
     }
 }

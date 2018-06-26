@@ -14,13 +14,6 @@
         </footer>
         <!-- End Footer -->
 
-        <!-- jQuery  -->
-        <script src="<?php echo base_url();?>assets/public/js/jquery.min.js"></script>
-        <script src="<?php echo base_url();?>assets/public/js/popper.min.js"></script>
-        <script src="<?php echo base_url();?>assets/public/js/bootstrap.min.js"></script>
-        <script src="<?php echo base_url();?>assets/public/js/waves.js"></script>
-        <script src="<?php echo base_url();?>assets/public/js/jquery.slimscroll.js"></script>
-
         <!-- Required datatable js -->
         <script src="<?php echo base_url();?>assets/public/plugins/datatables/jquery.dataTables.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/plugins/datatables/dataTables.bootstrap4.min.js"></script>
@@ -47,10 +40,5 @@
         <script src="<?php echo base_url();?>assets/public/js/jquery.core.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/jquery.app.js"></script>
 
-        <script type="text/javascript">
-            $(document).ready(function() {
-                logic_for_tickets();
-            });
-        </script>
     </body>
 </html>

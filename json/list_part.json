@@ -3,6 +3,7 @@
     {
       "part_id": "1",
       "part_number": "00050778000E",
+      "serial_number": "00050778000E12312312",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "DEMO MONEY,$50",
@@ -13,6 +14,7 @@
     {
       "part_id": "2",
       "part_number": "00100227000D",
+      "serial_number": "00100227000D4564564",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "MDS FLOPPY DISK,BTP",
@@ -23,6 +25,7 @@
     {
       "part_id": "3",
       "part_number": "00100880000L",
+      "serial_number": "00100880000L1239182",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "LOCK,OPTION,COMB,DIAL,SILENT SIGNAL",
@@ -33,6 +36,7 @@
     {
       "part_id": "4",
       "part_number": "00100956000A",
+      "serial_number": "00100956000A1289736",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "CONS PRNTR,35 COL(956)",
@@ -43,6 +47,7 @@
     {
       "part_id": "5",
       "part_number": "00101842000B",
+      "serial_number": "00101842000B123213",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "TRANSPORT, THRML RCPT",
@@ -53,6 +58,7 @@
     {
       "part_id": "6",
       "part_number": "00101861000K",
+      "serial_number": "00101861000K143132",
       "parent_part_id": "2",
       "part_id_sub": "",
       "part_name": "CD RDR,TRK 1/2/3 RD/WRT,8 PIN,TYPE APVD",
@@ -63,6 +69,7 @@
     {
       "part_id": "7",
       "part_number": "00103323000B",
+      "serial_number": "00103323000B1239218",
       "parent_part_id": "4",
       "part_id_sub": "8:9",
       "part_name": "PRNTR,THRM RCPT,80,USB",
@@ -73,6 +80,7 @@
     {
       "part_id": "8",
       "part_number": "00103323000D",
+      "serial_number": "00103323000D2198276",
       "parent_part_id": "4",
       "part_id_sub": "7:9",
       "part_name": "PRNTR,THRM RCPT,80,USB",
@@ -83,6 +91,7 @@
     {
       "part_id": "9",
       "part_number": "00103323000E",
+      "serial_number": "00103323000E123123",
       "parent_part_id": "4",
       "part_id_sub": "7:8",
       "part_name": "PRNTR,THRM RCPT,80,USB",
@@ -93,6 +102,7 @@
     {
       "part_id": "10",
       "part_number": "00103334000D",
+      "serial_number": "00103334000D12321312",
       "parent_part_id": "6",
       "part_id_sub": "11:12",
       "part_name": "AFD DIVERT CASSETTE, PLASTIC, CONV.",
@@ -103,6 +113,7 @@
     {
       "part_id": "11",
       "part_number": "00103334000E",
+      "serial_number": "00103334000E876567",
       "parent_part_id": "6",
       "part_id_sub": "12:13",
       "part_name": "AFD DIVERT CASSETTE, PLASTIC, SECURE",
@@ -113,6 +124,7 @@
     {
       "part_id": "12",
       "part_number": "00103334000Q",
+      "serial_number": "00103334000Q9876789",
       "parent_part_id": "6",
       "part_id_sub": "11:13",
       "part_name": "AFD DIVERT CASSETTE, PLASTIC, SECURE",
@@ -123,6 +135,7 @@
     {
       "part_id": "13",
       "part_number": "00104057000C",
+      "serial_number": "00104057000C23123213",
       "parent_part_id": "0",
       "part_id_sub": "14",
       "part_name": "THS,15IN",
@@ -133,6 +146,7 @@
     {
       "part_id": "14",
       "part_number": "00104057000L",
+      "serial_number": "00104057000L12312321",
       "parent_part_id": "0",
       "part_id_sub": "13",
       "part_name": "THS,15IN,PRV,OPT",
@@ -143,6 +157,7 @@
     {
       "part_id": "15",
       "part_number": "00104058000C",
+      "serial_number": "001040580231231200C",
       "parent_part_id": "0",
       "part_id_sub": "",
       "part_name": "VNDL,SCRN,15IN",

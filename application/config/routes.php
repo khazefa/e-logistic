@@ -66,5 +66,5 @@ $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
 
 $route['tickets'] = 'front/tickets';
-$route['data-parts'] = 'front/cparts';
+$route['data-spareparts'] = 'front/cparts';
 /* END CLIENT CONTROLLER */

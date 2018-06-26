@@ -154,7 +154,7 @@
 </div>
 </form>
 <script type="text/javascript">
-    function logic_for_tickets(){
+    $(document).ready(function() {
         var fticket = $('#fticket').val();
         var fpartnum = $('#fpartnum').val();
 
@@ -235,6 +235,5 @@
 
         table2.buttons().container()
                 .appendTo('#data_grid2_wrapper .col-md-6:eq(0)');
-    }
-
+    });
 </script>

@@ -67,4 +67,5 @@ $route['cl'] = 'front/dashboard';
 
 $route['tickets'] = 'front/tickets';
 $route['data-spareparts'] = 'front/cparts';
+$route['data-warehouses'] = 'front/cwarehouse';
 /* END CLIENT CONTROLLER */

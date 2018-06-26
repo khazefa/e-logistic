@@ -118,7 +118,7 @@
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Spareparts</a></li>
-                                    <li><a href="#">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="#">Supplier</a></li>
                                 </ul>
                             </li>

@@ -57,7 +57,7 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 /* END GLOBAL CONTROLLER */
 
-/* CLIENT CONTROLLER */
+/* USER CONTROLLER */
 $route['login'] = 'front/login';
 $route['login/proccess'] = 'front/login/auth_log';
 $route['login/reset_pass'] = 'front/login/reset_pass';
@@ -67,5 +67,16 @@ $route['cl'] = 'front/dashboard';
 
 $route['tickets'] = 'front/tickets';
 $route['data-spareparts'] = 'front/cparts';
+
+// ===========================
+//  Routing Warehouses
+// ===========================
 $route['data-warehouses'] = 'front/cwarehouse';
-/* END CLIENT CONTROLLER */
+$route['add-warehouses'] = 'front/cwarehouse/add';
+$route['edit-warehouses'] = 'front/cwarehouse/edit';
+$route['delete-warehouses'] = 'front/cwarehouse/delete';
+// ===========================
+//  Routing Warehouses
+// ===========================
+
+/* END USER CONTROLLER */

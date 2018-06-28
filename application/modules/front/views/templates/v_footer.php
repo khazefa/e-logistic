@@ -36,9 +36,21 @@
         <!-- Selection table -->
         <script src="<?php echo base_url();?>assets/public/plugins/datatables/dataTables.select.min.js"></script>
         
+        <!-- Parsley js -->
+        <script type="text/javascript" src="<?php echo base_url();?>assets/public/plugins/parsleyjs/parsley.min.js"></script>
+        
+        <!-- Plugin js -->
+        <script src="<?php echo base_url();?>assets/public/plugins/bootstrap-select/js/bootstrap-select.js" type="text/javascript"></script>
+        
         <!-- App js -->
         <script src="<?php echo base_url();?>assets/public/js/jquery.core.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/jquery.app.js"></script>
 
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('form').parsley();
+            });
+        </script>
+        
     </body>
 </html>

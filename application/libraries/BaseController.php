@@ -118,7 +118,7 @@ class BaseController extends CI_Controller {
      * This function is used to check the access
      */
     function isSuperUser() {
-        if ($this->role == ROLE_SUPER) {
+        if ($this->role == ROLE_SU) {
             return true;
         } else {
             return false;
@@ -129,7 +129,7 @@ class BaseController extends CI_Controller {
      * This function is used to check the access
      */
     function isAdmin() {
-        if ($this->role == ROLE_ADMIN) {
+        if ($this->role == ROLE_AM) {
             return true;
         } else {
             return false;

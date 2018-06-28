@@ -19,6 +19,9 @@ class CWarehouse extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if(!$this->isSuperUser()){
+            redirect('cl');
+        }
     }
     
     /**
@@ -38,9 +41,9 @@ class CWarehouse extends BaseController
     }
     
     /**
-     * This function is used to get data list
+     * This function is used to get list for datatables
      */
-    public function get_list(){
+    public function get_list_datatable(){
         $rs = array();
         
         //Parameters for cURL
@@ -77,6 +80,58 @@ class CWarehouse extends BaseController
     }
     
     /**
+     * This function is used to get lists for json or populate data
+     */
+    public function get_list_data(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            $row['phone'] = filter_var($r->fsl_phone, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($data)
+        );
+    }
+    
+    /**
+     * This function is used load detail data
+     */
+    public function get_info()
+    {
+        $rs = array();
+        $arrWhere = array();
+        
+        $ffsl = $this->input->post('ffsl', TRUE);
+        if($ffsl == null)
+        {
+           $rs = array();
+        }else{
+            //Parameters for cURL
+            $arrWhere = array('ffsl'=>$ffsl);
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouses'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+        }
+        return $rs;
+    }
+    
+    /**
      * This function is used to check data already exist
      */
     public function check_exist($str)
@@ -107,7 +162,7 @@ class CWarehouse extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
 
-        $this->loadViews('client/users/create', $this->global, NULL);
+        $this->loadViews('front/warehouse/create', $this->global, NULL);
     }
     
     /**

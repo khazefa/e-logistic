@@ -69,6 +69,7 @@ $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST
 //  Begin Warehouses
 // ===========================
 $config['api_list_warehouses'] = constant('urlapi').'api/cwarehouse/list/'; //POST
+$config['api_info_warehouses'] = constant('urlapi').'api/cwarehouse/info/'; //POST
 // ===========================
 //  End Warehouses
 // ===========================

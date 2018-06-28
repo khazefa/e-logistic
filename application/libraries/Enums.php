@@ -11,7 +11,7 @@ class Enums
 		// 	return $arrLevel[$intEnc];
 		// }
 
-		$arrLevel = array(ROLE_ABOVE => "One Above All", ROLE_SUPER => "Super User", ROLE_USER => "User");
+		$arrLevel = array(ROLE_ABOVE => "One Above All", ROLE_SU => "Super User", ROLE_USER => "User");
 		
 		if ($intEnc == 0){
                     return "Anonymous";

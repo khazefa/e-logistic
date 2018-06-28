@@ -73,8 +73,8 @@ $route['data-spareparts'] = 'front/cparts';
 // ===========================
 $route['data-warehouses'] = 'front/cwarehouse';
 $route['add-warehouses'] = 'front/cwarehouse/add';
-$route['edit-warehouses'] = 'front/cwarehouse/edit';
-$route['delete-warehouses'] = 'front/cwarehouse/delete';
+$route['edit-warehouses/(:num)'] = 'front/cwarehouse/edit/$1';
+$route['remove-warehouses/(:num)'] = 'front/cwarehouse/delete/$1';
 // ===========================
 //  Routing Warehouses
 // ===========================

@@ -19,7 +19,9 @@ class CWarehouse extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if(!$this->isSuperUser()){
+        if($this->isSuperUser() || $this->isAdmin()){
+            //load page
+        }else{
             redirect('cl');
         }
     }
@@ -54,18 +56,39 @@ class CWarehouse extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
+        $data_nearby = array();
+        $names = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
             $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            $row['phone'] = filter_var($r->fsl_phone, FILTER_SANITIZE_STRING);
+            $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            if(!empty($nearby)){
+                $names = '<ul class="list-unstyled">';
+                $e_nearby = explode(';', $nearby);
+                foreach ($e_nearby as $n){
+                    array_push($data_nearby, $this->get_list_info($n));
+                }
+                
+                foreach ($data_nearby as $datas){
+                    foreach($datas as $d){
+//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
+                        $names .= '<li>'.$d["name"].'</li>';
+                    }
+                }
+                $names .= '</ul>';
+            }else{
+                $names = '-';
+            }
+            $row['nearby'] = $names;
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
             
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
             $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("front/cwarehouse/delete/").$r->fsl_code.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit Ticket</a>';
-            $row['button'] .= '<a class="dropdown-item" href="#"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-warehouses/").$row['code'].'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-warehouses/").$row['code'].'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
             $row['button'] .= '</div>';
             $row['button'] .= '</div>';
  
@@ -82,22 +105,48 @@ class CWarehouse extends BaseController
     /**
      * This function is used to get lists for json or populate data
      */
-    public function get_list_data(){
+    public function get_list_json(){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        
+        $fcode = $this->input->post('fcode', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        if ($fname != "") $arrWhere['fname'] = $fname;
+        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
+        $data_nearby = array();
+        $names = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
             $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            $row['phone'] = filter_var($r->fsl_phone, FILTER_SANITIZE_STRING);
+            $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            if(!empty($nearby)){
+                $names = '<ul class="list-unstyled">';
+                $e_nearby = explode(';', $nearby);
+                foreach ($e_nearby as $n){
+                    array_push($data_nearby, $this->get_list_info($n));
+                }
+                
+                foreach ($data_nearby as $datas){
+                    foreach($datas as $d){
+//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
+                        $names .= '<li>'.$d["name"].'</li>';
+                    }
+                }
+                $names .= '</ul>';
+            }else{
+                $names = '-';
+            }
+            $row['nearby'] = $names;
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
  
             $data[] = $row;
         }
@@ -110,6 +159,75 @@ class CWarehouse extends BaseController
     }
     
     /**
+     * This function is used to get lists for populate data
+     */
+    public function get_list_data(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->input->post('fcode', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        if ($fname != "") $arrWhere['fname'] = $fname;
+//        if ($f_date != ""){
+//            $arrWhere['submission_date_1'] = $f_date;
+//            $arrWhere['submission_date_2'] = $f_date;
+//        }
+
+//        $arrWhere['is_deleted'] = 0;
+//        array_push($arrWhere, $arrWhere['is_deleted']);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $data_nearby = array();
+        $names = '';
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    public function get_list_info($fcode){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
      * This function is used load detail data
      */
     public function get_info()
@@ -117,36 +235,18 @@ class CWarehouse extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $ffsl = $this->input->post('ffsl', TRUE);
-        if($ffsl == null)
+        $fcode = $this->input->post('fcode', TRUE);
+        if($fcode == null)
         {
            $rs = array();
         }else{
             //Parameters for cURL
-            $arrWhere = array('ffsl'=>$ffsl);
+            $arrWhere = array('fcode'=>$fcode);
             //Parse Data for cURL
             $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouses'), 'POST', FALSE);
             $rs = $rs_data->status ? $rs_data->result : array();
         }
         return $rs;
-    }
-    
-    /**
-     * This function is used to check data already exist
-     */
-    public function check_exist($str)
-    {
-        $count = $this->MUser->check_username_exists($str);
-
-        if ($count > 0)
-        {
-            $this->form_validation->set_message('username_check', 'The {field} is already exists');
-            return FALSE;
-        }
-        else
-        {
-            return TRUE;
-        }
     }
     
     /**
@@ -161,61 +261,115 @@ class CWarehouse extends BaseController
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
-
-        $this->loadViews('front/warehouse/create', $this->global, NULL);
+        
+        $data['list_wr'] = $this->get_list_data();
+        
+        $this->loadViews('front/warehouse/create', $this->global, $data);
     }
     
     /**
      * This function is used to add new data to the system
      */
     function create()
-    {
-        $this->form_validation->set_rules('fusername','Username','trim|required|max_length[50]|callback_username_check');
-        $this->form_validation->set_rules('fname','Full Name','trim|required|max_length[128]');
-        $this->form_validation->set_rules('femail','Email','trim|valid_email|max_length[128]');
-        $this->form_validation->set_rules('fpassword','Password','required|max_length[20]');
-        // $this->form_validation->set_rules('cpassword','Confirm Password','trim|required|matches[password]|max_length[20]');
-        $this->form_validation->set_rules('frole','Role','trim|required');
-        $this->form_validation->set_rules('fdept','Departments','trim|required');
-        $this->form_validation->set_rules('fmobile','Mobile Number','max_length[32]');
-            
-        if($this->form_validation->run() == FALSE)
+    {        
+        $fcode = $this->input->post('fcode', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+        $flocation = $this->input->post('flocation', TRUE);
+        $fnearby = implode(';',$_POST['fnearby']);
+        $fpic = $this->input->post('fpic', TRUE);
+        $fphone = $this->input->post('fphone', TRUE);
+
+        $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
+        
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_warehouses'), 'POST', FALSE);
+
+        if($rs_data->status)
         {
-            $this->add();
+            $this->session->set_flashdata('success', $rs_data->message);
+            redirect('data-warehouses');
         }
         else
-        {            
-            $username = strtolower($this->input->post('fusername', TRUE));
-            $password = $this->input->post('fpassword', TRUE);
-            $email = $this->input->post('femail', TRUE);
-            $name = ucwords(strtolower($this->input->post('fname', TRUE)));
-            $mobile = $this->input->post('fmobile', TRUE);
-            $roleId = $this->input->post('frole');
-            $deptId = $this->input->post('fdept');
-            $createdby = $this->vendorId;
-            
-            $userInfo = array('cl_username'=>$username, 'cl_email'=>$email, 'cl_password'=>getHashedPassword($password), 
-            'cl_role_enc'=>$roleId, 'dept_id'=>$deptId,  'cl_name'=> $name, 'cl_mobile'=>$mobile, 'cl_createdBy'=>$createdby, 
-            'cl_createdDtm'=>date('Y-m-d H:i:sa'), 'cl_pict'=> $fpict);
-
-            $result = $this->MUser->insert_data($this->security->xss_clean($userInfo));
-            
-            if($result > 0)
-            {
-                if($this->send_registration_email($email, $username, $password, $name, $mobile)){
-                    $this->session->set_flashdata('success', 'Registration email has been sent.');
-                }else{
-                    $this->session->set_flashdata('error', 'Registration email has not been sent.');
-                }
-                $sessionArray = array('fvPict'=>$fpict);
-                $this->session->set_userdata($sessionArray);
-            }
-            else
-            {
-                $this->session->set_flashdata('error', 'Failed');
-            }
-            
-            redirect('client/users');
+        {
+            $this->session->set_flashdata('error', $rs_data->message);
+            redirect('add-warehouses');
         }
+    }
+    
+    /**
+     * This function is used load edit information
+     * @param $fkey : Optional : This is data unique key
+     */
+    function edit($fkey = NULL)
+    {
+        if($fkey == NULL)
+        {
+            redirect('data-warehouses');
+        }
+        
+        $this->global['pageTitle'] = "Edit Data Warehouse - ".APP_NAME;
+        $this->global['pageMenu'] = 'Edit Data Warehouse';
+        $this->global['contentHeader'] = 'Edit Data Warehouse';
+        $this->global['contentTitle'] = 'Edit Data Warehouse';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        $this->global ['repo'] = $this->repo;
+        
+        $data['records'] = $this->get_list_info($fkey);
+        $data['list_wr'] = $this->get_list_data();
+        
+        $this->loadViews('front/warehouse/edit', $this->global, $data);
+    }
+    
+    /**
+     * This function is used to edit the data information
+     */
+    function update()
+    {
+        $fcode = $this->input->post('fcode', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+        $flocation = $this->input->post('flocation', TRUE);
+        $fnearby = implode(';',$_POST['fnearby']);
+        $fpic = $this->input->post('fpic', TRUE);
+        $fphone = $this->input->post('fphone', TRUE);
+
+        $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
+        
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_warehouses'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $this->session->set_flashdata('success', $rs_data->message);
+            redirect('data-warehouses');
+        }
+        else
+        {
+            $this->session->set_flashdata('error', $rs_data->message);
+            redirect('edit-warehouses/'.$fcode);
+        }
+    }
+    
+    /**
+     * This function is used to delete the data
+     * @return boolean $result : TRUE / FALSE
+     */
+    function delete($fkey = NULL)
+    {
+        $arrWhere = array();
+        $arrWhere = array('fcode'=>$fkey);
+
+        $rs_data = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_remove_warehouses'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $this->session->set_flashdata('success', $rs_data->message);
+        }
+        else
+        {
+            $this->session->set_flashdata('error', $rs_data->message);
+        }
+
+        redirect('data-warehouses');
     }
 }

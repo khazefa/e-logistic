@@ -135,12 +135,23 @@ class BaseController extends CI_Controller {
             return false;
         }
     }
+    
+    /**
+     * This function is used to check the access
+     */
+    function isWarehouse() {
+        if ($this->role == ROLE_WH) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * This function is used to check the access
      */
-    function isUser() {
-        if ($this->comRole == ROLE_USER) {
+    function isEngineer() {
+        if ($this->comRole == ROLE_EG) {
             return true;
         } else {
             return false;

@@ -122,8 +122,14 @@
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Spareparts</a></li>
+                                    <?php
+                                    if(($role == ROLE_SU || $role == ROLE_AM)){
+                                    ?>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="#">Supplier</a></li>
+                                    <?php
+                                    }
+                                    ?>
                                 </ul>
                             </li>
 

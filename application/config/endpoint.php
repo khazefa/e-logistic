@@ -70,6 +70,9 @@ $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST
 // ===========================
 $config['api_list_warehouses'] = constant('urlapi').'api/cwarehouse/list/'; //POST
 $config['api_info_warehouses'] = constant('urlapi').'api/cwarehouse/info/'; //POST
+$config['api_add_warehouses'] = constant('urlapi').'api/cwarehouse/insert/'; //POST
+$config['api_edit_warehouses'] = constant('urlapi').'api/cwarehouse/update/'; //POST
+$config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; //POST
 // ===========================
 //  End Warehouses
 // ===========================

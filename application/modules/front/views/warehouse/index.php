@@ -6,6 +6,29 @@
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
             
+            <p class="text-success text-center">
+                <?php
+                $error = $this->session->flashdata('error');
+                if($error)
+                {
+                ?>
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php echo $error; ?>                    
+                </div>
+                <?php
+                }
+                $success = $this->session->flashdata('success');
+                if($success)
+                {
+                ?>
+                <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php echo $success; ?>                    
+                </div>
+                <?php } ?>
+            </p>
+            
             <div class="card-body">
                 <div class="row">
                     <div class="table-responsive">

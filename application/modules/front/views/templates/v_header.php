@@ -132,7 +132,20 @@
                                     ?>
                                 </ul>
                             </li>
-
+                            
+                            <?php
+                            if(($role == ROLE_SU)){
+                            ?>
+                            <li class="has-submenu">
+                                <a href="#"><i class="fa fa-gears"></i>Manage</a>
+                                <ul class="submenu">
+                                    <li><a href="<?php echo base_url("data-users");?>">Users</a></li>
+                                    <li><a href="<?php echo base_url("data-groups");?>">Users Group</a></li>
+                                </ul>
+                            </li>
+                            <?php
+                            }
+                            ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="icon-fire"></i>Multilevel Menu</a>
                                 <ul class="submenu">

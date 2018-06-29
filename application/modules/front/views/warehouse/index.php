@@ -39,6 +39,7 @@
                                 <th>Warehouse</th>
                                 <th>Location</th>
                                 <th>Nearby</th>
+                                <th>PIC</th>
                                 <th>Phone</th>
                                 <th>Action</th>
                             </tr>
@@ -97,6 +98,7 @@
                 { "data": 'name' },
                 { "data": 'location' },
                 { "data": 'nearby' },
+                { "data": 'pic' },
                 { "data": 'phone' },
                 { "data": 'button' },
             ],

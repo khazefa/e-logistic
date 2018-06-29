@@ -4,13 +4,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/BaseController.php';
 
 /**
- * Class : CWarehouse (CWarehouseController)
- * CWarehouse Class to control Data Warehouse.
+ * Class : CUsers (CUsersController)
+ * CUsers Class to control Data Warehouse.
  * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
-class CWarehouse extends BaseController
+class CUsers extends BaseController
 {
     /**
      * This is default constructor of the class
@@ -19,7 +19,7 @@ class CWarehouse extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser() || $this->isAdmin()){
+        if($this->isSuperUser()){
             //load page
         }else{
             redirect('cl');
@@ -31,15 +31,15 @@ class CWarehouse extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Warehouse - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Warehouse';
-        $this->global['contentHeader'] = 'List Warehouse';
-        $this->global['contentTitle'] = 'List Warehouse';
+        $this->global['pageTitle'] = 'List Users - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Users';
+        $this->global['contentHeader'] = 'List Users';
+        $this->global['contentTitle'] = 'List Users';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/warehouse/index', $this->global, NULL);
+        $this->loadViews('front/accounts/index', $this->global, NULL);
     }
     
     /**
@@ -248,129 +248,5 @@ class CWarehouse extends BaseController
             $rs = $rs_data->status ? $rs_data->result : array();
         }
         return $rs;
-    }
-    
-    /**
-     * This function is used to load the add new form
-     */
-    function add()
-    {
-        $this->global['pageTitle'] = "Add New Warehouse - ".APP_NAME;
-        $this->global['pageMenu'] = 'Add New Warehouse';
-        $this->global['contentHeader'] = 'Add New Warehouse';
-        $this->global['contentTitle'] = 'Add New Warehouse';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['list_wr'] = $this->get_list_data();
-        
-        $this->loadViews('front/warehouse/create', $this->global, $data);
-    }
-    
-    /**
-     * This function is used to add new data to the system
-     */
-    function create()
-    {        
-        $fcode = $this->input->post('fcode', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $flocation = $this->input->post('flocation', TRUE);
-        $fnearby = implode(';',$_POST['fnearby']);
-        $fpic = $this->input->post('fpic', TRUE);
-        $fphone = $this->input->post('fphone', TRUE);
-
-        $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
-        
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_warehouses'), 'POST', FALSE);
-
-        if($rs_data->status)
-        {
-            $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-warehouses');
-        }
-        else
-        {
-            $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-warehouses');
-        }
-    }
-    
-    /**
-     * This function is used load edit information
-     * @param $fkey : Optional : This is data unique key
-     */
-    function edit($fkey = NULL)
-    {
-        if($fkey == NULL)
-        {
-            redirect('data-warehouses');
-        }
-        
-        $this->global['pageTitle'] = "Edit Data Warehouse - ".APP_NAME;
-        $this->global['pageMenu'] = 'Edit Data Warehouse';
-        $this->global['contentHeader'] = 'Edit Data Warehouse';
-        $this->global['contentTitle'] = 'Edit Data Warehouse';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['records'] = $this->get_list_info($fkey);
-        $data['list_wr'] = $this->get_list_data();
-        
-        $this->loadViews('front/warehouse/edit', $this->global, $data);
-    }
-    
-    /**
-     * This function is used to edit the data information
-     */
-    function update()
-    {
-        $fcode = $this->input->post('fcode', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $flocation = $this->input->post('flocation', TRUE);
-        $fnearby = implode(';',$_POST['fnearby']);
-        $fpic = $this->input->post('fpic', TRUE);
-        $fphone = $this->input->post('fphone', TRUE);
-
-        $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
-        
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_warehouses'), 'POST', FALSE);
-
-        if($rs_data->status)
-        {
-            $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-warehouses');
-        }
-        else
-        {
-            $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-warehouses/'.$fcode);
-        }
-    }
-    
-    /**
-     * This function is used to delete the data
-     * @return boolean $result : TRUE / FALSE
-     */
-    function delete($fkey = NULL)
-    {
-        $arrWhere = array();
-        $arrWhere = array('fcode'=>$fkey);
-
-        $rs_data = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_remove_warehouses'), 'POST', FALSE);
-
-        if($rs_data->status)
-        {
-            $this->session->set_flashdata('success', $rs_data->message);
-        }
-        else
-        {
-            $this->session->set_flashdata('error', $rs_data->message);
-        }
-
-        redirect('data-warehouses');
     }
 }

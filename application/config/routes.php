@@ -65,6 +65,17 @@ $route['login/reset_pass_confirm'] = 'front/login/reset_pass_confirm';
 $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
 
+// ===========================
+//  Routing Accounts
+// ===========================
+$route['data-users'] = 'front/cusers';
+$route['add-users'] = 'front/cusers/add';
+$route['edit-users/(:any)'] = 'front/cusers/edit/$1';
+$route['remove-users/(:any)'] = 'front/cusers/delete/$1';
+// ===========================
+//  Routing Accounts
+// ===========================
+
 $route['tickets'] = 'front/tickets';
 $route['data-spareparts'] = 'front/cparts';
 

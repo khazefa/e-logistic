@@ -35,6 +35,12 @@ $config['api_reset_pass_confirm'] = constant('urlapi').'api/auth/reset_pass_conf
 $config['api_new_pass'] = constant('urlapi').'api/auth/create_pass/'; //POST
 $config['api_update_user'] = constant('urlapi').'api/users/update/'; //POST
 $config['api_get_user'] = constant('urlapi').'api/users/edit/'; //POST
+
+$config['api_list_warehouses'] = constant('urlapi').'api/cwarehouse/list/'; //POST
+$config['api_info_warehouses'] = constant('urlapi').'api/cwarehouse/info/'; //POST
+$config['api_add_warehouses'] = constant('urlapi').'api/cwarehouse/insert/'; //POST
+$config['api_edit_warehouses'] = constant('urlapi').'api/cwarehouse/update/'; //POST
+$config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; //POST
 // ===========================
 //  End Users and Auth
 // ===========================

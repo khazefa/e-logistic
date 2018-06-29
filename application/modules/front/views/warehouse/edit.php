@@ -72,16 +72,21 @@ if(!empty($records))
                     </div>
                     <div class="form-group row">
                         <label for="fnearby" class="col-2 col-form-label">FSL Nearby</label>
-                        <div class="col-6">
+                        <div class="col-6">                            
                             <select name="fnearby[]" id="fnearby" class="selectpicker" multiple data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                 <?php
                                     foreach($list_wr as $w){
-                                        if($w["code"] == $fcode){
-                                            echo '<option value="'.$w["code"].'" selected>'.$w["name"].'</option>';
-                                        }else{
-                                            echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
+                                        $selected = "";
+                                        if(!empty($fnearby)){
+                                            $i_nearby = explode(";", $fnearby);
+                                            foreach($i_nearby as $i){
+                                                if($w["code"] == $i){
+                                                    $selected = "selected";
+                                                }
+                                            }
                                         }
+                                        echo '<option value="'.$w["code"].'" '.$selected.'>'.$w["name"].'</option>';
                                     }
                                 ?>
                             </select>

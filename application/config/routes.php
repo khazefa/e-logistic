@@ -57,13 +57,18 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 /* END GLOBAL CONTROLLER */
 
-/* USER CONTROLLER */
+// ===========================
+//  Routing Auth
+// ===========================
 $route['login'] = 'front/login';
 $route['login/proccess'] = 'front/login/auth_log';
 $route['login/reset_pass'] = 'front/login/reset_pass';
 $route['login/reset_pass_confirm'] = 'front/login/reset_pass_confirm';
 $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
+// ===========================
+//  Routing Auth
+// ===========================
 
 // ===========================
 //  Routing Accounts
@@ -74,6 +79,17 @@ $route['edit-users/(:any)'] = 'front/cusers/edit/$1';
 $route['remove-users/(:any)'] = 'front/cusers/delete/$1';
 // ===========================
 //  Routing Accounts
+// ===========================
+
+// ===========================
+//  Routing Accounts Group
+// ===========================
+$route['data-groups'] = 'front/cusersgroup';
+$route['add-groups'] = 'front/cusersgroup/add';
+$route['edit-groups/(:num)'] = 'front/cusersgroup/edit/$1';
+$route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
+// ===========================
+//  Routing Accounts Group
 // ===========================
 
 $route['tickets'] = 'front/tickets';

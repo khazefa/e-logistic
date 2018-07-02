@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 29, 2018 at 12:21 PM
+-- Generation Time: Jul 02, 2018 at 12:58 PM
 -- Server version: 5.7.19
 -- PHP Version: 7.1.18
 
@@ -1401,7 +1401,7 @@ INSERT INTO `user_group` (`group_id`, `group_name`, `group_display`, `group_enc`
 (1, 'su', 'System Regulator', '68e66a29dff7a174e0baa236a068d591b9a9bc33'),
 (2, 'am', 'Web Administrator', '4047f500bde4b0c43dabc62653e16f4398e38367'),
 (3, 'wh', 'Warehouse', 'a88ba21a51f6b6fc85a0c9bb3e4b8cb07ce1b722'),
-(4, 'eg', 'Engineer', 'bf8bb43401cf41b1f89221440fd9342d785c6b57');
+(4, 'eg', 'Engineer', '9bd27b222550533c6cd9a1458f86001baf9c5a44');
 
 -- --------------------------------------------------------
 

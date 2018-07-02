@@ -252,7 +252,7 @@ class CUsersGroup extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/accounts-group/create', $this->global, $data);
+        $this->loadViews('front/accounts-group/create', $this->global, NULL);
     }
     
     /**

@@ -146,22 +146,6 @@
                             <?php
                             }
                             ?>
-                            <li class="has-submenu">
-                                <a href="#"><i class="icon-fire"></i>Multilevel Menu</a>
-                                <ul class="submenu">
-                                    <li class="has-submenu">
-                                        <a href="#">Level 1</a>
-                                        <ul class="submenu">
-                                            <li><a href="#">Level 1-1</a></li>
-                                            <li><a href="#">Level 1-2</a></li>
-                                            <li><a href="#">Level 1-3</a></li>            
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Level 2</a>
-                                    </li>
-                                </ul>
-                            </li>
 
                         </ul>
                         <!-- End navigation menu -->

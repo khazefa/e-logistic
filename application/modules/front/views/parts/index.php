@@ -5,7 +5,28 @@
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
-            
+            <p class="text-success text-center">
+                <?php
+                $error = $this->session->flashdata('error');
+                if($error)
+                {
+                ?>
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php echo $error; ?>                    
+                </div>
+                <?php
+                }
+                $success = $this->session->flashdata('success');
+                if($success)
+                {
+                ?>
+                <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php echo $success; ?>                    
+                </div>
+                <?php } ?>
+            </p>
             <div class="card-body">
                 <div class="row">
                     <div class="table-responsive">
@@ -32,9 +53,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var fticket = $('#fticket').val();
-        var fpartnum = $('#fpartnum').val();
-
         // Responsive Datatable with Buttons examples
         var table = $('#data_grid').DataTable({
 //            select: {
@@ -49,19 +67,31 @@
             deferRender: true,
             processing: true,
             lengthChange: true,
-            buttons: ['copy', 'excel', 'pdf'],
-            ajax: {
-                url: "<?= base_url('json/list_part.json') ?>",
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    footer:true
+                }, 
+                {
+                    extend: 'excel',
+                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    footer:true
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    footer:true
+                }
+            ],
+            ajax: {              
+                url: "<?= base_url('front/cparts/get_list_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
-//                data: JSON.stringify( { "fticket": fticket, "fpartnum": fpartnum } ),
-//                data: function(d){
-//                    d.fticket = fticket;
-//                    d.fpartnum = fpartnum;
-//                    d.fqty = fqty;
-//                    d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
-//                }
+                data: JSON.stringify( {
+                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                } ),
             },
             columns: [
                 { "data": 'part_number' },

@@ -67,7 +67,7 @@ $route['login/reset_pass_confirm'] = 'front/login/reset_pass_confirm';
 $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
 // ===========================
-//  Routing Auth
+//  End Routing Auth
 // ===========================
 
 // ===========================
@@ -78,7 +78,7 @@ $route['add-users'] = 'front/cusers/add';
 $route['edit-users/(:any)'] = 'front/cusers/edit/$1';
 $route['remove-users/(:any)'] = 'front/cusers/delete/$1';
 // ===========================
-//  Routing Accounts
+//  End Routing Accounts
 // ===========================
 
 // ===========================
@@ -89,11 +89,18 @@ $route['add-groups'] = 'front/cusersgroup/add';
 $route['edit-groups/(:num)'] = 'front/cusersgroup/edit/$1';
 $route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
 // ===========================
-//  Routing Accounts Group
+//  End Routing Accounts Group
 // ===========================
 
 $route['tickets'] = 'front/tickets';
+
+// ===========================
+//  Routing Spareparts
+// ===========================
 $route['data-spareparts'] = 'front/cparts';
+// ===========================
+//  End Routing Spareparts
+// ===========================
 
 // ===========================
 //  Routing Warehouses
@@ -103,7 +110,7 @@ $route['add-warehouses'] = 'front/cwarehouse/add';
 $route['edit-warehouses/(:num)'] = 'front/cwarehouse/edit/$1';
 $route['remove-warehouses/(:num)'] = 'front/cwarehouse/delete/$1';
 // ===========================
-//  Routing Warehouses
+//  End Routing Warehouses
 // ===========================
 
 /* END USER CONTROLLER */

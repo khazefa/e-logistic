@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <button type="button" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <button type="button" onclick="location.href='<?php echo base_url("add-spareparts");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
@@ -38,7 +38,8 @@
                                 <th>Sparepart Name</th>
                                 <th>Stock</th>
                                 <th>Sparepart Type</th>
-                                <th>FSL</th>
+                                <th>Warehouse</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -94,12 +95,13 @@
                 } ),
             },
             columns: [
-                { "data": 'part_number' },
-                { "data": 'serial_number' },
-                { "data": 'part_name' },
-                { "data": 'part_stock' },
-                { "data": 'part_type' },
-                { "data": 'fsl_code' },
+                { "data": 'partno' },
+                { "data": 'serialno' },
+                { "data": 'name' },
+                { "data": 'stock' },
+                { "data": 'type' },
+                { "data": 'warehouse' },
+                { "data": 'button' },
             ],
         });
 

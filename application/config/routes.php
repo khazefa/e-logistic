@@ -98,6 +98,9 @@ $route['tickets'] = 'front/tickets';
 //  Routing Spareparts
 // ===========================
 $route['data-spareparts'] = 'front/cparts';
+$route['add-spareparts'] = 'front/cparts/add';
+$route['edit-spareparts/(:any)'] = 'front/cparts/edit/$1';
+$route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
 //  End Routing Spareparts
 // ===========================

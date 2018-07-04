@@ -97,7 +97,7 @@
                 { "data": 'partno' },
                 { "data": 'name' },
                 { "data": 'desc' },
-                { "data": 0 },
+                { "data": 'stock' },
                 { "data": 'returncode' },
                 { "data": 'machine' },
                 { "data": 'button' },

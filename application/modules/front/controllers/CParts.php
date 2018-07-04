@@ -65,6 +65,7 @@ class CParts extends BaseController
             $row['partno'] = $partnum;
             $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
             $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['stock'] = 0;
             $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
             $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
             

@@ -74,6 +74,18 @@ $config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
 // ===========================
 
 // ===========================
+//  Begin Partners
+// ===========================
+$config['api_list_partners'] = constant('urlapi').'api/cpartners/list/'; //POST
+$config['api_info_partners'] = constant('urlapi').'api/cpartners/info/'; //POST
+$config['api_add_partners'] = constant('urlapi').'api/cpartners/insert/'; //POST
+$config['api_edit_partners'] = constant('urlapi').'api/cpartners/update/'; //POST
+$config['api_remove_partners'] = constant('urlapi').'api/cpartners/delete/'; //POST
+// ===========================
+//  End Partners
+// ===========================
+
+// ===========================
 //  Begin Spareparts
 // ===========================
 $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST

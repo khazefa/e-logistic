@@ -275,7 +275,7 @@ class CUsersGroup extends BaseController
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-users');
+            redirect('add-groups');
         }
     }
     
@@ -324,7 +324,7 @@ class CUsersGroup extends BaseController
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-users/'.$fkey);
+            redirect('edit-groups/'.$fkey);
         }
     }
     
@@ -332,7 +332,7 @@ class CUsersGroup extends BaseController
      * This function is used to delete the data
      * @return boolean $result : TRUE / FALSE
      */
-    function delete($fkey = NULL)
+    function delete($fid = NULL)
     {
         $arrWhere = array();
         $arrWhere = array('fid'=>$fid);

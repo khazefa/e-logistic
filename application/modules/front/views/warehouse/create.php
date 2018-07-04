@@ -33,7 +33,7 @@
                     <div class="form-group row">
                         <label for="fcode" class="col-2 col-form-label">FSL Code</label>
                         <div class="col-3">
-                            <input type="text" name="fcode" id="fcode" data-parsley-type="number" required placeholder="999" class="form-control">
+                            <input type="text" name="fcode" id="fcode" data-parsley-maxlength="4" required placeholder="999" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

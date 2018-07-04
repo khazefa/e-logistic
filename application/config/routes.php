@@ -95,6 +95,17 @@ $route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
 $route['tickets'] = 'front/tickets';
 
 // ===========================
+//  Routing Partners
+// ===========================
+$route['data-partners'] = 'front/cpartners';
+$route['add-partners'] = 'front/cpartners/add';
+$route['edit-partners/(:any)'] = 'front/cpartners/edit/$1';
+$route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
+// ===========================
+//  End Routing Partners
+// ===========================
+
+// ===========================
 //  Routing Spareparts
 // ===========================
 $route['data-spareparts'] = 'front/cparts';

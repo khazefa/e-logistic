@@ -124,12 +124,23 @@ class BaseController extends CI_Controller {
             return false;
         }
     }
-
+    
     /**
      * This function is used to check the access
      */
     function isAdmin() {
         if ($this->role == ROLE_AM) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This function is used to check the access
+     */
+    function isSpv() {
+        if ($this->role == ROLE_SPV) {
             return true;
         } else {
             return false;

@@ -19,6 +19,11 @@ class CParts extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isSuperUser()){
+            //load page
+        }else{
+            redirect('cl');
+        }
     }
     
     /**

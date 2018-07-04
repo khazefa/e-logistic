@@ -55,7 +55,7 @@ if(!empty($records))
                     <div class="form-group row">
                         <label for="fcode" class="col-2 col-form-label">FSL Code</label>
                         <div class="col-3">
-                            <input type="text" name="fcode" id="fcode" value="<?php echo $fcode; ?>" class="form-control" readonly="true">
+                            <input type="text" name="fcode" id="fcode" data-parsley-maxlength="4" value="<?php echo $fcode; ?>" class="form-control" readonly="true">
                         </div>
                     </div>
                     <div class="form-group row">

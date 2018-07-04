@@ -77,6 +77,10 @@ $config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
 //  Begin Spareparts
 // ===========================
 $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST
+$config['api_info_parts'] = constant('urlapi').'api/cparts/info/'; //POST
+$config['api_add_parts'] = constant('urlapi').'api/cparts/insert/'; //POST
+$config['api_edit_parts'] = constant('urlapi').'api/cparts/update/'; //POST
+$config['api_remove_parts'] = constant('urlapi').'api/cparts/delete/'; //POST
 // ===========================
 //  End Spareparts
 // ===========================

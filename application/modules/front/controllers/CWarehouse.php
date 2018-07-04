@@ -276,7 +276,7 @@ class CWarehouse extends BaseController
         $fcode = $this->input->post('fcode', TRUE);
         $fname = $this->input->post('fname', TRUE);
         $flocation = $this->input->post('flocation', TRUE);
-        $fnearby = implode(';',$_POST['fnearby']);
+        $fnearby = !empty($_POST['fnearby']) ? implode(';',$_POST['fnearby']) : "";
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
 
@@ -330,7 +330,7 @@ class CWarehouse extends BaseController
         $fcode = $this->input->post('fcode', TRUE);
         $fname = $this->input->post('fname', TRUE);
         $flocation = $this->input->post('flocation', TRUE);
-        $fnearby = implode(';',$_POST['fnearby']);
+        $fnearby = !empty($_POST['fnearby']) ? implode(';',$_POST['fnearby']) : "";
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
 

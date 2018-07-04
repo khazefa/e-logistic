@@ -33,12 +33,11 @@
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>Sparepart Number</th>
-                                <th>Serial Number</th>
-                                <th>Sparepart Name</th>
+                                <th>Part Number</th>
+                                <th>Part Name</th>
                                 <th>Stock</th>
-                                <th>Sparepart Type</th>
-                                <th>Warehouse</th>
+                                <th>Return Code</th>
+                                <th>Machine</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -96,11 +95,11 @@
             },
             columns: [
                 { "data": 'partno' },
-                { "data": 'serialno' },
                 { "data": 'name' },
-                { "data": 'stock' },
-                { "data": 'type' },
-                { "data": 'warehouse' },
+                { "data": 'desc' },
+                { "data": 0 },
+                { "data": 'returncode' },
+                { "data": 'machine' },
                 { "data": 'button' },
             ],
         });

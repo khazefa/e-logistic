@@ -65,7 +65,7 @@ class CUsers extends BaseController
             $row['group'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
             $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             if($code == "00"){
-                $names = "HQ";
+                $names = "WH";
             }else{
                 $data_warehouse = $this->get_list_info_wh($code);
                 foreach ($data_warehouse as $d){
@@ -118,7 +118,7 @@ class CUsers extends BaseController
             $row['group'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
             $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             if($code == "00"){
-                $names = "HQ";
+                $names = "WH";
             }else{
                 $data_warehouse = $this->get_list_info_wh($code);
                 foreach ($data_warehouse as $d){
@@ -171,7 +171,7 @@ class CUsers extends BaseController
             $row['group'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
             $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             if($code == "00"){
-                $names = "HQ";
+                $names = "WH";
             }else{
                 $data_warehouse = $this->get_list_info_wh($code);
                 foreach ($data_warehouse as $d){

@@ -85,13 +85,13 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fpartnum" class="col-2 col-form-label">Sparepart Number</label>
+                        <label for="fpartnum" class="col-2 col-form-label">Part Number</label>
                         <div class="col-4">
                             <input type="text" name="fpartnum" id="fpartnum" required value="<?php echo $fpartnum; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fparentid" class="col-2 col-form-label">Main Sparepart</label>
+                        <label for="fparentid" class="col-2 col-form-label">Main Part</label>
                         <div class="col-4">
                             <select name="fparentid" id="fparentid" class="selectpicker" required data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
@@ -105,7 +105,7 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fnearby" class="col-2 col-form-label">Sparepart Subtitution</label>
+                        <label for="fnearby" class="col-2 col-form-label">Part Subtitution</label>
                         <div class="col-10">
                             <select name="fpartidsub[]" id="fpartidsub" class="selectpicker" required multiple data-live-search="true" 
                                     data-selected-text-format="count > 2" title="Please choose.." data-style="btn-light">
@@ -129,7 +129,7 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fparttype" class="col-2 col-form-label">Sparepart Type</label>
+                        <label for="fparttype" class="col-2 col-form-label">Part Type</label>
                         <div class="col-3">
                             <select name="fparttype" id="fparttype" class="selectpicker" required data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
@@ -138,7 +138,7 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fpartsupply" class="col-2 col-form-label">Sparepart Supplier</label>
+                        <label for="fpartsupply" class="col-2 col-form-label">Part Supplier</label>
                         <div class="col-3">
                             <select name="fpartsupply" id="fpartsupply" class="selectpicker" required data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
@@ -147,21 +147,21 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fname" class="col-2 col-form-label">Sparepart Name</label>
+                        <label for="fname" class="col-2 col-form-label">Part Name</label>
                         <div class="col-6">
                             <input type="text" name="fname" id="fname" required value="<?php echo $fname; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fstock" class="col-2 col-form-label">Sparepart Stock</label>
+                        <label for="fstock" class="col-2 col-form-label">Part Stock</label>
                         <div class="col-2">
                             <input data-parsley-type="number" type="number" name="fstock" id="fstock" required value="<?php echo $fstock; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fdesc" class="col-2 col-form-label">Sparepart Description</label>
+                        <label for="fdesc" class="col-2 col-form-label">Part Description</label>
                         <div class="col-6">
-                            <textarea name="fdesc" id="fdesc" placeholder="Sparepart Description" class="form-control"><?php echo $fdesc; ?></textarea>
+                            <textarea name="fdesc" id="fdesc" placeholder="Part Description" class="form-control"><?php echo $fdesc; ?></textarea>
                         </div>
                     </div>
                     <div class="form-group row">

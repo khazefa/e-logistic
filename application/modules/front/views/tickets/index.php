@@ -89,7 +89,7 @@
 
                         <div class="row">
                             <div class="col col-md-12">
-                            <table id="data_grid2" class="table table-bordered table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <table id="cart_grid" class="table table-bordered table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
                                     <th>X</th>
@@ -135,20 +135,12 @@
 
     <div class="col-md-3">
         <div class="card-box table-responsive">
-            <h4 class="m-t-0 header-title">List Parts</h4>
-            <table id="data_grid" class="table table-bordered table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                <thead>
-                <tr>
-                    <th>Part Number</th>
-                    <th>Part Name</th>
-                    <th>Stock</th>
-                    <th>Part Type</th>
-                    <th>FSL</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <h4 class="m-t-0 header-title">Widgets</h4><hr>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+                laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
         </div>
     </div>
 </div>
@@ -158,44 +150,7 @@
         var fticket = $('#fticket').val();
         var fpartnum = $('#fpartnum').val();
 
-        // Responsive Datatable with Buttons examples
-        var table = $('#data_grid').DataTable({
-//            select: {
-//                style: 'multi'
-//            },
-            dom: "<'row'<'col-sm-9'B><'col-sm-3'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-8'i><'col-sm-4'p>>",
-            destroy: true,
-            stateSave: false,
-            deferRender: true,
-            processing: true,
-            lengthChange: true,
-            buttons: ['copy', 'excel', 'pdf'],
-            ajax: {
-                url: "<?= base_url('json/list_part.json') ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-//                data: JSON.stringify( { "fticket": fticket, "fpartnum": fpartnum } ),
-//                data: function(d){
-//                    d.fticket = fticket;
-//                    d.fpartnum = fpartnum;
-//                    d.fqty = fqty;
-//                    d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
-//                }
-            },
-            columns: [
-                { "data": 'part_number' },
-                { "data": 'part_name' },
-                { "data": 'part_stock' },
-                { "data": 'part_type' },
-                { "data": 'fsl_code' },
-            ],
-        });
-
-//        table.buttons().container()
-//                .appendTo('#data_grid_wrapper .col-md-6:eq(0)');
-
-        var table2 = $('#data_grid2').DataTable({
+        var table = $('#cart_grid').DataTable({
 //            select: {
 //                style: 'multi'
 //            },
@@ -233,7 +188,7 @@
             ],
         });
 
-        table2.buttons().container()
-                .appendTo('#data_grid2_wrapper .col-md-6:eq(0)');
+        table.buttons().container()
+                .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
     });
 </script>

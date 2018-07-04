@@ -121,7 +121,7 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-spareparts");?>">Spareparts</a></li>
+                                    <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
                                     <?php
                                     if(($role == ROLE_SU || $role == ROLE_AM)){
                                     ?>

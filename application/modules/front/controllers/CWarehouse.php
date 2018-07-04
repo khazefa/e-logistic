@@ -19,7 +19,7 @@ class CWarehouse extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser() || $this->isAdmin()){
+        if($this->isSuperUser()){
             //load page
         }else{
             redirect('cl');
@@ -58,6 +58,8 @@ class CWarehouse extends BaseController
         $data = array();
         $data_nearby = array();
         $names = '';
+        $data_spv = array();
+        $spvs = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
@@ -84,6 +86,26 @@ class CWarehouse extends BaseController
             $row['nearby'] = $names;
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $listspv = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+            if(!empty($listspv)){
+                $spvs = '<ul class="list-unstyled">';
+                $e_spv = explode(';', $listspv);
+                $data_spv = array();
+                foreach ($e_spv as $s){
+                    array_push($data_spv, $this->get_list_users($s));
+                }
+                
+                foreach ($data_spv as $datasp){
+                    foreach($datasp as $dp){
+//                        $names .= '<li style="display:inline; padding-left:5px;">'.$dp["fullname"].'</li>';
+                        $spvs .= '<li>'.$dp["fullname"].'</li>';
+                    }
+                }
+                $spvs .= '</ul>';
+            }else{
+                $spvs = '-';
+            }
+            $row['spv'] = $spvs;
             
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
@@ -148,6 +170,7 @@ class CWarehouse extends BaseController
             $row['nearby'] = $names;
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }
@@ -193,6 +216,7 @@ class CWarehouse extends BaseController
             $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }
@@ -221,6 +245,39 @@ class CWarehouse extends BaseController
             $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    public function get_list_users($fkey){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fgroup = "spv";
+        $arrWhere = array('fgroup'=>$fgroup);
+
+        $arrWhere['fkey'] = $fkey;
+        
+        if ($fkey != ""){
+            $arrWhere = array('fgroup'=>$fgroup, 'fkey'=>$fkey);
+        }
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_users'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['uname'] = filter_var($r->user_key, FILTER_SANITIZE_STRING);
+            $row['email'] = filter_var($r->user_email, FILTER_SANITIZE_STRING);
+            $row['fullname'] = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }
@@ -264,6 +321,7 @@ class CWarehouse extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['list_wr'] = $this->get_list_data();
+        $data['list_spv'] = $this->get_list_users("");
         
         $this->loadViews('front/warehouse/create', $this->global, $data);
     }
@@ -279,9 +337,10 @@ class CWarehouse extends BaseController
         $fnearby = !empty($_POST['fnearby']) ? implode(';',$_POST['fnearby']) : "";
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
+        $fspv = !empty($_POST['fspv']) ? implode(';',$_POST['fspv']) : "";
 
         $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_warehouses'), 'POST', FALSE);
 
@@ -318,6 +377,7 @@ class CWarehouse extends BaseController
         
         $data['records'] = $this->get_list_info($fkey);
         $data['list_wr'] = $this->get_list_data();
+        $data['list_spv'] = $this->get_list_users("");
         
         $this->loadViews('front/warehouse/edit', $this->global, $data);
     }
@@ -333,9 +393,10 @@ class CWarehouse extends BaseController
         $fnearby = !empty($_POST['fnearby']) ? implode(';',$_POST['fnearby']) : "";
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
+        $fspv = !empty($_POST['fspv']) ? implode(';',$_POST['fspv']) : "";
 
         $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone);
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_warehouses'), 'POST', FALSE);
 

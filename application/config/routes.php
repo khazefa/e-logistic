@@ -121,8 +121,8 @@ $route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
 $route['data-warehouses'] = 'front/cwarehouse';
 $route['add-warehouses'] = 'front/cwarehouse/add';
-$route['edit-warehouses/(:num)'] = 'front/cwarehouse/edit/$1';
-$route['remove-warehouses/(:num)'] = 'front/cwarehouse/delete/$1';
+$route['edit-warehouses/(:any)'] = 'front/cwarehouse/edit/$1';
+$route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
 // ===========================
 //  End Routing Warehouses
 // ===========================

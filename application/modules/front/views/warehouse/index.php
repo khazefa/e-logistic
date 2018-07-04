@@ -41,6 +41,7 @@
                                 <th>Nearby</th>
                                 <th>PIC</th>
                                 <th>Phone</th>
+                                <th>Supervisor</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -100,6 +101,7 @@
                 { "data": 'nearby' },
                 { "data": 'pic' },
                 { "data": 'phone' },
+                { "data": 'spv' },
                 { "data": 'button' },
             ],
         });

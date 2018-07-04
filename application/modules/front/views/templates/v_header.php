@@ -114,10 +114,20 @@
                             <li class="has-submenu">
                                 <a href="<?php echo base_url();?>"><i class="icon-speedometer"></i>Dashboard</a>
                             </li>
+                            
+                            <?php
+                            if(($role == ROLE_SU || $role == ROLE_AM)){
+                            ?>
                             <li class="has-submenu">
-                                <a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a>
+                                <a href="#"><i class="fa fa-exchange"></i>Transaction</a>
+                                <ul class="submenu">
+                                    <li><a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a></li>
+                                </ul>
                             </li>
-
+                            <?php
+                            }
+                            ?>
+                            
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
@@ -125,13 +135,13 @@
                                     if(($role == ROLE_SU)){
                                     ?>
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
+                                    <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <?php
                                     }
                                     ?>
                                     <?php
-                                    if(($role == ROLE_SU || $role == ROLE_AM)){
+                                    if(($role == ROLE_SU || $role == ROLE_AM || $role == ROLE_SPV)){
                                     ?>
-                                    <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
                                     <?php
                                     }

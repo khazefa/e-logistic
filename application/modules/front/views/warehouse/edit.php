@@ -5,6 +5,7 @@ $flocation = '';
 $fnearby = '';
 $fpic = '';
 $fphone = '';
+$fspv = '';
 
 if(!empty($records))
 {
@@ -17,6 +18,7 @@ if(!empty($records))
         $flocation = $r["location"];
         $fpic = $r["pic"];
         $fphone = $r["phone"];
+        $fspv = $r["spv"];
     }
 }
 ?>
@@ -55,7 +57,7 @@ if(!empty($records))
                     <div class="form-group row">
                         <label for="fcode" class="col-2 col-form-label">FSL Code</label>
                         <div class="col-3">
-                            <input type="text" name="fcode" id="fcode" data-parsley-maxlength="4" value="<?php echo $fcode; ?>" class="form-control" readonly="true">
+                            <input type="text" name="fcode" id="fcode" value="<?php echo $fcode; ?>" class="form-control" readonly="true">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -103,6 +105,29 @@ if(!empty($records))
                         <label for="fphone" class="col-2 col-form-label">Phone</label>
                         <div class="col-3">
                             <input type="text" name="fphone" id="fphone" data-parsley-type="number" required value="<?php echo $fphone; ?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fspv" class="col-2 col-form-label">Supervisor</label>
+                        <div class="col-6">                            
+                            <select name="fspv[]" id="fspv" class="selectpicker" multiple data-live-search="true" 
+                                    data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                <?php
+                                    foreach($list_spv as $s){
+                                        $selected = "";
+                                        if(!empty($fspv)){
+                                            $i_spv = explode(";", $fspv);
+                                            foreach($i_spv as $v){
+                                                if($s["uname"] == $v){
+                                                    $selected = "selected";
+                                                }
+                                            }
+                                        }
+                                        echo '<option value="'.$s["uname"].'" '.$selected.'>'.$s["fullname"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                            <span class="help-block"><small>Warehouse Supervisors</small></span>
                         </div>
                     </div>
                     <div class="form-group row">

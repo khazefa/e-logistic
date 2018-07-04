@@ -33,7 +33,7 @@
                     <div class="form-group row">
                         <label for="fcode" class="col-2 col-form-label">FSL Code</label>
                         <div class="col-3">
-                            <input type="text" name="fcode" id="fcode" data-parsley-maxlength="4" required placeholder="999" class="form-control">
+                            <input type="text" name="fcode" id="fcode" data-parsley-minlength="4" data-parsley-maxlength="4" required placeholder="CODE" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -72,6 +72,20 @@
                         <label for="fphone" class="col-2 col-form-label">Phone</label>
                         <div class="col-3">
                             <input type="text" name="fphone" id="fphone" data-parsley-type="number" required placeholder="Phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fspv" class="col-2 col-form-label">Supervisor</label>
+                        <div class="col-6">
+                            <select name="fspv[]" id="fspv" class="selectpicker" multiple data-live-search="true" 
+                                    data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
+                                <?php
+                                    foreach($list_spv as $s){
+                                        echo '<option value="'.$s["uname"].'">'.$s["fullname"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                            <span class="help-block"><small>Warehouse Supervisors</small></span>
                         </div>
                     </div>
                     <div class="form-group row">

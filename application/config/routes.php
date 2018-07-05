@@ -106,6 +106,17 @@ $route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
 // ===========================
 
 // ===========================
+//  Routing Engineers
+// ===========================
+$route['data-engineers'] = 'front/cengineers';
+$route['add-engineers'] = 'front/cengineers/add';
+$route['edit-engineers/(:any)'] = 'front/cengineers/edit/$1';
+$route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
+// ===========================
+//  End Routing Engineers
+// ===========================
+
+// ===========================
 //  Routing Spareparts
 // ===========================
 $route['data-spareparts'] = 'front/cparts';

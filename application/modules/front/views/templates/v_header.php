@@ -132,17 +132,12 @@
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
                                     <?php
-                                    if(($role == ROLE_SU)){
+                                    if(($role == ROLE_SU || $role == ROLE_AM || $role == ROLE_SPV)){
                                     ?>
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
-                                    <?php
-                                    }
-                                    ?>
-                                    <?php
-                                    if(($role == ROLE_SU || $role == ROLE_AM || $role == ROLE_SPV)){
-                                    ?>
                                     <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
+                                    <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
                                     <?php
                                     }
                                     ?>

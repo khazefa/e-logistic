@@ -86,6 +86,19 @@ $config['api_remove_partners'] = constant('urlapi').'api/cpartners/delete/'; //P
 // ===========================
 
 // ===========================
+//  Begin Engineers
+// ===========================
+$config['api_list_engineers'] = constant('urlapi').'api/cengineers/list/'; //POST
+$config['api_list_view_engineers'] = constant('urlapi').'api/cengineers/list_view/'; //POST
+$config['api_info_engineers'] = constant('urlapi').'api/cengineers/info/'; //POST
+$config['api_add_engineers'] = constant('urlapi').'api/cengineers/insert/'; //POST
+$config['api_edit_engineers'] = constant('urlapi').'api/cengineers/update/'; //POST
+$config['api_remove_engineers'] = constant('urlapi').'api/cengineers/delete/'; //POST
+// ===========================
+//  End Engineers
+// ===========================
+
+// ===========================
 //  Begin Spareparts
 // ===========================
 $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST

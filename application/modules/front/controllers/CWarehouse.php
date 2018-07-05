@@ -62,7 +62,7 @@ class CWarehouse extends BaseController
         $spvs = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['name'] = $this->common->nohtml($r->fsl_name);
             $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
             $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
             if(!empty($nearby)){

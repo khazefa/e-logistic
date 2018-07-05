@@ -13,7 +13,7 @@ if(!empty($records))
         $fpartnum = $r["partno"];
         $fname = $r["name"];
         $fdesc = $r["desc"];
-        $fmachine = $r["stock"];
+        $fmachine = $r["machine"];
     }
 }
 ?>
@@ -52,7 +52,7 @@ if(!empty($records))
                     <div class="form-group row">
                         <label for="fpartnum" class="col-2 col-form-label">Part Number</label>
                         <div class="col-4">
-                            <input type="text" name="fpartnum" id="fpartnum" required value="<?php echo $fpartnum; ?>" class="form-control">
+                            <input type="text" name="fpartnum" id="fpartnum" required value="<?php echo $fpartnum; ?>" class="form-control" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group row">

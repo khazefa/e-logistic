@@ -56,16 +56,13 @@ class CParts extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
-        $data_warehouse = array();
-        $wh_name = '';
-        $names = '';
         foreach ($rs as $r) {
             $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partnum = $r->part_number;
             $row['partno'] = $partnum;
-            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['name'] = $this->common->nohtml($r->part_name);
             $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['stock'] = 0;
+            $row['stock'] = '0';
             $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
             $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
             
@@ -77,6 +74,8 @@ class CParts extends BaseController
             $row['button'] .= '</div>';
             $row['button'] .= '</div>';
  
+//            $row['button'] = 'HTML';
+            
             $data[] = $row;
         }
         
@@ -105,8 +104,6 @@ class CParts extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
-        $data_nearby = array();
-        $names = '';
         foreach ($rs as $r) {
             $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
             $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
@@ -251,8 +248,6 @@ class CParts extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
-        $data_nearby = array();
-        $names = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
@@ -317,7 +312,7 @@ class CParts extends BaseController
         $fdesc = $this->input->post('fdesc', TRUE);
         $fmachine = $this->input->post('fmachine', TRUE);
 
-        $dataInfo = array('part_number'=>$fpartnum, 'part_name'=>$fname, 'part_desc'=>$fdesc, 'part_machine'=>$fmachine);
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fname'=>$fname, 'fdesc'=>$fdesc, 'fmachine'=>$fmachine);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_parts'), 'POST', FALSE);
 
@@ -367,7 +362,7 @@ class CParts extends BaseController
         $fdesc = $this->input->post('fdesc', TRUE);
         $fmachine = $this->input->post('fmachine', TRUE);
 
-        $dataInfo = array('part_number'=>$fpartnum, 'part_name'=>$fname, 'part_desc'=>$fdesc, 'part_machine'=>$fmachine);
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fname'=>$fname, 'fdesc'=>$fdesc, 'fmachine'=>$fmachine);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_parts'), 'POST', FALSE);
 

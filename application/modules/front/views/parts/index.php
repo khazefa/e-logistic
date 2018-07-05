@@ -5,6 +5,7 @@
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            
             <p class="text-success text-center">
                 <?php
                 $error = $this->session->flashdata('error');
@@ -27,6 +28,7 @@
                 </div>
                 <?php } ?>
             </p>
+            
             <div class="card-body">
                 <div class="row">
                     <div class="table-responsive">
@@ -35,10 +37,10 @@
                             <tr>
                                 <th>Part Number</th>
                                 <th>Part Name</th>
-                                <th>Stock</th>
+                                <th>Part Stock</th>
                                 <th>Return Code</th>
                                 <th>Machine</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -53,11 +55,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        // Responsive Datatable with Buttons examples
+        // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-//            select: {
-//                style: 'multi'
-//            },
             dom: "<'row'<'col-sm-10'B><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-10'i><'col-sm-2'p>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -66,7 +65,6 @@
             stateSave: false,
             deferRender: true,
             processing: true,
-            lengthChange: true,
             buttons: [
                 {
                     extend: 'copy',
@@ -84,7 +82,7 @@
                     footer:true
                 }
             ],
-            ajax: {              
+            ajax: {
                 url: "<?= base_url('front/cparts/get_list_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
@@ -96,7 +94,6 @@
             columns: [
                 { "data": 'partno' },
                 { "data": 'name' },
-                { "data": 'desc' },
                 { "data": 'stock' },
                 { "data": 'returncode' },
                 { "data": 'machine' },
@@ -105,6 +102,6 @@
         });
 
         table.buttons().container()
-                .appendTo('#data_grid_wrapper .col-md-6:eq(0)');
+                .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
     });
 </script>

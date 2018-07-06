@@ -86,16 +86,14 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 
 /**** USER DEFINED CONSTANTS **********/
 
-define('ROLE_SU','68e66a29dff7a174e0baa236a068d591b9a9bc33');
-define('ROLE_AM','4047f500bde4b0c43dabc62653e16f4398e38367');
-define('ROLE_SPV','eb5bf2a65032bba15af283768094f4c6d98ded66');
-define('ROLE_WH','a88ba21a51f6b6fc85a0c9bb3e4b8cb07ce1b722');
+define('ROLE_SU','0A2E486069911B6A82B60BE8BC78E958F7A10913');
+define('ROLE_AM','EF99C083978D329305A6F4376600A7D90E1D3395');
+define('ROLE_SPV','5177FFB6B85EE62D592F4EC3D415E6A199CC91AA');
 define('ROLE_EG','bf8bb43401cf41b1f89221440fd9342d785c6b57');
 
 define('BASE_SU','1');
 define('BASE_AM','2');
-define('BASE_SPV','5');
-define('BASE_WH','3');
+define('BASE_SPV','3');
 define('BASE_EG','4');
 
 define('APP_NAME','E-Logistic');

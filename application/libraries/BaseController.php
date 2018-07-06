@@ -146,17 +146,6 @@ class BaseController extends CI_Controller {
             return false;
         }
     }
-    
-    /**
-     * This function is used to check the access
-     */
-    function isWarehouse() {
-        if ($this->role == ROLE_WH) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * This function is used to check the access
@@ -180,7 +169,7 @@ class BaseController extends CI_Controller {
         $this->load->view( $parentView.'/'.'templates/v_header' );
     }
 
-	/**
+    /**
      * This function used to load views
      * @param {string} $viewName : This is view name
      * @param {mixed} $headerInfo : This is array of header information
@@ -194,7 +183,7 @@ class BaseController extends CI_Controller {
         $this->load->view('front/templates/v_footer', $footerInfo);
     }
 
-	/**
+    /**
      * This function used to load views
      * @param {string} $viewName : This is view name
      * @param {mixed} $headerInfo : This is array of header information

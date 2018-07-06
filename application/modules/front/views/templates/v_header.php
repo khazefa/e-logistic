@@ -135,6 +135,8 @@
                                     if(($role == ROLE_SU || $role == ROLE_AM || $role == ROLE_SPV)){
                                     ?>
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
+                                    <li><a href="#">Sparepart Subtitute</a></li>
+                                    <li><a href="#">Stock</a></li>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
@@ -150,8 +152,14 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-gears"></i>Manage</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-users");?>">Users</a></li>
-                                    <li><a href="<?php echo base_url("data-groups");?>">Users Group</a></li>
+                                    <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
+                                    <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
+                                    <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
+                                    <li><a href="#">Sparepart Subtitute</a></li>
+                                    <li><a href="#">Stock</a></li>
+                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
+                                    <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
                                 </ul>
                             </li>
                             <?php

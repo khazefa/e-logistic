@@ -31,10 +31,10 @@ class CUsers extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Users - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Users';
-        $this->global['contentHeader'] = 'List Users';
-        $this->global['contentTitle'] = 'List Users';
+        $this->global['pageTitle'] = 'Manage Users - '.APP_NAME;
+        $this->global['pageMenu'] = 'Manage Users';
+        $this->global['contentHeader'] = 'Manage Users';
+        $this->global['contentTitle'] = 'Manage Users';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
@@ -334,7 +334,7 @@ class CUsers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-users');
+            redirect('manage-users');
         }
         else
         {
@@ -351,7 +351,7 @@ class CUsers extends BaseController
     {
         if($fkey == NULL)
         {
-            redirect('data-users');
+            redirect('manage-users');
         }
         
         $this->global['pageTitle'] = "Edit Data User - ".APP_NAME;
@@ -390,7 +390,7 @@ class CUsers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-users');
+            redirect('manage-users');
         }
         else
         {
@@ -419,6 +419,6 @@ class CUsers extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-users');
+        redirect('manage-users');
     }
 }

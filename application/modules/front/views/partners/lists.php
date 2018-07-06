@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
+            <button type="button" onclick="location.href='<?php echo base_url("add-partners");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+                <i class="fa fa-plus"></i> Add New
+            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -32,11 +35,11 @@
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>Part Number</th>
-                                <th>Part Name</th>
-                                <th>Part Stock</th>
-                                <th>Return Code</th>
-                                <th>Machine</th>
+                                <th>Partner Alias</th>
+                                <th>Partner Name</th>
+                                <th>Partner Contact</th>
+                                <th>Partner Location</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -53,7 +56,7 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'B><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-10'i><'col-sm-2'p>>",
+            dom: "<'row'<'col-sm-10'><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-10'i><'col-sm-2'p>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -61,25 +64,9 @@
             stateSave: false,
             deferRender: true,
             processing: true,
-            buttons: [
-                {
-                    extend: 'copy',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
-                }, 
-                {
-                    extend: 'excel',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
-                },
-                {
-                    extend: 'pdf',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
-                }
-            ],
-            ajax: {
-                url: "<?= base_url('front/cparts/get_list_datatable'); ?>",
+            lengthChange: true,
+            ajax: {                
+                url: "<?= base_url('front/cpartners/get_m_list_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -88,11 +75,11 @@
                 } ),
             },
             columns: [
-                { "data": 'partno' },
+                { "data": 'code' },
                 { "data": 'name' },
-                { "data": 'stock' },
-                { "data": 'returncode' },
-                { "data": 'machine' },
+                { "data": 'location' },
+                { "data": 'contact' },
+                { "data": 'button' },
             ],
         });
 

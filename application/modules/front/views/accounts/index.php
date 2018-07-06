@@ -4,7 +4,7 @@
             <button type="button" onclick="location.href='<?php echo base_url("add-users");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
                 <?php

@@ -19,11 +19,6 @@ class CParts extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser()){
-            //load page
-        }else{
-            redirect('cl');
-        }
     }
     
     /**
@@ -43,9 +38,63 @@ class CParts extends BaseController
     }
     
     /**
+     * This function used to manage data
+     */
+    public function lists()
+    {
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = 'Manage Sparepart - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Sparepart';
+            $this->global['contentHeader'] = 'Manage Sparepart';
+            $this->global['contentTitle'] = 'Manage Sparepart';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $this->loadViews('front/parts/lists', $this->global, NULL);
+        }else{
+            redirect('data-spareparts');
+        }
+    }
+    
+    /**
      * This function is used to get list for datatables
      */
     public function get_list_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = $r->part_number;
+            $row['partno'] = $partnum;
+            $row['name'] = $this->common->nohtml($r->part_name);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['stock'] = '0';
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+            
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_m_list_datatable(){
         $rs = array();
         
         //Parameters for cURL
@@ -73,8 +122,6 @@ class CParts extends BaseController
             $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts/").$partnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
             $row['button'] .= '</div>';
             $row['button'] .= '</div>';
- 
-//            $row['button'] = 'HTML';
             
             $data[] = $row;
         }
@@ -289,17 +336,21 @@ class CParts extends BaseController
      */
     function add()
     {
-        $this->global['pageTitle'] = "Add New Sparepart - ".APP_NAME;
-        $this->global['pageMenu'] = 'Add New Sparepart';
-        $this->global['contentHeader'] = 'Add New Sparepart';
-        $this->global['contentTitle'] = 'Add New Sparepart';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['list_data'] = $this->get_list_data();
-        
-        $this->loadViews('front/parts/create', $this->global, $data);
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = "Add New Sparepart - ".APP_NAME;
+            $this->global['pageMenu'] = 'Add New Sparepart';
+            $this->global['contentHeader'] = 'Add New Sparepart';
+            $this->global['contentTitle'] = 'Add New Sparepart';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['list_data'] = $this->get_list_data();
+
+            $this->loadViews('front/parts/create', $this->global, $data);
+        }else{
+            redirect('data-spareparts');
+        }
     }
     
     /**
@@ -319,7 +370,7 @@ class CParts extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-spareparts');
+            redirect('manage-spareparts');
         }
         else
         {
@@ -334,22 +385,26 @@ class CParts extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($fkey == NULL)
-        {
+        if($this->isSuperUser()){
+            if($fkey == NULL)
+            {
+                redirect('manage-spareparts');
+            }
+
+            $this->global['pageTitle'] = "Edit Data Sparepart - ".APP_NAME;
+            $this->global['pageMenu'] = 'Edit Data Sparepart';
+            $this->global['contentHeader'] = 'Edit Data Sparepart';
+            $this->global['contentTitle'] = 'Edit Data Sparepart';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['records'] = $this->get_list_info($fkey);
+
+            $this->loadViews('front/parts/edit', $this->global, $data);
+        }else{
             redirect('data-spareparts');
         }
-        
-        $this->global['pageTitle'] = "Edit Data Sparepart - ".APP_NAME;
-        $this->global['pageMenu'] = 'Edit Data Sparepart';
-        $this->global['contentHeader'] = 'Edit Data Sparepart';
-        $this->global['contentTitle'] = 'Edit Data Sparepart';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['records'] = $this->get_list_info($fkey);
-        
-        $this->loadViews('front/parts/edit', $this->global, $data);
     }
     
     /**
@@ -369,7 +424,7 @@ class CParts extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-spareparts');
+            redirect('manage-spareparts');
         }
         else
         {
@@ -398,6 +453,6 @@ class CParts extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-spareparts');
+        redirect('manage-spareparts');
     }
 }

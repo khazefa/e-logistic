@@ -19,11 +19,6 @@ class CWarehouse extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser()){
-            //load page
-        }else{
-            redirect('cl');
-        }
     }
     
     /**
@@ -43,9 +38,104 @@ class CWarehouse extends BaseController
     }
     
     /**
+     * This function used to load the first screen of the user
+     */
+    public function lists()
+    {
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = 'Manage Warehouse - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Warehouse';
+            $this->global['contentHeader'] = 'Manage Warehouse';
+            $this->global['contentTitle'] = 'Manage Warehouse';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $this->loadViews('front/warehouse/lists', $this->global, NULL);
+        }else{
+            redirect('data-warehouses');
+        }
+    }
+    
+    /**
      * This function is used to get list for datatables
      */
     public function get_list_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $data_nearby = array();
+        $names = '';
+        $data_spv = array();
+        $spvs = '';
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = $this->common->nohtml($r->fsl_name);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            if(!empty($nearby)){
+                $names = '<ul class="list-unstyled">';
+                $e_nearby = explode(';', $nearby);
+                $data_nearby = array();
+                foreach ($e_nearby as $n){
+                    array_push($data_nearby, $this->get_list_info($n));
+                }
+                
+                foreach ($data_nearby as $datas){
+                    foreach($datas as $d){
+//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
+                        $names .= '<li>'.$d["name"].'</li>';
+                    }
+                }
+                $names .= '</ul>';
+            }else{
+                $names = '-';
+            }
+            $row['nearby'] = $names;
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $listspv = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+            if(!empty($listspv)){
+                $spvs = '<ul class="list-unstyled">';
+                $e_spv = explode(';', $listspv);
+                $data_spv = array();
+                foreach ($e_spv as $s){
+                    array_push($data_spv, $this->get_list_users($s));
+                }
+                
+                foreach ($data_spv as $datasp){
+                    foreach($datasp as $dp){
+//                        $names .= '<li style="display:inline; padding-left:5px;">'.$dp["fullname"].'</li>';
+                        $spvs .= '<li>'.$dp["fullname"].'</li>';
+                    }
+                }
+                $spvs .= '</ul>';
+            }else{
+                $spvs = '-';
+            }
+            $row['spv'] = $spvs;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_m_list_datatable(){
         $rs = array();
         
         //Parameters for cURL
@@ -312,18 +402,22 @@ class CWarehouse extends BaseController
      */
     function add()
     {
-        $this->global['pageTitle'] = "Add New Warehouse - ".APP_NAME;
-        $this->global['pageMenu'] = 'Add New Warehouse';
-        $this->global['contentHeader'] = 'Add New Warehouse';
-        $this->global['contentTitle'] = 'Add New Warehouse';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['list_wr'] = $this->get_list_data();
-        $data['list_spv'] = $this->get_list_users("");
-        
-        $this->loadViews('front/warehouse/create', $this->global, $data);
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = "Add New Warehouse - ".APP_NAME;
+            $this->global['pageMenu'] = 'Add New Warehouse';
+            $this->global['contentHeader'] = 'Add New Warehouse';
+            $this->global['contentTitle'] = 'Add New Warehouse';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['list_wr'] = $this->get_list_data();
+            $data['list_spv'] = $this->get_list_users("");
+
+            $this->loadViews('front/warehouse/create', $this->global, $data);
+        }else{
+            redirect('data-warehouses');
+        }
     }
     
     /**
@@ -347,7 +441,7 @@ class CWarehouse extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-warehouses');
+            redirect('manage-warehouses');
         }
         else
         {
@@ -362,24 +456,28 @@ class CWarehouse extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($fkey == NULL)
-        {
+        if($this->isSuperUser()){
+            if($fkey == NULL)
+            {
+                redirect('data-warehouses');
+            }
+
+            $this->global['pageTitle'] = "Edit Data Warehouse - ".APP_NAME;
+            $this->global['pageMenu'] = 'Edit Data Warehouse';
+            $this->global['contentHeader'] = 'Edit Data Warehouse';
+            $this->global['contentTitle'] = 'Edit Data Warehouse';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['records'] = $this->get_list_info($fkey);
+            $data['list_wr'] = $this->get_list_data();
+            $data['list_spv'] = $this->get_list_users("");
+
+            $this->loadViews('front/warehouse/edit', $this->global, $data);
+        }else{
             redirect('data-warehouses');
         }
-        
-        $this->global['pageTitle'] = "Edit Data Warehouse - ".APP_NAME;
-        $this->global['pageMenu'] = 'Edit Data Warehouse';
-        $this->global['contentHeader'] = 'Edit Data Warehouse';
-        $this->global['contentTitle'] = 'Edit Data Warehouse';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['records'] = $this->get_list_info($fkey);
-        $data['list_wr'] = $this->get_list_data();
-        $data['list_spv'] = $this->get_list_users("");
-        
-        $this->loadViews('front/warehouse/edit', $this->global, $data);
     }
     
     /**
@@ -403,7 +501,7 @@ class CWarehouse extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-warehouses');
+            redirect('manage-warehouses');
         }
         else
         {
@@ -432,6 +530,6 @@ class CWarehouse extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-warehouses');
+        redirect('manage-warehouses');
     }
 }

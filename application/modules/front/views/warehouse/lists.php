@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
+            <button type="button" onclick="location.href='<?php echo base_url("add-warehouses");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+                <i class="fa fa-plus"></i> Add New
+            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -32,11 +35,14 @@
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>Part Number</th>
-                                <th>Part Name</th>
-                                <th>Part Stock</th>
-                                <th>Return Code</th>
-                                <th>Machine</th>
+                                <th>FSL Code</th>
+                                <th>Warehouse</th>
+                                <th>Location</th>
+                                <th>Nearby</th>
+                                <th>PIC</th>
+                                <th>Phone</th>
+                                <th>Supervisor</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -61,6 +67,7 @@
             stateSave: false,
             deferRender: true,
             processing: true,
+            lengthChange: true,
             buttons: [
                 {
                     extend: 'copy',
@@ -78,8 +85,8 @@
                     footer:true
                 }
             ],
-            ajax: {
-                url: "<?= base_url('front/cparts/get_list_datatable'); ?>",
+            ajax: {                
+                url: "<?= base_url('front/cwarehouse/get_m_list_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -88,11 +95,14 @@
                 } ),
             },
             columns: [
-                { "data": 'partno' },
+                { "data": 'code' },
                 { "data": 'name' },
-                { "data": 'stock' },
-                { "data": 'returncode' },
-                { "data": 'machine' },
+                { "data": 'location' },
+                { "data": 'nearby' },
+                { "data": 'pic' },
+                { "data": 'phone' },
+                { "data": 'spv' },
+                { "data": 'button' },
             ],
         });
 

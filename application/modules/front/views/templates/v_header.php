@@ -116,7 +116,7 @@
                             </li>
                             
                             <?php
-                            if(($role == ROLE_SU || $role == ROLE_AM)){
+                            if(($role == ROLE_SPV || $role == ROLE_AM)){
                             ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-exchange"></i>Transaction</a>
@@ -128,23 +128,23 @@
                             }
                             ?>
                             
+                            <?php
+                            if(($role == ROLE_SPV || $role == ROLE_AM)){
+                            ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
-                                    <?php
-                                    if(($role == ROLE_SU || $role == ROLE_AM || $role == ROLE_SPV)){
-                                    ?>
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
                                     <li><a href="#">Sparepart Subtitute</a></li>
                                     <li><a href="#">Stock</a></li>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
-                                    <?php
-                                    }
-                                    ?>
                                 </ul>
                             </li>
+                            <?php
+                            }
+                            ?>
                             
                             <?php
                             if(($role == ROLE_SU)){

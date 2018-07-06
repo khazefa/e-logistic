@@ -31,10 +31,10 @@ class CUsersGroup extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Users Group - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Users Group';
-        $this->global['contentHeader'] = 'List Users Group';
-        $this->global['contentTitle'] = 'List Users Group';
+        $this->global['pageTitle'] = 'Manage User Group - '.APP_NAME;
+        $this->global['pageMenu'] = 'Manage User Group';
+        $this->global['contentHeader'] = 'Manage User Group';
+        $this->global['contentTitle'] = 'Manage User Group';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
@@ -270,7 +270,7 @@ class CUsersGroup extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-groups');
+            redirect('manage-groups');
         }
         else
         {
@@ -287,7 +287,7 @@ class CUsersGroup extends BaseController
     {
         if($fkey == NULL)
         {
-            redirect('data-groups');
+            redirect('manage-groups');
         }
         
         $this->global['pageTitle'] = "Edit Data Group - ".APP_NAME;
@@ -319,7 +319,7 @@ class CUsersGroup extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-groups');
+            redirect('manage-groups');
         }
         else
         {
@@ -348,6 +348,6 @@ class CUsersGroup extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-groups');
+        redirect('manage-groups');
     }
 }

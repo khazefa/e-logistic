@@ -29,7 +29,7 @@ class Dashboard extends BaseController
         $this->global['pageTitle'] = 'Dashboard - '.APP_NAME;
         $this->global['pageMenu'] = 'Dashboard';
         $this->global['contentHeader'] = 'Dashboard';
-        $this->global['contentTitle'] = 'Welcome Engineer DN / Partner';
+        $this->global['contentTitle'] = 'Welcome to E-Logistic';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;

@@ -1,10 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo base_url("add-warehouses");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
                 <?php
@@ -42,7 +39,6 @@
                                 <th>PIC</th>
                                 <th>Phone</th>
                                 <th>Supervisor</th>
-                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -102,7 +98,6 @@
                 { "data": 'pic' },
                 { "data": 'phone' },
                 { "data": 'spv' },
-                { "data": 'button' },
             ],
         });
 

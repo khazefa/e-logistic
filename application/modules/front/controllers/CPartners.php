@@ -19,11 +19,6 @@ class CPartners extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser() || $this->isAdmin()){
-            //load page
-        }else{
-            redirect('cl');
-        }
     }
     
     /**
@@ -43,9 +38,69 @@ class CPartners extends BaseController
     }
     
     /**
+     * This function used to load the first screen of the user
+     */
+    public function lists()
+    {
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = 'Manage Partners - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Partners';
+            $this->global['contentHeader'] = 'Manage Partners';
+            $this->global['contentTitle'] = 'Manage Partners';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $this->loadViews('front/partners/lists', $this->global, NULL);
+        }else{
+            redirect('data-partners');
+        }
+    }
+    
+    /**
      * This function is used to get list for datatables
      */
     public function get_list_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_partners'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
+            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+            $row['code'] = $key;
+            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
+            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            
+            $row['button'] = '<div class="btn-group dropdown">';
+            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-partners/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-partners/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+            $row['button'] .= '</div>';
+            $row['button'] .= '</div>';
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_m_list_datatable(){
         $rs = array();
         
         //Parameters for cURL
@@ -198,15 +253,19 @@ class CPartners extends BaseController
      */
     function add()
     {
-        $this->global['pageTitle'] = "Add New Partner - ".APP_NAME;
-        $this->global['pageMenu'] = 'Add New Partner';
-        $this->global['contentHeader'] = 'Add New Partner';
-        $this->global['contentTitle'] = 'Add New Partner';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $this->loadViews('front/partners/create', $this->global, NULL);
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = "Add New Partner - ".APP_NAME;
+            $this->global['pageMenu'] = 'Add New Partner';
+            $this->global['contentHeader'] = 'Add New Partner';
+            $this->global['contentTitle'] = 'Add New Partner';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $this->loadViews('front/partners/create', $this->global, NULL);
+        }else{
+            redirect('data-partners');
+        }
     }
     
     /**
@@ -226,7 +285,7 @@ class CPartners extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-partners');
+            redirect('manage-partners');
         }
         else
         {
@@ -241,22 +300,26 @@ class CPartners extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($fkey == NULL)
-        {
+        if($this->isSuperUser()){
+            if($fkey == NULL)
+            {
+                redirect('manage-partners');
+            }
+
+            $this->global['pageTitle'] = "Edit Data Partner - ".APP_NAME;
+            $this->global['pageMenu'] = 'Edit Data Partner';
+            $this->global['contentHeader'] = 'Edit Data Partner';
+            $this->global['contentTitle'] = 'Edit Data Partner';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['records'] = $this->get_list_info($fkey);
+
+            $this->loadViews('front/partners/edit', $this->global, $data);
+        }else{
             redirect('data-partners');
         }
-        
-        $this->global['pageTitle'] = "Edit Data Partner - ".APP_NAME;
-        $this->global['pageMenu'] = 'Edit Data Partner';
-        $this->global['contentHeader'] = 'Edit Data Partner';
-        $this->global['contentTitle'] = 'Edit Data Partner';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['records'] = $this->get_list_info($fkey);
-        
-        $this->loadViews('front/partners/edit', $this->global, $data);
     }
     
     /**
@@ -276,7 +339,7 @@ class CPartners extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-partners');
+            redirect('manage-partners');
         }
         else
         {
@@ -305,6 +368,6 @@ class CPartners extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-partners');
+        redirect('manage-partners');
     }
 }

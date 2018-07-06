@@ -19,11 +19,6 @@ class CEngineers extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser() || $this->isAdmin()){
-            //load page
-        }else{
-            redirect('cl');
-        }
     }
     
     /**
@@ -43,9 +38,71 @@ class CEngineers extends BaseController
     }
     
     /**
+     * This function used to load the first screen of the user
+     */
+    public function lists()
+    {
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = 'Manage Engineers - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Engineers';
+            $this->global['contentHeader'] = 'Manage Engineers';
+            $this->global['contentTitle'] = 'Manage Engineers';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $this->loadViews('front/engineers/lists', $this->global, NULL);
+        }else{
+            redirect('data-engineers');
+        }
+    }
+    
+    /**
      * This function is used to get list for datatables
      */
     public function get_list_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $data_warehouse = array();
+        $names = '';
+        foreach ($rs as $r) {
+            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+            $row['feid'] = $key;
+            $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            if($code == "00"){
+                $names = "WH";
+            }else{
+                $data_warehouse = $this->get_list_info_wh($code);
+                foreach ($data_warehouse as $d){
+                    $names = $d["name"];
+                }
+            }
+            $row['warehouse'] = $names;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_m_list_datatable(){
         $rs = array();
         
         //Parameters for cURL
@@ -316,19 +373,23 @@ class CEngineers extends BaseController
      */
     function add()
     {
-        $this->global['pageTitle'] = "Add New Engineer - ".APP_NAME;
-        $this->global['pageMenu'] = 'Add New Engineer';
-        $this->global['contentHeader'] = 'Add New Engineer';
-        $this->global['contentTitle'] = 'Add New Engineer';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['list_partner'] = $this->get_list_partners();
-        $data['list_wr'] = $this->get_list_wh();
-        $data['default_pass'] = strtoupper(generateRandomString());
-        
-        $this->loadViews('front/engineers/create', $this->global, $data);
+        if($this->isSuperUser()){
+            $this->global['pageTitle'] = "Add New Engineer - ".APP_NAME;
+            $this->global['pageMenu'] = 'Add New Engineer';
+            $this->global['contentHeader'] = 'Add New Engineer';
+            $this->global['contentTitle'] = 'Add New Engineer';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['list_partner'] = $this->get_list_partners();
+            $data['list_wr'] = $this->get_list_wh();
+            $data['default_pass'] = strtoupper(generateRandomString());
+
+            $this->loadViews('front/engineers/create', $this->global, $data);
+        }else{
+            redirect('data-engineers');
+        }
     }
     
     /**
@@ -351,7 +412,7 @@ class CEngineers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-engineers');
+            redirect('manage-engineers');
         }
         else
         {
@@ -366,24 +427,28 @@ class CEngineers extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($fkey == NULL)
-        {
+        if($this->isSuperUser()){
+            if($fkey == NULL)
+            {
+                redirect('manage-engineers');
+            }
+
+            $this->global['pageTitle'] = "Edit Data Engineer - ".APP_NAME;
+            $this->global['pageMenu'] = 'Edit Data Engineer';
+            $this->global['contentHeader'] = 'Edit Data Engineer';
+            $this->global['contentTitle'] = 'Edit Data Engineer';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['records'] = $this->get_list_info($fkey);
+            $data['list_partner'] = $this->get_list_partners();
+            $data['list_wr'] = $this->get_list_wh();
+
+            $this->loadViews('front/engineers/edit', $this->global, $data);
+        }else{
             redirect('data-engineers');
         }
-        
-        $this->global['pageTitle'] = "Edit Data Engineer - ".APP_NAME;
-        $this->global['pageMenu'] = 'Edit Data Engineer';
-        $this->global['contentHeader'] = 'Edit Data Engineer';
-        $this->global['contentTitle'] = 'Edit Data Engineer';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        $this->global ['repo'] = $this->repo;
-        
-        $data['records'] = $this->get_list_info($fkey);
-        $data['list_partner'] = $this->get_list_partners();
-        $data['list_wr'] = $this->get_list_wh();
-        
-        $this->loadViews('front/engineers/edit', $this->global, $data);
     }
     
     /**
@@ -406,7 +471,7 @@ class CEngineers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('data-engineers');
+            redirect('manage-engineers');
         }
         else
         {
@@ -435,6 +500,6 @@ class CEngineers extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('data-engineers');
+        redirect('manage-engineers');
     }
 }

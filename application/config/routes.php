@@ -119,6 +119,19 @@ $route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
 // ===========================
 
 // ===========================
+//  Routing Stock Spareparts
+// ===========================
+$route['manage-spareparts-stock'] = 'front/cstockpart/lists';
+$route['data-spareparts-stock'] = 'front/cstockpart';
+$route['add-spareparts-stock'] = 'front/cstockpart/add';
+$route['import-spareparts-stock'] = 'front/cstockpart/add_import';
+$route['edit-spareparts-stock/(:num)'] = 'front/cstockpart/edit/$1';
+$route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
+// ===========================
+//  End Routing Stock Spareparts
+// ===========================
+
+// ===========================
 //  Routing Partners
 // ===========================
 $route['manage-partners'] = 'front/cpartners/lists';

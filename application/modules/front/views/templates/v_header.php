@@ -23,13 +23,13 @@
         <link href="<?php echo base_url();?>assets/public/css/style.css" rel="stylesheet" type="text/css" />
 
         <script src="<?php echo base_url();?>assets/public/js/modernizr.min.js"></script>
-
+        
         <!-- jQuery  -->
         <script src="<?php echo base_url();?>assets/public/js/jquery.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/popper.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/bootstrap.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/waves.js"></script>
-        <script src="<?php echo base_url();?>assets/public/js/jquery.slimscroll.js"></script>
+        <script src="<?php echo base_url();?>assets/public/js/jquery.slimscroll.js"></script>        
 
     </head>
     <body>
@@ -135,7 +135,7 @@
                                 <a href="#"><i class="fa fa-wrench"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="#">Sparepart Subtitute</a></li>
+                                    <li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>
                                     <li><a href="#">Stock</a></li>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
@@ -155,7 +155,7 @@
                                     <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
                                     <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="#">Sparepart Subtitute</a></li>
+                                    <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
                                     <li><a href="#">Stock</a></li>
                                     <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>

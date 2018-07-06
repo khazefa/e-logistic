@@ -111,6 +111,18 @@ $config['api_remove_parts'] = constant('urlapi').'api/cparts/delete/'; //POST
 // ===========================
 
 // ===========================
+//  Begin Spareparts Subtitute
+// ===========================
+$config['api_list_part_sub'] = constant('urlapi').'api/cpartsub/list/'; //POST
+$config['api_info_part_sub'] = constant('urlapi').'api/cpartsub/info/'; //POST
+$config['api_add_part_sub'] = constant('urlapi').'api/cpartsub/insert/'; //POST
+$config['api_edit_part_sub'] = constant('urlapi').'api/cpartsub/update/'; //POST
+$config['api_remove_part_sub'] = constant('urlapi').'api/cpartsub/delete/'; //POST
+// ===========================
+//  End Spareparts Subtitute
+// ===========================
+
+// ===========================
 //  Begin Warehouses
 // ===========================
 $config['api_list_warehouses'] = constant('urlapi').'api/cwarehouse/list/'; //POST

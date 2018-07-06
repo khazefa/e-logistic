@@ -98,10 +98,24 @@ $route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
 $route['manage-spareparts'] = 'front/cparts/lists';
 $route['data-spareparts'] = 'front/cparts';
 $route['add-spareparts'] = 'front/cparts/add';
+$route['import-spareparts'] = 'front/cparts/add_import';
 $route['edit-spareparts/(:any)'] = 'front/cparts/edit/$1';
 $route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
 //  End Routing Spareparts
+// ===========================
+
+// ===========================
+//  Routing Spareparts Subtitute
+// ===========================
+$route['manage-spareparts-sub'] = 'front/cpartsub/lists';
+$route['data-spareparts-sub'] = 'front/cpartsub';
+$route['add-spareparts-sub'] = 'front/cpartsub/add';
+$route['import-spareparts-sub'] = 'front/cpartsub/add_import';
+$route['edit-spareparts-sub/(:num)'] = 'front/cpartsub/edit/$1';
+$route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
+// ===========================
+//  End Routing Spareparts Subtitute
 // ===========================
 
 // ===========================

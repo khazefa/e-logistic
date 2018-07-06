@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title><?php echo APP_NAME;?> | Login</title>
+        <title><?php echo APP_NAME;?> - Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="description" content="<?php echo APP_NAME;?>" />
         <meta name="author" content="sigit prayitno, cybergitt@gmail.com"/>

@@ -44,7 +44,7 @@ class CStockPart extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = 'Manage Stock Parts - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Stock Parts';
             $this->global['contentHeader'] = 'Manage Stock Parts';
@@ -299,7 +299,7 @@ class CStockPart extends BaseController
      */
     function add()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = "Add New Stock Parts - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Stock Parts';
             $this->global['contentHeader'] = 'Add New Stock Parts';
@@ -348,7 +348,7 @@ class CStockPart extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-spareparts-stock');

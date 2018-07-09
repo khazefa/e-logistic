@@ -42,7 +42,7 @@ class CWarehouse extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = 'Manage Warehouse - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Warehouse';
             $this->global['contentHeader'] = 'Manage Warehouse';
@@ -402,7 +402,7 @@ class CWarehouse extends BaseController
      */
     function add()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = "Add New Warehouse - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Warehouse';
             $this->global['contentHeader'] = 'Add New Warehouse';
@@ -456,7 +456,7 @@ class CWarehouse extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
                 redirect('data-warehouses');

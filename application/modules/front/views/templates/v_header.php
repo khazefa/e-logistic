@@ -154,6 +154,18 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
                                     <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
+                                </ul>
+                            </li>
+                            <?php
+                            }
+                            ?>
+                            
+                            <?php
+                            if(($role == ROLE_WA)){
+                            ?>
+                            <li class="has-submenu">
+                                <a href="#"><i class="fa fa-gears"></i>Manage</a>
+                                <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts-stock");?>">Stock</a></li>

@@ -19,7 +19,7 @@ class CUsersGroup extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             //load page
         }else{
             redirect('cl');

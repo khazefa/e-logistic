@@ -42,7 +42,7 @@ class CPartsub extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = 'Manage Part Subtitute - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Part Subtitute';
             $this->global['contentHeader'] = 'Manage Part Subtitute';
@@ -357,7 +357,7 @@ class CPartsub extends BaseController
      */
     function add()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = "Add New Part Subtitute - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Part Subtitute' ;
             $this->global['contentHeader'] = 'Add New Part Subtitute';
@@ -404,7 +404,7 @@ class CPartsub extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-spareparts-sub');

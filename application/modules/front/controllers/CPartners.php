@@ -42,7 +42,7 @@ class CPartners extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = 'Manage Partners - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Partners';
             $this->global['contentHeader'] = 'Manage Partners';
@@ -253,7 +253,7 @@ class CPartners extends BaseController
      */
     function add()
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             $this->global['pageTitle'] = "Add New Partner - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Partner';
             $this->global['contentHeader'] = 'Add New Partner';
@@ -300,7 +300,7 @@ class CPartners extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperUser()){
+        if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-partners');

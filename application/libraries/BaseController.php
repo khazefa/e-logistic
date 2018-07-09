@@ -117,7 +117,7 @@ class BaseController extends CI_Controller {
     /**
      * This function is used to check the access
      */
-    function isSuperUser() {
+    function isSuperAdmin() {
         if ($this->role == ROLE_SU) {
             return true;
         } else {
@@ -128,8 +128,8 @@ class BaseController extends CI_Controller {
     /**
      * This function is used to check the access
      */
-    function isAdmin() {
-        if ($this->role == ROLE_AM) {
+    function isWebAdmin() {
+        if ($this->role == ROLE_WA) {
             return true;
         } else {
             return false;
@@ -146,12 +146,12 @@ class BaseController extends CI_Controller {
             return false;
         }
     }
-
+    
     /**
      * This function is used to check the access
      */
-    function isEngineer() {
-        if ($this->comRole == ROLE_EG) {
+    function isStaff() {
+        if ($this->role == ROLE_AM) {
             return true;
         } else {
             return false;

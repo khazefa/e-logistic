@@ -54,24 +54,6 @@ $config['api_remove_user_group'] = constant('urlapi').'api/usergroup/delete/'; /
 // ===========================
 //  Begin Users Group
 // ===========================
-// 
-// ===========================
-//  Begin Tickets
-// ===========================
-$config['api_ticket_num'] = constant('urlapi').'api/cptickets/grab_ticket_num/'; //GET
-//$config['api_add_cart'] = constant('urlapi').'api/cptickets/create_tickets_cart/'; //POST
-$config['api_update_cart'] = constant('urlapi').'api/cptickets/update_tickets_cart/'; //POST
-$config['api_delete_cart'] = constant('urlapi').'api/cptickets/delete_tickets_cart/'; //POST
-$config['api_clear_cart'] = constant('urlapi').'api/cptickets/clear_tickets_cart/'; //POST
-$config['api_check_cart'] = constant('urlapi').'api/cptickets/check_tickets_cart/'; //POST
-$config['api_list_cart'] = constant('urlapi').'api/cptickets/list_tmp/'; //POST
-$config['api_add_ticket_detail'] = constant('urlapi').'api/cptickets/create_tickets_detail/'; //POST
-$config['api_list_detail'] = constant('urlapi').'api/cptickets/list_detail/'; //POST
-$config['api_add_ticket_trans'] = constant('urlapi').'api/cptickets/create_tickets/'; //POST
-$config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
-// ===========================
-//  End Tickets
-// ===========================
 
 // ===========================
 //  Begin Partners
@@ -145,4 +127,40 @@ $config['api_edit_warehouses'] = constant('urlapi').'api/cwarehouse/update/'; //
 $config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; //POST
 // ===========================
 //  End Warehouses
+// ===========================
+
+// ===========================
+//  Begin Tickets
+// ===========================
+$config['api_ticket_num'] = constant('urlapi').'api/cptickets/grab_ticket_num/'; //GET
+//$config['api_add_cart'] = constant('urlapi').'api/cptickets/create_tickets_cart/'; //POST
+$config['api_update_cart'] = constant('urlapi').'api/cptickets/update_tickets_cart/'; //POST
+$config['api_delete_cart'] = constant('urlapi').'api/cptickets/delete_tickets_cart/'; //POST
+$config['api_clear_cart'] = constant('urlapi').'api/cptickets/clear_tickets_cart/'; //POST
+$config['api_check_cart'] = constant('urlapi').'api/cptickets/check_tickets_cart/'; //POST
+$config['api_list_cart'] = constant('urlapi').'api/cptickets/list_tmp/'; //POST
+$config['api_add_ticket_detail'] = constant('urlapi').'api/cptickets/create_tickets_detail/'; //POST
+$config['api_list_detail'] = constant('urlapi').'api/cptickets/list_detail/'; //POST
+$config['api_add_ticket_trans'] = constant('urlapi').'api/cptickets/create_tickets/'; //POST
+$config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
+// ===========================
+//  End Tickets
+// ===========================
+
+// ===========================
+//  Begin Incoming Trans
+// ===========================
+$config['api_ticket_num'] = constant('urlapi').'api/cpincomings/grab_ticket_num/'; //GET
+//$config['api_add_cart'] = constant('urlapi').'api/cpincomings/create_tickets_cart/'; //POST
+$config['api_update_cart'] = constant('urlapi').'api/cpincomings/update_tickets_cart/'; //POST
+$config['api_delete_cart'] = constant('urlapi').'api/cpincomings/delete_tickets_cart/'; //POST
+$config['api_clear_cart'] = constant('urlapi').'api/cpincomings/clear_tickets_cart/'; //POST
+$config['api_check_cart'] = constant('urlapi').'api/cpincomings/check_tickets_cart/'; //POST
+$config['api_list_cart'] = constant('urlapi').'api/cpincomings/list_tmp/'; //POST
+$config['api_add_ticket_detail'] = constant('urlapi').'api/cpincomings/create_tickets_detail/'; //POST
+$config['api_list_detail'] = constant('urlapi').'api/cpincomings/list_detail/'; //POST
+$config['api_add_ticket_trans'] = constant('urlapi').'api/cpincomings/create_tickets/'; //POST
+$config['api_list_ticket'] = constant('urlapi').'api/cpincomings/list/'; //POST
+// ===========================
+//  End Incoming Trans
 // ===========================

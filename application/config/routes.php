@@ -176,4 +176,13 @@ $route['tickets'] = 'front/ctickets';
 //  End Routing Tickets
 // ===========================
 
+// ===========================
+//  Routing Incoming Trans
+// ===========================
+$route['incoming'] = 'front/cincoming';
+$route['new-incoming-trans'] = 'front/cincoming/new';
+// ===========================
+//  End Routing Incoming Trans
+// ===========================
+
 /* END USER CONTROLLER */

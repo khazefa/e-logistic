@@ -125,6 +125,7 @@ $route['manage-spareparts-stock'] = 'front/cstockpart/lists';
 $route['data-spareparts-stock'] = 'front/cstockpart';
 $route['add-spareparts-stock'] = 'front/cstockpart/add';
 $route['import-spareparts-stock'] = 'front/cstockpart/add_import';
+$route['detail-spareparts-stock/(:any)'] = 'front/cstockpart/detail/$1';
 $route['edit-spareparts-stock/(:num)'] = 'front/cstockpart/edit/$1';
 $route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
 // ===========================
@@ -170,7 +171,7 @@ $route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
 // ===========================
 //  Routing Tickets
 // ===========================
-$route['tickets'] = 'front/tickets';
+$route['tickets'] = 'front/ctickets';
 // ===========================
 //  End Routing Tickets
 // ===========================

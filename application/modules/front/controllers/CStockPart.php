@@ -44,7 +44,7 @@ class CStockPart extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = 'Manage Stock Parts - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Stock Parts';
             $this->global['contentHeader'] = 'Manage Stock Parts';
@@ -64,13 +64,6 @@ class CStockPart extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_view_datatable(){
-        
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
     public function get_list_datatable(){
         $rs = array();
         
@@ -83,20 +76,20 @@ class CStockPart extends BaseController
         
         $data = array();
         foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['minval'] = $minval;
+            $row['initval'] = $initval;
+            $row['lastval'] = $lastval;
+            $row['initflag'] = $initflag;
  
             $data[] = $row;
         }
@@ -111,11 +104,13 @@ class CStockPart extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_m_list_datatable(){
+    public function get_m_list_datatable($fcode){
         $rs = array();
         
         //Parameters for cURL
         $arrWhere = array();
+
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
@@ -123,12 +118,20 @@ class CStockPart extends BaseController
         
         $data = array();
         foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['minval'] = $minval;
+            $row['initval'] = $initval;
+            $row['lastval'] = $lastval;
+//            $row['initflag'] = $initflag;
             
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
@@ -156,12 +159,14 @@ class CStockPart extends BaseController
         $arrWhere = array();
         
         $fid = $this->input->post('fid', TRUE);
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
+        $fcode = $this->input->post('fcode', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fflag = $this->input->post('fflag', TRUE);
 
         if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fkey != "") $arrWhere['fkey'] = $fkey;
-        if ($fname != "") $arrWhere['fname'] = $fname;
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        if ($fpartnum != "") $arrWhere['fpartnum'] = $fname;
+        if ($fflag != "") $arrWhere['fflag'] = $fflag;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
@@ -171,12 +176,20 @@ class CStockPart extends BaseController
         $data_warehouse = array();
         $names = '';
         foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['minval'] = $minval;
+            $row['initval'] = $initval;
+            $row['lastval'] = $lastval;
+            $row['initflag'] = $initflag;
  
             $data[] = $row;
         }
@@ -196,12 +209,14 @@ class CStockPart extends BaseController
         $arrWhere = array();
         
         $fid = $this->input->post('fid', TRUE);
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
+        $fcode = $this->input->post('fcode', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fflag = $this->input->post('fflag', TRUE);
 
         if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fkey != "") $arrWhere['fkey'] = $fkey;
-        if ($fname != "") $arrWhere['fname'] = $fname;
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        if ($fpartnum != "") $arrWhere['fpartnum'] = $fname;
+        if ($fflag != "") $arrWhere['fflag'] = $fflag;
 //        if ($f_date != ""){
 //            $arrWhere['submission_date_1'] = $f_date;
 //            $arrWhere['submission_date_2'] = $f_date;
@@ -218,12 +233,20 @@ class CStockPart extends BaseController
         $data_warehouse = array();
         $names = '';
         foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['minval'] = $minval;
+            $row['initval'] = $initval;
+            $row['lastval'] = $lastval;
+            $row['initflag'] = $initflag;
  
             $data[] = $row;
         }
@@ -267,13 +290,44 @@ class CStockPart extends BaseController
     }
     
     /**
+     * This function is used to get lists for populate data
+     */
+    public function get_list_data_stock($fcode){
+        $rs = array();
+        $arrWhere = array();
+
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $data_nearby = array();
+        $names = '';
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
      * This function is used to get list information described by function name
      */
     public function get_list_info($fkey){
         $rs = array();
         $arrWhere = array();
         
-        $arrWhere = array('fkey'=>$fkey);
+        $arrWhere = array('fcode'=>$fkey);
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
@@ -281,12 +335,20 @@ class CStockPart extends BaseController
         
         $data = array();
         foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['minval'] = $minval;
+            $row['initval'] = $initval;
+            $row['lastval'] = $lastval;
+            $row['initflag'] = $initflag;
  
             $data[] = $row;
         }

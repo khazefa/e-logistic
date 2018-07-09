@@ -39,7 +39,7 @@
                             <a href="#" class="btn btn-custom waves-effect waves-light">Go somewhere</a>
                         </div>
                     </div>
-                            <?php
+                    <?php
                         }
                     ?>
                 </div>

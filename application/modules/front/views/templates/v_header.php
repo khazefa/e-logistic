@@ -121,7 +121,9 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-exchange"></i>Transaction</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a></li>
+                                    <!--<li><a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a></li>-->
+                                    <li><a href="<?php echo base_url("incoming");?>"><i class="fa fa-ticket"></i>Incoming</a></li>
+                                    <li><a href="<?php echo base_url("outgoing");?>"><i class="fa fa-ticket"></i>Outgoing</a></li>
                                 </ul>
                             </li>
                             <?php

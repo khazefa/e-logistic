@@ -4,13 +4,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/BaseController.php';
 
 /**
- * Class : Tickets (TicketsController)
- * Tickets Class to control Tickets.
+ * Class : CTickets (TicketsController)
+ * CTickets Class to control Tickets.
  * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
-class Tickets extends BaseController
+class CTickets extends BaseController
 {
 	/**
      * This is default constructor of the class

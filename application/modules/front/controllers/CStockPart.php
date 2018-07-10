@@ -169,7 +169,21 @@ class CStockPart extends BaseController
 
             $data['code'] = $upfcode;
             
-            $this->loadViews('front/stock-part/lists-detail', $this->global, $data);
+            $arrWhere = array('fcode'=>$fcode);
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_part_stock'), 'POST', FALSE);
+            $status = $rs_data->status ? TRUE : FALSE;
+            if($status){
+                $this->loadViews('front/stock-part/lists-detail', $this->global, $data);
+            }else{
+                ?>
+                <script type="text/javascript">
+                    alert("Data Stock for your choosen Warehouse is not ready in system!");
+                    history.back();
+                </script>
+                <?php
+            }
+            
         }else{
             redirect('data-spareparts-stock');
         }

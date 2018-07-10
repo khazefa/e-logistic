@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
+            <button type="button" onclick="location.href='<?php echo base_url("import-spareparts-stock");?>'" class="btn btn-success btn-rounded w-md waves-effect waves-light">
+                <i class="fa fa-download"></i> Import
+            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -37,6 +40,7 @@
                                 <th>Min Stock</th>
                                 <th>Init Stock</th>
                                 <th>Last Stock</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -53,7 +57,7 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-8'i><'col-sm-4 pull-right'p>>",
+            dom: "<'row'<'col-sm-10'><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-8'i><'col-sm-4 pull-right'p>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -63,7 +67,7 @@
             processing: true,
             lengthChange: true,
             ajax: {                
-                url: "<?= base_url('front/cstockpart/get_list_datatable/').$repo; ?>",
+                url: "<?= base_url('front/cstockpart/get_m_list_datatable/').$code; ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -77,6 +81,7 @@
                 { "data": 'minval' },
                 { "data": 'initval' },
                 { "data": 'lastval' },
+                { "data": 'button' },
             ],
         });
 

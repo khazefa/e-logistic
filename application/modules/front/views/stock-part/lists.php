@@ -37,7 +37,7 @@
                             <h4 class="card-header text-center">FSL</h4>
                             <div class="card m-b-30 card-body">
                                 <h2 class="card-title text-center">
-                                    <a href="<?php echo base_url("edit-warehouses/").$wh_code; ?>" class="btn btn-custom waves-effect waves-light"><?php echo $w["code"]; ?></a>
+                                    <a href="<?php echo base_url("detail-spareparts-stock/").$wh_code; ?>" class="btn btn-custom waves-effect waves-light"><?php echo $w["code"]; ?></a>
                                 </h2>
                                 <p class="card-text text-center"><?php echo $w["name"]; ?></p>
                             </div>

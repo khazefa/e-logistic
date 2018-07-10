@@ -33,10 +33,8 @@ class CStockPart extends BaseController
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
-        
-        $data['list_data_wh'] = $this->get_list_data_wh();
             
-        $this->loadViews('front/stock-part/index', $this->global, $data);
+        $this->loadViews('front/stock-part/index', $this->global, NULL);
     }
     
     /**
@@ -64,11 +62,13 @@ class CStockPart extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list_datatable($fcode){
         $rs = array();
         
         //Parameters for cURL
         $arrWhere = array();
+
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
@@ -136,8 +136,8 @@ class CStockPart extends BaseController
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
             $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$partno.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$partno.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
             $row['button'] .= '</div>';
             $row['button'] .= '</div>';
  
@@ -149,6 +149,30 @@ class CStockPart extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+    }
+    
+    /**
+     * This function used to load the first screen of the user
+     */
+    public function detail($fcode)
+    {
+        $upfcode = strtoupper($fcode);
+        $lofcode = strtolower($fcode);
+        if($this->isWebAdmin()){
+            $this->global['pageTitle'] = 'Manage Stock Warehouse '.$upfcode.' - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Stock Warehouse '.$upfcode;
+            $this->global['contentHeader'] = 'Manage Stock Warehouse '.$upfcode;
+            $this->global['contentTitle'] = 'Manage Stock Warehouse '.$upfcode;
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+
+            $data['code'] = $upfcode;
+            
+            $this->loadViews('front/stock-part/lists-detail', $this->global, $data);
+        }else{
+            redirect('data-spareparts-stock');
+        }
     }
     
     /**

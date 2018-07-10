@@ -150,17 +150,8 @@ $config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
 // ===========================
 //  Begin Incoming Trans
 // ===========================
-$config['api_ticket_num'] = constant('urlapi').'api/cpincomings/grab_ticket_num/'; //GET
-//$config['api_add_cart'] = constant('urlapi').'api/cpincomings/create_tickets_cart/'; //POST
-$config['api_update_cart'] = constant('urlapi').'api/cpincomings/update_tickets_cart/'; //POST
-$config['api_delete_cart'] = constant('urlapi').'api/cpincomings/delete_tickets_cart/'; //POST
-$config['api_clear_cart'] = constant('urlapi').'api/cpincomings/clear_tickets_cart/'; //POST
-$config['api_check_cart'] = constant('urlapi').'api/cpincomings/check_tickets_cart/'; //POST
-$config['api_list_cart'] = constant('urlapi').'api/cpincomings/list_tmp/'; //POST
-$config['api_add_ticket_detail'] = constant('urlapi').'api/cpincomings/create_tickets_detail/'; //POST
-$config['api_list_detail'] = constant('urlapi').'api/cpincomings/list_detail/'; //POST
-$config['api_add_ticket_trans'] = constant('urlapi').'api/cpincomings/create_tickets/'; //POST
-$config['api_list_ticket'] = constant('urlapi').'api/cpincomings/list/'; //POST
+$config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //POST
+$config['api_list_view_incomings'] = constant('urlapi').'api/cpincomings/list_view/'; //POST
 // ===========================
 //  End Incoming Trans
 // ===========================

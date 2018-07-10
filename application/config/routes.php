@@ -179,8 +179,9 @@ $route['tickets'] = 'front/ctickets';
 // ===========================
 //  Routing Incoming Trans
 // ===========================
-$route['incoming'] = 'front/cincoming';
-$route['new-incoming-trans'] = 'front/cincoming/new';
+$route['incoming-trans'] = 'front/cincoming';
+$route['view-incoming-trans'] = 'front/cincoming/views';
+$route['new-incoming-trans'] = 'front/cincoming/add';
 // ===========================
 //  End Routing Incoming Trans
 // ===========================

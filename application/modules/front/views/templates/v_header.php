@@ -13,7 +13,6 @@
         <!-- App favicon -->
         <link rel="shortcut icon" href="<?php echo base_url();?>assets/public/images/favicon.png">
 
-
         <!-- Plugins css-->
         <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
         
@@ -119,11 +118,14 @@
                             if(($role == ROLE_SPV || $role == ROLE_AM)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-exchange"></i>Transaction</a>
+                                <a href="#"><i class="icon-basket"></i>Transaction</a>
                                 <ul class="submenu">
-                                    <!--<li><a href="<?php echo base_url("tickets");?>"><i class="fa fa-ticket"></i>Tickets</a></li>-->
-                                    <li><a href="<?php echo base_url("incoming");?>"><i class="fa fa-ticket"></i>Incoming Parts</a></li>
-                                    <li><a href="<?php echo base_url("outgoing");?>"><i class="fa fa-ticket"></i>Outgoing Parts</a></li>
+                                    <li>
+                                        <a href="<?php echo base_url("incoming-trans");?>">Incoming Parts</a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php
@@ -134,7 +136,7 @@
                             if(($role == ROLE_SPV || $role == ROLE_AM)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-wrench"></i>Master</a>
+                                <a href="#"><i class="fa fa-database"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>

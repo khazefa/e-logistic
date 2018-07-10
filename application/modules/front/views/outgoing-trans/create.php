@@ -12,28 +12,24 @@
                             <div class="col-6">
                                 <select name="fpurpose" id="fpurpose" class="form-control" placeholder="Select Purpose">
                                     <option value="0">Select Purpose</option>
-                                    <option value="S">Supply</option>
-                                    <option value="RG">Return</option>
+                                    <option value="Sales/Project">Sales/Project</option>
+                                    <option value="Warranty">Warranty</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Investment">Investment</option>
+                                    <option value="Borrowing">Borrowing</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="fticketnum" class="col-3 col-form-label">Ticket Number</label>
                             <div class="col-6">
-                                <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" pattern="\s*">
+                                <input type="text" name="fticketnum" id="fticketnum" class="form-control" placeholder="99999999" required="required" pattern="\d*">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="fengineer_id" class="col-3 col-form-label">FE ID Number</label>
+                            <label for="f_idfe" class="col-3 col-form-label">FE ID Number</label>
                             <div class="col-6">
-                                <input type="text" name="fengineer_id" id="fengineer_id" class="form-control" required="required">
-                                <span id="feg_notes" class="help-block"><small></small></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fnotes" class="col-3 col-form-label">Delivery Notes</label>
-                            <div class="col-6">
-                                <input type="text" name="fnotes" id="fnotes" class="form-control">
+                                <input type="text" name="f_idfe" id="f_idfe" class="form-control" placeholder="99999999">
                             </div>
                         </div>
                     </div>
@@ -45,13 +41,10 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="fengineer_name" class="col-3 col-form-label">Assigned FE</label>
+                            <label for="f_asfe" class="col-3 col-form-label">Assigned FE</label>
                             <div class="col-6">
-                                <input type="text" name="fengineer_name" id="fengineer_name" class="form-control" readonly="readonly">
+                                <input type="text" name="f_asfe" id="f_asfe" class="form-control" readonly="readonly">
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="freturn_notes" id="freturn_notes" class="col-9 col-form-label"></label>
                         </div>
                     </div>
                 </div>
@@ -65,7 +58,7 @@
     <div class="col-md-9">
         <div class="card-box">
             <div class="card-header bg-primary text-white">
-                <strong class="card-title">Detail Orders</strong>
+                <strong class="card-title">Order Summary</strong>
             </div>
 
             <div class="card-body">
@@ -77,7 +70,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                      </div>
-                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number" required="required">
+                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
                                 </div>
                             </div>
                             <div class="col col-md-6">
@@ -153,121 +146,9 @@
 </div>
 </form>
 <script type="text/javascript">
-    var e_purpose = $('#fpurpose');
-    var e_ticketnum = $('#fticketnum');
-    var e_engineer_id = $('#fengineer_id');
-    var e_engineer_notes = $('#feg_notes');
-    var e_notes = $('#fnotes');
-    var e_partner = $('#fpartner');
-    var e_engineer_name = $('#fengineer_name');
-    var e_return_notes = $('#freturn_notes');
-    
-    var e_partnum = $('#fpartnum');
-    var e_serialnum = $('#fserialnum');
-    
-    var fpurpose = "";
-    var fticketnum = "";
-    var fengineer_id = "";
-    var fnotes = "";
-    var fpartner = "";
-    var fengineer_name = "";
-        
-    function init_form(){
-        e_ticketnum.prop("readonly", true);
-        e_ticketnum.prop("value", "");
-        e_engineer_id.prop("readonly", true);
-        e_engineer_id.prop("value", "");
-        e_engineer_notes.html("");
-        e_notes.prop("readonly", true);
-        e_notes.prop("value", "");
-        e_return_notes.html("");
-    }
-    
-    function get_eg_detail(eg_id){
-        var url = '<?php echo base_url('front/cincoming/info_eg'); ?>';
-        var type = 'POST';
-        
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fkey : e_engineer_id.val()
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status == 1){
-                    e_partner.val(jqXHR.pr_name);
-                    e_engineer_name.val(jqXHR.eg_name);
-                    e_engineer_notes.html("");
-                }else if(jqXHR.status == 0){
-                    e_engineer_notes.html(jqXHR.message);
-//                    alert(jqXHR.message);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    function add_cart(){
-        var url = '<?php echo base_url('front/cincoming/add_cart'); ?>';
-        var type = 'POST';
-        
-        var data = {
-                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-                fpartnum : e_partnum.val(),
-                fserialnum : e_serialnum.val()
-            };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status == 1){
-                    get_total();
-                    reload();
-                }else if(jqXHR.status == 0){
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
-                    $('#error_modal').modal({
-                        show: true
-                    });
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    $(document).ready(function() {        
-        init_form();
-        
-        e_ticketnum.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        
-        e_engineer_id.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        
-        /*
-        e_notes.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        */
+    $(document).ready(function() {
+        var fticket = $('#fticket').val();
+        var fpartnum = $('#fpartnum').val();
 
         var table = $('#cart_grid').DataTable({
 //            select: {
@@ -309,35 +190,5 @@
 
         table.buttons().container()
                 .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
-            
-        e_purpose.on("change", function(e) {
-            var valpurpose = e_purpose.val();
-            
-            if(valpurpose === "S"){
-                e_ticketnum.prop("readonly", true);
-                e_ticketnum.prop("value", "");
-                e_engineer_id.prop("readonly", true);
-                e_engineer_id.prop("value", "");
-                e_notes.prop("readonly", false);
-                e_return_notes.html("");
-            }else if(valpurpose === "RG"){
-                e_ticketnum.prop("readonly", false);
-                e_engineer_id.prop("readonly", false);
-                e_notes.prop("readonly", true);
-                e_notes.prop("value", "");
-                e_return_notes.html("Pengembalian Barang ke FSL");
-            }else{
-                alert( "Please choose purpose!" );
-                init_form();
-            }
-        });
-        
-        e_engineer_id.on("keypress", function(e) {
-            if (e.keyCode == 13) {
-                get_eg_detail(e_engineer_id.val());
-                return false;
-            }
-        });
-        
     });
 </script>

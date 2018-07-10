@@ -171,4 +171,52 @@ class CIncoming extends BaseController
             redirect('cl');
         }
     }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    public function info_eg(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $fkey = $this->input->post('fkey', TRUE);
+        $arrWhere = array('fkey'=>$fkey);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(empty($rs)){
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Data cannot be found'
+            );
+            $response = $error_response;
+        }else{
+            foreach ($rs as $r) {
+                $partner_key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+                $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+                $name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+                $email = filter_var($r->engineer_email, FILTER_SANITIZE_EMAIL);
+                $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
+                
+                $success_response = array(
+                    'status' => 1,
+                    'pr_name'=> $partner,
+                    'eg_name'=> $name
+                );
+            }
+            $response = $success_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
 }

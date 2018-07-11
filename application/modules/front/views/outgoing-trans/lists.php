@@ -66,7 +66,7 @@
             processing: true,
             lengthChange: true,
             ajax: {                
-                url: "<?= base_url('front/cincoming/get_list_view_datatable'); ?>",
+                url: "<?= base_url('front/coutgoing/get_list_view_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",

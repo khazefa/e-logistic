@@ -157,3 +157,13 @@ $config['api_get_total_cart'] = constant('urlapi').'api/cpincomings/total_cart/'
 // ===========================
 //  End Incoming Trans
 // ===========================
+
+// ===========================
+//  Begin Outgoing Trans
+// ===========================
+$config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //POST
+$config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
+$config['api_get_total_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //GET
+// ===========================
+//  End Outgoing Trans
+// ===========================

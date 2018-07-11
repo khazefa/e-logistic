@@ -177,13 +177,13 @@ $route['tickets'] = 'front/ctickets';
 // ===========================
 
 // ===========================
-//  Routing Incoming Trans
+//  Routing Outgoing Trans
 // ===========================
-$route['incoming-trans'] = 'front/cincoming';
-$route['view-incoming-trans'] = 'front/cincoming/views';
-$route['new-incoming-trans'] = 'front/cincoming/add';
+$route['outgoing-trans'] = 'front/coutgoing';
+$route['view-outgoing-trans'] = 'front/coutgoing/views';
+$route['new-outgoing-trans'] = 'front/coutgoing/add';
 // ===========================
-//  End Routing Incoming Trans
+//  End Routing Outgoing Trans
 // ===========================
 
 /* END USER CONTROLLER */

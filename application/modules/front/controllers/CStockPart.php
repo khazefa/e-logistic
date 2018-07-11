@@ -328,37 +328,6 @@ class CStockPart extends BaseController
     }
     
     /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data_stock($fcode){
-        $rs = array();
-        $arrWhere = array();
-
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_nearby = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
-            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
-            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
      * This function is used to get list information described by function name
      */
     public function get_list_info($fkey){

@@ -98,7 +98,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="m-b-30">&nbsp;</div>
+                    <div class="form-group form-group-sm col-sm-12">
+                        <span id="fpartnum_notes" class="help-block text-danger"><small></small></span>
+                    </div>
+                    <div class="m-b-10">&nbsp;</div>
                 </div>
                 <div class="row">
                     <div class="col col-md-12">
@@ -122,7 +125,7 @@
 
                         <div class="row">
                             <div class="col-md-2 offset-md-10">
-                                Total Quantity: <span id="ttl_qty">10</span>
+                                Total Quantity: <span id="ttl_qty">0</span>
                             </div>
                         </div>
                     </div>
@@ -168,6 +171,7 @@
     var e_purpose_notes = $('#fpurpose_notes');
     
     var e_partnum = $('#fpartnum');
+    var e_partnum_notes = $('#fpartnum_notes');
     var e_serialnum = $('#fserialnum');
     
     var fpurpose = "";
@@ -178,7 +182,10 @@
     var fengineer_name = "";
     var fpartnum = "";
     var fserialnum = "";
+    
+    var dataSet = [];
         
+    //initial form state
     function init_form(){
         e_ticketnum.prop("readonly", true);
         e_ticketnum.prop("value", "");
@@ -190,9 +197,11 @@
         e_purpose_notes.html("Purpose Notes");
         
         e_partnum.prop("values", "");
+        e_partnum_notes.html("");
         e_serialnum.prop("values", "");
     }
     
+    //get detail eg
     function get_eg_detail(eg_id){
         var url = '<?php echo base_url('front/cincoming/info_eg'); ?>';
         var type = 'POST';
@@ -226,60 +235,9 @@
         });
     }
     
-    function add_cart(){
-        var url = '<?php echo base_url('front/cincoming/add_cart'); ?>';
-        var type = 'POST';
-        
-        var data = {
-                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-                fpartnum : e_partnum.val(),
-                fserialnum : e_serialnum.val()
-            };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status == 1){
-                    get_total();
-                    reload();
-                }else if(jqXHR.status == 0){
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
-                    $('#error_modal').modal({
-                        show: true
-                    });
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    $(document).ready(function() {        
-        init_form();
-        
-        e_ticketnum.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        
-        e_engineer_id.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        
-        /*
-        e_notes.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        */
-
-        var table = $('#cart_grid').DataTable({
+    //init table
+    function init_table(){
+        table = $('#cart_grid').DataTable({
 //            select: {
 //                style: 'multi'
 //            },
@@ -330,15 +288,19 @@
             fid = data['part_id'];
             delete_cart(fid);
         });
-    
-        function reload(){
-            table.ajax.reload();
-        }
 
         table.buttons().container()
                 .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
-            
-        var table2 = $('#subtitute_grid').DataTable({
+    }
+    
+    //reload table
+    function reload(){
+        table.ajax.reload();
+    }
+    
+    //init table
+    function init_table2(){
+        table2 = $('#subtitute_grid').DataTable({
             searching: false,
             ordering: false,
             info: false,
@@ -348,23 +310,11 @@
             deferRender: true,
             processing: true,
             lengthChange: false,
-            ajax: {
-                url: "<?= base_url('json/req_carts.json') ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-//                        data: JSON.stringify( { "fticket": fticket, "fpartnum": fpartnum } ),
-//                        data: function(d){
-//                            d.fticket = fticket;
-//                            d.fpartnum = fpartnum;
-//                            d.fqty = fqty;
-//                            d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
-//                        }
-            },
+            data: dataSet,
             columns: [
-                { "data": 'part_id' },
-                { "data": 'part_number' },
-                { "data": 'part_stock' },
+                { "title": "", "class": "center" },
+                { "title": "Part Number", "class": "center" },
+                { "title": "Stock", "class": "center" },
             ],
             columnDefs : [{
                 targets   : 0,
@@ -377,17 +327,184 @@
         
         //function for datatables button
         $('#subtitute_grid tbody').on( 'click', 'button', function (e) {        
-            var data = table.row( $(this).parents('tr') ).data();
-            fpartnum = data['part_number'];
+            var data = table2.row( $(this).parents('tr') ).data();
+            fpartnum = data[0];
             add_cart(fpartnum);
         });
-    
-        function reload2(){
-            table2.ajax.reload();
-        }
 
         table2.buttons().container()
-                .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
+                .appendTo('#subtitute_grid_wrapper .col-md-6:eq(0)');
+    }
+    
+    //reload table
+    function reload2(){
+        table2.ajax.reload();
+    }
+    
+    //get part replacement
+    function get_part_sub(partno){
+        var url = '<?php echo base_url('front/cincoming/get_list_part_sub'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fpartnum : e_partnum.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    //load parts replacement
+                    table2.clear().draw();
+                    $.each(jqXHR.data, function(i, object) {
+                        $.each(object, function(property, data) {
+                            $.each(data, function(property2, detail_data) {
+                                table2.row.add(
+                                    [detail_data.partno, detail_data.partno, detail_data.lastval]
+                                ).draw();
+                            });
+                        });
+                    });
+                    e_partnum_notes.html(jqXHR.message);
+                    e_serialnum.focus();
+                }else if(jqXHR.status == 0){
+                    e_partnum_notes.html(jqXHR.message);
+                    e_partnum.val('');
+                    e_partnum.focus();
+//                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //check part stock
+    function check_part(partno){
+        var url = '<?php echo base_url('front/cincoming/check_part'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fpartnum : e_partnum.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    e_partnum_notes.html(jqXHR.message);
+                    table2.clear().draw();
+                    //fill serial number
+                    e_serialnum.focus();
+                }else if(jqXHR.status == 0){
+                    e_partnum_notes.html(jqXHR.message);
+                    //load data part replacement
+                    get_part_sub(partno);
+//                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //add to cart
+    function add_cart(partno){
+        alert('Cart add '+partno);
+        /*
+        var url = '<?php echo base_url('front/cincoming/add_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                fpartnum : e_partnum.val(),
+                fserialnum : e_serialnum.val()
+            };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    get_total();
+                    reload();
+                }else if(jqXHR.status == 0){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+        */
+    }
+    
+    function get_total() {
+        var url = '<?php echo base_url('front/cincoming/get_total_cart'); ?>';
+        var type = 'GET';
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            success:function(jqXHR)
+            {
+                $('#ttl_qty').html(jqXHR.ttl_cart);
+            },
+            cache: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    $(document).ready(function() {
+        init_form();
+        
+        e_ticketnum.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        
+        e_engineer_id.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        
+        /*
+        e_notes.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        */
+       
+        init_table();
+        init_table2();
             
         e_purpose.on("change", function(e) {
             var valpurpose = e_purpose.val();
@@ -420,5 +537,11 @@
             }
         });
         
+        e_partnum.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                check_part(e_partnum.val());
+                return false;
+            }
+        });
     });
 </script>

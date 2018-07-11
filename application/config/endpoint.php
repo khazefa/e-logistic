@@ -97,6 +97,7 @@ $config['api_remove_parts'] = constant('urlapi').'api/cparts/delete/'; //POST
 // ===========================
 $config['api_list_part_sub'] = constant('urlapi').'api/cpartsub/list/'; //POST
 $config['api_info_part_sub'] = constant('urlapi').'api/cpartsub/info/'; //POST
+$config['api_partsub_part_sub'] = constant('urlapi').'api/cpartsub/get_part_sub/'; //POST
 $config['api_add_part_sub'] = constant('urlapi').'api/cpartsub/insert/'; //POST
 $config['api_edit_part_sub'] = constant('urlapi').'api/cpartsub/update/'; //POST
 $config['api_remove_part_sub'] = constant('urlapi').'api/cpartsub/delete/'; //POST
@@ -152,6 +153,7 @@ $config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
 // ===========================
 $config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //POST
 $config['api_list_view_incomings'] = constant('urlapi').'api/cpincomings/list_view/'; //POST
+$config['api_get_total_cart'] = constant('urlapi').'api/cpincomings/total_cart/'; //GET
 // ===========================
 //  End Incoming Trans
 // ===========================

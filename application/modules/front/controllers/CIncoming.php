@@ -229,8 +229,6 @@ class CIncoming extends BaseController
         $success_response = array();
         $error_response = array();
         
-        // filters that will be loaded in the multiselect dropdown
-        
         $fcode = $this->repo;
         $fpartnum = $this->input->post('fpartnum', TRUE);
         
@@ -247,7 +245,104 @@ class CIncoming extends BaseController
             );
             $response = $error_response;
         }else{
+            foreach ($rs as $r) {
+                $last_stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                
+                if($last_stock < 1){
+                    $error_response = array(
+                        'status' => 0,
+                        'message'=> 'Out of stock, please choose part number subtitution!'
+                    );
+                    $response = $error_response;
+                }else{
+                    $success_response = array(
+                        'status' => 1,
+                        'stock'=> $last_stock,
+                        'message'=> 'Stock available'
+                    );
+                    $response = $success_response;
+                }
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    private function get_info_part_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
+            $row['partno'] = $partno;
+            $row['lastval'] = $lastval;
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get lists for populate data
+     */
+    public function get_list_part_sub(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+//        $arrWhere = array('fpartnum'=>"00100227000D");
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_partsub_part_sub'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : "";
+        
+        if(empty($rs)){
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Data cannot be found'
+            );
+            $response = $error_response;
+        }else{
+            $val_partsub = $rs;
+            
+            $exp_partsub = explode(";", $val_partsub);
+            $arrData = array();
+            foreach ($exp_partsub as $partnum){
+                $row['partno'] = $partnum;
+                
+                $result = $this->get_info_part_stock($fcode, $partnum);
+
+                $arrData[] = array('detail_data'=>$result);
+            }
+            $success_response = array(
+                'status' => 1,
+                'data'=> $arrData
+            );
+            $response = $success_response;
         }
         
         return $this->output
@@ -276,5 +371,42 @@ class CIncoming extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         
+    }
+    
+    /**
+     * This function is used to get total cart
+     */
+    public function get_total_cart(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $cartid = $this->session->userdata ( 'cart_session' ).md5('Incoming');
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : 0;
+        
+        if($rs > 0){
+            $success_response = array(
+                'status' => 1,
+                'ttl_cart'=> $rs
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'ttl_cart'=> 0
+            );
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
     }
 }

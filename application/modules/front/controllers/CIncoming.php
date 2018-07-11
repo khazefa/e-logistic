@@ -219,4 +219,62 @@ class CIncoming extends BaseController
             json_encode($response)
         );
     }
+    
+    /**
+     * This function is used to check part
+     */
+    public function check_part(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        // filters that will be loaded in the multiselect dropdown
+        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(empty($rs)){
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Data cannot be found'
+            );
+            $response = $error_response;
+        }else{
+            
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to add cart
+     */
+    public function add_cart(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $cartid = $this->session->userdata ( 'cart_session' ).md5('Incoming');
+        
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        
+    }
 }

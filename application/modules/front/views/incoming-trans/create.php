@@ -98,19 +98,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group form-group-sm col-sm-12">
-                        <hr>
-                    </div>
+                    <div class="m-b-30">&nbsp;</div>
                 </div>
                 <div class="row">
                     <div class="col col-md-12">
 
-                        <div class="row">
-                            <div class="col col-md-12">
-                            <table id="cart_grid" class="table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <table id="cart_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
-                                    <th>X</th>
+                                    <th>&nbsp;</th>
                                     <th>Part Number</th>
                                     <th>Serial Number</th>
                                     <th>Part Name</th>
@@ -121,8 +117,6 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            </div>
-                        </div>
 
                         <div class="mt-2"></div>
 
@@ -147,12 +141,18 @@
 
     <div class="col-md-3">
         <div class="card-box table-responsive">
-            <h4 class="m-t-0 header-title">Widgets</h4><hr>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
-                laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <h4 class="m-b-30 header-title">Part Subtitusi</h4>
+            <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Part Number</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -176,6 +176,8 @@
     var fnotes = "";
     var fpartner = "";
     var fengineer_name = "";
+    var fpartnum = "";
+    var fserialnum = "";
         
     function init_form(){
         e_ticketnum.prop("readonly", true);
@@ -186,6 +188,9 @@
         e_notes.prop("readonly", true);
         e_notes.prop("value", "");
         e_purpose_notes.html("Purpose Notes");
+        
+        e_partnum.prop("values", "");
+        e_serialnum.prop("values", "");
     }
     
     function get_eg_detail(eg_id){
@@ -278,8 +283,8 @@
 //            select: {
 //                style: 'multi'
 //            },
-            scrollY: '50vh',
-            scrollCollapse: true,
+//            scrollY: '50vh',
+//            scrollCollapse: true,
             searching: false,
             ordering: false,
             info: false,
@@ -310,9 +315,78 @@
                 { "data": 'part_stock' },
                 { "data": 'qty' },
             ],
+            columnDefs : [{
+                targets   : 0,
+                orderable : false, //set not orderable
+                data      : null,
+                render    : function ( data, type, full, meta ) {
+                    return '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-trash"></i></button>';
+            }}]
         });
+        
+        //function for datatables button
+        $('#cart_grid tbody').on( 'click', 'button', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            fid = data['part_id'];
+            delete_cart(fid);
+        });
+    
+        function reload(){
+            table.ajax.reload();
+        }
 
         table.buttons().container()
+                .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
+            
+        var table2 = $('#subtitute_grid').DataTable({
+            searching: false,
+            ordering: false,
+            info: false,
+            paging: false,
+            destroy: true,
+            stateSave: false,
+            deferRender: true,
+            processing: true,
+            lengthChange: false,
+            ajax: {
+                url: "<?= base_url('json/req_carts.json') ?>",
+                type: "POST",
+                dataType: "JSON",
+                contentType: "application/json",
+//                        data: JSON.stringify( { "fticket": fticket, "fpartnum": fpartnum } ),
+//                        data: function(d){
+//                            d.fticket = fticket;
+//                            d.fpartnum = fpartnum;
+//                            d.fqty = fqty;
+//                            d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
+//                        }
+            },
+            columns: [
+                { "data": 'part_id' },
+                { "data": 'part_number' },
+                { "data": 'part_stock' },
+            ],
+            columnDefs : [{
+                targets   : 0,
+                orderable : false, //set not orderable
+                data      : null,
+                render    : function ( data, type, full, meta ) {
+                    return '<button type="button" class="btn btn-warning" id="btn_add_sub"><i class="fa fa-cart-plus"></i></button>';
+            }}]
+        });
+        
+        //function for datatables button
+        $('#subtitute_grid tbody').on( 'click', 'button', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            fpartnum = data['part_number'];
+            add_cart(fpartnum);
+        });
+    
+        function reload2(){
+            table2.ajax.reload();
+        }
+
+        table2.buttons().container()
                 .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
             
         e_purpose.on("change", function(e) {
@@ -324,6 +398,7 @@
                 e_engineer_id.prop("readonly", true);
                 e_engineer_id.prop("value", "");
                 e_notes.prop("readonly", false);
+                e_notes.focus();
                 e_purpose_notes.html("Purpose Notes");
             }else if(valpurpose === "RG"){
                 e_ticketnum.prop("readonly", false);

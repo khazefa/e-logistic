@@ -78,7 +78,7 @@ class Login extends CI_Controller
                     'vendorRepo'=>$res->accessRepo,          
                     'role'=>$res->role,
                     'roleText'=>$res->roleText,
-                    'cart_session'=> md5($res->accessUR."-".$res->accessName."-".$res->accessRepo),
+                    'cart_session'=> md5($res->accessUR."-".$res->accessName."-".$res->accessRepo."-".$res->roleText),
                     'isSessionFilled' => TRUE
                 );
                 $this->session->set_userdata($sessionArray);

@@ -2,6 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/Login.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/COutgoing.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/outgoing-trans/create.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CStockPart.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/libraries/BaseController.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_header.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/engineers/create.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/config/endpoint.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_footer.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CParts.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/config/routes.php</file>
+        </group>
     </open-files>
 </project-private>

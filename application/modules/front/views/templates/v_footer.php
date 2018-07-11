@@ -47,6 +47,9 @@
         <script src="<?php echo base_url();?>assets/public/js/jquery.app.js"></script>
 
         <script type="text/javascript">
+            function isEmpty(val){
+                return (val === undefined || val == null || val.length <= 0) ? true : false;
+            }
             $(document).ready(function() {
                 $('form').parsley();
             });

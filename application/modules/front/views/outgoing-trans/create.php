@@ -11,8 +11,12 @@
                             <div class="col-sm-6">
                                 <select name="fpurpose" id="fpurpose" class="form-control" placeholder="Select Purpose">
                                     <option value="0">Select Purpose</option>
-                                    <option value="S">Supply</option>
-                                    <option value="RG">Return</option>
+                                    <option value="SP">Sales/Project</option>
+                                    <option value="W">Warranty</option>
+                                    <option value="M">Maintenance</option>
+                                    <option value="I">Investment</option>
+                                    <option value="B">Borrowing</option>
+                                    <option value="RWH">Return to WH</option>
                                 </select>
                             </div>
                         </div>
@@ -273,13 +277,29 @@
                 { "data": 'part_stock' },
                 { "data": 'qty' },
             ],
-            columnDefs : [{
-                targets   : 0,
-                orderable : false, //set not orderable
-                data      : null,
-                render    : function ( data, type, full, meta ) {
-                    return '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-trash"></i></button>';
-            }}]
+            columnDefs : [
+                {
+                    targets   : 0,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        return '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-trash"></i></button>';
+                    }
+                },
+                {
+                    targets   : 5,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+//                        console.log('data: '+full.serial_number);
+                        if(full.serial_number === "NOSN"){
+                            return '<input type="text" id="fqty" value="1" class="form-control" data-parsley-type="number">';
+                        }else{
+                            return data;
+                        }
+                    }
+                }
+            ]
         });
         
         //function for datatables button
@@ -287,6 +307,16 @@
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['part_id'];
             delete_cart(fid);
+        });
+        
+        //function for datatables button
+        $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            if (e.keyCode == 13) {
+                //update cart by cart id
+//                alert(this.value);
+                return false;
+            }
         });
 
         table.buttons().container()
@@ -329,7 +359,13 @@
         $('#subtitute_grid tbody').on( 'click', 'button', function (e) {        
             var data = table2.row( $(this).parents('tr') ).data();
             fpartnum = data[0];
-            add_part_sub(fpartnum);
+            flastval = data[2];
+            
+            if(flastval < 1){
+                alert('Out of stock!');
+            }else{
+                add_part_sub(fpartnum);
+            }
         });
 
         table2.buttons().container()
@@ -433,16 +469,16 @@
     }
     
     //add to cart
-    function add_cart(partno){
-        alert('Cart add '+partno);
+    function add_cart(partno, serialno){
+        alert('Cart add part number:'+partno+' - serial number:'+serialno);
         /*
         var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
         var type = 'POST';
         
         var data = {
                 <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-                fpartnum : e_partnum.val(),
-                fserialnum : e_serialnum.val()
+                fpartnum : partno,
+                fserialnum : serialno
             };
         
         $.ajax({
@@ -517,7 +553,10 @@
         e_purpose.on("change", function(e) {
             var valpurpose = e_purpose.val();
             
-            if(valpurpose === "S"){
+            if(valpurpose === "0"){
+                alert( "Please choose purpose!" );
+                init_form();
+            }else if(valpurpose === "RWH"){
                 e_ticketnum.prop("readonly", true);
                 e_ticketnum.prop("value", "");
                 e_engineer_id.prop("readonly", true);
@@ -525,16 +564,13 @@
                 e_notes.prop("readonly", false);
                 e_notes.focus();
                 e_purpose_notes.html("Purpose Notes");
-            }else if(valpurpose === "RG"){
+            }else{
                 e_ticketnum.prop("readonly", false);
                 e_ticketnum.focus();
                 e_engineer_id.prop("readonly", false);
                 e_notes.prop("readonly", true);
                 e_notes.prop("value", "");
-                e_purpose_notes.html("Pengembalian Barang ke FSL");
-            }else{
-                alert( "Please choose purpose!" );
-                init_form();
+                e_purpose_notes.html("Pengembalian Barang ke Warehouse");
             }
         });
         
@@ -547,7 +583,25 @@
         
         e_partnum.on("keypress", function(e){
             if (e.keyCode == 13) {
-                check_part(e_partnum.val());
+                if(isEmpty(e_partnum.val())){
+                    alert('Please fill in this field!');
+                    e_partnum.focus();
+                }else{
+                    check_part(e_partnum.val());
+                }
+                return false;
+            }
+        });
+        
+        e_serialnum.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                if(isEmpty(e_partnum.val()) || isEmpty(e_serialnum.val())){
+                    alert('Please fill in required field!');
+                    e_serialnum.focus();
+                }else{
+                    //add cart with serial number logic
+                    add_cart(e_partnum.val(), e_serialnum.val());
+                }
                 return false;
             }
         });

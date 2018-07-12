@@ -195,7 +195,7 @@ class COutgoing extends BaseController
         if(empty($rs)){
             $error_response = array(
                 'status' => 0,
-                'message'=> 'Data cannot be found'
+                'message'=> 'Engineer not found'
             );
             $response = $error_response;
         }else{
@@ -242,13 +242,7 @@ class COutgoing extends BaseController
         $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        if(empty($rs)){
-            $error_response = array(
-                'status' => 0,
-                'message'=> 'Data cannot be found'
-            );
-            $response = $error_response;
-        }else{
+        if($rs){
             foreach ($rs as $r) {
                 $last_stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
                 
@@ -267,6 +261,12 @@ class COutgoing extends BaseController
                     $response = $success_response;
                 }
             }
+        }else{
+            $error_response = array(
+                'status' => 2,
+                'message'=> 'Stock not available'
+            );
+            $response = $error_response;
         }
         
         return $this->output
@@ -325,12 +325,18 @@ class COutgoing extends BaseController
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
+            $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['lastval'] = $lastval;
+            
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
  
             $data[] = $row;
         }
@@ -349,18 +355,11 @@ class COutgoing extends BaseController
         $fpartnum = $this->input->post('fpartnum', TRUE);
         
         $arrWhere = array('fpartnum'=>$fpartnum);
-//        $arrWhere = array('fpartnum'=>"00100227000D");
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_partsub_part_sub'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : "";
+        $rs = $rs_data->status ? $rs_data->result : null;
         
-        if(empty($rs)){
-            $error_response = array(
-                'status' => 0,
-                'message'=> 'Data cannot be found'
-            );
-            $response = $error_response;
-        }else{
+        if($rs){
             $val_partsub = $rs;
             
             $exp_partsub = explode(";", $val_partsub);
@@ -377,8 +376,63 @@ class COutgoing extends BaseController
                 'data'=> $arrData
             );
             $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Part do not have subtitution'
+            );
+            $response = $error_response;
         }
         
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_part_nearby(){
+        $rs = array();
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+//        $partnum = $this->input->post('fpartnum', TRUE);
+        $partnum = "00050778000E";
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if($rs){
+            $wh_nearby = "";
+            foreach ($rs as $r){
+                $wh_nearby = $r->fsl_nearby;
+            }
+            $exp_wh_nearby = explode(";", $wh_nearby);
+            $arrData = array();
+            foreach ($exp_wh_nearby as $code){
+                $result = $this->get_info_part_stock($code, $partnum);
+
+                $arrData[] = array('detail_data'=>$result);
+            }
+            $success_response = array(
+                'status' => 1,
+                'data'=> $arrData
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'no nearby warehouse'
+            );
+            $response = $error_response;
+        }
         return $this->output
         ->set_content_type('application/json')
         ->set_output(
@@ -446,7 +500,7 @@ class COutgoing extends BaseController
             }
             $rs_stock = $this->get_info_part_stock($fcode, $partnum);
             foreach ($rs_stock as $s){
-                $partstock = (int)$s["lastval"];
+                $partstock = (int)$s["stock"];
             }
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);

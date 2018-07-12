@@ -79,16 +79,20 @@ class CStockPart extends BaseController
             $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['minval'] = $minval;
-            $row['initval'] = $initval;
-            $row['lastval'] = $lastval;
+            $row['minstock'] = $minstock;
+            $row['initstock'] = $initstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
             $row['initflag'] = $initflag;
  
             $data[] = $row;
@@ -121,16 +125,20 @@ class CStockPart extends BaseController
             $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['minval'] = $minval;
-            $row['initval'] = $initval;
-            $row['lastval'] = $lastval;
+            $row['minstock'] = $minstock;
+            $row['initstock'] = $initstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
 //            $row['initflag'] = $initflag;
             
             $row['button'] = '<div class="btn-group dropdown">';
@@ -217,16 +225,20 @@ class CStockPart extends BaseController
             $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['minval'] = $minval;
-            $row['initval'] = $initval;
-            $row['lastval'] = $lastval;
+            $row['minstock'] = $minstock;
+            $row['initstock'] = $initstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
             $row['initflag'] = $initflag;
  
             $data[] = $row;
@@ -274,16 +286,20 @@ class CStockPart extends BaseController
             $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['minval'] = $minval;
-            $row['initval'] = $initval;
-            $row['lastval'] = $lastval;
+            $row['minstock'] = $minstock;
+            $row['initstock'] = $initstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
             $row['initflag'] = $initflag;
  
             $data[] = $row;
@@ -345,16 +361,20 @@ class CStockPart extends BaseController
             $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initval = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $lastval = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
-            $row['minval'] = $minval;
-            $row['initval'] = $initval;
-            $row['lastval'] = $lastval;
+            $row['minstock'] = $minstock;
+            $row['initstock'] = $initstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
             $row['initflag'] = $initflag;
  
             $data[] = $row;

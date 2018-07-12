@@ -161,7 +161,23 @@
                 </tbody>
             </table>
         </div>
+        
+        <div class="card-box table-responsive">
+            <h4 class="m-b-30 header-title">Part In Nearby Warehouse</h4>
+            <table id="wh_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>FSL</th>
+                    <th>Part Number</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
+    
 </div>
 </form>
 <script type="text/javascript">
@@ -360,9 +376,9 @@
         $('#subtitute_grid tbody').on( 'click', 'button', function (e) {        
             var data = table2.row( $(this).parents('tr') ).data();
             fpartnum = data[0];
-            flastval = data[2];
+            fstock = data[2];
             
-            if(flastval < 1){
+            if(fstock < 1){
                 alert('Out of stock!');
             }else{
                 add_part_sub(fpartnum);
@@ -378,6 +394,35 @@
         table2.ajax.reload();
     }
     
+    //init table
+    function init_table3(){
+        table3 = $('#wh_grid').DataTable({
+            searching: false,
+            ordering: false,
+            info: false,
+            paging: false,
+            destroy: true,
+            stateSave: false,
+            deferRender: true,
+            processing: true,
+            lengthChange: false,
+            data: dataSet,
+            columns: [
+                { "title": "FSL", "class": "center" },
+                { "title": "Part Number", "class": "center" },
+                { "title": "Stock", "class": "center" },
+            ]
+        });
+
+        table3.buttons().container()
+                .appendTo('#wh_grid_wrapper .col-md-6:eq(0)');
+    }
+    
+    //reload table
+    function reload3(){
+        table3.ajax.reload();
+    }
+    
     //get part replacement
     function get_part_sub(partno){
         var url = '<?php echo base_url('front/coutgoing/get_list_part_sub'); ?>';
@@ -385,7 +430,7 @@
         
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fpartnum : e_partnum.val()
+            fpartnum : partno
         };
         
         $.ajax({
@@ -403,7 +448,7 @@
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
                                 table2.row.add(
-                                    [detail_data.partno, detail_data.partno, detail_data.lastval]
+                                    [detail_data.partno, detail_data.partno, detail_data.stock]
                                 ).draw();
                             });
                         });
@@ -412,9 +457,53 @@
                     e_partnum.val('');
                 }else if(jqXHR.status == 0){
                     e_partnum_notes.html(jqXHR.message);
+//                    e_partnum.val('');
+                    e_partnum.focus();
+                    //load part from nearby warehouse
+                    get_nearby_wh(partno);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //get part replacement
+    function get_nearby_wh(partno){
+        var url = '<?php echo base_url('front/coutgoing/get_part_nearby'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fpartnum : partno
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    //load part from nearby warehouse
+                    table3.clear().draw();
+                    $.each(jqXHR.data, function(i, object) {
+                        $.each(object, function(property, data) {
+                            $.each(data, function(property2, detail_data) {
+                                table3.row.add(
+                                    [detail_data.code, detail_data.partno, detail_data.stock]
+                                ).draw();
+                            });
+                        });
+                    });
+                }else if(jqXHR.status == 0){
+                    e_partnum_notes.html(jqXHR.message);
                     e_partnum.val('');
                     e_partnum.focus();
-//                    alert(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -442,16 +531,18 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 1){
+                if(jqXHR.status == 0){
+                    e_partnum_notes.html(jqXHR.message);
+                    //load data part replacement
+                    get_part_sub(partno);
+                }else if(jqXHR.status == 1){
                     e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
                     //fill serial number
                     e_serialnum.focus();
-                }else if(jqXHR.status == 0){
-                    e_partnum_notes.html(jqXHR.message);
-                    //load data part replacement
-                    get_part_sub(partno);
-//                    alert(jqXHR.message);
+                }else if(jqXHR.status == 2){
+                    //load part from nearby warehouse
+                    
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -545,6 +636,7 @@
        
         init_table();
         init_table2();
+        init_table3();
             
         e_purpose.on("change", function(e) {
             var valpurpose = e_purpose.val();

@@ -78,9 +78,9 @@
             columns: [
                 { "data": 'code' },
                 { "data": 'partno' },
-                { "data": 'minval' },
-                { "data": 'initval' },
-                { "data": 'lastval' },
+                { "data": 'minstock' },
+                { "data": 'initstock' },
+                { "data": 'stock' },
                 { "data": 'button' },
             ],
         });

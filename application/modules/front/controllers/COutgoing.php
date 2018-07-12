@@ -257,26 +257,26 @@ class COutgoing extends BaseController
                 }
                 
                 if($stock < 1){
-                    $error_response = array(
+                    $success_response = array(
                         'status' => 0,
                         'message'=> 'Out of stock, please choose part number subtitution!'
                     );
-                    $response = $error_response;
+                    $response = $success_response;
                 }else{
                     $success_response = array(
                         'status' => 1,
-                        'stock'=> $laststock,
+                        'stock'=> $stock,
                         'message'=> 'Stock available'
                     );
                     $response = $success_response;
                 }
             }
         }else{
-            $error_response = array(
+            $success_response = array(
                 'status' => 2,
                 'message'=> 'Stock not available'
             );
-            $response = $error_response;
+            $response = $success_response;
         }
         
         return $this->output

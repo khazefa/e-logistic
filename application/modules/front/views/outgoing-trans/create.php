@@ -444,9 +444,13 @@
                     $.each(jqXHR.data, function(i, object) {
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
-                                table2.row.add(
-                                    [detail_data.partno, detail_data.partno, detail_data.stock]
-                                ).draw();
+                                if(detail_data.stock === "0"){
+                                    
+                                }else{
+                                    table2.row.add(
+                                        [detail_data.partno, detail_data.partno, detail_data.stock]
+                                    ).draw();
+                                }
                             });
                         });
                     });
@@ -489,9 +493,13 @@
                     $.each(jqXHR.data, function(i, object) {
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
-                                table3.row.add(
-                                    [detail_data.code, detail_data.partno, detail_data.stock]
-                                ).draw();
+                                if(detail_data.stock === "0"){
+                                    //if stock is 0 then hide part information
+                                }else{
+                                    table3.row.add(
+                                        [detail_data.code, detail_data.partno, detail_data.stock]
+                                    ).draw();
+                                }
                             });
                         });
                     });
@@ -558,6 +566,9 @@
         if(check_part(partno) === 0){
             //load data part replacement
             get_part_sub(partno);
+        }else if(check_part(partno) === 1){
+            //fill in serial number
+            table2.clear().draw();
         }else if(check_part(partno) === 2){
             //load part from nearby warehouse
             get_nearby_wh(partno);
@@ -753,9 +764,11 @@
                     if(check_part(e_partnum.val()) === 0){
                         //load data part replacement
                         get_part_sub(e_partnum.val());
+                    }else if(check_part(e_partnum.val()) === 1){
+                        //fill in serial number
                     }else if(check_part(e_partnum.val()) === 2){
                         //load part from nearby warehouse
-                        get_nearby_wh(partno);
+                        get_nearby_wh(e_partnum.val());
                     }
                 }
                 return false;

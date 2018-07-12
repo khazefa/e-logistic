@@ -134,14 +134,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-footer">
                 <div class="button-list">
-                    <button type="button" class="btn btn-block btn-danger waves-effect waves-light">Cancel</button>
-                    <button type="button" class="btn btn-block btn-warning waves-effect waves-light">Hold</button>
-                    <button type="submit" class="btn btn-block btn-success waves-effect waves-light">Request</button>
+                    <div class="mt-2"></div>
+                    <button type="submit" class="btn btn-success waves-effect waves-light">Submit</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -223,7 +219,6 @@
         e_partnum.focus();
         e_partnum_notes.html("");
         e_serialnum.val("");
-        get_total();
     }
     
     //get detail eg
@@ -310,7 +305,7 @@
                     render    : function ( data, type, full, meta ) {
 //                        console.log('data: '+full.serial_number);
                         if(full.serialno === "NOSN"){
-                            return '<input type="text" id="fqty" value="'+full.qty+'" class="form-control" data-parsley-type="number">';
+                            return '<input type="text" id="fqty" value="'+full.qty+'" data-parsley-type="number" size="2" pattern="[0-9]">';
                         }else{
                             return data;
                         }
@@ -322,16 +317,18 @@
         //function for datatables button
         $('#cart_grid tbody').on( 'click', 'button', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
-            fid = data['part_id'];
+            fid = data['id'];
             delete_cart(fid);
         });
         
         //function for datatables button
         $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
+            fid = data['id'];
+            fqty = this.value;
             if (e.keyCode == 13) {
                 //update cart by cart id
-//                alert(this.value);
+                update_cart(fid, fqty);
                 return false;
             }
         });
@@ -454,13 +451,11 @@
                         });
                     });
                     e_partnum_notes.html(jqXHR.message);
-                    e_partnum.val('');
+//                    e_partnum.val('');
                 }else if(jqXHR.status == 0){
                     e_partnum_notes.html(jqXHR.message);
 //                    e_partnum.val('');
                     e_partnum.focus();
-                    //load part from nearby warehouse
-                    get_nearby_wh(partno);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -515,6 +510,7 @@
     
     //check part stock
     function check_part(partno){
+        var status = 0;
         var url = '<?php echo base_url('front/coutgoing/check_part'); ?>';
         var type = 'POST';
         
@@ -533,16 +529,18 @@
             success: function (jqXHR) {
                 if(jqXHR.status == 0){
                     e_partnum_notes.html(jqXHR.message);
-                    //load data part replacement
-                    get_part_sub(partno);
+                    status = 0;
                 }else if(jqXHR.status == 1){
                     e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
                     //fill serial number
                     e_serialnum.focus();
+                    status = 1;
                 }else if(jqXHR.status == 2){
                     //load part from nearby warehouse
-                    
+                    e_partnum_notes.html(jqXHR.message);
+                    table2.clear().draw();
+                    status = 2;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -550,13 +548,20 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
+        return status;
     }
     
     //add part sub number to part number field
     function add_part_sub(partno){
         e_partnum.val('');
         e_partnum.val(partno);
-        check_part(partno);
+        if(check_part(partno) === 0){
+            //load data part replacement
+            get_part_sub(partno);
+        }else if(check_part(partno) === 2){
+            //load part from nearby warehouse
+            get_nearby_wh(partno);
+        }
 //        e_partnum.focus;
     }
     
@@ -606,9 +611,78 @@
             contentType:"application/json",
             success:function(jqXHR)
             {
-                $('#ttl_qty').html(jqXHR.ttl_cart);
+                if(jqXHR.status === 1){
+                    $('#ttl_qty').html(jqXHR.ttl_cart);
+                }else{
+                    $('#ttl_qty').html(jqXHR.ttl_cart);
+                }
             },
             cache: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //add to cart
+    function update_cart(id, qty){        
+        var url = '<?php echo base_url('front/coutgoing/update_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fid : id,
+            fqty : qty
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    reload();
+                    get_total();
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //add to cart
+    function delete_cart(id){        
+        var url = '<?php echo base_url('front/coutgoing/delete_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fid : id
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    reload();
+                    get_total();
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
             error: function(jqXHR, textStatus, errorThrown) {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
@@ -637,6 +711,7 @@
         init_table();
         init_table2();
         init_table3();
+        get_total();
             
         e_purpose.on("change", function(e) {
             var valpurpose = e_purpose.val();
@@ -651,14 +726,14 @@
                 e_engineer_id.prop("value", "");
                 e_notes.prop("readonly", false);
                 e_notes.focus();
-                e_purpose_notes.html("Purpose Notes");
+                e_purpose_notes.html("Return Sparepart");
             }else{
                 e_ticketnum.prop("readonly", false);
                 e_ticketnum.focus();
                 e_engineer_id.prop("readonly", false);
                 e_notes.prop("readonly", true);
                 e_notes.val("");
-                e_purpose_notes.html("Pengembalian Barang ke Warehouse");
+                e_purpose_notes.html("Sparepart to engineer");
             }
         });
         
@@ -675,7 +750,13 @@
                     alert('Please fill in this field!');
                     e_partnum.focus();
                 }else{
-                    check_part(e_partnum.val());
+                    if(check_part(e_partnum.val()) === 0){
+                        //load data part replacement
+                        get_part_sub(e_partnum.val());
+                    }else if(check_part(e_partnum.val()) === 2){
+                        //load part from nearby warehouse
+                        get_nearby_wh(partno);
+                    }
                 }
                 return false;
             }
@@ -687,10 +768,16 @@
                     alert('Please fill in required field!');
                     e_serialnum.focus();
                 }else{
-                    //add cart with serial number logic
-                    add_cart(e_partnum.val(), e_serialnum.val());
-                    reload();
-                    init_form_order();
+                    if(check_part(e_partnum.val()) === 0){
+                        init_form_order();
+                    }else if(check_part(e_partnum.val()) === 0){
+                        //add cart with serial number logic
+                        add_cart(e_partnum.val(), e_serialnum.val());
+                        reload();
+                        init_form_order();
+                    }else{
+                        init_form_order();
+                    }
                 }
                 return false;
             }

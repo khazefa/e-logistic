@@ -131,24 +131,6 @@ $config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; 
 // ===========================
 
 // ===========================
-//  Begin Tickets
-// ===========================
-$config['api_ticket_num'] = constant('urlapi').'api/cptickets/grab_ticket_num/'; //GET
-//$config['api_add_cart'] = constant('urlapi').'api/cptickets/create_tickets_cart/'; //POST
-$config['api_update_cart'] = constant('urlapi').'api/cptickets/update_tickets_cart/'; //POST
-$config['api_delete_cart'] = constant('urlapi').'api/cptickets/delete_tickets_cart/'; //POST
-$config['api_clear_cart'] = constant('urlapi').'api/cptickets/clear_tickets_cart/'; //POST
-$config['api_check_cart'] = constant('urlapi').'api/cptickets/check_tickets_cart/'; //POST
-$config['api_list_cart'] = constant('urlapi').'api/cptickets/list_tmp/'; //POST
-$config['api_add_ticket_detail'] = constant('urlapi').'api/cptickets/create_tickets_detail/'; //POST
-$config['api_list_detail'] = constant('urlapi').'api/cptickets/list_detail/'; //POST
-$config['api_add_ticket_trans'] = constant('urlapi').'api/cptickets/create_tickets/'; //POST
-$config['api_list_ticket'] = constant('urlapi').'api/cptickets/list/'; //POST
-// ===========================
-//  End Tickets
-// ===========================
-
-// ===========================
 //  Begin Incoming Trans
 // ===========================
 $config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //POST
@@ -165,6 +147,8 @@ $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //PO
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
+$config['api_update_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/update_cart/'; //POST
+$config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_cart/'; //POST
 $config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
 // ===========================
 //  End Outgoing Trans

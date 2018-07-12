@@ -243,10 +243,20 @@ class COutgoing extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if($rs){
+            $stock = 0;
             foreach ($rs as $r) {
-                $last_stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                $laststock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
                 
-                if($last_stock < 1){
+                if($initflag === "Y"){
+                    $stock = $initstock;
+                }else{
+                    $stock = $laststock;
+                }
+                
+                if($stock < 1){
                     $error_response = array(
                         'status' => 0,
                         'message'=> 'Out of stock, please choose part number subtitution!'
@@ -255,7 +265,7 @@ class COutgoing extends BaseController
                 }else{
                     $success_response = array(
                         'status' => 1,
-                        'stock'=> $last_stock,
+                        'stock'=> $laststock,
                         'message'=> 'Stock available'
                     );
                     $response = $success_response;
@@ -379,7 +389,7 @@ class COutgoing extends BaseController
         }else{
             $error_response = array(
                 'status' => 0,
-                'message'=> 'Part do not have subtitution'
+                'message'=> 'Sparepart is out of stock and do not have subtitution'
             );
             $response = $error_response;
         }
@@ -400,8 +410,7 @@ class COutgoing extends BaseController
         $arrWhere = array();
         
         $fcode = $this->repo;
-//        $partnum = $this->input->post('fpartnum', TRUE);
-        $partnum = "00050778000E";
+        $partnum = $this->input->post('fpartnum', TRUE);
         
         $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
         
@@ -469,8 +478,6 @@ class COutgoing extends BaseController
         {
             $response = $error_response;
         }
-        
-        
     }
     
     /**
@@ -537,6 +544,7 @@ class COutgoing extends BaseController
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_total_outgoings_cart'), 'POST', FALSE);
+//        $rs_data = send_curl($arrWhere, $this->config->item('api_total_outgoings_cart').'?funiqid='.$cartid, 'GET', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if(!empty($rs)){
@@ -557,6 +565,71 @@ class COutgoing extends BaseController
             $response = $error_response;
         }
         
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete cart
+     */
+    public function update_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+
+        $arrWhere = array('fid'=>$fid, 'fqty'=>$fqty);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete cart
+     */
+    public function delete_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to delete cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+
+        $arrWhere = array('fid'=>$fid);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_delete_outgoings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

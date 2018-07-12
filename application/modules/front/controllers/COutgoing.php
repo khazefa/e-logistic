@@ -41,7 +41,11 @@ class COutgoing extends BaseController
             $this->global['contentTitle'] = 'Outgoing Transaction';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
-            $this->loadViews('front/outgoing-trans/index', $this->global, NULL);
+            
+            $cartid = $this->session->userdata ( 'cart_session' )."ot";
+            $data['cartid'] = $cartid;
+            
+            $this->loadViews('front/outgoing-trans/index', $this->global, $data);
             
         }else{
             redirect('cl');
@@ -273,6 +277,36 @@ class COutgoing extends BaseController
     }
     
     /**
+     * This function is used to get detail information
+     */
+    public function get_info_part($fpartnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $row['pid'] = $pid;
+            $row['partno'] = $partnum;
+            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
      * This function is used to get list information described by function name
      */
     private function get_info_part_stock($fcode, $partnum){
@@ -356,21 +390,83 @@ class COutgoing extends BaseController
      * This function is used to add cart
      */
     public function add_cart(){
-        $rs = array();
-        $arrWhere = array();
-        $success_response = array();
-        $error_response = array();
-        
-        $cartid = $this->session->userdata ( 'cart_session' ).md5('Outgoing');
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed add data to cart'
+        );
         
         $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);  
+        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $fqty = 1;
+
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
+        
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        
+        
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_cart_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings_cart'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $rs_part = $this->get_info_part($partnum);
+            foreach ($rs_part as $p){
+                $partname = $p["name"];
+            }
+            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+            foreach ($rs_stock as $s){
+                $partstock = (int)$s["lastval"];
+            }
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['serialno'] = $serialnum;
+            $row['name'] = $partname;
+            $row['stock'] = $partstock;
+            $row['qty'] = $qty;
+ 
+            $data[] = $row;
+        }
         
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
     }
     
     /**
@@ -382,17 +478,21 @@ class COutgoing extends BaseController
         $success_response = array();
         $error_response = array();
         
-        $cartid = $this->session->userdata ( 'cart_session' ).md5('Outgoing');
+        $cartid = $this->session->userdata ( 'cart_session' )."ot";
         $arrWhere = array('funiqid'=>$cartid);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : 0;
+        $rs_data = send_curl($arrWhere, $this->config->item('api_total_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
         
-        if($rs > 0){
+        if(!empty($rs)){
+            $total = 0;
+            foreach ($rs as $r){
+                $total = $r->total;
+            }
             $success_response = array(
                 'status' => 1,
-                'ttl_cart'=> $rs
+                'ttl_cart'=> $total
             );
             $response = $success_response;
         }else{

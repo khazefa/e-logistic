@@ -192,17 +192,22 @@
     //initial form state
     function init_form(){
         e_ticketnum.prop("readonly", true);
-        e_ticketnum.prop("value", "");
+        e_ticketnum.val("");
         e_engineer_id.prop("readonly", true);
-        e_engineer_id.prop("value", "");
+        e_engineer_id.val("");
         e_engineer_notes.html("");
         e_notes.prop("readonly", true);
-        e_notes.prop("value", "");
+        e_notes.val("");
         e_purpose_notes.html("Purpose Notes");
-        
-        e_partnum.prop("values", "");
+    }
+    
+    //initial form order state
+    function init_form_order(){
+        e_partnum.val("");
+        e_partnum.focus();
         e_partnum_notes.html("");
-        e_serialnum.prop("values", "");
+        e_serialnum.val("");
+        get_total();
     }
     
     //get detail eg
@@ -257,24 +262,20 @@
             processing: true,
             lengthChange: false,
             ajax: {
-                url: "<?= base_url('json/req_carts.json') ?>",
+                url: "<?= base_url('front/coutgoing/get_list_cart_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
-//                        data: JSON.stringify( { "fticket": fticket, "fpartnum": fpartnum } ),
-//                        data: function(d){
-//                            d.fticket = fticket;
-//                            d.fpartnum = fpartnum;
-//                            d.fqty = fqty;
-//                            d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
-//                        }
+                data: JSON.stringify( {
+                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                } ),
             },
             columns: [
-                { "data": 'part_id' },
-                { "data": 'part_number' },
-                { "data": 'serial_number' },
-                { "data": 'part_name' },
-                { "data": 'part_stock' },
+                { "data": 'id' },
+                { "data": 'partno' },
+                { "data": 'serialno' },
+                { "data": 'name' },
+                { "data": 'stock' },
                 { "data": 'qty' },
             ],
             columnDefs : [
@@ -292,8 +293,8 @@
                     data      : null,
                     render    : function ( data, type, full, meta ) {
 //                        console.log('data: '+full.serial_number);
-                        if(full.serial_number === "NOSN"){
-                            return '<input type="text" id="fqty" value="1" class="form-control" data-parsley-type="number">';
+                        if(full.serialno === "NOSN"){
+                            return '<input type="text" id="fqty" value="'+full.qty+'" class="form-control" data-parsley-type="number">';
                         }else{
                             return data;
                         }
@@ -470,16 +471,16 @@
     
     //add to cart
     function add_cart(partno, serialno){
-        alert('Cart add part number:'+partno+' - serial number:'+serialno);
-        /*
+//        alert('Cart add part number:'+partno+' - serial number:'+serialno);
+        
         var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
         var type = 'POST';
         
         var data = {
-                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-                fpartnum : partno,
-                fserialnum : serialno
-            };
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fpartnum : partno,
+            fserialnum : serialno
+        };
         
         $.ajax({
             type: type,
@@ -491,13 +492,8 @@
             success: function (jqXHR) {
                 if(jqXHR.status == 1){
                     get_total();
-                    reload();
                 }else if(jqXHR.status == 0){
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
-                    $('#error_modal').modal({
-                        show: true
-                    });
+                    alert(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -505,12 +501,11 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        */
     }
     
     function get_total() {
         var url = '<?php echo base_url('front/coutgoing/get_total_cart'); ?>';
-        var type = 'GET';
+        var type = 'POST';
         
         $.ajax({
             type: type,
@@ -532,6 +527,7 @@
     
     $(document).ready(function() {
         init_form();
+        init_form_order();
         
         e_ticketnum.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
@@ -558,7 +554,7 @@
                 init_form();
             }else if(valpurpose === "RWH"){
                 e_ticketnum.prop("readonly", true);
-                e_ticketnum.prop("value", "");
+                e_ticketnum.val("");
                 e_engineer_id.prop("readonly", true);
                 e_engineer_id.prop("value", "");
                 e_notes.prop("readonly", false);
@@ -569,7 +565,7 @@
                 e_ticketnum.focus();
                 e_engineer_id.prop("readonly", false);
                 e_notes.prop("readonly", true);
-                e_notes.prop("value", "");
+                e_notes.val("");
                 e_purpose_notes.html("Pengembalian Barang ke Warehouse");
             }
         });
@@ -601,6 +597,8 @@
                 }else{
                     //add cart with serial number logic
                     add_cart(e_partnum.val(), e_serialnum.val());
+                    reload();
+                    init_form_order();
                 }
                 return false;
             }

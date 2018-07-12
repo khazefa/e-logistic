@@ -163,7 +163,9 @@ $config['api_get_total_cart'] = constant('urlapi').'api/cpincomings/total_cart/'
 // ===========================
 $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //POST
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
-$config['api_get_total_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //GET
+$config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
+$config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
+$config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
 // ===========================
 //  End Outgoing Trans
 // ===========================

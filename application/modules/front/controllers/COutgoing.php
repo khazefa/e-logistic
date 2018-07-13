@@ -717,4 +717,41 @@ class COutgoing extends BaseController
             json_encode($response)
         );
     }
+    
+    /**
+     * This function is used to add cart
+     */
+    public function submit_trans(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to submit transaction'
+        );
+        
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);  
+        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $fqty = 1;
+
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
+        
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
 }

@@ -128,7 +128,7 @@
                         <div class="mt-2"></div>
 
                         <div class="row">
-                            <div class="col-md-2 offset-md-10">
+                            <div class="col-md-3 offset-md-9">
                                 Total Quantity: <span id="ttl_qty">0</span>
                             </div>
                         </div>
@@ -205,6 +205,7 @@
         
     //initial form state
     function init_form(){
+        e_purpose.focus();
         e_ticketnum.prop("readonly", true);
         e_ticketnum.val("");
         e_engineer_id.prop("readonly", true);
@@ -218,7 +219,6 @@
     //initial form order state
     function init_form_order(){
         e_partnum.val("");
-        e_partnum.focus();
         e_partnum.prop("readonly", false);
         e_partnum_notes.html("");
         e_serialnum.val("");
@@ -246,9 +246,9 @@
                     e_partner.val(jqXHR.pr_name);
                     e_engineer_name.val(jqXHR.eg_name);
                     e_engineer_notes.html("");
+                    e_partnum.focus();
                 }else if(jqXHR.status == 0){
                     e_engineer_notes.html(jqXHR.message);
-//                    alert(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -593,9 +593,7 @@
     }
     
     //add to cart
-    function add_cart(partno, serialno){
-//        alert('Cart add part number:'+partno+' - serial number:'+serialno);
-        
+    function add_cart(partno, serialno){        
         var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
         var type = 'POST';
         
@@ -718,6 +716,39 @@
         });
     }
     
+    //submit transaction
+    function complete_request(){        
+        var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fpartnum : partno,
+            fserialnum : serialno
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    reload();
+                    get_total();
+                }else if(jqXHR.status == 0){
+                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
     $(document).ready(function() {
         init_form();
         init_form_order();
@@ -765,6 +796,14 @@
             }
         });
         
+        e_ticketnum.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                e_engineer_id.val('');
+                e_engineer_id.focus();
+                return false;
+            }
+        });
+        
         e_engineer_id.on("keypress", function(e) {
             if (e.keyCode == 13) {
                 get_eg_detail(e_engineer_id.val());
@@ -800,6 +839,7 @@
                     add_cart(e_partnum.val(), e_serialnum.val());
                     reload();
                     init_form_order();
+                    e_partnum.focus();
                 }
                 return false;
             }

@@ -74,7 +74,7 @@
         </div>
     </div>
     
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="card-box">
             <div class="card-header bg-primary text-white">
                 <strong class="card-title">Detail Orders</strong>
@@ -98,7 +98,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                  </div>
-                                <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
+                                <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number" required="required">
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card-box table-responsive">
             <h4 class="m-b-30 header-title">Part Subtitusi</h4>
             <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
@@ -150,6 +150,7 @@
                 <tr>
                     <th>&nbsp;</th>
                     <th>Part Number</th>
+                    <th>Part Name</th>
                     <th>Stock</th>
                 </tr>
                 </thead>
@@ -165,6 +166,7 @@
                 <tr>
                     <th>FSL</th>
                     <th>Part Number</th>
+                    <th>Part Name</th>
                     <th>Stock</th>
                 </tr>
                 </thead>
@@ -217,6 +219,7 @@
     function init_form_order(){
         e_partnum.val("");
         e_partnum.focus();
+        e_partnum.prop("readonly", false);
         e_partnum_notes.html("");
         e_serialnum.val("");
     }
@@ -325,10 +328,16 @@
         $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
+            fstock = data['stock'];
             fqty = this.value;
             if (e.keyCode == 13) {
-                //update cart by cart id
-                update_cart(fid, fqty);
+                if(fqty > fstock){
+                    alert('The quantity amount exceeds sparepart stock');
+                    this.focus;
+                }else{
+                    //update cart by cart id
+                    update_cart(fid, fqty);
+                }
                 return false;
             }
         });
@@ -358,6 +367,7 @@
             columns: [
                 { "title": "", "class": "center" },
                 { "title": "Part Number", "class": "center" },
+                { "title": "Part Name", "class": "center" },
                 { "title": "Stock", "class": "center" },
             ],
             columnDefs : [{
@@ -379,6 +389,7 @@
                 alert('Out of stock!');
             }else{
                 add_part_sub(fpartnum);
+                table2.clear().draw();
             }
         });
 
@@ -405,8 +416,9 @@
             lengthChange: false,
             data: dataSet,
             columns: [
-                { "title": "FSL", "class": "center" },
+                { "title": "Warehouse", "class": "center" },
                 { "title": "Part Number", "class": "center" },
+                { "title": "Part Name", "class": "center" },
                 { "title": "Stock", "class": "center" },
             ]
         });
@@ -422,6 +434,7 @@
     
     //get part replacement
     function get_part_sub(partno){
+        var status = 0;
         var url = '<?php echo base_url('front/coutgoing/get_list_part_sub'); ?>';
         var type = 'POST';
         
@@ -438,28 +451,28 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 1){
+                if(jqXHR.status === 1){
                     //load parts replacement
                     table2.clear().draw();
                     $.each(jqXHR.data, function(i, object) {
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
                                 if(detail_data.stock === "0"){
-                                    
+                                    //if stock is 0 then hide information list
                                 }else{
                                     table2.row.add(
-                                        [detail_data.partno, detail_data.partno, detail_data.stock]
+                                        [detail_data.partno, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
                                 }
                             });
                         });
                     });
                     e_partnum_notes.html(jqXHR.message);
-//                    e_partnum.val('');
-                }else if(jqXHR.status == 0){
+                    status = 1;
+                }else if(jqXHR.status === 0){
                     e_partnum_notes.html(jqXHR.message);
-//                    e_partnum.val('');
                     e_partnum.focus();
+                    status = 0;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -467,6 +480,7 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
+        return status;
     }
     
     //get part replacement
@@ -494,10 +508,10 @@
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
                                 if(detail_data.stock === "0"){
-                                    //if stock is 0 then hide part information
+                                    //if stock is 0 then hide information list
                                 }else{
                                     table3.row.add(
-                                        [detail_data.code, detail_data.partno, detail_data.stock]
+                                        [detail_data.warehouse, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
                                 }
                             });
@@ -535,19 +549,29 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 0){
+                if(jqXHR.status === 0){
                     e_partnum_notes.html(jqXHR.message);
+                    //load data part replacement
+                    if( get_part_sub(partno) === 0 ){
+                        //if data part replacement not available 
+                        //then load part from nearby warehouse
+                        get_nearby_wh(partno);
+                    }
                     status = 0;
-                }else if(jqXHR.status == 1){
+                }else if(jqXHR.status === 1){
                     e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
+                    table3.clear().draw();
+                    
+                    e_partnum.prop("readonly", true);
                     //fill serial number
                     e_serialnum.focus();
                     status = 1;
-                }else if(jqXHR.status == 2){
+                }else if(jqXHR.status === 2){
                     //load part from nearby warehouse
                     e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
+                    table3.clear().draw();
                     status = 2;
                 }
             },
@@ -561,19 +585,11 @@
     
     //add part sub number to part number field
     function add_part_sub(partno){
+        e_partnum.prop("readonly", false);
         e_partnum.val('');
         e_partnum.val(partno);
-        if(check_part(partno) === 0){
-            //load data part replacement
-            get_part_sub(partno);
-        }else if(check_part(partno) === 1){
-            //fill in serial number
-            table2.clear().draw();
-        }else if(check_part(partno) === 2){
-            //load part from nearby warehouse
-            get_nearby_wh(partno);
-        }
-//        e_partnum.focus;
+        e_partnum.prop("readonly", true);
+        check_part(partno);
     }
     
     //add to cart
@@ -598,6 +614,7 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status == 1){
+                    reload();
                     get_total();
                 }else if(jqXHR.status == 0){
                     alert(jqXHR.message);
@@ -762,8 +779,7 @@
                     e_partnum.focus();
                 }else{
                     if(check_part(e_partnum.val()) === 0){
-                        //load data part replacement
-                        get_part_sub(e_partnum.val());
+                        
                     }else if(check_part(e_partnum.val()) === 1){
                         //fill in serial number
                     }else if(check_part(e_partnum.val()) === 2){
@@ -781,16 +797,9 @@
                     alert('Please fill in required field!');
                     e_serialnum.focus();
                 }else{
-                    if(check_part(e_partnum.val()) === 0){
-                        init_form_order();
-                    }else if(check_part(e_partnum.val()) === 0){
-                        //add cart with serial number logic
-                        add_cart(e_partnum.val(), e_serialnum.val());
-                        reload();
-                        init_form_order();
-                    }else{
-                        init_form_order();
-                    }
+                    add_cart(e_partnum.val(), e_serialnum.val());
+                    reload();
+                    init_form_order();
                 }
                 return false;
             }

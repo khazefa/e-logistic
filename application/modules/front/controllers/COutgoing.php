@@ -244,39 +244,41 @@ class COutgoing extends BaseController
         
         if($rs){
             $stock = 0;
+            $minstock = 0;
+            $initstock = 0;
+            $laststock = 0;
+            $initflag = "";
             foreach ($rs as $r) {
                 $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
                 $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
                 $laststock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
                 $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-                
-                if($initflag === "Y"){
-                    $stock = $initstock;
-                }else{
-                    $stock = $laststock;
-                }
-                
-                if($stock < 1){
-                    $success_response = array(
-                        'status' => 0,
-                        'message'=> 'Out of stock, please choose part number subtitution!'
-                    );
-                    $response = $success_response;
-                }else{
-                    $success_response = array(
-                        'status' => 1,
-                        'stock'=> $stock,
-                        'message'=> 'Stock available'
-                    );
-                    $response = $success_response;
-                }
             }
+            if($initflag === "Y"){
+                $stock = $initstock;
+            }else{
+                $stock = $laststock;
+            }
+
+            if($stock < 1){
+                $success_response = array(
+                    'status' => 0,
+                    'message'=> 'Out of stock, please choose part number subtitution!'
+                );
+            }else{
+                $success_response = array(
+                    'status' => 1,
+                    'stock'=> $stock,
+                    'message'=> 'Stock available'
+                );
+            }
+            $response = $success_response;
         }else{
-            $success_response = array(
+            $error_response = array(
                 'status' => 2,
                 'message'=> 'Stock not available'
             );
-            $response = $success_response;
+            $response = $error_response;
         }
         
         return $this->output
@@ -341,6 +343,8 @@ class COutgoing extends BaseController
             
             $row['code'] = $code;
             $row['partno'] = $partno;
+            $row['warehouse'] = $this->get_info_warehouse_name($code);
+            $row['part'] = $this->get_info_part_name($partno);
             
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
@@ -399,6 +403,77 @@ class COutgoing extends BaseController
         ->set_output(
             json_encode($response)
         );
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_warehouse($fcode){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
+            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
+            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
+            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_part_name($fpartnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partname = "";
+        foreach ($rs as $r) {
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $partname;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_warehouse_name($fcode){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $wh_name = "";
+        foreach ($rs as $r) {
+            $wh_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $wh_name;
     }
     
     /**
@@ -478,6 +553,12 @@ class COutgoing extends BaseController
         {
             $response = $error_response;
         }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
     }
     
     /**

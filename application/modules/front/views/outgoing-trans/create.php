@@ -16,7 +16,7 @@
                                     <option value="M">Maintenance</option>
                                     <option value="I">Investment</option>
                                     <option value="B">Borrowing</option>
-                                    <option value="RWH">Return to WH</option>
+                                    <option value="RWH">Transfer Stock</option>
                                 </select>
                             </div>
                         </div>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="form-group form-group-sm col-sm-6">
                         <div class="row">
-                            <label for="fengineer_id" class="col-sm-3 col-form-label">FE ID Number</label>
+                            <label for="fengineer_id" class="col-sm-3 col-form-label">FSE ID</label>
                             <div class="col-sm-6">
                                 <input type="text" name="fengineer_id" id="fengineer_id" class="form-control" required="required">
                                 <span id="feg_notes" class="help-block"><small></small></span>
@@ -88,7 +88,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                  </div>
-                                <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number" required="required">
+                                <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
                             </div>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                  </div>
-                                <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number" required="required">
+                                <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="button-list">
                     <div class="mt-2"></div>
-                    <button type="submit" class="btn btn-success waves-effect waves-light">Submit</button>
+                    <button type="button" id="btn_complete" class="btn btn-success waves-effect waves-light">Submit</button>
                 </div>
             </div>
         </div>
@@ -308,7 +308,7 @@
                     render    : function ( data, type, full, meta ) {
 //                        console.log('data: '+full.serial_number);
                         if(full.serialno === "NOSN"){
-                            return '<input type="text" id="fqty" value="'+full.qty+'" data-parsley-type="number" size="2" pattern="[0-9]">';
+                            return '<input type="text" id="fqty" value="'+full.qty+'" data-parsley-type="number" size="2">';
                         }else{
                             return data;
                         }
@@ -611,11 +611,14 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 1){
+                if(jqXHR.status == 0){
+                    alert(jqXHR.message);
+                }else if(jqXHR.status == 1){
                     reload();
                     get_total();
-                }else if(jqXHR.status == 0){
+                }else if(jqXHR.status == 2){
                     alert(jqXHR.message);
+                    init_form_order();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -717,14 +720,17 @@
     }
     
     //submit transaction
-    function complete_request(){        
-        var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
+    function complete_request(){
+        var url = '<?php echo base_url('front/coutgoing/submit_trans'); ?>';
         var type = 'POST';
         
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fpartnum : partno,
-            fserialnum : serialno
+            fticket : e_ticketnum.val(),
+            fengineer_id : e_engineer_id.val(),
+            fpurpose : e_purpose.val(),
+            fqty : parseInt($('#ttl_qty').html()),
+            fnotes : e_notes.val()
         };
         
         $.ajax({
@@ -735,11 +741,12 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 1){
-                    reload();
-                    get_total();
-                }else if(jqXHR.status == 0){
-                    alert(jqXHR.message);
+                if(jqXHR.status == 0){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
+                    $('#error_modal').modal({
+                        show: true
+                    });
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -842,6 +849,38 @@
                     e_partnum.focus();
                 }
                 return false;
+            }
+        });
+        
+        $("#btn_complete").on("click", function(e){
+            var total_qty = parseInt($('#ttl_qty').html());
+        
+            if(e_purpose.val() === "0"){
+                $("#error_modal .modal-title").html("Message");
+                $("#error_modal .modal-body h4").html("Please select your purpose!");
+                $('#error_modal').modal({
+                    show: true
+                });
+            }else{
+                if(total_qty > 0){
+                    $('#confirmation').modal({
+                        show: true
+                    });
+                    $('#opt_yess').click(function () {
+                        complete_request();
+                        window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+                    });
+                    $('#opt_no').click(function () {
+                        complete_request();
+                        window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+                    });
+                }else{
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html("You have not filled out the data");
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                }
             }
         });
     });

@@ -147,9 +147,13 @@ $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //PO
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
+$config['api_add_outgoings_trans'] = constant('urlapi').'api/cpoutgoings/create_trans/'; //POST
+$config['api_add_outgoings_trans_detail'] = constant('urlapi').'api/cpoutgoings/create_trans_detail/'; //POST
 $config['api_update_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/update_cart/'; //POST
 $config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_cart/'; //POST
+$config['api_clear_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_multi_cart/'; //POST
 $config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
+$config['api_get_trans_num'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num/'; //POST
 // ===========================
 //  End Outgoing Trans
 // ===========================

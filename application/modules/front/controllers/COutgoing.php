@@ -536,22 +536,36 @@ class COutgoing extends BaseController
             'message'=> 'Failed add data to cart'
         );
         
+        $fcode = $this->repo;
         $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fserialnum = $this->input->post('fserialnum', TRUE);  
+        $fserialnum = $this->input->post('fserialnum', TRUE);
         $cartid = $this->session->userdata ( 'cart_session' )."ot";
         $fqty = 1;
-
-        $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
         
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
-
-        if($rs_data->status)
-        {
-            $response = $success_response;
+        $partstock = 0;
+        $rs_stock = $this->get_info_part_stock($fcode, $fpartnum);
+        foreach ($rs_stock as $s){
+            $partstock = (int)$s["stock"];
         }
-        else
-        {
+        
+        if($partstock <= $fqty){
+            $error_response = array(
+                'status' => 2,
+                'message'=> 'Stock is running low!'
+            );
             $response = $error_response;
+        }else{
+            $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
+            $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+
+            if($rs_data->status)
+            {
+                $response = $success_response;
+            }
+            else
+            {
+                $response = $error_response;
+            }
         }
         
         return $this->output
@@ -571,6 +585,8 @@ class COutgoing extends BaseController
         $arrWhere = array();
         
         $fcode = $this->repo;
+        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $arrWhere = array('funiqid'=>$cartid);
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings_cart'), 'POST', FALSE);
@@ -599,7 +615,7 @@ class COutgoing extends BaseController
             $row['serialno'] = $serialnum;
             $row['name'] = $partname;
             $row['stock'] = $partstock;
-            $row['qty'] = $qty;
+            $row['qty'] = (int)$qty;
  
             $data[] = $row;
         }
@@ -609,6 +625,54 @@ class COutgoing extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    private function get_list_cart(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $rs_part = $this->get_info_part($partnum);
+            foreach ($rs_part as $p){
+                $partname = $p["name"];
+            }
+            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+            foreach ($rs_stock as $s){
+                $partstock = (int)$s["stock"];
+            }
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['serialno'] = $serialnum;
+            $row['name'] = $partname;
+            $row['stock'] = $partstock;
+            $row['qty'] = (int)$qty;
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
     }
     
     /**
@@ -718,6 +782,16 @@ class COutgoing extends BaseController
         );
     }
     
+    public function get_trans_num(){
+        $arrWhere = array('fparam'=>"OT");
+        $transnum = send_curl($arrWhere, $this->config->item('api_get_trans_num'), 'POST', FALSE);
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($transnum)
+        );
+    }
+    
     /**
      * This function is used to add cart
      */
@@ -730,22 +804,62 @@ class COutgoing extends BaseController
             'message'=> 'Failed to submit transaction'
         );
         
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fserialnum = $this->input->post('fserialnum', TRUE);  
+        $fcode = $this->repo;
         $cartid = $this->session->userdata ( 'cart_session' )."ot";
-        $fqty = 1;
-
-        $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
+               
+        $date = date('Y-m-d'); 
+        $fticket = $this->input->post('fticket', TRUE);
+        $fengineer_id = $this->input->post('fengineer_id', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $fnotes = $this->input->post('fnotes', TRUE);
+        $createdby = $this->session->userdata ( 'vendorUR' );
+        $createdat = date('Y-m-d H:i:sa');
         
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
-
-        if($rs_data->status)
-        {
-            $response = $success_response;
-        }
-        else
-        {
+        $arrParam = array('fparam'=>"OT");
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_trans_num'), 'POST', FALSE);
+        $transnum = $rs_transnum->status ? $rs_transnum->result : "";
+        
+        if($transnum === ""){
             $response = $error_response;
+        }else{
+            //get cart list by retnum
+            $data_tmp = $this->get_list_cart();
+
+            $dataDetail = array();
+            if(!empty($data_tmp)){
+                foreach ($data_tmp as $d){
+                    $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                        'fqty'=>$d['qty'], 'fcreatedat'=>$createdat);
+                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 'POST', FALSE);
+                }
+            }
+
+            $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
+                'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes, 'fcreatedat'=>$createdat);
+            $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
+            if($main_res->status)
+            {
+                //update stock by fsl code and part number
+                
+                
+                //clear cart list data
+                $arrWhere = array('fcartid'=>$cartid);
+                $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_outgoings_cart'), 'POST', FALSE);
+                if($rem_res){
+                    $response = $success_response;
+                }else{
+                    $response = $error_response;
+                }
+                
+                //keep cart list
+//                $response = $success_response;
+            }
+            else
+            {
+                $this->session->set_flashdata('error', 'Failed to insert data');
+                $response = $error_response;
+            }
         }
         
         return $this->output

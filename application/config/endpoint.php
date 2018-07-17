@@ -113,6 +113,7 @@ $config['api_list_view_part_stock'] = constant('urlapi').'api/cstockwh/list_view
 $config['api_info_part_stock'] = constant('urlapi').'api/cstockwh/info/'; //POST
 $config['api_add_part_stock'] = constant('urlapi').'api/cstockwh/insert/'; //POST
 $config['api_edit_part_stock'] = constant('urlapi').'api/cstockwh/update/'; //POST
+$config['api_edit_stock_part_stock'] = constant('urlapi').'api/cstockwh/update_stock/'; //POST
 $config['api_remove_part_stock'] = constant('urlapi').'api/cstockwh/delete/'; //POST
 // ===========================
 //  End Stock Spareparts

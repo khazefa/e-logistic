@@ -588,6 +588,7 @@
     //check part stock
     function check_part(partno){
         var status = 0;
+        
         var url = '<?php echo base_url('front/coutgoing/check_part'); ?>';
         var type = 'POST';
         
@@ -648,39 +649,49 @@
     }
     
     //add to cart
-    function add_cart(partno, serialno){        
-        var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
-        var type = 'POST';
+    function add_cart(partno, serialno){
+        var total_qty = table.rows().count();
         
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fpartnum : partno,
-            fserialnum : serialno
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status == 0){
-                    alert(jqXHR.message);
-                }else if(jqXHR.status == 1){
-                    reload();
-                    get_total();
-                }else if(jqXHR.status == 2){
-                    alert(jqXHR.message);
-                    init_form_order();
+        if(total_qty >= 3){
+            $("#error_modal .modal-title").html("Message");
+            $("#error_modal .modal-body h4").html("Cannot add request more than 3 items!");
+            $('#error_modal').modal({
+                show: true
+            });
+        }else{
+            var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
+            var type = 'POST';
+
+            var data = {
+                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                fpartnum : partno,
+                fserialnum : serialno
+            };
+
+            $.ajax({
+                type: type,
+                url: url,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                dataType: 'JSON',
+                contentType:"application/json",
+                data: data,
+                success: function (jqXHR) {
+                    if(jqXHR.status == 0){
+                        alert(jqXHR.message);
+                    }else if(jqXHR.status == 1){
+                        reload();
+                        get_total();
+                    }else if(jqXHR.status == 2){
+                        alert(jqXHR.message);
+                        init_form_order();
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Handle errors here
+                    console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
+            });
+        }
     }
     
     function get_total() {
@@ -884,13 +895,13 @@
             if (e.keyCode == 13) {
                 get_eg_detail(e_engineer_id.val());
                 $("#global_confirm .modal-title").html("Confirmation");
-                $("#global_confirm .modal-body h4").html("Add FSE Messenger Identity?");
+                $("#global_confirm .modal-body h4").html("Add FSE Mess ID?");
                 $('#global_confirm').modal({
                     show: true
                 });
                 $('#ans_yess').click(function () {
                     e_engineer2_id.prop("readonly", false);
-                    e_engineer2_id.val('');
+                    e_engineer2_id.prop("value", "");
                     e_engineer2_id.focus();
                 });
                 $('#ans_no').click(function () {

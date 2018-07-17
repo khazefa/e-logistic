@@ -900,7 +900,6 @@ class COutgoing extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
-        $createdat = date('Y-m-d H:i:sa');
         
         $arrParam = array('fparam'=>"OT");
         $rs_transnum = send_curl($arrParam, $this->config->item('api_get_trans_num'), 'POST', FALSE);
@@ -916,35 +915,33 @@ class COutgoing extends BaseController
             if(!empty($data_tmp)){
                 foreach ($data_tmp as $d){
                     $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                        'fqty'=>$d['qty'], 'fcreatedat'=>$createdat);
-                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 'POST', FALSE);
+                        'fqty'=>$d['qty']);
+                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$d['stock']-(int)$d['qty'], 'fflag'=>'N');
+                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
+                            'POST', FALSE);
+                    //update stock by fsl code and part number
+                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                            'POST', FALSE);
                 }
             }
 
             $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes, 
-                'fcreatedat'=>$createdat);
+                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
-                //update stock by fsl code and part number
-                
-                
                 //clear cart list data
                 $arrWhere = array('fcartid'=>$cartid);
                 $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_outgoings_cart'), 'POST', FALSE);
-                if($rem_res){
+                if($rem_res->status){
                     $response = $success_response;
                 }else{
                     $response = $error_response;
                 }
-                
-                //keep cart list
-//                $response = $success_response;
             }
             else
             {
-                $this->session->set_flashdata('error', 'Failed to insert data');
+                $this->session->set_flashdata('error', 'Failed to submit transaction data');
                 $response = $error_response;
             }
         }

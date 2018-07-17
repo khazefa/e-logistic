@@ -4,6 +4,9 @@
             <button type="button" onclick="location.href='<?php echo base_url("new-outgoing-trans");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button> <?php echo $this->session->userdata ( 'cart_session' )."ot"; ?>
+            <button type="button" onclick="location.href='<?php echo base_url("front/coutgoing/print_pdf");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light" target="_blank">
+                <i class="fa fa-print"></i> Print
+            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">

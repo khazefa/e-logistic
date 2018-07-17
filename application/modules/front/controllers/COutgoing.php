@@ -952,4 +952,76 @@ class COutgoing extends BaseController
             json_encode($response)
         );
     }
+    
+    public function print_pdf(){
+        $this->load->library('fpdf_generator');
+	
+        $orientation = "P";
+        $paper_size = "A4";
+        $width = 0;
+        $height = 0;
+
+        switch ($orientation) {
+            case "P":
+               switch ($paper_size) {
+                    case "A4":
+                        $width = 210;
+                        $height = 297;
+                    break;
+                    case "A5":
+                        $width = 148;
+                        $height = 210;
+                    break;
+                    default:
+                        $width = 210;
+                        $height = 297;
+                    break;
+                }
+                break;
+
+            case "L":
+                switch ($paper_size) {
+                    case "A4":
+                        $width = 297;
+                        $height = 210;
+                    break;
+                    case "A5":
+                        $width = 210;
+                        $height = 148;
+                    break;
+                    default:
+                        $width = 297;
+                        $height = 210;
+                    break;
+                }
+                break;
+
+            default:
+                switch ($paper_size) {
+                    case "A4":
+                        $width = 210;
+                        $height = 297;
+                    break;
+                    case "A5":
+                        $width = 148;
+                        $height = 210;
+                    break;
+                    default:
+                        $width = 210;
+                        $height = 297;
+                    break;
+                }
+                break;
+        }
+        
+        // intance object dan memberikan pengaturan halaman PDF
+        $pdf = new FPDF($orientation,'mm',$paper_size); // ukuran kertas atau  new FPDF('P','mm','A4');  
+	$pdf->AddPage('portrait');
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(40,10,'Hello World!');
+
+        $title = 'Print Transaction';
+        $pdf->SetTitle($title);
+        echo $pdf->Output('I', $title.'.pdf');
+    }
 }

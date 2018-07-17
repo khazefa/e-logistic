@@ -525,6 +525,54 @@ class COutgoing extends BaseController
     }
     
     /**
+     * This function is used to get cart info where part stock is already low
+     */
+    private function get_info_cart($partnum){
+        
+        $fcode = $this->repo;
+        $arrWhere = array('fpartnum'=>$partnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        
+        if(!empty($rs)){
+            foreach ($rs as $r) {
+                $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+                $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                $rs_part = $this->get_info_part($partnum);
+                foreach ($rs_part as $p){
+                    $partname = $p["name"];
+                }
+                $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+                foreach ($rs_stock as $s){
+                    $partstock = (int)$s["stock"];
+                }
+                $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+                $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $user = filter_var($r->user, FILTER_SANITIZE_STRING);
+                $fullname = filter_var($r->fullname, FILTER_SANITIZE_STRING);
+
+                $row['id'] = $id;
+                $row['partno'] = $partnum;
+                $row['serialno'] = $serialnum;
+                $row['name'] = $partname;
+                $row['stock'] = $partstock;
+                $row['qty'] = (int)$qty;
+                $row['user'] = $user;
+                $row['fullname'] = $fullname;
+
+                $data[] = $row;
+            }
+
+        }
+        return $data;
+    }
+    
+    /**
      * This function is used to add cart
      */
     public function add_cart(){
@@ -537,6 +585,8 @@ class COutgoing extends BaseController
         );
         
         $fcode = $this->repo;
+        $fuser = $this->vendorUR;
+        $fname = $this->name;
         $fpartnum = $this->input->post('fpartnum', TRUE);
         $fserialnum = $this->input->post('fserialnum', TRUE);
         $cartid = $this->session->userdata ( 'cart_session' )."ot";
@@ -548,14 +598,49 @@ class COutgoing extends BaseController
             $partstock = (int)$s["stock"];
         }
         
-        if($partstock <= $fqty){
-            $error_response = array(
-                'status' => 2,
-                'message'=> 'Stock is running low!'
-            );
-            $response = $error_response;
+        if($partstock === $fqty){
+            $cstock = 0;
+            $cqty = 0;
+            $cuser = "";
+            $cname = "";
+            
+            $rs_cart_info = $this->get_info_cart($fpartnum);
+            
+            if(!empty($rs_cart_info)){
+                foreach($rs_cart_info as $c){
+                    $cstock = (int)$c['stock'];
+                    $cqty = (int)$c['qty'];
+                    $cuser = $c['user'];
+                    $cname = $c['fullname'];
+                }
+                if($cuser === $fuser){
+                $error_response = array(
+                    'status' => 2,
+                    'message'=> 'Part stock is limited!'
+                );
+                }else{
+                    $error_response = array(
+                        'status' => 2,
+                        'message'=> 'Stock is limited and part is already assigned to '.$cname
+                    );
+                }
+                $response = $error_response;
+            }else{
+                $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty, 
+                    'fuser'=>$fuser, 'fname'=>$fname);
+                $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+
+                if($rs_data->status)
+                {
+                    $response = $success_response;
+                }
+                else
+                {
+                    $response = $error_response;
+                }
+            }
         }else{
-            $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty);
+            $dataInfo = array('fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty, 'fuser'=>$fuser, 'fname'=>$fname);
             $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
 
             if($rs_data->status)
@@ -810,6 +895,7 @@ class COutgoing extends BaseController
         $date = date('Y-m-d'); 
         $fticket = $this->input->post('fticket', TRUE);
         $fengineer_id = $this->input->post('fengineer_id', TRUE);
+        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
         $fpurpose = $this->input->post('fpurpose', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
@@ -836,7 +922,8 @@ class COutgoing extends BaseController
             }
 
             $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes, 'fcreatedat'=>$createdat);
+                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes, 
+                'fcreatedat'=>$createdat);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
             if($main_res->status)
             {

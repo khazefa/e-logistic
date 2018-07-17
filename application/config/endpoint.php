@@ -154,6 +154,7 @@ $config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delet
 $config['api_clear_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_multi_cart/'; //POST
 $config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
 $config['api_get_trans_num'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num/'; //POST
+$config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info/'; //POST
 // ===========================
 //  End Outgoing Trans
 // ===========================

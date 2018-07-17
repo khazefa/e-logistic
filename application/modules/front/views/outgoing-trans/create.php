@@ -21,6 +21,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group form-group-sm col-sm-6">
+                        <div class="row">
+                            <label for="fpurpose_notes" id="fpurpose_notes" class="col-sm-9 col-form-label"></label>                            
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="form-group form-group-sm col-sm-6">
@@ -50,6 +55,15 @@
                     </div>
                     <div class="form-group form-group-sm col-sm-6">
                         <div class="row">
+                            <label for="fengineer2_id" class="col-sm-3 col-form-label">FSE Mess ID</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="fengineer2_id" id="fengineer2_id" class="form-control" required="required">
+                                <span id="feg2_notes" class="help-block"><small></small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm col-sm-6">
+                        <div class="row">
                             <label for="fpartner" class="col-sm-3 col-form-label">Service Partner</label>
                             <div class="col-sm-6">
                                 <input type="text" name="fpartner" id="fpartner" class="form-control" readonly="readonly">
@@ -58,14 +72,25 @@
                     </div>
                     <div class="form-group form-group-sm col-sm-6">
                         <div class="row">
-                            <label for="fpurpose_notes" id="fpurpose_notes" class="col-sm-9 col-form-label"></label>                            
+                            <label for="fengineer_name" class="col-sm-3 col-form-label">Assigned FSE</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="fengineer_name" id="fengineer_name" class="form-control" readonly="readonly">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group form-group-sm col-sm-6">
                         <div class="row">
-                            <label for="fengineer_name" class="col-sm-3 col-form-label">Assigned FE</label>
+                            <label for="fpartner2" class="col-sm-3 col-form-label">Service Partner Mess</label>
                             <div class="col-sm-6">
-                                <input type="text" name="fengineer_name" id="fengineer_name" class="form-control" readonly="readonly">
+                                <input type="text" name="fpartner2" id="fpartner2" class="form-control" readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm col-sm-6">
+                        <div class="row">
+                            <label for="fengineer2_name" class="col-sm-3 col-form-label">Assigned FSE Mess</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="fengineer2_name" id="fengineer2_name" class="form-control" readonly="readonly">
                             </div>
                         </div>
                     </div>
@@ -182,24 +207,19 @@
     var e_purpose = $('#fpurpose');
     var e_ticketnum = $('#fticketnum');
     var e_engineer_id = $('#fengineer_id');
+    var e_engineer2_id = $('#fengineer2_id');
     var e_engineer_notes = $('#feg_notes');
+    var e_engineer2_notes = $('#feg2_notes');
     var e_notes = $('#fnotes');
     var e_partner = $('#fpartner');
+    var e_partner2 = $('#fpartner2');
     var e_engineer_name = $('#fengineer_name');
+    var e_engineer2_name = $('#fengineer2_name');
     var e_purpose_notes = $('#fpurpose_notes');
     
     var e_partnum = $('#fpartnum');
     var e_partnum_notes = $('#fpartnum_notes');
     var e_serialnum = $('#fserialnum');
-    
-    var fpurpose = "";
-    var fticketnum = "";
-    var fengineer_id = "";
-    var fnotes = "";
-    var fpartner = "";
-    var fengineer_name = "";
-    var fpartnum = "";
-    var fserialnum = "";
     
     var dataSet = [];
         
@@ -211,6 +231,9 @@
         e_engineer_id.prop("readonly", true);
         e_engineer_id.val("");
         e_engineer_notes.html("");
+        e_engineer2_id.prop("readonly", true);
+        e_engineer2_id.val("");
+        e_engineer2_notes.html("");
         e_notes.prop("readonly", true);
         e_notes.val("");
         e_purpose_notes.html("Purpose Notes");
@@ -246,9 +269,41 @@
                     e_partner.val(jqXHR.pr_name);
                     e_engineer_name.val(jqXHR.eg_name);
                     e_engineer_notes.html("");
-                    e_partnum.focus();
                 }else if(jqXHR.status == 0){
                     e_engineer_notes.html(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //get detail eg mess
+    function get_eg_detail2(eg_id){
+        var url = '<?php echo base_url('front/coutgoing/info_eg'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fkey : e_engineer2_id.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    e_partner2.val(jqXHR.pr_name);
+                    e_engineer2_name.val(jqXHR.eg_name);
+                    e_engineer2_notes.html("");
+                }else if(jqXHR.status == 0){
+                    e_engineer2_notes.html(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -728,6 +783,7 @@
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             fticket : e_ticketnum.val(),
             fengineer_id : e_engineer_id.val(),
+            fengineer2_id : e_engineer2_id.val(),
             fpurpose : e_purpose.val(),
             fqty : parseInt($('#ttl_qty').html()),
             fnotes : e_notes.val()
@@ -768,6 +824,10 @@
             $(this).val($(this).val().toUpperCase());
 	});
         
+        e_engineer2_id.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        
         /*
         e_notes.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
@@ -788,8 +848,17 @@
             }else if(valpurpose === "RWH"){
                 e_ticketnum.prop("readonly", true);
                 e_ticketnum.val("");
+                
                 e_engineer_id.prop("readonly", true);
                 e_engineer_id.prop("value", "");
+                e_partner.prop("value", "");
+                e_engineer_name.prop("value", "");
+                
+                e_engineer2_id.prop("readonly", true);
+                e_engineer2_id.prop("value", "");
+                e_partner2.prop("value", "");
+                e_engineer2_name.prop("value", "");
+                
                 e_notes.prop("readonly", false);
                 e_notes.focus();
                 e_purpose_notes.html("Return Sparepart");
@@ -814,6 +883,26 @@
         e_engineer_id.on("keypress", function(e) {
             if (e.keyCode == 13) {
                 get_eg_detail(e_engineer_id.val());
+                $("#global_confirm .modal-title").html("Confirmation");
+                $("#global_confirm .modal-body h4").html("Add FSE Messenger Identity?");
+                $('#global_confirm').modal({
+                    show: true
+                });
+                $('#ans_yess').click(function () {
+                    e_engineer2_id.prop("readonly", false);
+                    e_engineer2_id.val('');
+                    e_engineer2_id.focus();
+                });
+                $('#ans_no').click(function () {
+                    e_partnum.focus();
+                });
+                return false;
+            }
+        });
+        
+        e_engineer2_id.on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                get_eg_detail2(e_engineer2_id.val());
                 return false;
             }
         });

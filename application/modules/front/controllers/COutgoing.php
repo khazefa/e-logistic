@@ -953,9 +953,7 @@ class COutgoing extends BaseController
         );
     }
     
-    public function print_pdf(){
-        $this->load->library('fpdf_generator');
-	
+    public function print_pdf(){	
         $orientation = "P";
         $paper_size = "A4";
         $width = 0;
@@ -1014,14 +1012,39 @@ class COutgoing extends BaseController
                 break;
         }
         
-        // intance object dan memberikan pengaturan halaman PDF
-        $pdf = new FPDF($orientation,'mm',$paper_size); // ukuran kertas atau  new FPDF('P','mm','A4');  
-	$pdf->AddPage('portrait');
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,10,'Hello World!');
+        // config fpdf options
+        $config=array($orientation=>'P','size'=>$paper_size);
+        $this->load->library('mypdf',$config);
+        $this->mypdf->AliasNbPages();
+        $this->mypdf->AddPage();
+        $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,32,15);
+        
+        $this->mypdf->SetFont('Arial','B',12);
+        $this->mypdf->Code39($width-80,10,'OT18070001',1,10);
+        $this->mypdf->ln(20);
 
+        $this->mypdf->setFont('Arial','B',11);
+        $this->mypdf->Cell(($width/6),10,'Stock Location',0,0,'L');
+        $this->mypdf->setFont('Arial','',11);
+        $this->mypdf->Cell(($width/4),10,'Gudang A',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',11);
+        $this->mypdf->Cell(($width/5),10,'      Ticket Number',0,0,'L');
+        $this->mypdf->setFont('Arial','',11);
+        $this->mypdf->Cell(($width/4),10,'AKJSA6512765',1,1, 'L');
+        
+        $this->mypdf->ln(0);
+        
+        $this->mypdf->setFont('Arial','B',11);
+        $this->mypdf->Cell(($width/6),10,'Service Partner',0,0,'L');
+        $this->mypdf->setFont('Arial','',11);
+        $this->mypdf->Cell(($width/4),10,'Qualita Indonesia',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',11);
+        $this->mypdf->Cell(($width/5),10,'      Customer',0,0,'L');
+        $this->mypdf->setFont('Arial','',11);
+        $this->mypdf->Cell(($width/4),10,'-',1,1, 'L');
+        
         $title = 'Print Transaction';
-        $pdf->SetTitle($title);
-        echo $pdf->Output('I', $title.'.pdf');
+        $this->mypdf->SetTitle($title);
+        $this->mypdf->Output('I', $title.'.pdf');
     }
 }

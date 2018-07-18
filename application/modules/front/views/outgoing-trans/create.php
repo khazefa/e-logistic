@@ -814,6 +814,8 @@
                     $('#error_modal').modal({
                         show: true
                     });
+                }else if(jqXHR.status == 1){
+                    print_transaction(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -821,6 +823,13 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
+    }
+    
+    function print_transaction(ftransno)
+    {
+        var param = ftransno;
+        var url = '<?php echo base_url('front/coutgoing/print_transaction/'); ?>'+param;
+        var newWindow=window.open(url);
     }
     
     $(document).ready(function() {

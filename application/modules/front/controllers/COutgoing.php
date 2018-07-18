@@ -930,11 +930,14 @@ class COutgoing extends BaseController
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
-                $this->print_transaction($transnum);
                 //clear cart list data
                 $arrWhere = array('fcartid'=>$cartid);
                 $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_outgoings_cart'), 'POST', FALSE);
                 if($rem_res->status){
+                    $success_response = array(
+                        'status' => 1,
+                        'message' => $transnum
+                    );
                     $response = $success_response;
                 }else{
                     $response = $error_response;
@@ -954,7 +957,7 @@ class COutgoing extends BaseController
         );
     }
     
-    private function print_transaction($ftrans_out){
+    public function print_transaction($ftrans_out){
         $orientation = "P";
         $paper_size = "A4";
         $width = 0;

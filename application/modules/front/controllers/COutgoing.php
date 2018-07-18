@@ -1017,31 +1017,114 @@ class COutgoing extends BaseController
         $this->load->library('mypdf',$config);
         $this->mypdf->AliasNbPages();
         $this->mypdf->AddPage();
-        $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,32,15);
+        $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
         
-        $this->mypdf->SetFont('Arial','B',12);
-        $this->mypdf->Code39($width-80,10,'OT18070001',1,10);
+        $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
+        $this->mypdf->SetFont('Arial','B',11);
+        $this->mypdf->Code39(($width*(65/100)),10,'OT18070001',1,10);
         $this->mypdf->ln(20);
 
-        $this->mypdf->setFont('Arial','B',11);
-        $this->mypdf->Cell(($width/6),10,'Stock Location',0,0,'L');
-        $this->mypdf->setFont('Arial','',11);
-        $this->mypdf->Cell(($width/4),10,'Gudang A',1,0, 'L');
-        $this->mypdf->setFont('Arial','B',11);
-        $this->mypdf->Cell(($width/5),10,'      Ticket Number',0,0,'L');
-        $this->mypdf->setFont('Arial','',11);
-        $this->mypdf->Cell(($width/4),10,'AKJSA6512765',1,1, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),7,'Purpose',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'Borrowing',1,1, 'L');
+        
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),7,'Stock Location',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'Gudang A',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(20/100)),7,'        Ticket Number',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'AKJSA6512765',1,1, 'L');
         
         $this->mypdf->ln(0);
         
-        $this->mypdf->setFont('Arial','B',11);
-        $this->mypdf->Cell(($width/6),10,'Service Partner',0,0,'L');
-        $this->mypdf->setFont('Arial','',11);
-        $this->mypdf->Cell(($width/4),10,'Qualita Indonesia',1,0, 'L');
-        $this->mypdf->setFont('Arial','B',11);
-        $this->mypdf->Cell(($width/5),10,'      Customer',0,0,'L');
-        $this->mypdf->setFont('Arial','',11);
-        $this->mypdf->Cell(($width/4),10,'-',1,1, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),7,'Service Partner',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'Qualita Indonesia',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'',1,1, 'L');
+        
+        $this->mypdf->ln(0);
+        
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),7,'Assigned FSE',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'Engineer 1',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'',1,1, 'L');
+        
+        $this->mypdf->ln(0);
+        
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),7,'FSE ID Number',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'EG1',1,0, 'L');
+        $this->mypdf->setFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
+        $this->mypdf->setFont('Arial','',10);
+        $this->mypdf->Cell(($width*(25/100)),7,'',1,1, 'L');
+        
+        $this->mypdf->ln(5);
+        $this->mypdf->setFont('Arial','B',13);
+        $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
+        $this->mypdf->ln(5);
+        // Garis atas untuk header
+        $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+        
+        $this->mypdf->ln(5);
+        
+        $this->mypdf->SetFont('Arial','B',10);
+        $this->mypdf->Cell(($width*(15/100)),6,'Requested PN',1,0);
+        $this->mypdf->Cell(($width*(20/100)),6,'Description',1,0);
+        $this->mypdf->Cell(($width*(7.5/100)),6,'Qty',1,0);
+        $this->mypdf->Cell(($width*(15/100)),6,'Issued PN',1,0);
+        $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,0);
+        $this->mypdf->Cell(($width*(5/100)),6,'Bin',1,0);
+        $this->mypdf->Cell(($width*(10/100)),6,'Status',1,1);
+        
+        $this->mypdf->SetFont('Arial','',9);
+        $results = array(
+            array('00101861000K','CD RDR,TRK 1/2/3 RD/WRT,8 PIN,TYPE APVD',1,'00101861000K123123'),
+            array('00103323000D','PRNTR,THRM RCPT,80,USB',1,'00103323000D879'),
+            array('00103323000B','PRNTR,THRM RCPT,80,USB',1,'NOSN')
+        );
+        foreach( $results as $row )
+        {
+//            var_dump($row[3]);exit();
+            $this->mypdf->Cell(($width*(15/100)),6,$row[0],1,0);
+            $this->mypdf->CellFitScale(($width*(20/100)),6,$row[1],1,0);
+            $this->mypdf->CellFitScale(($width*(7.5/100)),6,$row[2],1,0,'C');
+            $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
+            $this->mypdf->CellFitScale(($width*(18/100)),6,$row[3],1,0);
+            $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
+            $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+        }
+        
+        $this->mypdf->ln(1);
+        $this->mypdf->SetFont('Arial','',10);
+        $this->mypdf->drawTextBox('Notes:', $width-20, 12, 'L', 'T');
+        $this->mypdf->ln(10);
+        $this->mypdf->Cell(($width*(25/100)),6,'Requested by:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Approved by:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Processed by:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Received by:',0,1,'L');
+        $this->mypdf->ln(12);
+        $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,1,'L');
+        $this->mypdf->ln(0.1);
+        $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
+        $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,1,'L');
         
         $title = 'Print Transaction';
         $this->mypdf->SetTitle($title);

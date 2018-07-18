@@ -12,15 +12,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 *          implement protection in pdf.                                     *
 ****************************************************************************/
 
-if(function_exists('mcrypt_encrypt'))
-{
-	function RC4($key, $data)
-	{
-		return mcrypt_encrypt(MCRYPT_ARCFOUR, $key, $data, MCRYPT_MODE_STREAM, '');
-	}
-}
-else
-{
+//if(function_exists('mcrypt_encrypt'))
+//{
+//	function RC4($key, $data)
+//	{
+//		return mcrypt_encrypt(MCRYPT_ARCFOUR, $key, $data, MCRYPT_MODE_STREAM, '');
+//	}
+//}
+//else
+//{
 	function RC4($key, $data)
 	{
 		static $last_key, $last_state;
@@ -57,7 +57,7 @@ else
 		}
 		return $out;
 	}
-}
+//}
 
 class FPDF_Protection extends PDF_HTML
 {

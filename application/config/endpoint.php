@@ -146,6 +146,7 @@ $config['api_get_total_cart'] = constant('urlapi').'api/cpincomings/total_cart/'
 // ===========================
 $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //POST
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
+$config['api_list_view_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view_detail/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
 $config['api_add_outgoings_trans'] = constant('urlapi').'api/cpoutgoings/create_trans/'; //POST
@@ -158,4 +159,12 @@ $config['api_get_trans_num'] = constant('urlapi').'api/cpoutgoings/grab_ticket_n
 $config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info/'; //POST
 // ===========================
 //  End Outgoing Trans
+// ===========================
+
+// ===========================
+//  Begin Procedure
+// ===========================
+$config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
+// ===========================
+//  End Procedure
 // ===========================

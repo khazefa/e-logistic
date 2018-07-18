@@ -179,7 +179,7 @@ class COutgoing extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    public function info_eg(){
+    public function info_eg_json(){
         $rs = array();
         $arrWhere = array();
         $success_response = array();

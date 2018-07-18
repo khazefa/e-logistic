@@ -249,7 +249,7 @@
     
     //get detail eg
     function get_eg_detail(eg_id){
-        var url = '<?php echo base_url('front/coutgoing/info_eg'); ?>';
+        var url = '<?php echo base_url('front/coutgoing/info_eg_json'); ?>';
         var type = 'POST';
         
         var data = {
@@ -282,7 +282,7 @@
     
     //get detail eg mess
     function get_eg_detail2(eg_id){
-        var url = '<?php echo base_url('front/coutgoing/info_eg'); ?>';
+        var url = '<?php echo base_url('front/coutgoing/info_eg_json'); ?>';
         var type = 'POST';
         
         var data = {

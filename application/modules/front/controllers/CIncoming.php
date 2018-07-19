@@ -818,6 +818,70 @@ class CIncoming extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if(!empty($rs)){
+            $arrData = array();
+            $partname = "";
+            foreach ($rs as $r){
+                $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                $rs_part = $this->get_info_part($partnum);
+                foreach ($rs_part as $p){
+                    $partname = $p["name"];
+                }
+                $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+                $qty = filter_var($r->dt_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+                
+                $row['partno'] = $partnum;
+                $row['serialno'] = $serialnum;
+                $row['partname'] = $partname;
+                $row['qty'] = (int)$qty;
+                $row['status'] = "RG";
+                
+                $arrData[] = $row;
+//                $dataInfo = array('fpartnum'=>$partnum, 'fserialnum'=>$serialnum, 'fcartid'=>$cartid, 'fqty'=>$qty, 
+//                        'fuser'=>$fuser, 'fname'=>$fname);
+//                $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_incomings_cart'), 'POST', FALSE);
+            }
+
+            $success_response = array(
+                'status' => 1,
+                'data'=> $arrData
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Data not available'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to check outgoing transaction
+     */
+    public function verify_outgoing_backup(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $fuser = $this->vendorUR;
+        $fname = $this->name;
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' )."inr";
+        
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
             foreach ($rs as $r){
                 $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
                 $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);

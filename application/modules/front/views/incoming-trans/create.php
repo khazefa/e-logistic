@@ -313,11 +313,6 @@
     //init table
     function init_table_r(){        
         table_match = $('#match_grid').DataTable({
-//            select: {
-//                style: 'multi'
-//            },
-//            scrollY: '50vh',
-//            scrollCollapse: true,
             searching: false,
             ordering: false,
             info: false,
@@ -327,21 +322,13 @@
             deferRender: true,
             processing: true,
             lengthChange: false,
-            ajax: {
-                url: "<?= base_url('front/cincoming/get_list_cart_datatable2'); ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-                data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
-                } ),
-            },
+            data: dataSet,
             columns: [
-                { "data": 'partno' },
-                { "data": 'serialno' },
-                { "data": 'name' },
-                { "data": 'qty' },
-                { "data": 'status' },
+                { "title": "Part Number", "class": "left" },
+                { "title": "Serial Number", "class": "left" },
+                { "title": "Part Name", "class": "left" },
+                { "title": "Qty", "class": "left" },
+                { "title": "Status", "class": "left" },
             ]
         });
 
@@ -617,9 +604,18 @@
                 if(jqXHR.status == 0){
                     e_verify_note_r.html(jqXHR.message);
                 }else if(jqXHR.status == 1){
-                    reload2();
                     init_form_r();
-//                    get_total_s();
+                    //load part from nearby warehouse
+                    $.each(jqXHR.data, function(i, object) {
+                        table_match.row.add(
+                            [object.partno, object.serialno, object.partname, object.qty, object.status]
+                        ).draw();
+//                        $.each(object, function(property, data) {
+//                            table_match.row.add(
+//                                [data.partno, data.serialno, data.partname, data.qty, data.status]
+//                            ).draw();
+//                        });
+                    });
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -634,6 +630,7 @@
         get_total_s();
         
         init_table_r();
+        table_match.clear().draw();
         
         
         e_partnum_s.on("keypress", function(e){
@@ -728,14 +725,18 @@
         
         e_serialnum_r.on("keypress", function(e){
             if (e.keyCode == 13) {
-                if(isEmpty(e_partnum_r.val()) || isEmpty(e_serialnum_r.val())){
-                    alert('Please fill in required field!');
-                    e_serialnum_r.focus();
+                if(isEmpty(e_trans_out.val())){
+                    alert('Please fill in outgoing transaction number!');
+                    e_trans_out.focus();
                 }else{
-                    verify_data();
-                    reload2();
-                    init_form_r();
-                    e_partnum_r.focus();
+                    if(isEmpty(e_partnum_r.val()) || isEmpty(e_serialnum_r.val())){
+                        alert('Please fill in required field!');
+                        e_serialnum_r.focus();
+                    }else{
+                        verify_data();
+                        init_form_r();
+                        e_partnum_r.focus();
+                    }
                 }
                 return false;
             }

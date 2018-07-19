@@ -706,4 +706,40 @@ class CIncoming extends BaseController
             json_encode($response)
         );
     }
+    
+    /**
+     * This function is used to check outgoing transaction
+     */
+    public function check_outgoing(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if($rs){
+            $success_response = array(
+                'status' => 1,
+                'message'=> 'Data available'
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Data not available'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
 }

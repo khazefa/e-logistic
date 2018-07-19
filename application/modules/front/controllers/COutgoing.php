@@ -130,6 +130,8 @@ class COutgoing extends BaseController
             $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
             $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
             $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
+            $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
             $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);

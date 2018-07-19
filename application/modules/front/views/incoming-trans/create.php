@@ -6,13 +6,13 @@
             <div class="card-body">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-supply-tab" data-toggle="tab" href="#nav-supply" role="tab" aria-controls="nav-supply" aria-selected="true">Supply</a>
-                        <a class="nav-item nav-link" id="nav-return-tab" data-toggle="tab" href="#nav-return" role="tab" aria-controls="nav-return" aria-selected="false">Return</a>
+                        <a class="nav-item nav-link " id="nav-supply-tab" data-toggle="tab" href="#nav-supply" role="tab" aria-controls="nav-supply" aria-selected="true">Supply</a>
+                        <a class="nav-item nav-link active" id="nav-return-tab" data-toggle="tab" href="#nav-return" role="tab" aria-controls="nav-return" aria-selected="false">Return</a>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <!-- Begin Content Panel Supply -->
-                    <div class="tab-pane fade show active" id="nav-supply" role="tabpanel" aria-labelledby="nav-supply-tab">
+                    <div class="tab-pane fade " id="nav-supply" role="tabpanel" aria-labelledby="nav-supply-tab">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card-box">
@@ -67,7 +67,7 @@
                             <div class="col-md-8">
                                 <div class="card-box table-responsive">
                                     <h4 class="m-b-30 header-title">Detail Transaction</h4>
-                                    <table id="cart_grid_s" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                                    <table id="cart_grid_s" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                         <thead>
                                         <tr>
                                             <th>&nbsp;</th>
@@ -92,8 +92,104 @@
                     <!-- End Content Panel Supply -->
                     
                     <!-- Begin Content Panel Return -->
-                    <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab">
-                        
+                    <div class="tab-pane fade show active" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="card bg-light">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Retrieve Outgoing Transaction</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                                 </div>
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Outgoing Trans. No.">
+                                            </div>
+                                            <div class="input-group col-sm-12">
+                                                <span id="ftrans_out_notes" class="help-block text-danger"><small></small></span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2"><hr></div>
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fengineer_id" id="fengineer_id" class="form-control" placeholder="FSE ID">
+                                            </div>
+                                            <span id="feg_notes" class="help-block text-danger"><small></small></span>
+                                        </div>
+                                        <div class="mt-2"></div>
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fengineer_name" id="fengineer_name" class="form-control" placeholder="Assigned FSE">
+                                            </div>
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fpartner" id="fpartner" class="form-control" placeholder="Service Partner">
+                                            </div>
+                                        </div>
+                                        <div class="mt-2"></div>
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fengineer2_id" id="fengineer2_id" class="form-control" placeholder="FSE ID Mess">
+                                            </div>
+                                            <span id="feg2_notes" class="help-block text-danger"><small></small></span>
+                                        </div>
+                                        <div class="mt-2"></div>
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fengineer2_name" id="fengineer2_name" class="form-control" placeholder="Assigned FSE Mess">
+                                            </div>
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="fpartner2" id="fpartner2" class="form-control" placeholder="Service Partner Mess">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="btn_submit_r" class="btn btn-success waves-effect waves-light">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-7">
+                                <div class="card bg-light">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Verify Data</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                                 </div>
+                                                <input type="text" name="fpartnum_r" id="fpartnum_r" class="form-control" placeholder="Part Number">
+                                            </div>
+                                            <div class="input-group col-sm-6">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                                 </div>
+                                                <input type="text" name="fserialnum_r" id="fserialnum_r" class="form-control" placeholder="Serial Number">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2"></div>
+                                <table id="match_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Part Number</th>
+                                        <th>Serial Number</th>
+                                        <th>Part Name</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <!-- End Content Panel Return -->
                 </div>
@@ -104,9 +200,34 @@
 </div>
 </form>
 <script type="text/javascript">
+   /*
+    * variable for supply transaction
+    */
     var e_partnum_s = $('#fpartnum_s');
     var e_qty_s = $('#fqty_s');
     var e_part_note_s = $('#fpartnum_s_notes');
+   /*
+    * end variable for supply transaction
+    */
+   
+   /*
+    * variable for supply transaction
+    */
+   var e_trans_out = $('#ftrans_out');
+   var e_trans_out_notes = $('#ftrans_out_notes');
+   var e_partnum_r = $('#fpartnum_r');
+   var e_serialnum_r = $('#fserialnum_r');
+    var e_engineer_id = $('#fengineer_id');
+    var e_engineer2_id = $('#fengineer2_id');
+    var e_engineer_notes = $('#feg_notes');
+    var e_engineer2_notes = $('#feg2_notes');
+    var e_partner = $('#fpartner');
+    var e_partner2 = $('#fpartner2');
+    var e_engineer_name = $('#fengineer_name');
+    var e_engineer2_name = $('#fengineer2_name');
+   /*
+    * variable for supply transaction
+    */
     
     var dataSet = [];
 
@@ -178,6 +299,34 @@
         table.ajax.reload();
     }
     
+    //init table
+    function init_table_r(){
+        table_match = $('#match_grid').DataTable({
+            searching: false,
+            ordering: false,
+            info: false,
+            paging: false,
+            destroy: true,
+            stateSave: false,
+            deferRender: true,
+            processing: true,
+            lengthChange: false,
+            data: dataSet,
+            columns: [
+                { "title": "Part Number", "class": "left" },
+                { "title": "Serial Number", "class": "left" },
+                { "title": "Part Name", "class": "left" },
+                { "title": "Qty", "class": "left" },
+                { "title": "Status", "class": "left" },
+            ]
+        });
+    }
+    
+    //reload table
+    function reload2(){
+        table_match.ajax.reload();
+    }
+    
     //check part
     function check_part(partno){
         var status = 0;
@@ -241,7 +390,7 @@
                     alert(jqXHR.message);
                 }else if(jqXHR.status == 1){
                     reload();
-                    get_total();
+                    get_total_s();
                 }else if(jqXHR.status == 2){
                     alert(jqXHR.message);
                     init_form_s();
@@ -254,7 +403,7 @@
         });
     }
     
-    function get_total() {
+    function get_total_s() {
         var url = '<?php echo base_url('front/cincoming/get_total_cart'); ?>';
         var type = 'POST';
         
@@ -280,7 +429,7 @@
         });
     }
     
-    //add to cart
+    //update cart
     function update_cart(id, qty){        
         var url = '<?php echo base_url('front/cincoming/update_cart'); ?>';
         var type = 'POST';
@@ -301,7 +450,7 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 1){
                     reload();
-                    get_total();
+                    get_total_s();
                 }else if(jqXHR.status === 0){
                     alert(jqXHR.message);
                 }
@@ -313,7 +462,7 @@
         });
     }
     
-    //add to cart
+    //delete cart
     function delete_cart(id){        
         var url = '<?php echo base_url('front/cincoming/delete_cart'); ?>';
         var type = 'POST';
@@ -333,7 +482,7 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 1){
                     reload();
-                    get_total();
+                    get_total_s();
                 }else if(jqXHR.status === 0){
                     alert(jqXHR.message);
                 }
@@ -379,9 +528,50 @@
         });
     }
     
+    //check outgoing transaction
+    function check_trans_out(transnum){
+        var status = 0;
+        
+        var url = '<?php echo base_url('front/cincoming/check_outgoing'); ?>';
+        var type = 'POST';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            ftrans_out : e_trans_out.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 0){
+                    e_trans_out_notes.html(jqXHR.message);
+                    e_partnum_s.val("");
+                    e_partnum_s.focus();
+                    status = 0;
+                }else if(jqXHR.status === 1){
+                    e_trans_out_notes.html(jqXHR.message);
+                    e_qty_s.focus();
+                    status = 1;
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+        return status;
+    }
+    
     $(document).ready(function() {
         init_table_s();
-        get_total();
+        get_total_s();
+        
+        init_table_r();
+        
         
         e_partnum_s.on("keypress", function(e){
             if (e.keyCode == 13) {
@@ -443,6 +633,19 @@
                 $('#error_modal').modal({
                     show: true
                 });
+            }
+        });
+        
+        e_trans_out.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                if(isEmpty(e_trans_out.val())){
+                    alert('Please fill in this field!');
+                    e_trans_out.focus();
+                }else{
+                    check_trans_out(e_trans_out.val());
+                    e_trans_out.prop("readonly", true);
+                }
+                return false;
             }
         });
     });

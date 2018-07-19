@@ -136,7 +136,17 @@ $config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; 
 // ===========================
 $config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //POST
 $config['api_list_view_incomings'] = constant('urlapi').'api/cpincomings/list_view/'; //POST
-$config['api_get_total_cart'] = constant('urlapi').'api/cpincomings/total_cart/'; //GET
+$config['api_list_view_detail_incomings'] = constant('urlapi').'api/cpincomings/list_view_detail/'; //POST
+$config['api_list_incomings_cart'] = constant('urlapi').'api/cpincomings/list_tmp/'; //POST
+$config['api_add_incomings_cart'] = constant('urlapi').'api/cpincomings/create_trans_tmp/'; //POST
+$config['api_add_incomings_trans'] = constant('urlapi').'api/cpincomings/create_trans/'; //POST
+$config['api_add_incomings_trans_detail'] = constant('urlapi').'api/cpincomings/create_trans_detail/'; //POST
+$config['api_update_incomings_cart'] = constant('urlapi').'api/cpincomings/update_cart/'; //POST
+$config['api_delete_incomings_cart'] = constant('urlapi').'api/cpincomings/delete_cart/'; //POST
+$config['api_clear_incomings_cart'] = constant('urlapi').'api/cpincomings/delete_multi_cart/'; //POST
+$config['api_total_incomings_cart'] = constant('urlapi').'api/cpincomings/total_cart/'; //POST
+$config['api_get_trans_num'] = constant('urlapi').'api/cpincomings/grab_ticket_num/'; //POST
+$config['api_get_cart_info'] = constant('urlapi').'api/cpincomings/get_cart_info/'; //POST
 // ===========================
 //  End Incoming Trans
 // ===========================

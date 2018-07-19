@@ -186,4 +186,14 @@ $route['new-outgoing-trans'] = 'front/coutgoing/add';
 //  End Routing Outgoing Trans
 // ===========================
 
+// ===========================
+//  Routing Incoming Trans
+// ===========================
+$route['incoming-trans'] = 'front/cincoming';
+$route['view-incoming-trans'] = 'front/cincoming/views';
+$route['new-incoming-trans'] = 'front/cincoming/add';
+// ===========================
+//  End Routing Incoming Trans
+// ===========================
+
 /* END USER CONTROLLER */

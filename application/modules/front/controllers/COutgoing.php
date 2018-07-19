@@ -878,7 +878,7 @@ class COutgoing extends BaseController
     }
     
     /**
-     * This function is used to add cart
+     * This function is used to complete transaction
      */
     public function submit_trans(){
         $success_response = array(
@@ -902,7 +902,7 @@ class COutgoing extends BaseController
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         $arrParam = array('fparam'=>"OT");
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_trans_num'), 'POST', FALSE);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){

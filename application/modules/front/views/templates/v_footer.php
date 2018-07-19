@@ -23,7 +23,7 @@
                 <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
               </div>
               <div class="modal-body">
-                <h4>Are you sure?</h4>
+                <h4>Process transaction?</h4>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-info" data-dismiss="modal" data-toggle="modal" data-target="#add_request">Yes</button>

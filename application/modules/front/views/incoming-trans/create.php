@@ -171,6 +171,9 @@
                                                  </div>
                                                 <input type="text" name="fserialnum_r" id="fserialnum_r" class="form-control" placeholder="Serial Number">
                                             </div>
+                                            <div class="input-group col-sm-12">
+                                                <span id="fverify_r" class="help-block text-danger"><small></small></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -211,12 +214,13 @@
     */
    
    /*
-    * variable for supply transaction
+    * variable for return transaction
     */
    var e_trans_out = $('#ftrans_out');
    var e_trans_out_notes = $('#ftrans_out_notes');
    var e_partnum_r = $('#fpartnum_r');
    var e_serialnum_r = $('#fserialnum_r');
+   var e_verify_note_r = $('#fverify_r');
     var e_engineer_id = $('#fengineer_id');
     var e_engineer2_id = $('#fengineer2_id');
     var e_engineer_notes = $('#feg_notes');
@@ -236,6 +240,13 @@
         e_partnum_s.val("");
         e_qty_s.val(1);
         e_part_note_s.html("");
+    }
+    
+    function init_form_r(){
+        e_partnum_r.val("");
+        e_partnum_r.prop("readonly", false);
+        e_serialnum_r.val("");
+        e_verify_note_r.html("");
     }
     
     //init table
@@ -300,8 +311,13 @@
     }
     
     //init table
-    function init_table_r(){
+    function init_table_r(){        
         table_match = $('#match_grid').DataTable({
+//            select: {
+//                style: 'multi'
+//            },
+//            scrollY: '50vh',
+//            scrollCollapse: true,
             searching: false,
             ordering: false,
             info: false,
@@ -311,15 +327,26 @@
             deferRender: true,
             processing: true,
             lengthChange: false,
-            data: dataSet,
+            ajax: {
+                url: "<?= base_url('front/cincoming/get_list_cart_datatable2'); ?>",
+                type: "POST",
+                dataType: "JSON",
+                contentType: "application/json",
+                data: JSON.stringify( {
+                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                } ),
+            },
             columns: [
-                { "title": "Part Number", "class": "left" },
-                { "title": "Serial Number", "class": "left" },
-                { "title": "Part Name", "class": "left" },
-                { "title": "Qty", "class": "left" },
-                { "title": "Status", "class": "left" },
+                { "data": 'partno' },
+                { "data": 'serialno' },
+                { "data": 'name' },
+                { "data": 'qty' },
+                { "data": 'status' },
             ]
         });
+
+        table_match.buttons().container()
+                .appendTo('#match_grid_wrapper .col-md-6:eq(0)');
     }
     
     //reload table
@@ -553,7 +580,6 @@
                     e_partnum_s.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){
-                    e_trans_out_notes.html(jqXHR.message);
                     e_qty_s.focus();
                     status = 1;
                 }
@@ -564,6 +590,43 @@
             }
         });
         return status;
+    }
+    
+    //check data to outgoing data
+    function verify_data(){
+        var total_qty = table_match.rows().count();
+        
+        var url = '<?php echo base_url('front/cincoming/verify_outgoing'); ?>';
+        var type = 'POST';
+
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            ftrans_out : e_trans_out.val(),
+            fpartnum : e_partnum_r.val(),
+            fserialnum : e_serialnum_r.val()
+        };
+
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 0){
+                    e_verify_note_r.html(jqXHR.message);
+                }else if(jqXHR.status == 1){
+                    reload2();
+                    init_form_r();
+//                    get_total_s();
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
     }
     
     $(document).ready(function() {
@@ -644,6 +707,35 @@
                 }else{
                     check_trans_out(e_trans_out.val());
                     e_trans_out.prop("readonly", true);
+                }
+                return false;
+            }
+        });
+        
+        e_partnum_r.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                if(isEmpty(e_partnum_r.val())){
+                    alert('Please fill in this field!');
+                    e_partnum_r.focus();
+                }else{
+                    e_partnum_r.prop("readonly", true);
+                    e_serialnum_r.val("");
+                    e_serialnum_r.focus();
+                }
+                return false;
+            }
+        });
+        
+        e_serialnum_r.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                if(isEmpty(e_partnum_r.val()) || isEmpty(e_serialnum_r.val())){
+                    alert('Please fill in required field!');
+                    e_serialnum_r.focus();
+                }else{
+                    verify_data();
+                    reload2();
+                    init_form_r();
+                    e_partnum_r.focus();
                 }
                 return false;
             }

@@ -162,6 +162,7 @@ $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tm
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
 $config['api_add_outgoings_trans'] = constant('urlapi').'api/cpoutgoings/create_trans/'; //POST
 $config['api_add_outgoings_trans_detail'] = constant('urlapi').'api/cpoutgoings/create_trans_detail/'; //POST
+$config['api_update_outgoings_trans'] = constant('urlapi').'api/cpoutgoings/update/'; //POST
 $config['api_update_outgoings_trans_detail'] = constant('urlapi').'api/cpoutgoings/update_detail/'; //POST
 $config['api_update_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/update_cart/'; //POST
 $config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_cart/'; //POST

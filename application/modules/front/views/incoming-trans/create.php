@@ -113,6 +113,13 @@
                                         </div>
                                         <div class="mt-2"><hr></div>
                                         <div class="form-row">
+                                            <div class="input-group col-sm-8">
+                                                <input type="text" name="ffe_report" id="ffe_report" class="form-control" placeholder="FE Report Number">
+                                            </div>
+                                            <span id="feg_notes" class="help-block text-danger"><small></small></span>
+                                        </div>
+                                        <div class="mt-2"></div>
+                                        <div class="form-row">
                                             <div class="input-group col-sm-6">
                                                 <input type="text" name="fengineer_id" id="fengineer_id" class="form-control" placeholder="FSE ID">
                                             </div>
@@ -563,10 +570,12 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
                     e_trans_out_notes.html(jqXHR.message);
+                    e_trans_out.prop("readonly", false);
                     e_partnum_s.val("");
                     e_partnum_s.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){
+                    e_trans_out_notes.html("");
                     e_qty_s.focus();
                     status = 1;
                 }
@@ -625,13 +634,76 @@
         });
     }
     
+    //clear cart
+    function clear_cart(){        
+        var url = '<?php echo base_url('front/cincoming/clear_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>"
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    //done
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //submit return transaction
+    function complete_return(){
+        var url = '<?php echo base_url('front/cincoming/submit_trans_return'); ?>';
+        var type = 'POST';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>"
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 0){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                }else if(jqXHR.status == 1){
+//                    print_transaction(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
     $(document).ready(function() {
         init_table_s();
         get_total_s();
         
         init_table_r();
+        clear_cart();
         table_match.clear().draw();
-        
         
         e_partnum_s.on("keypress", function(e){
             if (e.keyCode == 13) {
@@ -740,6 +812,30 @@
                 }
                 return false;
             }
+        });
+        
+        $("#btn_submit_r").on("click", function(e){
+//            var total_qty = parseInt($('#ttl_qty_s').html());
+            
+//            if(total_qty > 0){
+                $('#confirmation').modal({
+                    show: true
+                });
+                $('#opt_yess').click(function () {
+                    complete_return();
+                    window.location.href = "<?php echo base_url('new-incoming-trans'); ?>";
+                });
+                $('#opt_no').click(function () {
+                    complete_return();
+                    window.location.href = "<?php echo base_url('incoming-trans'); ?>";
+                });
+//            }else{
+//                $("#error_modal .modal-title").html("Message");
+//                $("#error_modal .modal-body h4").html("You have not filled out the data");
+//                $('#error_modal').modal({
+//                    show: true
+//                });
+//            }
         });
     });
 </script>

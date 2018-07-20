@@ -7,8 +7,8 @@
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/outgoing-trans/create.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CIncoming.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/incoming-trans/create.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_header.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/endpoint.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CParts.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/routes.php</file>
         </group>
     </open-files>

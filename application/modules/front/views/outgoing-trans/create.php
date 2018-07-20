@@ -829,7 +829,8 @@
     {
         var param = ftransno;
         var url = '<?php echo base_url('front/coutgoing/print_transaction/'); ?>'+param;
-        var newWindow=window.open(url);
+//        var newWindow=window.open(url);
+        window.location.assign(url);
     }
     
     $(document).ready(function() {

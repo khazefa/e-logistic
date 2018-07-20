@@ -94,7 +94,7 @@
                     <!-- Begin Content Panel Return -->
                     <div class="tab-pane fade show active" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab">
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <div class="card bg-light">
                                     <div class="card-header bg-primary text-white">
                                         <strong class="card-title">Retrieve Outgoing Transaction</strong>
@@ -113,41 +113,8 @@
                                         </div>
                                         <div class="mt-2"><hr></div>
                                         <div class="form-row">
-                                            <div class="input-group col-sm-8">
+                                            <div class="input-group col-sm-6">
                                                 <input type="text" name="ffe_report" id="ffe_report" class="form-control" placeholder="FE Report Number">
-                                            </div>
-                                            <span id="feg_notes" class="help-block text-danger"><small></small></span>
-                                        </div>
-                                        <div class="mt-2"></div>
-                                        <div class="form-row">
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fengineer_id" id="fengineer_id" class="form-control" placeholder="FSE ID">
-                                            </div>
-                                            <span id="feg_notes" class="help-block text-danger"><small></small></span>
-                                        </div>
-                                        <div class="mt-2"></div>
-                                        <div class="form-row">
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fengineer_name" id="fengineer_name" class="form-control" placeholder="Assigned FSE">
-                                            </div>
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fpartner" id="fpartner" class="form-control" placeholder="Service Partner">
-                                            </div>
-                                        </div>
-                                        <div class="mt-2"></div>
-                                        <div class="form-row">
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fengineer2_id" id="fengineer2_id" class="form-control" placeholder="FSE ID Mess">
-                                            </div>
-                                            <span id="feg2_notes" class="help-block text-danger"><small></small></span>
-                                        </div>
-                                        <div class="mt-2"></div>
-                                        <div class="form-row">
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fengineer2_name" id="fengineer2_name" class="form-control" placeholder="Assigned FSE Mess">
-                                            </div>
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="fpartner2" id="fpartner2" class="form-control" placeholder="Service Partner Mess">
                                             </div>
                                         </div>
                                     </div>
@@ -159,7 +126,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-7">
+                            <div class="col-md-8">
                                 <div class="card bg-light">
                                     <div class="card-header bg-primary text-white">
                                         <strong class="card-title">Verify Data</strong>
@@ -228,14 +195,7 @@
    var e_partnum_r = $('#fpartnum_r');
    var e_serialnum_r = $('#fserialnum_r');
    var e_verify_note_r = $('#fverify_r');
-    var e_engineer_id = $('#fengineer_id');
-    var e_engineer2_id = $('#fengineer2_id');
-    var e_engineer_notes = $('#feg_notes');
-    var e_engineer2_notes = $('#feg2_notes');
-    var e_partner = $('#fpartner');
-    var e_partner2 = $('#fpartner2');
-    var e_engineer_name = $('#fengineer_name');
-    var e_engineer2_name = $('#fengineer2_name');
+    var e_fe_report = $('#ffe_report');
    /*
     * variable for supply transaction
     */
@@ -669,7 +629,9 @@
         var url = '<?php echo base_url('front/cincoming/submit_trans_return'); ?>';
         var type = 'POST';
         var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>"
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
+            ftrans_out : e_trans_out.val(),
+            ffe_report : e_fe_report.val()
         };
         
         $.ajax({
@@ -776,6 +738,7 @@
                 }else{
                     check_trans_out(e_trans_out.val());
                     e_trans_out.prop("readonly", true);
+                    e_fe_report.focus();
                 }
                 return false;
             }

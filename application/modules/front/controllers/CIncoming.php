@@ -951,6 +951,7 @@ class CIncoming extends BaseController
                
         $date = date('Y-m-d'); 
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $ffe_report = $this->input->post('ffe_report', TRUE);
         $fticket = $this->input->post('fticket', TRUE);
         $fengineer_id = $this->input->post('fengineer_id', TRUE);
         $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
@@ -976,14 +977,14 @@ class CIncoming extends BaseController
                         'fqty'=>$d['qty']);
                     $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$d['stock']+(int)$d['qty'], 
                         'fflag'=>'N');
-                    $updateDetail = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno']);
+                    $updateDetailOutgoing = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno']);
                     $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
                             'POST', FALSE);
                     //update stock by fsl code and part number
                     $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
                             'POST', FALSE);
-                    //update detail outgoing status by outgoing number and part number
-                    $update_status_outgoing = send_curl($this->security->xss_clean($updateDetail), $this->config->item('api_update_outgoings_trans_detail'), 
+                    //update detail outgoing status by outgoing number, part number and serial number
+                    $update_status_detail_outgoing = send_curl($this->security->xss_clean($updateDetailOutgoing), $this->config->item('api_update_outgoings_trans_detail'), 
                             'POST', FALSE);
                 }
             }
@@ -993,6 +994,10 @@ class CIncoming extends BaseController
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
+                //update outgoing status by outgoing number
+                $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
+                $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                        'POST', FALSE);
                 //clear cart list data
                 $arrWhere = array('fcartid'=>$cartid);
                 $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);

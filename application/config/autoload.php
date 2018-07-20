@@ -103,7 +103,7 @@ $autoload['helper'] = array('url','security','form','file','string','text','arra
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array('endpoint');
+$autoload['config'] = array('main_endpoint','endpoint');
 
 /*
 | -------------------------------------------------------------------

@@ -111,17 +111,6 @@
                                                 <span id="ftrans_out_notes" class="help-block text-danger"><small></small></span>
                                             </div>
                                         </div>
-                                        <div class="mt-2"><hr></div>
-                                        <div class="form-row">
-                                            <div class="input-group col-sm-6">
-                                                <input type="text" name="ffe_report" id="ffe_report" class="form-control" placeholder="FE Report Number">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <button type="button" id="btn_submit_r" class="btn btn-success waves-effect waves-light">
-                                            Submit
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -165,6 +154,29 @@
                                     <tbody>
                                     </tbody>
                                 </table>
+                                <div class="row">
+                                    <div class="col-md-3 offset-md-9">
+                                        Total Quantity: <span id="ttl_qty_r">0</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2"></div>
+                                <div class="card-box col-md-6 offset-md-6">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Input FE Report</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-12">
+                                                <input type="text" name="ffe_report" id="ffe_report" class="form-control" placeholder="FE Report Number">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="btn_submit_r" class="btn btn-success waves-effect waves-light">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -201,6 +213,8 @@
     */
     
     var dataSet = [];
+    
+    var outgoing_qty = 0;
 
     //initial form supply
     function init_form_s(){
@@ -384,6 +398,7 @@
         });
     }
     
+    //get total cart supply
     function get_total_s() {
         var url = '<?php echo base_url('front/cincoming/get_total_cart'); ?>';
         var type = 'POST';
@@ -400,6 +415,33 @@
                     $('#ttl_qty_s').html(jqXHR.ttl_cart);
                 }else{
                     $('#ttl_qty_s').html(jqXHR.ttl_cart);
+                }
+            },
+            cache: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //get total cart return
+    function get_total_r() {
+        var url = '<?php echo base_url('front/cincoming/get_total_cart_return'); ?>';
+        var type = 'POST';
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            success:function(jqXHR)
+            {
+                if(jqXHR.status === 1){
+                    $('#ttl_qty_r').html(jqXHR.ttl_cart);
+                }else{
+                    $('#ttl_qty_r').html(jqXHR.ttl_cart);
                 }
             },
             cache: false,
@@ -531,12 +573,11 @@
                 if(jqXHR.status === 0){
                     e_trans_out_notes.html(jqXHR.message);
                     e_trans_out.prop("readonly", false);
-                    e_partnum_s.val("");
-                    e_partnum_s.focus();
+                    e_trans_out.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){
                     e_trans_out_notes.html("");
-                    e_qty_s.focus();
+                    outgoing_qty = jqXHR.total_qty;
                     status = 1;
                 }
             },
@@ -574,6 +615,10 @@
                     e_verify_note_r.html(jqXHR.message);
                 }else if(jqXHR.status == 1){
                     init_form_r();
+                    //cek total qty outgoing jika verifikasi melebihi qotal qty tolak verifikasi selanjutnya, 
+                    //jika kurang dari total qty maka admin harus input FE Report
+                    //jika sama maka tidak harus input FE Report
+                    
                     //load part from nearby warehouse
                     $.each(jqXHR.data, function(i, object) {
                         table_match.row.add(
@@ -665,6 +710,7 @@
         
         init_table_r();
         clear_cart();
+        get_total_r();
         table_match.clear().draw();
         
         e_partnum_s.on("keypress", function(e){
@@ -738,7 +784,7 @@
                 }else{
                     check_trans_out(e_trans_out.val());
                     e_trans_out.prop("readonly", true);
-                    e_fe_report.focus();
+                    e_partnum_r.focus();
                 }
                 return false;
             }
@@ -769,6 +815,7 @@
                         e_serialnum_r.focus();
                     }else{
                         verify_data();
+                        get_total_r();
                         init_form_r();
                         e_partnum_r.focus();
                     }

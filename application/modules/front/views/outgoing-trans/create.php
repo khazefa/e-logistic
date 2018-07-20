@@ -512,13 +512,13 @@
                     $.each(jqXHR.data, function(i, object) {
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
-                                if(detail_data.stock === "0"){
-                                    //if stock is 0 then hide information list
-                                }else{
+//                                if(detail_data.stock === "0"){
+//                                    //if stock is 0 then hide information list
+//                                }else{
                                     table2.row.add(
                                         [detail_data.partno, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
-                                }
+//                                }
                             });
                         });
                     });

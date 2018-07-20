@@ -15,6 +15,7 @@ class BaseController extends CI_Controller {
     protected $role = '';
     protected $roleText = '';
     protected $repo = '';
+    protected $repoName = '';
     
     protected $comId = '';
     protected $comUR = '';
@@ -62,11 +63,13 @@ class BaseController extends CI_Controller {
             $this->role = $this->session->userdata ( 'role' );
             $this->roleText = $this->session->userdata ( 'roleText' );
             $this->repo = $this->session->userdata ( 'vendorRepo' );
+            $this->repoName = $this->session->userdata ( 'vendorRepoName' );
 
             $this->global ['name'] = $this->name;
             $this->global ['role'] = $this->role;
             $this->global ['role_text'] = $this->roleText;
             $this->global ['repo'] = $this->repo;
+            $this->global ['repoName'] = $this->repoName;
         }
     }
     

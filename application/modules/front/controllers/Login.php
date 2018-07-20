@@ -69,6 +69,7 @@ class Login extends CI_Controller
             
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
+                $wh_name = $this->get_info_warehouse_name($res->accessRepo);
                 //Set Session for login
                 $sessionArray = array(
                     'vendorId'=>$res->accessId,         
@@ -76,6 +77,7 @@ class Login extends CI_Controller
                     'vendorName'=>$res->accessName,          
                     'isAdm'=>$res->isAdmin,          
                     'vendorRepo'=>$res->accessRepo,          
+                    'vendorRepoName'=>$wh_name,          
                     'role'=>$res->role,
                     'roleText'=>$res->roleText,
                     'cart_session'=> md5($res->accessUR."-".$res->accessName."-".$res->accessRepo."-".$res->roleText),
@@ -89,6 +91,27 @@ class Login extends CI_Controller
                 redirect('login');
             }
         }
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_warehouse_name($fcode){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $wh_name = "";
+        foreach ($rs as $r) {
+            $wh_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $wh_name;
     }
 
     /**

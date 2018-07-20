@@ -202,7 +202,7 @@
                                     <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Warehouse - <span id="glob_fsl"><?php echo $repo;?></span></h4>
+                            <h4 class="page-title">FSL - <span id="glob_fsl"><?php echo $repo." (".$repoName.")";?></span></h4>
                         </div>
                     </div>
                 </div>

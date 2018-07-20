@@ -778,8 +778,13 @@ class CIncoming extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if($rs){
+            $total_qty = 0;
+            foreach ($rs as $r){
+                $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            }
             $success_response = array(
-                'status' => 1
+                'status' => 1,
+                'total_qty' => $total_qty
             );
             $response = $success_response;
         }else{
@@ -875,7 +880,7 @@ class CIncoming extends BaseController
                     $partname = $p["name"];
                 }
                 $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-                $qty = filter_var($r->dt_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+                $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                 
                 $row['partno'] = $partnum;
                 $row['serialno'] = $serialnum;
@@ -902,6 +907,48 @@ class CIncoming extends BaseController
             );
             $response = $error_response;
         }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get total cart return
+     */
+    public function get_total_cart_return(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $cartid = $this->session->userdata ( 'cart_session' )."inr";
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_total_incomings_cart'), 'POST', FALSE);
+//        $rs_data = send_curl($arrWhere, $this->config->item('api_total_incomings_cart').'?funiqid='.$cartid, 'GET', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $total = 0;
+            foreach ($rs as $r){
+                $total = $r->total;
+            }
+            $success_response = array(
+                'status' => 1,
+                'ttl_cart'=> $total
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'ttl_cart'=> 0
+            );
+            $response = $error_response;
+        }
+        
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

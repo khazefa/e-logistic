@@ -1192,7 +1192,8 @@ class COutgoing extends BaseController
         
         $title = 'Request #'.$ftrans_out;
         $this->mypdf->SetTitle($title);
-        $this->mypdf->Output('D', $title.'.pdf');
+//        $this->mypdf->Output('D', $title.'.pdf');
+        return $this->mypdf->Output('D', $title.'.pdf');
     }
     
     public function print_pdf(){

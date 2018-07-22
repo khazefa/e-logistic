@@ -13,6 +13,7 @@ $config['api_list_users'] = constant('urlapi').'api/users/list/'; //POST
 $config['api_info_users'] = constant('urlapi').'api/users/info/'; //POST
 $config['api_add_users'] = constant('urlapi').'api/users/insert/'; //POST
 $config['api_edit_users'] = constant('urlapi').'api/users/update/'; //POST
+$config['api_edit_account'] = constant('urlapi').'api/users/update_account/'; //POST
 $config['api_remove_users'] = constant('urlapi').'api/users/delete/'; //POST
 // ===========================
 //  End Users and Auth

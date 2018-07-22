@@ -82,6 +82,14 @@ $route['remove-users/(:any)'] = 'front/cusers/delete/$1';
 // ===========================
 
 // ===========================
+//  Routing My Accounts
+// ===========================
+$route['my-account'] = 'front/cprofile';
+// ===========================
+//  End Routing My Accounts
+// ===========================
+
+// ===========================
 //  Routing Accounts Group
 // ===========================
 $route['manage-groups'] = 'front/cusersgroup';

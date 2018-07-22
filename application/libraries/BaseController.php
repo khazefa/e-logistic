@@ -105,7 +105,7 @@ class BaseController extends CI_Controller {
         
         if ( isset ( $isSessionFilled ) || $isSessionFilled == TRUE) {
             $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
-                ,'isAdm','vendorRepo','role','roleText');
+                ,'isAdm','vendorRepo','vendorRepoName','role','roleText');
             $this->session->unset_userdata($sess_items);
             redirect ( 'login' );
         }

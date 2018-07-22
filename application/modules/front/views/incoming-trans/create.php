@@ -8,6 +8,7 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link " id="nav-supply-tab" data-toggle="tab" href="#nav-supply" role="tab" aria-controls="nav-supply" aria-selected="true">Supply</a>
                         <a class="nav-item nav-link active" id="nav-return-tab" data-toggle="tab" href="#nav-return" role="tab" aria-controls="nav-return" aria-selected="false">Return</a>
+                        <a class="nav-item nav-link " id="nav-close-tab" data-toggle="tab" href="#nav-close" role="tab" aria-controls="nav-close" aria-selected="false">Close</a>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -38,11 +39,8 @@
                                         <div class="row">
                                             <div class="form-group form-group-sm col-sm-6">
                                                 <div class="row">
-                                                    <div class="input-group col-sm-12">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"> <i class="fa fa-calculator"></i> </span>
-                                                         </div>
-                                                        <input type="number" name="fqty_s" id="fqty_s" class="form-control" value="1" required="required">
+                                                    <div class="col-sm-12">
+                                                        <input type="number" name="fqty_s" id="fqty_s" class="form-control" value="1" min="0" required="required">
                                                     </div>
                                                 </div>
                                             </div>
@@ -52,6 +50,15 @@
                                                         <button type="button" id="btn_add_s" class="btn btn-warning waves-effect waves-light pull-right">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group form-group-sm col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="fnotes_s" id="fnotes_s" class="form-control" required="required" placeholder="Delivery Notes">
                                                     </div>
                                                 </div>
                                             </div>
@@ -181,6 +188,41 @@
                         </div>
                     </div>
                     <!-- End Content Panel Return -->
+                    
+                    <!-- Begin Content Panel Close -->
+                    <div class="tab-pane fade " id="nav-close" role="tabpanel" aria-labelledby="nav-close-tab">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="card bg-light">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Close Outgoing Transaction</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="input-group col-sm-6">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                                 </div>
+                                                <input type="text" name="ftrans_out_c" id="ftrans_out_c" class="form-control" placeholder="Outgoing Trans. No.">
+                                            </div>
+                                            <div class="input-group col-sm-6">
+                                                <input type="text" name="ffe_report_c" id="ffe_report_c" class="form-control" placeholder="FE Report">
+                                            </div>
+                                            <div class="input-group col-sm-12">
+                                                <div id="ftrans_out_c_notes"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="btn_submit_c" class="btn btn-success waves-effect waves-light">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Content Panel Close -->
                 </div>
             </div>
         </div>
@@ -195,6 +237,7 @@
     var e_partnum_s = $('#fpartnum_s');
     var e_qty_s = $('#fqty_s');
     var e_part_note_s = $('#fpartnum_s_notes');
+    var e_note_s = $('#fnotes_s');
    /*
     * end variable for supply transaction
     */
@@ -202,14 +245,24 @@
    /*
     * variable for return transaction
     */
-   var e_trans_out = $('#ftrans_out');
-   var e_trans_out_notes = $('#ftrans_out_notes');
-   var e_partnum_r = $('#fpartnum_r');
-   var e_serialnum_r = $('#fserialnum_r');
-   var e_verify_note_r = $('#fverify_r');
+    var e_trans_out = $('#ftrans_out');
+    var e_trans_out_notes = $('#ftrans_out_notes');
+    var e_partnum_r = $('#fpartnum_r');
+    var e_serialnum_r = $('#fserialnum_r');
+    var e_verify_note_r = $('#fverify_r');
     var e_fe_report = $('#ffe_report');
    /*
-    * variable for supply transaction
+    * end variable for return transaction
+    */
+    
+   /*
+    * variable for close transaction
+    */
+    var e_trans_out_c = $('#ftrans_out_c');
+    var e_trans_out_c_notes = $('#ftrans_out_c_notes');
+    var e_fe_report_c = $('#ffe_report_c');
+   /*
+    * end variable for close transaction
     */
     
     var dataSet = [];
@@ -221,6 +274,7 @@
         e_partnum_s.val("");
         e_qty_s.val(1);
         e_part_note_s.html("");
+        e_note_s.val("");
     }
     
     function init_form_r(){
@@ -228,6 +282,12 @@
         e_partnum_r.prop("readonly", false);
         e_serialnum_r.val("");
         e_verify_note_r.html("");
+    }
+    
+    function init_form_c(){
+        e_trans_out_c.val('');
+        e_trans_out_c_notes.html('');
+        e_fe_report_c.val('');
     }
     
     //init table
@@ -342,12 +402,12 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
-                    e_part_note_s.html(jqXHR.message);
+                    e_part_note_s.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_partnum_s.val("");
                     e_partnum_s.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){
-                    e_part_note_s.html(jqXHR.message);
+                    e_part_note_s.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
                     e_qty_s.focus();
                     status = 1;
                 }
@@ -523,7 +583,8 @@
         var type = 'POST';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fqty : parseInt($('#ttl_qty_s').html())
+            fqty : parseInt($('#ttl_qty_s').html()),
+            fnotes : e_note_s.val()
         };
         
         $.ajax({
@@ -559,7 +620,7 @@
         var type = 'POST';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftrans_out : e_trans_out.val()
+            ftrans_out : transnum
         };
         
         $.ajax({
@@ -571,7 +632,7 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
-                    e_trans_out_notes.html(jqXHR.message);
+                    e_trans_out_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_trans_out.prop("readonly", false);
                     e_trans_out.focus();
                     status = 0;
@@ -612,7 +673,7 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status == 0){
-                    e_verify_note_r.html(jqXHR.message);
+                    e_verify_note_r.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                 }else if(jqXHR.status == 1){
                     init_form_r();
                     //cek total qty outgoing jika verifikasi melebihi qotal qty tolak verifikasi selanjutnya, 
@@ -704,6 +765,79 @@
         });
     }
     
+    //check outgoing transaction
+    function check_trans_out_c(transnum){
+        var status = 0;
+        
+        var url = '<?php echo base_url('front/cincoming/check_outgoing'); ?>';
+        var type = 'POST';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            ftrans_out : transnum
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 0){
+                    e_trans_out_c_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                    e_trans_out_c.prop("readonly", false);
+                    e_trans_out_c.focus();
+                    status = 0;
+                }else if(jqXHR.status === 1){
+                    e_trans_out_c_notes.html("");
+                    e_fe_report_c.focus();
+                    status = 1;
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+        return status;
+    }
+    
+    //submit close transaction
+    function complete_close(){
+        var url = '<?php echo base_url('front/cincoming/submit_trans_close'); ?>';
+        var type = 'POST';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
+            ftrans_out : e_trans_out_c.val(),
+            ffe_report : e_fe_report_c.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 0){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                }else if(jqXHR.status == 1){
+//                    print_transaction(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
     $(document).ready(function() {
         init_table_s();
         get_total_s();
@@ -712,6 +846,8 @@
         clear_cart();
         get_total_r();
         table_match.clear().draw();
+        
+        init_form_c();
         
         e_partnum_s.on("keypress", function(e){
             if (e.keyCode == 13) {
@@ -846,6 +982,34 @@
 //                    show: true
 //                });
 //            }
+        });
+        
+        e_trans_out_c.on("keypress", function(e){
+            if (e.keyCode == 13) {
+                if(isEmpty(e_trans_out_c.val())){
+                    alert('Please fill in this field!');
+                    e_trans_out_c.focus();
+                }else{
+                    check_trans_out_c(e_trans_out_c.val());
+                    e_trans_out_c.prop("readonly", true);
+                    e_fe_report_c.focus();
+                }
+                return false;
+            }
+        });
+        
+        $("#btn_submit_c").on("click", function(e){     
+            $('#confirmation').modal({
+                show: true
+            });
+            $('#opt_yess').click(function () {
+                complete_close();
+                window.location.href = "<?php echo base_url('new-incoming-trans'); ?>";
+            });
+            $('#opt_no').click(function () {
+                complete_close();
+                window.location.href = "<?php echo base_url('incoming-trans'); ?>";
+            });
         });
     });
 </script>

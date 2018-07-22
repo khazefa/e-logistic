@@ -182,6 +182,7 @@ $route['tickets'] = 'front/ctickets';
 $route['outgoing-trans'] = 'front/coutgoing';
 $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
+$route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 // ===========================
 //  End Routing Outgoing Trans
 // ===========================
@@ -192,8 +193,17 @@ $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
+$route['print-incoming-trans/(:any)'] = 'front/cincoming/print_transaction/$1';
 // ===========================
 //  End Routing Incoming Trans
+// ===========================
+
+// ===========================
+//  Routing Reports
+// ===========================
+$route['report-consumed-parts'] = 'front/creports/report_consumed_part';
+// ===========================
+//  End Routing Reports
 // ===========================
 
 /* END USER CONTROLLER */

@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="form-group row">
                                     <label for="fnotes1" class="col-sm-3 col-form-label">Delivery Notes</label>
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-6">
                                         <input type="text" name="fnotes1" id="fnotes1" class="form-control">
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                                 </div>
                                 <div class="form-group row">
                                     <label for="fnotes2" class="col-sm-3 col-form-label">Delivery Notes</label>
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-6">
                                         <input type="text" name="fnotes2" id="fnotes2" class="form-control">
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     <div class="form-group form-group-sm col-sm-12">
-                        <div id="fpartnum_notes"></div>
+                        <span id="fpartnum_notes" class="help-block text-danger"><small></small></span>
                     </div>
                     <div class="m-b-10">&nbsp;</div>
                 </div>
@@ -192,7 +192,7 @@
         
         <div class="card-box table-responsive">
             <h4 class="m-b-30 header-title">Part In Nearby Warehouse</h4>
-            <table id="fsl_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+            <table id="wh_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>FSL</th>
@@ -233,12 +233,12 @@
         
         e_ticketnum.val("");
         e_ticketnum.prop("readonly", true);
-        e_engineer_id.attr('disabled', true);
-        e_engineer2_id.attr('disabled', true);
+        e_engineer_id.prop("disabled", true);
+        e_engineer2_id.prop("disabled", true);
         e_notes1.val("");
         e_notes1.prop("readonly", true);
         
-        e_dest_fsl.attr('disabled', true);
+        e_dest_fsl.prop("disabled", true);
         e_notes2.val("");
         e_notes2.prop("readonly", true);
     }
@@ -249,6 +249,72 @@
         e_partnum.prop("readonly", false);
         e_partnum_notes.html("");
         e_serialnum.val("");
+    }
+    
+    //get detail eg
+    function get_eg_detail(eg_id){
+        var url = '<?php echo base_url('front/coutgoing/info_eg_json'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fkey : e_engineer_id.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    e_partner.val(jqXHR.pr_name);
+                    e_engineer_name.val(jqXHR.eg_name);
+                    e_engineer_notes.html("");
+                }else if(jqXHR.status == 0){
+                    e_engineer_notes.html(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //get detail eg mess
+    function get_eg_detail2(eg_id){
+        var url = '<?php echo base_url('front/coutgoing/info_eg_json'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fkey : e_engineer2_id.val()
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status == 1){
+                    e_partner2.val(jqXHR.pr_name);
+                    e_engineer2_name.val(jqXHR.eg_name);
+                    e_engineer2_notes.html("");
+                }else if(jqXHR.status == 0){
+                    e_engineer2_notes.html(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
     }
     
     //init table
@@ -301,7 +367,7 @@
                     render    : function ( data, type, full, meta ) {
 //                        console.log('data: '+full.serial_number);
                         if(full.serialno === "NOSN"){
-                            return '<input type="number" id="fqty" min="0" value="'+full.qty+'" style="width: 100%;">';
+                            return '<input type="text" id="fqty" value="'+full.qty+'" data-parsley-type="number" size="2">';
                         }else{
                             return data;
                         }
@@ -325,7 +391,7 @@
             fqty = this.value;
             if (e.keyCode == 13) {
                 if(fqty > fstock){
-                    alert('The quantity amount exceeds the sparepart stock!');
+                    alert('The quantity amount exceeds sparepart stock');
                     this.focus;
                 }else{
                     //update cart by cart id
@@ -397,7 +463,7 @@
     
     //init table
     function init_table3(){
-        table3 = $('#fsl_grid').DataTable({
+        table3 = $('#wh_grid').DataTable({
             searching: false,
             ordering: false,
             info: false,
@@ -417,31 +483,12 @@
         });
 
         table3.buttons().container()
-                .appendTo('#fsl_grid_wrapper .col-md-6:eq(0)');
+                .appendTo('#wh_grid_wrapper .col-md-6:eq(0)');
     }
     
     //reload table
     function reload3(){
         table3.ajax.reload();
-    }
-    
-    //load fsl destination
-    function load_fsl_dest(){
-        alert('its working');
-        let e_dest_fsl = $('#fdest_fsl');
-        e_dest_fsl.empty();
-
-        e_dest_fsl.append('<option selected="true" disabled>Please choose..</option>');
-        e_dest_fsl.prop('selectedIndex', 0);
-
-        const url = '<?php echo base_url('front/coutgoing/get_list_warehouse'); ?>';
-
-        // Populate dropdown with list of provinces
-        $.getJSON(url, function (data) {
-          $.each(data, function (key, entry) {
-            e_dest_fsl.append($('<option></option>').attr('value', entry.code).text(entry.name));
-          })
-        });
     }
     
     //get part replacement
@@ -479,14 +526,11 @@
                             });
                         });
                     });
-//                    e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
-                    table3.clear().draw();
+                    e_partnum_notes.html(jqXHR.message);
                     status = 1;
                 }else if(jqXHR.status === 0){
-                    e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                    e_partnum_notes.html(jqXHR.message);
                     e_partnum.focus();
-                    table2.clear().draw();
-                    get_nearby_wh(partno);
                     status = 0;
                 }
             },
@@ -522,18 +566,18 @@
                     $.each(jqXHR.data, function(i, object) {
                         $.each(object, function(property, data) {
                             $.each(data, function(property2, detail_data) {
-//                                if(detail_data.stock === "0"){
-//                                    //if stock is 0 then hide information list
-//                                }else{
+                                if(detail_data.stock === "0"){
+                                    //if stock is 0 then hide information list
+                                }else{
                                     table3.row.add(
                                         [detail_data.warehouse, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
-//                                }
+                                }
                             });
                         });
                     });
                 }else if(jqXHR.status == 0){
-                    e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                    e_partnum_notes.html(jqXHR.message);
                     e_partnum.val('');
                     e_partnum.focus();
                 }
@@ -566,12 +610,16 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
-                    e_partnum_notes.html('<span class="help-block text-warning">'+jqXHR.message+'</span>');
+                    e_partnum_notes.html(jqXHR.message);
                     //load data part replacement
-                    get_part_sub(partno);
+                    if( get_part_sub(partno) === 0 ){
+                        //if data part replacement not available 
+                        //then load part from nearby warehouse
+                        get_nearby_wh(partno);
+                    }
                     status = 0;
-                }else if(jqXHR.status == "1"){
-                    e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
+                }else if(jqXHR.status === 1){
+                    e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
                     table3.clear().draw();
                     
@@ -579,8 +627,9 @@
                     //fill serial number
                     e_serialnum.focus();
                     status = 1;
-                }else if(jqXHR.status == "2"){
-                    e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                }else if(jqXHR.status === 2){
+                    //load part from nearby warehouse
+                    e_partnum_notes.html(jqXHR.message);
                     table2.clear().draw();
                     table3.clear().draw();
                     status = 2;
@@ -745,12 +794,6 @@
         var url = '<?php echo base_url('front/coutgoing/submit_trans'); ?>';
         var type = 'POST';
         
-        var notes = "";
-        if(isEmpty(e_notes1.val())){
-            notes = e_notes1.val();
-        }else{
-            notes = e_notes2.val();
-        }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             fticket : e_ticketnum.val(),
@@ -758,7 +801,7 @@
             fengineer2_id : e_engineer2_id.val(),
             fpurpose : e_purpose.val(),
             fqty : parseInt($('#ttl_qty').html()),
-            fnotes : notes
+            fnotes : e_notes.val()
         };
         
         $.ajax({
@@ -789,7 +832,7 @@
     function print_transaction(ftransno)
     {
         var param = ftransno;
-        var url = '<?php echo base_url('print-outgoing-trans/'); ?>'+param;
+        var url = '<?php echo base_url('front/coutgoing/print_transaction/'); ?>'+param;
         var newWindow=window.open(url);
 //        window.location.assign(url);
     }
@@ -799,6 +842,14 @@
         init_form_order();
         
         e_ticketnum.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        
+        e_engineer_id.on("keyup", function(e) {
+            $(this).val($(this).val().toUpperCase());
+	});
+        
+        e_engineer2_id.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
 	});
         
@@ -814,7 +865,7 @@
         get_total();
             
         e_purpose.on("change", function(e) {
-            var valpurpose = $(this).val();
+            var valpurpose = e_purpose.val();
             
             if(valpurpose === "0"){
                 alert( "Please choose purpose!" );
@@ -823,33 +874,32 @@
                 e_ticketnum.prop("readonly", true);
                 e_ticketnum.val("");
                 
-                e_engineer_id.prop('disabled', true);
-                e_engineer_id.selectpicker('refresh');
-                e_engineer2_id.prop('disabled', true);
-                e_engineer2_id.selectpicker('refresh');
+                e_engineer_id.prop("readonly", true);
+                e_engineer_id.prop("value", "");
+                e_partner.prop("value", "");
+                e_engineer_name.prop("value", "");
                 
-                e_dest_fsl.prop('disabled', false);
-                e_dest_fsl.selectpicker('refresh');
-//                load_fsl_dest();
-                e_dest_fsl.focus();
-                e_notes2.prop("readonly", false);
+                e_engineer2_id.prop("readonly", true);
+                e_engineer2_id.prop("value", "");
+                e_partner2.prop("value", "");
+                e_engineer2_name.prop("value", "");
+                
+                e_notes.prop("readonly", false);
+                e_notes.focus();
+                e_purpose_notes.html("Return Sparepart");
             }else{
                 e_ticketnum.prop("readonly", false);
                 e_ticketnum.focus();
-                
-                e_engineer_id.prop('disabled', false);
-                e_engineer_id.selectpicker('refresh');
-                e_notes1.prop("readonly", true);
-                e_notes1.val("");
-                
-                e_dest_fsl.prop('disabled', true);
-                e_dest_fsl.selectpicker('refresh');
-                e_notes2.prop("readonly", true);
+                e_engineer_id.prop("readonly", false);
+                e_notes.prop("readonly", true);
+                e_notes.val("");
+                e_purpose_notes.html("Sparepart to engineer");
             }
         });
         
         e_ticketnum.on("keypress", function(e){
             if (e.keyCode == 13) {
+                e_engineer_id.val('');
                 e_engineer_id.focus();
                 return false;
             }
@@ -857,31 +907,25 @@
         
         e_engineer_id.on('change', function() {
             $("#global_confirm .modal-title").html("Confirmation");
-            $("#global_confirm .modal-body h4").html("Is the person who ask for sparepart are not the concerned FSE?");
+            $("#global_confirm .modal-body h4").html("Add FSE Mess ID?");
             $('#global_confirm').modal({
                 show: true
             });
             $('#ans_yess').click(function () {
-                e_engineer2_id.prop('disabled', false);
-                e_engineer2_id.selectpicker('refresh');
+                e_engineer2_id.prop("readonly", false);
+                e_engineer2_id.prop("value", "");
                 e_engineer2_id.focus();
-                e_notes1.prop("readonly", false);
             });
             $('#ans_no').click(function () {
-                e_notes1.prop("readonly", false);
-                e_notes1.focus();
+                e_partnum.focus();
             });
         });
         
-        e_engineer2_id.on('change', function() {
-            e_notes1.prop("readonly", false);
-            e_notes1.focus();
-//            e_partnum.focus();
-        });
-        
-        e_dest_fsl.on('change', function() {
-            var selectedText = $(this).find("option:selected").text();
-            e_notes2.val("Transfer stock to "+selectedText);
+        e_engineer2_id.on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                get_eg_detail2(e_engineer2_id.val());
+                return false;
+            }
         });
         
         e_partnum.on("keypress", function(e){

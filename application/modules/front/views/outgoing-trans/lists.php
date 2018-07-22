@@ -35,11 +35,12 @@
                                 <th>Trans No</th>
                                 <th>Date</th>
                                 <th>Ticket No</th>
-                                <th>Engineer</th>
+                                <th>Requested by</th>
                                 <th>Purpose</th>
                                 <th>Qty</th>
                                 <th>FSL Admin</th>
-                                <th>Notes</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -78,11 +79,12 @@
                 { "data": 'transnum' },
                 { "data": 'transdate' },
                 { "data": 'transticket' },
-                { "data": 'engineer' },
+                { "data": 'reqby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
                 { "data": 'user' },
-                { "data": 'notes' },
+                { "data": 'status' },
+                { "data": 'button' },
             ],
         });
 

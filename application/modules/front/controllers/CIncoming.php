@@ -72,10 +72,11 @@ class CIncoming extends BaseController
      */
     public function get_list_datatable(){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
         
+        $fcode = $this->repo;
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -115,10 +116,11 @@ class CIncoming extends BaseController
      */
     public function get_list_view_datatable(){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
         
+        $fcode = $this->repo;
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -130,10 +132,23 @@ class CIncoming extends BaseController
             $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
             $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
             $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $purpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->incoming_notes, FILTER_SANITIZE_STRING);
+            $purpose = "";
+            
+            switch ($fpurpose){
+                case "S";
+                    $purpose = "Supply";
+                break;
+                case "RG";
+                    $purpose = "Return Good";
+                break;
+                default;
+                    $purpose = "-";
+                break;
+            }
             
             $row['transnum'] = $transnum;
             $row['transdate'] = tgl_indo($transdate);
@@ -143,6 +158,19 @@ class CIncoming extends BaseController
             $row['qty'] = $qty;
             $row['user'] = $user_fullname;
             $row['notes'] = $notes;
+            
+            if($this->isSpv()){
+                $row['button'] = '<div class="btn-group dropdown">';
+                $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-incoming-trans/").$transnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-incoming-trans/").$transnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                $row['button'] .= '</div>';
+                $row['button'] .= '</div>';
+            }elseif($this->isStaff()){
+//                $row['button'] = '<a href="'.base_url("print-incoming-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                $row['button'] = '-';
+            }
  
             $data[] = $row;
         }
@@ -1063,6 +1091,44 @@ class CIncoming extends BaseController
                 $this->session->set_flashdata('error', 'Failed to submit transaction data');
                 $response = $error_response;
             }
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to complete close transaction
+     */
+    public function submit_trans_close(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to submit transaction'
+        );
+        
+        $fcode = $this->repo;
+        $date = date('Y-m-d'); 
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $ffe_report = $this->input->post('ffe_report', TRUE);
+        
+        //update outgoing status by outgoing number
+        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
+        $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                'POST', FALSE);
+
+        if($update_status_outgoing->status){
+            $success_response = array(
+                'status' => 1,
+                'message' => $ftrans_out
+            );
+            $response = $success_response;
+        }else{
+            $response = $error_response;
         }
         return $this->output
         ->set_content_type('application/json')

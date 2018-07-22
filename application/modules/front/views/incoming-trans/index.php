@@ -37,12 +37,13 @@
                             <tr>
                                 <th>Trans No</th>
                                 <th>Date</th>
-                                <th>Ticket No</th>
-                                <th>Engineer</th>
+                                <!--<th>Ticket No</th>-->
+                                <!--<th>Engineer</th>-->
                                 <th>Purpose</th>
                                 <th>Qty</th>
                                 <th>FSL Admin</th>
-                                <th>Notes</th>
+                                <!--<th>Notes</th>-->
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -80,12 +81,13 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
-                { "data": 'transticket' },
-                { "data": 'engineer' },
+//                { "data": 'transticket' },
+//                { "data": 'engineer' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
                 { "data": 'user' },
-                { "data": 'notes' },
+//                { "data": 'notes' },
+                { "data": 'button' },
             ],
         });
 

@@ -83,7 +83,7 @@
                                     </div>
 
                                     <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                    <a href="<?php echo base_url('my-account');?>" class="dropdown-item notify-item">
                                         <i class="fi-head"></i> <span>My Account</span>
                                     </a>
 

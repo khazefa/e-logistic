@@ -128,10 +128,11 @@ class CIncoming extends BaseController
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
+            $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
             $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
             $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
-            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+//            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+//            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
@@ -151,9 +152,10 @@ class CIncoming extends BaseController
             }
             
             $row['transnum'] = $transnum;
+            $row['transout'] = $transout;
             $row['transdate'] = tgl_indo($transdate);
             $row['transticket'] = $transticket;
-            $row['engineer'] = $engineer_name;
+//            $row['engineer'] = $engineer_name;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
             $row['user'] = $user_fullname;
@@ -1064,8 +1066,7 @@ class CIncoming extends BaseController
                 }
             }
 
-            $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes);
+            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {

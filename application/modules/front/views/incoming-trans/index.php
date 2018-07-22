@@ -40,7 +40,8 @@
                                 <!--<th>Ticket No</th>-->
                                 <!--<th>Engineer</th>-->
                                 <th>Purpose</th>
-                                <th>Qty</th>
+                                <!--<th>Qty</th>-->
+                                <th>Outgoing No.</th>
                                 <th>FSL Admin</th>
                                 <!--<th>Notes</th>-->
                                 <th>Action</th>
@@ -84,7 +85,8 @@
 //                { "data": 'transticket' },
 //                { "data": 'engineer' },
                 { "data": 'purpose' },
-                { "data": 'qty' },
+//                { "data": 'qty' },
+                { "data": 'transout' },
                 { "data": 'user' },
 //                { "data": 'notes' },
                 { "data": 'button' },

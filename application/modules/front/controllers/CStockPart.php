@@ -62,12 +62,11 @@ class CStockPart extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable($fcode){
+    public function get_list_datatable(){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
 
+        $fcode = $this->repo;
         if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL

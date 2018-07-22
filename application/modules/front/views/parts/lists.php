@@ -42,7 +42,7 @@
                             <tr>
                                 <th>Part Number</th>
                                 <th>Part Name</th>
-                                <th>Part Stock</th>
+                                <!--<th>Part Stock</th>-->
                                 <th>Return Code</th>
                                 <th>Machine</th>
                                 <th>Actions</th>
@@ -99,7 +99,7 @@
             columns: [
                 { "data": 'partno' },
                 { "data": 'name' },
-                { "data": 'stock' },
+//                { "data": 'stock' },
                 { "data": 'returncode' },
                 { "data": 'machine' },
                 { "data": 'button' },

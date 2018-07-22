@@ -1094,6 +1094,15 @@ class COutgoing extends BaseController
     }
     
     public function print_transaction($ftrans_out){
+        $ftrans_out = $ftrans_out;
+
+        $rs = array();
+        $arrWhere = array();
+        $arrWhere2 = array();
+
+        //Parameters for cURL
+        $arrWhere = array('ftrans_out'=>$ftrans_out);
+            
         if(empty($ftrans_out) || $ftrans_out = ""){
             redirect('cl');
         }else{
@@ -1161,9 +1170,7 @@ class COutgoing extends BaseController
             $this->mypdf->AliasNbPages();
             $this->mypdf->AddPage();
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
-
-            //get query data
-            $arrWhere = array('ftrans_out'=>$ftrans_out);
+            
             //Parse Data for cURL
             $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
@@ -1217,9 +1224,10 @@ class COutgoing extends BaseController
                 }
                 $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                 $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+                $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             }
 
-            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
+//            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
             $this->mypdf->SetFont('Arial','B',11);
             $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
             $this->mypdf->ln(20);
@@ -1229,54 +1237,68 @@ class COutgoing extends BaseController
             $this->mypdf->setFont('Arial','',10);
             $this->mypdf->Cell(($width*(25/100)),7,$purpose,1,1, 'L');
 
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),7,'Stock Location',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(25/100)),7,$fslname,1,0, 'L');
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(20/100)),7,'        Ticket Number',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(30/100)),7,$ticket,1,1, 'L');
+            if($fpurpose != "RWH"){
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(15/100)),7,'Stock Location',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(25/100)),7,$fslname,1,0, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(20/100)),7,'        Ticket Number',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(30/100)),7,$ticket,1,1, 'L');
 
-            $this->mypdf->ln(0);
+                $this->mypdf->ln(0);
 
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),7,'Service Partner',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(25/100)),7,$partner,1,0, 'L');
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(15/100)),7,'Service Partner',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(25/100)),7,$partner,1,0, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
 
-            $this->mypdf->ln(0);
+                $this->mypdf->ln(0);
 
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),7,'Assigned FSE',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(25/100)),7,$engineer_name,1,0, 'L');
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(15/100)),7,'Assigned FSE',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(25/100)),7,$engineer_name,1,0, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
 
-            $this->mypdf->ln(0);
+                $this->mypdf->ln(0);
 
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),7,'FSE ID Number',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(25/100)),7,$engineer_id,1,0, 'L');
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(15/100)),7,'FSE ID Number',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(25/100)),7,$engineer_id,1,0, 'L');
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
 
-            $this->mypdf->ln(5);
-            $this->mypdf->setFont('Arial','B',13);
-            $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
-            $this->mypdf->ln(5);
-            // Garis atas untuk header
-            $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+                $this->mypdf->ln(5);
+                $this->mypdf->setFont('Arial','B',13);
+                $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
+                $this->mypdf->ln(5);
+                // Garis atas untuk header
+                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+            }else{
+                $this->mypdf->setFont('Arial','B',10);
+                $this->mypdf->Cell(($width*(15/100)),7,'Delivery Notes',0,0,'L');
+                $this->mypdf->setFont('Arial','',10);
+                $this->mypdf->CellFitScale(($width*(35/100)),7,$notes,1,1, 'L');
+                
+                $this->mypdf->ln(5);
+                $this->mypdf->setFont('Arial','B',13);
+                $this->mypdf->Cell(($width*(60/100)),7,'STOCK TRANSFER FORM',0,0,'R');
+                $this->mypdf->ln(5);
+                // Garis atas untuk header
+                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+            }
 
             $this->mypdf->ln(5);
 
@@ -1289,14 +1311,13 @@ class COutgoing extends BaseController
             $this->mypdf->Cell(($width*(5/100)),6,'Bin',1,0);
             $this->mypdf->Cell(($width*(10/100)),6,'Status',1,1);
 
-            $this->mypdf->SetFont('Arial','',9);        
-            //Parameters for cURL
-            $arrWhere = array('ftrans_out'=>$ftrans_out);
+            $this->mypdf->SetFont('Arial','',9);
+            
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
-            $rs = $rs_data->status ? $rs_data->result : array();
-
-            foreach( $rs as $row )
+            $rs_data2 = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
+            $rslist = $rs_data2->status ? $rs_data2->result : array();
+            
+            foreach( $rslist as $row )
             {
                 $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
                 $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
@@ -1334,7 +1355,7 @@ class COutgoing extends BaseController
             $title = 'Request #'.$transnum;
             $this->mypdf->SetTitle($title);
     //        $this->mypdf->Output('D', $title.'.pdf');
-            return $this->mypdf->Output('I', $title.'.pdf');
+            return $this->mypdf->Output('D', $title.'.pdf');
         }
     }
     

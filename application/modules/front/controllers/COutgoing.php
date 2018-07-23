@@ -449,11 +449,11 @@ class COutgoing extends BaseController
             }
             $response = $global_response;
         }else{
-            $error_response = array(
+            $success_response = array(
                 'status' => 1,
                 'message'=> 'FSE Confirmed'
             );
-            $response = $error_response;
+            $response = $success_response;
         }
         return $this->output
         ->set_content_type('application/json')

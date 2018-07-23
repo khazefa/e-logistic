@@ -85,8 +85,8 @@ class CIncoming extends BaseController
         foreach ($rs as $r) {
             $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
             $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
-            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
-            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+//            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
+//            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
             $purpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
@@ -94,8 +94,8 @@ class CIncoming extends BaseController
             
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
-            $row['transticket'] = $transticket;
-            $row['engineer'] = $engineer;
+//            $row['transticket'] = $transticket;
+//            $row['engineer'] = $engineer;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
             $row['user'] = $user;
@@ -130,7 +130,7 @@ class CIncoming extends BaseController
             $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
             $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
             $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
-            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
+//            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
 //            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
 //            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
@@ -154,7 +154,7 @@ class CIncoming extends BaseController
             $row['transnum'] = $transnum;
             $row['transout'] = $transout;
             $row['transdate'] = tgl_indo($transdate);
-            $row['transticket'] = $transticket;
+//            $row['transticket'] = $transticket;
 //            $row['engineer'] = $engineer_name;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
@@ -728,9 +728,9 @@ class CIncoming extends BaseController
         $cartid = $this->session->userdata ( 'cart_session' )."in";
                
         $date = date('Y-m-d'); 
-        $fticket = $this->input->post('fticket', TRUE);
-        $fengineer_id = $this->input->post('fengineer_id', TRUE);
-        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
+//        $fticket = $this->input->post('fticket', TRUE);
+//        $fengineer_id = $this->input->post('fengineer_id', TRUE);
+//        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
         $fpurpose = "S";
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
@@ -760,8 +760,7 @@ class CIncoming extends BaseController
                 }
             }
 
-            $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes);
+            $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
@@ -797,6 +796,7 @@ class CIncoming extends BaseController
     public function check_outgoing(){
         $rs = array();
         $arrWhere = array();
+        $global_response = array();
         $success_response = array();
         $error_response = array();
         
@@ -809,14 +809,23 @@ class CIncoming extends BaseController
         
         if($rs){
             $total_qty = 0;
+            $status = "";
             foreach ($rs as $r){
                 $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             }
-            $success_response = array(
-                'status' => 1,
-                'total_qty' => $total_qty
-            );
-            $response = $success_response;
+            if($status == "complete"){
+                $global_response = array(
+                    'status' => 0,
+                    'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 1,
+                    'total_qty' => $total_qty
+                );
+            }
+            $response = $global_response;
         }else{
             $error_response = array(
                 'status' => 0,
@@ -1028,10 +1037,10 @@ class CIncoming extends BaseController
                
         $date = date('Y-m-d'); 
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
-        $ffe_report = $this->input->post('ffe_report', TRUE);
-        $fticket = $this->input->post('fticket', TRUE);
-        $fengineer_id = $this->input->post('fengineer_id', TRUE);
-        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
+//        $ffe_report = $this->input->post('ffe_report', TRUE);
+//        $fticket = $this->input->post('fticket', TRUE);
+//        $fengineer_id = $this->input->post('fengineer_id', TRUE);
+//        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
         $fpurpose = "RG";
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);

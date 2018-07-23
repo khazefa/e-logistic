@@ -436,7 +436,8 @@ class COutgoing extends BaseController
                 $ticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
                 $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             }
-            if($code == $fcode){
+
+            if($code === $fcode){
                 $global_response = array(
                     'status' => 1,
                     'message'=> 'FSE Confirmed'

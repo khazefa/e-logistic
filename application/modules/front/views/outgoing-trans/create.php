@@ -636,7 +636,7 @@
                     window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
                 }else if(jqXHR.status == "1"){
                     alert(jqXHR.message);
-                    e_engineer2_id.focus();
+                    e_engineer_id.focus();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

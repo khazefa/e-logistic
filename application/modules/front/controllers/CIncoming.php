@@ -129,6 +129,7 @@ class CIncoming extends BaseController
         foreach ($rs as $r) {
             $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
             $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $outstatus = $r->outgoing_status == "" ? "" : "(". strtoupper($r->outgoing_status).")";
             $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
 //            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
 //            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
@@ -152,7 +153,7 @@ class CIncoming extends BaseController
             }
             
             $row['transnum'] = $transnum;
-            $row['transout'] = $transout;
+            $row['transout'] = $transout == "" ? "-" : $transout." ".$outstatus;
             $row['transdate'] = tgl_indo($transdate);
 //            $row['transticket'] = $transticket;
 //            $row['engineer'] = $engineer_name;
@@ -182,6 +183,172 @@ class CIncoming extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+    }
+    
+    /**
+     * This function is used to print supply transaction
+     */
+    public function print_trans_supply($ftrans_in){
+        $ftrans_in = $ftrans_in;
+
+        $rs = array();
+        $arrWhere = array();
+        $arrWhere2 = array();
+
+        //Parameters for cURL
+        $arrWhere = array('ftrans_in'=>$ftrans_in);
+            
+        if(empty($ftrans_in) || $ftrans_in = ""){
+            redirect('cl');
+        }else{
+            $orientation = "P";
+            $paper_size = "A4";
+            $width = 0;
+            $height = 0;
+
+            switch ($orientation) {
+                case "P":
+                   switch ($paper_size) {
+                        case "A4":
+                            $width = 210;
+                            $height = 297;
+                        break;
+                        case "A5":
+                            $width = 148;
+                            $height = 210;
+                        break;
+                        default:
+                            $width = 210;
+                            $height = 297;
+                        break;
+                    }
+                break;
+
+                case "L":
+                    switch ($paper_size) {
+                        case "A4":
+                            $width = 297;
+                            $height = 210;
+                        break;
+                        case "A5":
+                            $width = 210;
+                            $height = 148;
+                        break;
+                        default:
+                            $width = 297;
+                            $height = 210;
+                        break;
+                    }
+                break;
+
+                default:
+                    switch ($paper_size) {
+                        case "A4":
+                            $width = 210;
+                            $height = 297;
+                        break;
+                        case "A5":
+                            $width = 148;
+                            $height = 210;
+                        break;
+                        default:
+                            $width = 210;
+                            $height = 297;
+                        break;
+                    }
+                break;
+            }
+
+            // config fpdf options
+            $config=array($orientation=>'P','size'=>$paper_size);
+            $this->load->library('mypdf',$config);
+            $this->mypdf->AliasNbPages();
+            $this->mypdf->AddPage();
+            $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
+            
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+            $results = $rs_data->status ? $rs_data->result : array();
+            $transnum = "";
+            $purpose = "";
+            $transdate = "";
+            $ticket = "";
+            foreach ($results as $r){
+                $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
+                switch ($fpurpose){
+                    case "S";
+                        $purpose = "Supply";
+                    break;
+                    case "RG";
+                        $purpose = "Return Good";
+                    break;
+                    default;
+                        $purpose = "-";
+                    break;
+                }
+                $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
+//                $ticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
+                $transdate = date("d/m/Y", strtotime(filter_var($r->incoming_date, FILTER_SANITIZE_STRING)));
+                $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+                $notes = filter_var($r->incoming_notes, FILTER_SANITIZE_STRING);
+            }
+
+//            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
+            $this->mypdf->SetFont('Arial','B',11);
+            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
+            $this->mypdf->ln(20);
+
+            $this->mypdf->setFont('Arial','B',10);
+            $this->mypdf->Cell(($width*(15/100)),7,'Purpose',0,0,'L');
+            $this->mypdf->setFont('Arial','',10);
+            $this->mypdf->Cell(($width*(25/100)),7,$purpose,1,1, 'L');
+            
+            $this->mypdf->ln(5);
+            $this->mypdf->setFont('Arial','B',13);
+            $this->mypdf->Cell(($width*(60/100)),7,'SPAREPART SUPPLY LIST',0,0,'R');
+            $this->mypdf->ln(5);
+            // Garis atas untuk header
+            $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+
+            $this->mypdf->ln(5);
+
+            $this->mypdf->SetFont('Arial','B',10);
+            $this->mypdf->Cell(($width*(15/100)),6,'Requested PN',1,0);
+            $this->mypdf->Cell(($width*(20/100)),6,'Description',1,0);
+            $this->mypdf->Cell(($width*(7.5/100)),6,'Qty',1,0);
+            $this->mypdf->Cell(($width*(15/100)),6,'Issued PN',1,0);
+            $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,0);
+            $this->mypdf->Cell(($width*(5/100)),6,'Bin',1,0);
+            $this->mypdf->Cell(($width*(10/100)),6,'Status',1,1);
+
+            $this->mypdf->SetFont('Arial','',9);
+            
+            //Parse Data for cURL
+            $rs_data2 = send_curl($arrWhere, $this->config->item('api_list_view_detail_incomings'), 'POST', FALSE);
+            $rslist = $rs_data2->status ? $rs_data2->result : array();
+            
+            foreach( $rslist as $row )
+            {
+                $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
+                $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
+                $qty = filter_var($row->dt_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+                $serialnum = filter_var($row->serial_number, FILTER_SANITIZE_STRING);
+
+                $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
+                $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
+                $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
+                $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
+                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
+                $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
+                $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+            }
+
+            $title = 'Supply #'.$transnum;
+            $this->mypdf->SetTitle($title);
+    //        $this->mypdf->Output('D', $title.'.pdf');
+            return $this->mypdf->Output('D', $title.'.pdf');
+        }
     }
     
     /**
@@ -728,9 +895,12 @@ class CIncoming extends BaseController
         $cartid = $this->session->userdata ( 'cart_session' )."in";
                
         $date = date('Y-m-d'); 
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
 //        $fticket = $this->input->post('fticket', TRUE);
 //        $fengineer_id = $this->input->post('fengineer_id', TRUE);
 //        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
+        $fuser = $this->input->post('fuser', TRUE);
+		
         $fpurpose = "S";
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
@@ -759,8 +929,8 @@ class CIncoming extends BaseController
                             'POST', FALSE);
                 }
             }
-
-            $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
+			
+            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
@@ -1075,7 +1245,7 @@ class CIncoming extends BaseController
                 }
             }
 
-            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fnotes'=>$fnotes);
+            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {

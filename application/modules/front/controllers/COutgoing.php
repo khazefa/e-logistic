@@ -412,6 +412,57 @@ class COutgoing extends BaseController
     }
     
     /**
+     * This function is used to check ticket
+     */
+    public function check_ticket(){
+        $rs = array();
+        $arrWhere = array();
+        $global_response = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $fcode = $this->repo;
+        $fticket = $this->input->post('fticket', TRUE);
+        $arrWhere = array('fticket'=>$fticket);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $ticket = "";
+            $code = "";
+            foreach ($rs as $r){
+                $ticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+                $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            }
+            if($code === $fcode){
+                $global_response = array(
+                    'status' => 1,
+                    'message'=> 'FSE Confirmed'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 0,
+                    'message'=> 'You cannot continue transaction!'
+                );
+            }
+            $response = $global_response;
+        }else{
+            $success_response = array(
+                'status' => 1,
+                'message'=> 'FSE Confirmed'
+            );
+            $response = $success_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
      * This function is used to get detail information
      */
     public function get_info_part($fpartnum){

@@ -554,7 +554,7 @@
         
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fpartnum : e_partnum.val()
+            fpartnum : partno
         };
         
         $.ajax({
@@ -584,6 +584,42 @@
                     table2.clear().draw();
                     table3.clear().draw();
                     status = 2;
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+        return status;
+    }
+    
+    //check ticket
+    function check_ticket(ticketno){
+        var status = 0;
+        
+        var url = '<?php echo base_url('front/coutgoing/check_ticket'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fticket : ticketno
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                    window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+                }else if(jqXHR.status == "1"){
+                    alert(jqXHR.message);
+                    e_engineer_id.focus();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -850,7 +886,7 @@
         
         e_ticketnum.on("keypress", function(e){
             if (e.keyCode == 13) {
-                e_engineer_id.focus();
+                check_ticket(e_ticketnum.val());
                 return false;
             }
         });

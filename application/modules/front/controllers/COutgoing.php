@@ -42,10 +42,7 @@ class COutgoing extends BaseController
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
-            $cartid = $this->session->userdata ( 'cart_session' )."ot";
-            $data['cartid'] = $cartid;
-            
-            $this->loadViews('front/outgoing-trans/index', $this->global, $data);
+            $this->loadViews('front/outgoing-trans/index', $this->global, NULL);
             
         }else{
             redirect('cl');
@@ -238,8 +235,8 @@ class COutgoing extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $fcode = $this->repo;
-        $arrWhere = array('fcode'=>$fcode);
+//        $fcode = $this->repo;
+//        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();

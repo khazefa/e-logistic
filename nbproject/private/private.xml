@@ -3,23 +3,34 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/COutgoing.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/TestLayouts.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/outgoing-trans/create.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CStockPart.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/outgoing-trans/index.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CIncoming.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/autoload.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/incoming-trans/create.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_header.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/layouts/form-row.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/outgoing-trans/lists.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/endpoint.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/config/database.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/incoming-trans/index.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/incoming-trans/lists.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/config/main_endpoint.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/Login.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/libraries/BaseController.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CEngineers.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CReports.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CParts.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/routes.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/COutgoing.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_header.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/reports/consumed-part.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CWarehouse.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/templates/v_footer.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/CPartners.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/controllers/Handling.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/controllers/Login.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/libraries/BaseController.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/engineers/lists.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/front/views/engineers/create.php</file>
         </group>
     </open-files>
 </project-private>

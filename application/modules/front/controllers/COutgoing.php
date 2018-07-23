@@ -412,6 +412,57 @@ class COutgoing extends BaseController
     }
     
     /**
+     * This function is used to check ticket
+     */
+    public function check_ticket(){
+        $rs = array();
+        $arrWhere = array();
+        $global_response = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $fcode = $this->repo;
+        $fticket = $this->input->post('fticket', TRUE);
+        $arrWhere = array('fticket'=>$fticket);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $ticket = "";
+            $code = "";
+            foreach ($rs as $r){
+                $ticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+                $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            }
+            if($code == $fcode){
+                $global_response = array(
+                    'status' => 1,
+                    'message'=> 'FSE Confirmed'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 0,
+                    'message'=> 'You cannot continue the transaction!'
+                );
+            }
+            $response = $global_response;
+        }else{
+            $error_response = array(
+                'status' => 1,
+                'message'=> 'FSE Confirmed'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
      * This function is used to get detail information
      */
     public function get_info_part($fpartnum){
@@ -863,10 +914,10 @@ class COutgoing extends BaseController
             foreach ($rs_part as $p){
                 $partname = $p["name"];
             }
-            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
-            foreach ($rs_stock as $s){
-                $partstock = (int)$s["stock"];
-            }
+//            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+//            foreach ($rs_stock as $s){
+//                $partstock = (int)$s["stock"];
+//            }
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
@@ -875,7 +926,7 @@ class COutgoing extends BaseController
             $row['partno'] = $partnum;
             $row['serialno'] = $serialnum;
             $row['name'] = $partname;
-            $row['stock'] = $partstock;
+//            $row['stock'] = $partstock;
             $row['qty'] = (int)$qty;
  
             $data[] = $row;
@@ -901,10 +952,10 @@ class COutgoing extends BaseController
 //        $rs_data = send_curl($arrWhere, $this->config->item('api_total_outgoings_cart').'?funiqid='.$cartid, 'GET', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
+        $total = 0;
         if(!empty($rs)){
-            $total = 0;
             foreach ($rs as $r){
-                $total = $r->total;
+                $total = $r->total > 0 ? (int)$r->total : 0;
             }
             $success_response = array(
                 'status' => 1,
@@ -914,7 +965,7 @@ class COutgoing extends BaseController
         }else{
             $error_response = array(
                 'status' => 0,
-                'ttl_cart'=> 0
+                'ttl_cart'=> $total
             );
             $response = $error_response;
         }
@@ -1031,6 +1082,7 @@ class COutgoing extends BaseController
         $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
         $fpurpose = $this->input->post('fpurpose', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
+        $fdelivery = $this->input->post('fdelivery', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
@@ -1043,23 +1095,35 @@ class COutgoing extends BaseController
         }else{
             //get cart list by retnum
             $data_tmp = $this->get_list_cart();
-
+            
             $dataDetail = array();
+            $total_qty = 0;
             if(!empty($data_tmp)){
                 foreach ($data_tmp as $d){
-                    $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                        'fqty'=>$d['qty']);
-                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$d['stock']-(int)$d['qty'], 'fflag'=>'N');
-                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
-                            'POST', FALSE);
-                    //update stock by fsl code and part number
-                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
-                            'POST', FALSE);
+                    $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
+                    foreach ($rs_stock as $s){
+                        $partstock = (int)$s["stock"];
+                    }
+                    if($partstock < (int)$d['qty']){
+                        
+                    }else{                        
+                        $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                            'fqty'=>$d['qty']);
+                        $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
+                                'POST', FALSE);
+                        $total_qty += (int)$d['qty'];
+                        
+                        $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock-(int)$d['qty'], 'fflag'=>'N');
+                        //update stock by fsl code and part number
+                        $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                                'POST', FALSE);
+                    }
                 }
             }
 
             $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
+                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fdelivery'=>$fdelivery, 'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 
+                'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
@@ -1207,7 +1271,7 @@ class COutgoing extends BaseController
                     break;
                 }
                 $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-                $ticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+                $ticket = $r->outgoing_ticket == "" ? "-" : filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
                 $transdate = date("d/m/Y", strtotime(filter_var($r->outgoing_date, FILTER_SANITIZE_STRING)));
                 $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
                 $engineer_id = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
@@ -1221,7 +1285,7 @@ class COutgoing extends BaseController
                 }
                 $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                 $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-                $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+                $notes = $r->outgoing_notes == "" ? "-" : filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             }
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
@@ -1282,7 +1346,7 @@ class COutgoing extends BaseController
                 $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
                 $this->mypdf->ln(5);
                 // Garis atas untuk header
-                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
             }else{
                 $this->mypdf->setFont('Arial','B',10);
                 $this->mypdf->Cell(($width*(15/100)),7,'Delivery Notes',0,0,'L');
@@ -1294,7 +1358,7 @@ class COutgoing extends BaseController
                 $this->mypdf->Cell(($width*(60/100)),7,'STOCK TRANSFER FORM',0,0,'R');
                 $this->mypdf->ln(5);
                 // Garis atas untuk header
-                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
+//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
             }
 
             $this->mypdf->ln(5);

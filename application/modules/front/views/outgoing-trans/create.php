@@ -38,12 +38,12 @@
                                 </div>
                                 <div class="form-group row">
                                     <label for="fengineer_id" class="col-sm-3 col-form-label">Assigned FSE</label>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-8">
                                         <select name="fengineer_id" id="fengineer_id" class="selectpicker" data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                             <?php
                                                 foreach($list_eg as $e){
-                                                    echo '<option value="'.$e["feid"].'">'.$e["fullname"].' - '.$e["partner"].'</option>';
+                                                    echo '<option value="'.$e["feid"].'">'.$e['feid'].' - '.$e["fullname"].' - '.$e["partner"].'</option>';
                                                 }
                                             ?>
                                         </select>
@@ -51,19 +51,25 @@
                                 </div>
                                 <div class="form-group row">
                                     <label for="fengineer2_id" class="col-sm-3 col-form-label">FSE Messenger</label>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-8">
                                         <select name="fengineer2_id" id="fengineer2_id" class="selectpicker" data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                             <?php
                                                 foreach($list_eg as $e2){
-                                                    echo '<option value="'.$e2["feid"].'">'.$e2["fullname"].' - '.$e2["partner"].'</option>';
+                                                    echo '<option value="'.$e2["feid"].'">'.$e2['feid'].' - '.$e2["fullname"].' - '.$e2["partner"].'</option>';
                                                 }
                                             ?>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fnotes1" class="col-sm-3 col-form-label">Delivery Notes</label>
+                                    <label for="fdelivery" class="col-sm-3 col-form-label">Delivery Notes</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="fdelivery" id="fdelivery" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="fnotes1" class="col-sm-3 col-form-label">Transaction Notes</label>
                                     <div class="col-sm-9">
                                         <input type="text" name="fnotes1" id="fnotes1" class="form-control">
                                     </div>
@@ -80,7 +86,7 @@
                                 <p>Please use this form section <strong>for purpose Transfer Stock</strong></p>
                                 <div class="form-group row">
                                     <label for="fdest_fsl" class="col-sm-3 col-form-label">FSL Destination</label>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-8">
                                         <select name="fdest_fsl" id="fdest_fsl" class="selectpicker" data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                             <?php
@@ -92,7 +98,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fnotes2" class="col-sm-3 col-form-label">Delivery Notes</label>
+                                    <label for="fdelivery2" class="col-sm-3 col-form-label">Delivery Notes</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="fdelivery2" id="fdelivery2" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="fnotes2" class="col-sm-3 col-form-label">Transaction Notes</label>
                                     <div class="col-sm-9">
                                         <input type="text" name="fnotes2" id="fnotes2" class="form-control">
                                     </div>
@@ -216,9 +228,11 @@
     var e_engineer2_id = $('#fengineer2_id');
     var e_engineer_notes = $('#feg_notes');
     var e_engineer2_notes = $('#feg2_notes');
+    var e_delivery1 = $('#fdelivery');
     var e_notes1 = $('#fnotes1');
     
     var e_dest_fsl = $('#fdest_fsl');
+    var e_delivery2 = $('#fdelivery2');
     var e_notes2 = $('#fnotes2');
     
     var e_partnum = $('#fpartnum');
@@ -235,10 +249,14 @@
         e_ticketnum.prop("readonly", true);
         e_engineer_id.attr('disabled', true);
         e_engineer2_id.attr('disabled', true);
+        e_delivery1.val("");
+        e_delivery1.prop("readonly", true);
         e_notes1.val("");
         e_notes1.prop("readonly", true);
         
         e_dest_fsl.attr('disabled', true);
+        e_delivery2.val("");
+        e_delivery2.prop("readonly", true);
         e_notes2.val("");
         e_notes2.prop("readonly", true);
     }
@@ -427,7 +445,6 @@
     
     //load fsl destination
     function load_fsl_dest(){
-        alert('its working');
         let e_dest_fsl = $('#fdest_fsl');
         e_dest_fsl.empty();
 
@@ -643,13 +660,10 @@
     function add_cart(partno, serialno){
         var total_qty = table.rows().count();
         
-        if(total_qty >= 3){
-            $("#error_modal .modal-title").html("Message");
-            $("#error_modal .modal-body h4").html("Cannot add request more than 3 items!");
-            $('#error_modal').modal({
-                show: true
-            });
-        }else{
+        if(e_purpose.val() === "RWH"){
+            if(total_qty >= 15){
+                
+            }
             var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
             var type = 'POST';
 
@@ -682,6 +696,47 @@
                     console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
                 }
             });
+        }else{
+            if(total_qty >= 3){
+                $("#error_modal .modal-title").html("Message");
+                $("#error_modal .modal-body h4").html("Cannot add request more than 3 items!");
+                $('#error_modal').modal({
+                    show: true
+                });
+            }else{
+                var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
+                var type = 'POST';
+
+                var data = {
+                    <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                    fpartnum : partno,
+                    fserialnum : serialno
+                };
+
+                $.ajax({
+                    type: type,
+                    url: url,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    dataType: 'JSON',
+                    contentType:"application/json",
+                    data: data,
+                    success: function (jqXHR) {
+                        if(jqXHR.status == 0){
+                            alert(jqXHR.message);
+                        }else if(jqXHR.status == 1){
+                            reload();
+                            get_total();
+                        }else if(jqXHR.status == 2){
+                            alert(jqXHR.message);
+                            init_form_order();
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // Handle errors here
+                        console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+                    }
+                });
+            }
         }
     }
     
@@ -697,7 +752,7 @@
             contentType:"application/json",
             success:function(jqXHR)
             {
-                if(jqXHR.status === 1){
+                if(jqXHR.status == 1){
                     $('#ttl_qty').html(jqXHR.ttl_cart);
                 }else{
                     $('#ttl_qty').html(jqXHR.ttl_cart);
@@ -781,11 +836,17 @@
         var url = '<?php echo base_url('front/coutgoing/submit_trans'); ?>';
         var type = 'POST';
         
+        var delivery = "";
+        if(isEmpty(e_delivery1.val())){
+            delivery = e_delivery2.val();
+        }else{
+            delivery = e_delivery1.val();
+        }
         var notes = "";
         if(isEmpty(e_notes1.val())){
-            notes = e_notes1.val();
-        }else{
             notes = e_notes2.val();
+        }else{
+            notes = e_notes1.val();
         }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
@@ -794,7 +855,8 @@
             fengineer2_id : e_engineer2_id.val(),
             fpurpose : e_purpose.val(),
             fqty : parseInt($('#ttl_qty').html()),
-            fnotes : notes
+            fnotes : notes,
+            fdelivery : delivery
         };
         
         $.ajax({
@@ -869,6 +931,7 @@
 //                load_fsl_dest();
                 e_dest_fsl.focus();
                 e_notes2.prop("readonly", false);
+                e_delivery2.prop("readonly", false);
             }else{
                 e_ticketnum.prop("readonly", false);
                 e_ticketnum.focus();
@@ -877,16 +940,19 @@
                 e_engineer_id.selectpicker('refresh');
                 e_notes1.prop("readonly", true);
                 e_notes1.val("");
+                e_delivery1.prop("readonly", true);
+                e_delivery1.val("");
                 
                 e_dest_fsl.prop('disabled', true);
                 e_dest_fsl.selectpicker('refresh');
                 e_notes2.prop("readonly", true);
+                e_delivery2.prop("readonly", true);
             }
         });
         
         e_ticketnum.on("keypress", function(e){
             if (e.keyCode == 13) {
-                check_ticket(e_ticketnum.val());
+                check_ticket($(this).val());
                 return false;
             }
         });
@@ -902,16 +968,19 @@
                 e_engineer2_id.selectpicker('refresh');
                 e_engineer2_id.focus();
                 e_notes1.prop("readonly", false);
+                e_delivery1.prop("readonly", false);
             });
             $('#ans_no').click(function () {
+                e_delivery1.prop("readonly", false);
+                e_delivery1.focus();
                 e_notes1.prop("readonly", false);
-                e_notes1.focus();
             });
         });
         
         e_engineer2_id.on('change', function() {
+            e_delivery1.prop("readonly", false);
+            e_delivery1.focus();
             e_notes1.prop("readonly", false);
-            e_notes1.focus();
 //            e_partnum.focus();
         });
         

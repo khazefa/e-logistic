@@ -634,6 +634,7 @@
                 if(jqXHR.status === 0){
                     e_trans_out_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_trans_out.prop("readonly", false);
+                    e_trans_out.val("");
                     e_trans_out.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){
@@ -787,6 +788,7 @@
                 if(jqXHR.status === 0){
                     e_trans_out_c_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_trans_out_c.prop("readonly", false);
+                    e_trans_out_c.val("");
                     e_trans_out_c.focus();
                     status = 0;
                 }else if(jqXHR.status === 1){

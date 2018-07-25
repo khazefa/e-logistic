@@ -1087,7 +1087,7 @@ class COutgoing extends BaseController
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>"OT");
+        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode);
         $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         

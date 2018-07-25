@@ -210,6 +210,9 @@ $route['print-incoming-trans/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 //  Routing Reports
 // ===========================
 $route['report-consumed-parts'] = 'front/creports/report_consumed_part';
+$route['report-replenish-plan'] = 'front/creports/report_replenish_plan';
+$route['print-consumed-parts'] = 'front/creports/print_daily_report';
+$route['print-replenish-plan'] = 'front/creports/print_replenish_plan';
 // ===========================
 //  End Routing Reports
 // ===========================

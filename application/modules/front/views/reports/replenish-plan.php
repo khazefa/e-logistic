@@ -1,4 +1,4 @@
-<form action="<?php echo base_url('print-consumed-parts');?>" method="POST" class="form-horizontal" role="form" target="_blank">
+<form action="<?php echo base_url('print-replenish-plan');?>" method="POST" class="form-horizontal" role="form" target="_blank">
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
@@ -8,7 +8,7 @@
                     <div class="col-md-6">
                         <div class="card bg-light">
                             <div class="card-header bg-primary text-white">
-                                <strong class="card-title">Daily Report Consumed Part</strong>
+                                <strong class="card-title">Report Replenish Plan</strong>
                             </div>
                             <div class="card-body">
                                 <?php

@@ -154,6 +154,8 @@ $config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info
 //  Begin Procedure
 // ===========================
 $config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
+$config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_daily_reports/'; //POST
+$config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_replenish_plan/'; //POST
 // ===========================
 //  End Procedure
 // ===========================

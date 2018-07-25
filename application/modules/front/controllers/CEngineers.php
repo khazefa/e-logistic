@@ -42,7 +42,7 @@ class CEngineers extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = 'Manage Engineers - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Engineers';
             $this->global['contentHeader'] = 'Manage Engineers';
@@ -373,7 +373,7 @@ class CEngineers extends BaseController
      */
     function add()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = "Add New Engineer - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Engineer';
             $this->global['contentHeader'] = 'Add New Engineer';
@@ -427,7 +427,7 @@ class CEngineers extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-engineers');

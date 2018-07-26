@@ -39,8 +39,9 @@
                                 <div class="form-group row">
                                     <label for="fengineer_id" class="col-sm-3 col-form-label">Assigned FSE</label>
                                     <div class="col-sm-8">
-                                        <select name="fengineer_id" id="fengineer_id" class="selectpicker" data-live-search="true" 
+                                        <select name="fengineer_id" id="fengineer_id" class="selectpicker" required data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                            <option value="0">Select FSE</option>
                                             <?php
                                                 foreach($list_eg as $e){
                                                     echo '<option value="'.$e["feid"].'">'.$e['feid'].' - '.$e["fullname"].' - '.$e["partner"].'</option>';
@@ -54,6 +55,7 @@
                                     <div class="col-sm-8">
                                         <select name="fengineer2_id" id="fengineer2_id" class="selectpicker" data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                            <option value="0">Select FSE</option>
                                             <?php
                                                 foreach($list_eg as $e2){
                                                     echo '<option value="'.$e2["feid"].'">'.$e2['feid'].' - '.$e2["fullname"].' - '.$e2["partner"].'</option>';
@@ -89,6 +91,7 @@
                                     <div class="col-sm-8">
                                         <select name="fdest_fsl" id="fdest_fsl" class="selectpicker" data-live-search="true" 
                                                 data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                            <option value="0">Select FSL Destination</option>
                                             <?php
                                                 foreach($list_fsl as $f){
                                                     echo '<option value="'.$f["code"].'">'.$f["name"].'</option>';
@@ -120,7 +123,8 @@
     <div class="col-md-8">
         <div class="card-box">
             <div class="card-header bg-primary text-white">
-                <strong class="card-title">Detail Orders</strong>
+                <input type="checkbox" name="fswitch" id="fswitch" data-plugin="switchery" data-color="#f1b53d"/>
+                <strong class="card-title pull-right">Detail Orders</strong>
             </div>
 
             <div class="card-body">
@@ -235,6 +239,7 @@
     var e_delivery2 = $('#fdelivery2');
     var e_notes2 = $('#fnotes2');
     
+    var e_switch = $('#fswitch');
     var e_partnum = $('#fpartnum');
     var e_partnum_notes = $('#fpartnum_notes');
     var e_serialnum = $('#fserialnum');
@@ -263,10 +268,12 @@
     
     //initial form order state
     function init_form_order(){
+//        e_switch.prop('checked', false);
         e_partnum.val("");
-        e_partnum.prop("readonly", false);
+        e_partnum.prop("readonly", true);
         e_partnum_notes.html("");
         e_serialnum.val("");
+        e_serialnum.prop("readonly", true);
     }
     
     //init table
@@ -574,20 +581,21 @@
             fpartnum : partno
         };
         
-        $.ajax({
+        var resAjax = $.ajax({
             type: type,
             url: url,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             dataType: 'JSON',
             contentType:"application/json",
             data: data,
+            async: false,
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
                     e_partnum_notes.html('<span class="help-block text-warning">'+jqXHR.message+'</span>');
                     //load data part replacement
                     get_part_sub(partno);
-                    status = 0;
-                }else if(jqXHR.status == "1"){
+                    return 0;
+                }else if(jqXHR.status === 1){
                     e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
                     table2.clear().draw();
                     table3.clear().draw();
@@ -595,12 +603,12 @@
                     e_partnum.prop("readonly", true);
                     //fill serial number
                     e_serialnum.focus();
-                    status = 1;
-                }else if(jqXHR.status == "2"){
+                    return 1;
+                }else if(jqXHR.status === 2){
                     e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     table2.clear().draw();
                     table3.clear().draw();
-                    status = 2;
+                    return 2;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -608,7 +616,7 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        return status;
+        return resAjax.status;
     }
     
     //check ticket
@@ -634,9 +642,11 @@
                 if(jqXHR.status === 0){
                     alert(jqXHR.message);
                     window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                }else if(jqXHR.status == "1"){
+                    status = 0;
+                }else if(jqXHR.status === 1){
                     alert(jqXHR.message);
                     e_engineer_id.focus();
+                    status = 1;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -892,6 +902,12 @@
 //        window.location.assign(url);
     }
     
+    function setMessage(){
+        var message = "Hello";
+        
+        return message;
+    }
+    
     $(document).ready(function() {
         init_form();
         init_form_order();
@@ -920,10 +936,17 @@
             }else if(valpurpose === "RWH"){
                 e_ticketnum.prop("readonly", true);
                 e_ticketnum.val("");
+                e_delivery1.prop("readonly", true);
+                e_delivery1.val("");
+                e_notes1.prop("readonly", true);
+                e_notes1.val("");
                 
                 e_engineer_id.prop('disabled', true);
+                e_engineer_id.val('default');
                 e_engineer_id.selectpicker('refresh');
+                
                 e_engineer2_id.prop('disabled', true);
+                e_engineer2_id.val('default');
                 e_engineer2_id.selectpicker('refresh');
                 
                 e_dest_fsl.prop('disabled', false);
@@ -937,44 +960,61 @@
                 e_ticketnum.focus();
                 
                 e_engineer_id.prop('disabled', false);
+                e_engineer_id.val('default');
                 e_engineer_id.selectpicker('refresh');
-                e_notes1.prop("readonly", true);
+                
                 e_notes1.val("");
-                e_delivery1.prop("readonly", true);
+                e_notes1.prop("readonly", true);
                 e_delivery1.val("");
+                e_delivery1.prop("readonly", true);
                 
                 e_dest_fsl.prop('disabled', true);
+                e_dest_fsl.val('default');
                 e_dest_fsl.selectpicker('refresh');
+                
+                e_notes2.val("");
                 e_notes2.prop("readonly", true);
+                e_delivery2.val("");
                 e_delivery2.prop("readonly", true);
             }
         });
         
         e_ticketnum.on("keypress", function(e){
             if (e.keyCode == 13) {
-                check_ticket($(this).val());
+                if(isEmpty(e_ticketnum.val())){
+                    alert('Please fill out the ticket number!');
+                    e_ticketnum.focus();
+                }else{
+                    check_ticket($(this).val());
+                }
                 return false;
             }
         });
         
         e_engineer_id.on('change', function() {
-            $("#global_confirm .modal-title").html("Confirmation");
-            $("#global_confirm .modal-body h4").html("Is the person who ask for sparepart are not the concerned FSE?");
-            $('#global_confirm').modal({
-                show: true
-            });
-            $('#ans_yess').click(function () {
-                e_engineer2_id.prop('disabled', false);
-                e_engineer2_id.selectpicker('refresh');
-                e_engineer2_id.focus();
-                e_notes1.prop("readonly", false);
-                e_delivery1.prop("readonly", false);
-            });
-            $('#ans_no').click(function () {
-                e_delivery1.prop("readonly", false);
-                e_delivery1.focus();
-                e_notes1.prop("readonly", false);
-            });
+            if(isEmpty(e_ticketnum.val())){
+                alert('Please fill out the ticket number!');
+                e_ticketnum.focus();
+                e_engineer_id.selectpicker('refresh');
+            }else{
+                $("#global_confirm .modal-title").html("Confirmation");
+                $("#global_confirm .modal-body h4").html("Is the person who ask for sparepart are not the concerned FSE?");
+                $('#global_confirm').modal({
+                    show: true
+                });
+                $('#ans_yess').click(function () {
+                    e_engineer2_id.prop('disabled', false);
+                    e_engineer2_id.selectpicker('refresh');
+                    e_engineer2_id.focus();
+                    e_notes1.prop("readonly", false);
+                    e_delivery1.prop("readonly", false);
+                });
+                $('#ans_no').click(function () {
+                    e_delivery1.prop("readonly", false);
+                    e_delivery1.focus();
+                    e_notes1.prop("readonly", false);
+                });
+            }
         });
         
         e_engineer2_id.on('change', function() {
@@ -989,7 +1029,19 @@
             e_notes2.val("Transfer stock to "+selectedText);
         });
         
-        e_partnum.on("keypress", function(e){
+        e_switch.on('change', function(){
+            if(this.checked === false){
+                init_form_order();
+            }else{
+                e_partnum.prop('readonly', false);
+                e_partnum.val('');
+                e_partnum.focus();
+                e_serialnum.prop('readonly', false);
+                e_serialnum.val('');
+            }
+        });
+        
+        e_partnum.on('keypress', function(e){
             if (e.keyCode == 13) {
                 if(isEmpty(e_partnum.val())){
                     alert('Please fill in this field!');
@@ -1010,14 +1062,27 @@
         
         e_serialnum.on("keypress", function(e){
             if (e.keyCode == 13) {
-                if(isEmpty(e_partnum.val()) || isEmpty(e_serialnum.val())){
-                    alert('Please fill in required field!');
+                if(isEmpty(e_partnum.val())){
+                    alert('Please fill out spare part number!');
+                    e_partnum.focus();
+                }else if(isEmpty(e_serialnum.val())){
+                    alert('Please fill out serial number!');
                     e_serialnum.focus();
                 }else{
-                    add_cart(e_partnum.val(), e_serialnum.val());
-                    reload();
-                    init_form_order();
-                    e_partnum.focus();
+//                    alert(setMessage());
+                    alert(check_part(e_partnum.val()));
+//                    if(check_part(e_partnum.val()) === 1){
+//                        add_cart(e_partnum.val(), e_serialnum.val());
+//                        reload();
+////                        init_form_order();
+//                        e_partnum.prop('readonly', false);
+//                        e_partnum.val('');
+//                        e_partnum.focus();
+//                    }else{
+//                        alert('Please check your spare part number again');
+//                        e_partnum.prop('readonly', false);
+//                        e_partnum.focus();
+//                    }
                 }
                 return false;
             }
@@ -1033,24 +1098,73 @@
                     show: true
                 });
             }else{
-                if(total_qty > 0){
-                    $('#confirmation').modal({
-                        show: true
-                    });
-                    $('#opt_yess').click(function () {
-                        complete_request();
-                        window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-                    });
-                    $('#opt_no').click(function () {
-                        complete_request();
-                        window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                    });
+                if(e_purpose.val() === "RWH"){
+                    if(isEmpty(e_dest_fsl.val())){
+                        alert('Please select your FSL Destination!');
+                        e_dest_fsl.focus();
+                    }else if(isEmpty(e_delivery2.val())){
+                        $("#confirmation .modal-title").html("Message");
+                        $("#confirmation .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
+                        $('#confirmation').modal({
+                            show: true
+                        });
+                        $('#opt_yess').click(function () {
+                            e_delivery2.prop('readonly', false);
+                            e_delivery2.focus();
+                        });
+                        $('#opt_no').click(function () {
+                            e_notes2.prop('readonly', false);
+                            e_notes2.focus();
+                        });
+                    }
                 }else{
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html("You have not filled out the data");
-                    $('#error_modal').modal({
-                        show: true
-                    });
+                    if(isEmpty(e_ticketnum.val())){
+                        alert('Please fill out the ticket number!');
+                        e_ticketnum.focus();
+                    }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === 0){
+                        alert('Please select the FSE data!');
+                        e_engineer_id.focus();
+                    }else if(isEmpty(e_delivery1.val())){
+                        $("#global_confirm .modal-title").html("Message");
+                        $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
+                        $('#global_confirm').modal({
+                            show: true
+                        });
+                        $('#ans_yess').click(function () {
+                            e_delivery1.prop('readonly', false);
+                            e_delivery1.focus();
+                        });
+                        $('#ans_no').click(function () {
+                            e_notes1.prop('readonly', false);
+                            e_notes1.focus();
+                        });
+                    }else{
+                        if(total_qty > 0){
+                            $('#confirmation').modal({
+                                show: true
+                            });
+                            $('#opt_yess').click(function () {
+                                if(check_ticket(e_ticketnum.val()) === 1){
+                                    complete_request();
+                                    window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+                                }
+                            });
+                            $('#opt_no').click(function () {
+                                if(check_ticket(e_ticketnum.val()) === 1){
+                                    complete_request();
+                                    window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+                                }
+                            });
+                        }else{
+                            $("#error_modal .modal-title").html("Message");
+                            $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
+                            $('#error_modal').modal({
+                                show: true
+                            });
+                            e_partnum.prop('readonly', false);
+                            e_partnum.focus();
+                        }
+                    }
                 }
             }
         });

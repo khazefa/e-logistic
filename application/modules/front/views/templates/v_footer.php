@@ -120,6 +120,7 @@
         
         <!-- Plugin js -->
         <script src="<?php echo base_url();?>assets/public/plugins/bootstrap-select/js/bootstrap-select.js" type="text/javascript"></script>
+        <script src="<?php echo base_url();?>assets/public/plugins/switchery/switchery.min.js" type="text/javascript"></script>
         
         <!-- App js -->
         <script src="<?php echo base_url();?>assets/public/js/jquery.core.js"></script>

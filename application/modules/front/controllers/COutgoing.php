@@ -383,19 +383,20 @@ class COutgoing extends BaseController
                 $stock = $laststock;
             }
 
-            if($stock < 1){
-                $success_response = array(
-                    'status' => 0,
-                    'message'=> 'Out of stock, please choose part number subtitution!'
-                );
-            }else{
+            if($stock > 0){
                 $success_response = array(
                     'status' => 1,
                     'stock'=> $stock,
                     'message'=> 'Stock available'
                 );
+                $response = $success_response;
+            }else{
+                $error_response = array(
+                    'status' => 0,
+                    'message'=> 'Out of stock, please choose part number subtitution!'
+                );
+                $response = $error_response;
             }
-            $response = $success_response;
         }else{
             $error_response = array(
                 'status' => 2,
@@ -445,7 +446,7 @@ class COutgoing extends BaseController
             }else{
                 $global_response = array(
                     'status' => 0,
-                    'message'=> 'You cannot continue the transaction!'
+                    'message'=> 'You cannot continue the transaction, please just ask for parts in your own FSL!'
                 );
             }
             $response = $global_response;

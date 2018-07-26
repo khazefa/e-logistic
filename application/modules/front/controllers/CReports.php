@@ -19,9 +19,7 @@ class CReports extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isWebAdmin()){
-            
-        }else{
+        if($this->isSuperAdmin()){
             redirect('cl');
         }
     }
@@ -155,7 +153,9 @@ class CReports extends BaseController
         $fdate2 = $this->input->post('fdate2', TRUE);
         $createdBy = $this->name;
         
-        if(empty($fdate1) && empty($fdate2)){
+        if(empty($fcode)){
+            redirect('cl');
+        }elseif(empty($fdate1) && empty($fdate2)){
             redirect('cl');
         }else{
             //Parameters for cURL
@@ -418,7 +418,7 @@ class CReports extends BaseController
             {
                 $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
                 $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
-                $qty = filter_var($row->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $qty = filter_var($row->qty, FILTER_SANITIZE_NUMBER_INT);
                 $notes = $row->o_delivery_notes === "" ? "-" : filter_var($row->o_delivery_notes, FILTER_SANITIZE_STRING);
 
                 $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);

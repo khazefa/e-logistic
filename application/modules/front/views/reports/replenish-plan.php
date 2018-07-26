@@ -31,6 +31,9 @@
                                 }
                                 ?>
                                 <div class="form-row">
+                                    <div class="input-group col-sm-12">
+                                        <p>Please select the same date to select report on the same day (Daily)</p>
+                                    </div>
                                     <div class="input-group col-sm-6">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>

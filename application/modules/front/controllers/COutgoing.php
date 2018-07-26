@@ -1274,7 +1274,7 @@ class COutgoing extends BaseController
                 }
                 $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
                 $ticket = $r->outgoing_ticket == "" ? "-" : filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                $transdate = date("d/m/Y", strtotime(filter_var($r->outgoing_date, FILTER_SANITIZE_STRING)));
+                $transdate = date("d/m/Y H:i:s", strtotime(filter_var($r->created_at, FILTER_SANITIZE_STRING)));
                 $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
                 $engineer_id = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
                 $engineer2_id = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);

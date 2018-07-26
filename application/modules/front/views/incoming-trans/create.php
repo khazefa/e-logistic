@@ -238,6 +238,7 @@
     var e_qty_s = $('#fqty_s');
     var e_part_note_s = $('#fpartnum_s_notes');
     var e_note_s = $('#fnotes_s');
+    var e_total_qty_s = $('#ttl_qty_s');
    /*
     * end variable for supply transaction
     */
@@ -251,6 +252,7 @@
     var e_serialnum_r = $('#fserialnum_r');
     var e_verify_note_r = $('#fverify_r');
     var e_fe_report = $('#ffe_report');
+    var e_total_qty_r = $('#ttl_qty_r');
    /*
     * end variable for return transaction
     */
@@ -268,6 +270,8 @@
     var dataSet = [];
     
     var outgoing_qty = 0;
+    var status_checkpart_s = 0;
+    var status_checkpart_r = 0;
 
     //initial form supply
     function init_form_s(){
@@ -275,6 +279,7 @@
         e_qty_s.val(1);
         e_part_note_s.html("");
         e_note_s.val("");
+        e_total_qty_s.html("0");
     }
     
     function init_form_r(){
@@ -282,6 +287,7 @@
         e_partnum_r.prop("readonly", false);
         e_serialnum_r.val("");
         e_verify_note_r.html("");
+        e_total_qty_r.html("0");
     }
     
     function init_form_c(){
@@ -384,8 +390,6 @@
     
     //check part
     function check_part(partno){
-        var status = 0;
-        
         var url = '<?php echo base_url('front/cincoming/check_part'); ?>';
         var type = 'POST';
         var data = {
@@ -405,11 +409,11 @@
                     e_part_note_s.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_partnum_s.val("");
                     e_partnum_s.focus();
-                    status = 0;
+                    status_checkpart_s = 0;
                 }else if(jqXHR.status === 1){
                     e_part_note_s.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
                     e_qty_s.focus();
-                    status = 1;
+                    status_checkpart_s = 1;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -474,7 +478,7 @@
                 if(jqXHR.status === 1){
                     $('#ttl_qty_s').html(jqXHR.ttl_cart);
                 }else{
-                    $('#ttl_qty_s').html(jqXHR.ttl_cart);
+                    $('#ttl_qty_s').html("0");
                 }
             },
             cache: false,
@@ -501,7 +505,7 @@
                 if(jqXHR.status === 1){
                     $('#ttl_qty_r').html(jqXHR.ttl_cart);
                 }else{
-                    $('#ttl_qty_r').html(jqXHR.ttl_cart);
+                    $('#ttl_qty_r').html("0");
                 }
             },
             cache: false,
@@ -841,9 +845,11 @@
     }
     
     $(document).ready(function() {
+        init_form_s();
         init_table_s();
         get_total_s();
         
+        init_form_r();
         init_table_r();
         clear_cart();
         get_total_r();

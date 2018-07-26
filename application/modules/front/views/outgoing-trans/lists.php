@@ -86,6 +86,11 @@
                 { "data": 'status' },
                 { "data": 'button' },
             ],
+            order: [[ 0, "desc" ]],
+            columnDefs: [{ 
+                orderable: false,
+                targets: [ -1 ]
+            }],
         });
 
         table.buttons().container()

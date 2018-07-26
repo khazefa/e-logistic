@@ -245,6 +245,8 @@
     var e_serialnum = $('#fserialnum');
     
     var dataSet = [];
+    var status_checkpart = 0;
+    var status_checkticket = 0;
         
     //initial form state
     function init_form(){
@@ -570,9 +572,7 @@
     }
     
     //check part stock
-    function check_part(partno){
-        var status = 0;
-        
+    function check_part(partno){        
         var url = '<?php echo base_url('front/coutgoing/check_part'); ?>';
         var type = 'POST';
         
@@ -581,7 +581,7 @@
             fpartnum : partno
         };
         
-        var resAjax = $.ajax({
+        $.ajax({
             type: type,
             url: url,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -594,21 +594,19 @@
                     e_partnum_notes.html('<span class="help-block text-warning">'+jqXHR.message+'</span>');
                     //load data part replacement
                     get_part_sub(partno);
-                    return 0;
+                    status_checkpart = 0;
                 }else if(jqXHR.status === 1){
                     e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
                     table2.clear().draw();
                     table3.clear().draw();
                     
                     e_partnum.prop("readonly", true);
-                    //fill serial number
-                    e_serialnum.focus();
-                    return 1;
+                    status_checkpart = 1;
                 }else if(jqXHR.status === 2){
                     e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     table2.clear().draw();
                     table3.clear().draw();
-                    return 2;
+                    status_checkpart = 2;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -616,13 +614,11 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        return resAjax.status;
+        
     }
     
     //check ticket
-    function check_ticket(ticketno){
-        var status = 0;
-        
+    function check_ticket(ticketno){        
         var url = '<?php echo base_url('front/coutgoing/check_ticket'); ?>';
         var type = 'POST';
         
@@ -642,11 +638,10 @@
                 if(jqXHR.status === 0){
                     alert(jqXHR.message);
                     window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                    status = 0;
+                    status_checkticket = 0;
                 }else if(jqXHR.status === 1){
                     alert(jqXHR.message);
-                    e_engineer_id.focus();
-                    status = 1;
+                    status_checkticket = 1;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -654,7 +649,7 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        return status;
+//        return status;
     }
     
     //add part sub number to part number field
@@ -986,6 +981,9 @@
                     e_ticketnum.focus();
                 }else{
                     check_ticket($(this).val());
+                    if(status_checkticket === 1){
+                        e_engineer_id.focus();
+                    }
                 }
                 return false;
             }
@@ -1036,8 +1034,6 @@
                 e_partnum.prop('readonly', false);
                 e_partnum.val('');
                 e_partnum.focus();
-                e_serialnum.prop('readonly', false);
-                e_serialnum.val('');
             }
         });
         
@@ -1047,13 +1043,18 @@
                     alert('Please fill in this field!');
                     e_partnum.focus();
                 }else{
-                    if(check_part(e_partnum.val()) === 0){
-                        
-                    }else if(check_part(e_partnum.val()) === 1){
-                        //fill in serial number
-                    }else if(check_part(e_partnum.val()) === 2){
-                        //load part from nearby warehouse
-                        get_nearby_wh(e_partnum.val());
+                    if (/^[0-9A-Za-z]+$/.test(e_partnum.val())){
+                        check_part(e_partnum.val());
+                        if(status_checkpart === 1){
+                            //fill serial number
+                            e_serialnum.prop('readonly', false);
+                            e_serialnum.val('');
+                            e_serialnum.focus();
+                        }
+                    }else{
+                        alert('Spare part number contained by unknown characters!');
+                        e_partnum.val('');
+                        e_partnum.focus();
                     }
                 }
                 return false;
@@ -1069,20 +1070,23 @@
                     alert('Please fill out serial number!');
                     e_serialnum.focus();
                 }else{
-//                    alert(setMessage());
-                    alert(check_part(e_partnum.val()));
-//                    if(check_part(e_partnum.val()) === 1){
-//                        add_cart(e_partnum.val(), e_serialnum.val());
-//                        reload();
-////                        init_form_order();
-//                        e_partnum.prop('readonly', false);
-//                        e_partnum.val('');
-//                        e_partnum.focus();
-//                    }else{
-//                        alert('Please check your spare part number again');
-//                        e_partnum.prop('readonly', false);
-//                        e_partnum.focus();
-//                    }
+                    check_part(e_partnum.val());
+//                    alert(status_checkpart);
+                    if(status_checkpart === 1){
+                        add_cart(e_partnum.val(), e_serialnum.val());
+                        reload();
+//                        init_form_order();
+                        e_partnum.prop('readonly', false);
+                        e_partnum.val('');
+                        e_partnum.focus();
+                        e_partnum_notes.html('');
+                        e_serialnum.prop('readonly', true);
+                        e_serialnum.val('');
+                    }else{
+                        alert('Please check your spare part number again');
+                        e_partnum.prop('readonly', false);
+                        e_partnum.focus();
+                    }
                 }
                 return false;
             }
@@ -1144,13 +1148,15 @@
                                 show: true
                             });
                             $('#opt_yess').click(function () {
-                                if(check_ticket(e_ticketnum.val()) === 1){
+                                check_ticket(e_ticketnum.val());
+                                if(status_checkticket === 1){
                                     complete_request();
                                     window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
                                 }
                             });
                             $('#opt_no').click(function () {
-                                if(check_ticket(e_ticketnum.val()) === 1){
+                                check_ticket(e_ticketnum.val());
+                                if(status_checkticket === 1){
                                     complete_request();
                                     window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
                                 }

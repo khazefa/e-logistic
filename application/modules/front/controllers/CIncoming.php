@@ -782,7 +782,7 @@ class CIncoming extends BaseController
         if(!empty($rs)){
             $total = 0;
             foreach ($rs as $r){
-                $total = $r->total;
+                $total = $r->total > 0 ? (int)$r->total : 0;
             }
             $success_response = array(
                 'status' => 1,
@@ -1150,7 +1150,7 @@ class CIncoming extends BaseController
         if(!empty($rs)){
             $total = 0;
             foreach ($rs as $r){
-                $total = $r->total;
+                $total = $r->total > 0 ? (int)$r->total : 0;
             }
             $success_response = array(
                 'status' => 1,

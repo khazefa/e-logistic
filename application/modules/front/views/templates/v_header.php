@@ -147,15 +147,13 @@
                                     <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
                                 </ul>
                             </li>
-                            <!--
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-file-text"></i>Summary Report</a>
+                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-consumed-parts");?>">Consumed Part</a></li>
-                                    <li><a href="#">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                 </ul>
                             </li>
-                            -->
                             <?php
                             }
                             ?>

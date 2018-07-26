@@ -340,14 +340,15 @@ function drawRows($w, $h, $txt, $border=0, $align='J', $fill=false, $maxline=0, 
     // Page footer
     function Footer()
     {
-        $curdate = date('d/m/Y');
+        $curdate = date('d/m/Y H:i:s');
         // Position at 1.5 cm from bottom
         $this->SetY(-15);
         // Arial italic 8
         $this->SetFont('Arial','I',8);
         // Page number
-        $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'L');
-        $this->Cell(0,10,'Security print key: '. generateRandomString(32).' - print date:'.$curdate,0,0,'R');
+        $this->Cell(0,10,'Security print key: '. generateRandomString(32),0,0,'L');
+//        $this->Cell(105,10,'Page '.$this->PageNo().'/{nb}',1,0,'C');
+        $this->Cell(0,10,' print date: '.$curdate,0,1,'R');
     }
 }
 

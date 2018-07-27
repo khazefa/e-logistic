@@ -1247,6 +1247,8 @@ class COutgoing extends BaseController
             $engineer_name = "";
             $engineer_mess = "";
             $engineer_sign = "";
+            $fpurpose = "";
+            $fslname = "";
             foreach ($results as $r){
                 $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 switch ($fpurpose){
@@ -1275,13 +1277,13 @@ class COutgoing extends BaseController
                 $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
                 $ticket = $r->outgoing_ticket == "" ? "-" : filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
                 $transdate = date("d/m/Y H:i:s", strtotime(filter_var($r->created_at, FILTER_SANITIZE_STRING)));
-                $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-                $engineer_id = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-                $engineer2_id = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
-                $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+                $partner = $r->partner_name == "" ? "-" : filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                $engineer_id = $r->engineer_key == "" ? "-" : filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+                $engineer2_id = $r->engineer_2_key == "" ? "-" : filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
+                $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                 if(!empty($engineer2_id)){
-                    $engineer_mess = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                 }else{
                     $engineer_sign = $engineer_name;
                 }

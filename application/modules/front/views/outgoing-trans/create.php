@@ -410,6 +410,9 @@
             }else{
                 add_part_sub(fpartnum);
                 table2.clear().draw();
+                e_serialnum.prop('readonly', false);
+                e_serialnum.val('');
+                e_serialnum.focus();
             }
         });
 
@@ -657,8 +660,10 @@
         e_partnum.prop("readonly", false);
         e_partnum.val('');
         e_partnum.val(partno);
-        e_partnum.prop("readonly", true);
-        check_part(partno);
+//        e_partnum.prop("readonly", true);
+        alert('Please press [ENTER] to your subtitution part number');
+        
+//        check_part(partno);
     }
     
     //add to cart
@@ -872,13 +877,13 @@
             contentType:"application/json",
             data: data,
             success: function (jqXHR) {
-                if(jqXHR.status == 0){
+                if(jqXHR.status === 0){
                     $("#error_modal .modal-title").html("Message");
                     $("#error_modal .modal-body h4").html(""+jqXHR.message);
                     $('#error_modal').modal({
                         show: true
                     });
-                }else if(jqXHR.status == 1){
+                }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
                 }
             },
@@ -895,12 +900,6 @@
         var url = '<?php echo base_url('print-outgoing-trans/'); ?>'+param;
         var newWindow=window.open(url);
 //        window.location.assign(url);
-    }
-    
-    function setMessage(){
-        var message = "Hello";
-        
-        return message;
     }
     
     $(document).ready(function() {
@@ -1092,9 +1091,9 @@
             }
         });
         
-        $("#btn_complete").on("click", function(e){
+        $("#btn_complete").on("click", function(e){        
             var total_qty = parseInt($('#ttl_qty').html());
-        
+            
             if(e_purpose.val() === "0"){
                 $("#error_modal .modal-title").html("Message");
                 $("#error_modal .modal-body h4").html("Please select your purpose!");
@@ -1103,29 +1102,50 @@
                 });
             }else{
                 if(e_purpose.val() === "RWH"){
-                    if(isEmpty(e_dest_fsl.val())){
+                    if(isEmpty(e_dest_fsl.val()) || e_dest_fsl.val() === "0"){
                         alert('Please select your FSL Destination!');
                         e_dest_fsl.focus();
                     }else if(isEmpty(e_delivery2.val())){
-                        $("#confirmation .modal-title").html("Message");
-                        $("#confirmation .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
-                        $('#confirmation').modal({
+                        $("#global_confirm .modal-title").html("Message");
+                        $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
+                        $('#global_confirm').modal({
                             show: true
                         });
-                        $('#opt_yess').click(function () {
+                        $('#ans_yess').click(function () {
                             e_delivery2.prop('readonly', false);
                             e_delivery2.focus();
                         });
-                        $('#opt_no').click(function () {
+                        $('#ans_no').click(function () {
                             e_notes2.prop('readonly', false);
                             e_notes2.focus();
                         });
+                    }else{
+                        if(total_qty > 0){
+                            $('#confirmation').modal({
+                                show: true
+                            });
+                            $('#opt_yess').click(function () {
+                                complete_request();
+                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+                            });
+                            $('#opt_no').click(function () {
+                                complete_request();
+                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+                            });
+                        }else{
+                            $("#error_modal .modal-title").html("Message");
+                            $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
+                            $('#error_modal').modal({
+                                show: true
+                            });
+                            e_dest_fsl.focus();
+                        }
                     }
                 }else{
                     if(isEmpty(e_ticketnum.val())){
                         alert('Please fill out the ticket number!');
                         e_ticketnum.focus();
-                    }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === 0){
+                    }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === "0"){
                         alert('Please select the FSE data!');
                         e_engineer_id.focus();
                     }else if(isEmpty(e_delivery1.val())){

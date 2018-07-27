@@ -76,6 +76,24 @@
                                         <input type="text" name="fnotes1" id="fnotes1" class="form-control">
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="fcust" class="col-sm-3 col-form-label">Customer</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="fcust" id="fcust" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="floc" class="col-sm-3 col-form-label">Location</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="floc" id="floc" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="fssb_id" class="col-sm-3 col-form-label">SSB/ID</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="fssb_id" id="fssb_id" class="form-control">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -234,6 +252,9 @@
     var e_engineer2_notes = $('#feg2_notes');
     var e_delivery1 = $('#fdelivery');
     var e_notes1 = $('#fnotes1');
+    var e_cust = $('#fcust');
+    var e_loc = $('#floc');
+    var e_ssb_id = $('#fssb_id');
     
     var e_dest_fsl = $('#fdest_fsl');
     var e_delivery2 = $('#fdelivery2');
@@ -260,6 +281,12 @@
         e_delivery1.prop("readonly", true);
         e_notes1.val("");
         e_notes1.prop("readonly", true);
+        e_cust.val("");
+        e_cust.prop("readonly", true);
+        e_loc.val("");
+        e_loc.prop("readonly", true);
+        e_ssb_id.val("");
+        e_ssb_id.prop("readonly", true);
         
         e_dest_fsl.attr('disabled', true);
         e_delivery2.val("");
@@ -865,8 +892,11 @@
             fengineer2_id : e_engineer2_id.val(),
             fpurpose : e_purpose.val(),
             fqty : parseInt($('#ttl_qty').html()),
+            fdelivery : delivery,
             fnotes : notes,
-            fdelivery : delivery
+            fcust : e_cust.val(),
+            floc : e_loc.val(),
+            fssb_id : e_ssb_id.val()
         };
         
         $.ajax({
@@ -928,12 +958,18 @@
                 alert( "Please choose purpose!" );
                 init_form();
             }else if(valpurpose === "RWH"){
-                e_ticketnum.prop("readonly", true);
                 e_ticketnum.val("");
-                e_delivery1.prop("readonly", true);
+                e_ticketnum.prop("readonly", true);
                 e_delivery1.val("");
-                e_notes1.prop("readonly", true);
+                e_delivery1.prop("readonly", true);
                 e_notes1.val("");
+                e_notes1.prop("readonly", true);
+                e_cust.val("");
+                e_cust.prop("readonly", true);
+                e_loc.val("");
+                e_loc.prop("readonly", true);
+                e_ssb_id.val("");
+                e_ssb_id.prop("readonly", true);
                 
                 e_engineer_id.prop('disabled', true);
                 e_engineer_id.val('default');
@@ -961,6 +997,12 @@
                 e_notes1.prop("readonly", true);
                 e_delivery1.val("");
                 e_delivery1.prop("readonly", true);
+                e_cust.val("");
+                e_cust.prop("readonly", true);
+                e_loc.val("");
+                e_loc.prop("readonly", true);
+                e_ssb_id.val("");
+                e_ssb_id.prop("readonly", true);
                 
                 e_dest_fsl.prop('disabled', true);
                 e_dest_fsl.val('default');
@@ -979,7 +1021,7 @@
                     alert('Please fill out the ticket number!');
                     e_ticketnum.focus();
                 }else{
-                    check_ticket($(this).val());
+                    check_ticket(e_ticketnum.val());
                     if(status_checkticket === 1){
                         e_engineer_id.focus();
                     }
@@ -1005,11 +1047,17 @@
                     e_engineer2_id.focus();
                     e_notes1.prop("readonly", false);
                     e_delivery1.prop("readonly", false);
+                    e_cust.prop("readonly", false);
+                    e_loc.prop("readonly", false);
+                    e_ssb_id.prop("readonly", false);
                 });
                 $('#ans_no').click(function () {
                     e_delivery1.prop("readonly", false);
                     e_delivery1.focus();
                     e_notes1.prop("readonly", false);
+                    e_cust.prop("readonly", false);
+                    e_loc.prop("readonly", false);
+                    e_ssb_id.prop("readonly", false);
                 });
             }
         });
@@ -1017,8 +1065,6 @@
         e_engineer2_id.on('change', function() {
             e_delivery1.prop("readonly", false);
             e_delivery1.focus();
-            e_notes1.prop("readonly", false);
-//            e_partnum.focus();
         });
         
         e_dest_fsl.on('change', function() {
@@ -1168,18 +1214,12 @@
                                 show: true
                             });
                             $('#opt_yess').click(function () {
-                                check_ticket(e_ticketnum.val());
-                                if(status_checkticket === 1){
-                                    complete_request();
-                                    window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-                                }
+                                complete_request();
+                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
                             });
                             $('#opt_no').click(function () {
-                                check_ticket(e_ticketnum.val());
-                                if(status_checkticket === 1){
-                                    complete_request();
-                                    window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                                }
+                                complete_request();
+                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
                             });
                         }else{
                             $("#error_modal .modal-title").html("Message");

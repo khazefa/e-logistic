@@ -1086,6 +1086,9 @@ class COutgoing extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $fdelivery = $this->input->post('fdelivery', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
+        $fcust = $this->input->post('fcust', TRUE);
+        $floc = $this->input->post('floc', TRUE);
+        $fssb_id = $this->input->post('fssb_id', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode);
@@ -1122,10 +1125,10 @@ class COutgoing extends BaseController
                     }
                 }
             }
-
+        
             $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fdelivery'=>$fdelivery, 'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 
-                'fnotes'=>$fnotes);
+                'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fdelivery'=>$fdelivery, 'fqty'=>$total_qty, 
+                'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes, 'fcust'=>$fcust, 'floc'=>$floc, 'fssb_id'=>$fssb_id);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
@@ -1248,6 +1251,9 @@ class COutgoing extends BaseController
             $engineer_mess = "";
             $engineer_sign = "";
             $fpurpose = "";
+            $customer = "";
+            $location = "";
+            $ssb_id = "";
             $fslname = "";
             foreach ($results as $r){
                 $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
@@ -1290,6 +1296,9 @@ class COutgoing extends BaseController
                 $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                 $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
                 $notes = $r->outgoing_notes == "" ? "-" : filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+                $customer = $r->outgoing_cust == "" ? "-" : filter_var($r->outgoing_cust, FILTER_SANITIZE_STRING);
+                $location = $r->outgoing_loc == "" ? "-" : filter_var($r->outgoing_loc, FILTER_SANITIZE_STRING);
+                $ssb_id = $r->outgoing_ssbid == "" ? "-" : filter_var($r->outgoing_ssbid, FILTER_SANITIZE_STRING);
             }
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
@@ -1321,7 +1330,7 @@ class COutgoing extends BaseController
                 $this->mypdf->setFont('Arial','B',10);
                 $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
                 $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->Cell(($width*(30/100)),7,$customer,1,1, 'L');
 
                 $this->mypdf->ln(0);
 
@@ -1332,7 +1341,7 @@ class COutgoing extends BaseController
                 $this->mypdf->setFont('Arial','B',10);
                 $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
                 $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->Cell(($width*(30/100)),7,$location,1,1, 'L');
 
                 $this->mypdf->ln(0);
 
@@ -1343,7 +1352,7 @@ class COutgoing extends BaseController
                 $this->mypdf->setFont('Arial','B',10);
                 $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
                 $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,'',1,1, 'L');
+                $this->mypdf->Cell(($width*(30/100)),7,$ssb_id,1,1, 'L');
 
                 $this->mypdf->ln(5);
                 $this->mypdf->setFont('Arial','B',13);

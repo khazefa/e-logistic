@@ -382,23 +382,25 @@ class CIncoming extends BaseController
         $success_response = array();
         $error_response = array();
         
+        $fcode = $this->repo;
         $fpartnum = $this->input->post('fpartnum', TRUE);
-        $arrWhere = array('fpartnum'=>$fpartnum);
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_info_parts'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        if($rs){
+        if(!empty($rs)){
             $success_response = array(
                 'status' => 1,
-                'message'=> 'Stock available'
+                'message'=> 'Sparepart data available'
             );
             $response = $success_response;
         }else{
             $error_response = array(
                 'status' => 0,
-                'message'=> 'Sparepart not available'
+                'message'=> 'Sparepart data not available in Stock Data'
             );
             $response = $error_response;
         }

@@ -39,6 +39,7 @@
                                 <th>Date</th>
                                 <th>Ticket No</th>
                                 <th>Requested by</th>
+                                <th>Take by</th>
                                 <th>Purpose</th>
                                 <th>Qty</th>
                                 <th>FSL Admin</th>
@@ -83,6 +84,7 @@
                 { "data": 'transdate' },
                 { "data": 'transticket' },
                 { "data": 'reqby' },
+                { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
                 { "data": 'user' },

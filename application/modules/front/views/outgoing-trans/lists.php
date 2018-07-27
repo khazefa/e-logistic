@@ -36,6 +36,7 @@
                                 <th>Date</th>
                                 <th>Ticket No</th>
                                 <th>Requested by</th>
+                                <th>Take by</th>
                                 <th>Purpose</th>
                                 <th>Qty</th>
                                 <th>FSL Admin</th>
@@ -66,7 +67,7 @@
             deferRender: true,
             processing: true,
             lengthChange: true,
-            ajax: {                
+            ajax: {
                 url: "<?= base_url('front/coutgoing/get_list_view_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
@@ -80,6 +81,7 @@
                 { "data": 'transdate' },
                 { "data": 'transticket' },
                 { "data": 'reqby' },
+                { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
                 { "data": 'user' },

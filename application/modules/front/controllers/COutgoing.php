@@ -126,7 +126,8 @@ class COutgoing extends BaseController
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
+//            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
             $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
             $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
             $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
@@ -138,12 +139,15 @@ class COutgoing extends BaseController
             $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             $requestby = "";
+            $takeby = "";
             $purpose = "";
             
             if(empty($engineer2) || $engineer2 == ""){
                 $requestby = $engineer_name;
+                $takeby = "-";
             }else{
-                $requestby = $engineer2_name;
+                $requestby = $engineer_name;
+                $takeby = $engineer2_name;
             }
             
             switch ($fpurpose){
@@ -171,9 +175,10 @@ class COutgoing extends BaseController
             }
             
             $row['transnum'] = $transnum;
-            $row['transdate'] = tgl_indo($transdate);
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
             $row['transticket'] = $transticket;
             $row['reqby'] = $requestby;
+            $row['takeby'] = $takeby;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
             $row['user'] = $user_fullname;

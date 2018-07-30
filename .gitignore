@@ -16,7 +16,7 @@ application/logs/*
 !application/logs/.htaccess
 /vendor/
 
-# NetBeans specific #
-nbproject/
-nbproject/private/
-nbproject/private/private.xml
+#netbeans specific
+nbproject/*
+!nbproject/project.properties
+!nbproject/project.xml

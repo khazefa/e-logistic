@@ -378,32 +378,63 @@ class CIncoming extends BaseController
      */
     public function check_part(){
         $rs = array();
+        $rs2 = array();
         $arrWhere = array();
+        $arrWhere2 = array();
         $success_response = array();
         $error_response = array();
+        $response = array();
         
         $fcode = $this->repo;
         $fpartnum = $this->input->post('fpartnum', TRUE);
         
-        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
-        
+        $arrWhere = array('fpartnum'=>$fpartnum);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_parts'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if(!empty($rs)){
-            $success_response = array(
-                'status' => 1,
-                'message'=> 'Sparepart data available'
-            );
-            $response = $success_response;
+            $arrWhere2 = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
+            //Parse Data for cURL
+            $rs_data2 = send_curl($arrWhere2, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+            $rs2 = $rs_data2->status ? $rs_data2->result : array();
+
+            if(!empty($rs2)){
+                $success_response = array(
+                    'status' => 1,
+                    'message'=> 'Sparepart data is available'
+                );
+                $response = $success_response;
+            }else{
+                $dataInfo = array('fcode'=> $fcode, 'fpartnum'=> $fpartnum, 'fminval'=> 3, 'finitval'=> 0, 
+                    'flastval'=> 0, 'fflag'=> 'Y');
+                $rs_data2 = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_part_stock'), 'POST', FALSE);
+
+                if($rs_data2->status)
+                {
+                    $success_response = array(
+                        'status' => 1,
+                        'message'=> 'Sparepart data is available'
+                    );
+                    $response = $success_response;
+                }
+                else
+                {
+                    $error_response = array(
+                        'status' => 0,
+                        'message'=> 'There is an error while searching the data'
+                    );
+                    $response = $error_response;
+                }
+            }
         }else{
             $error_response = array(
                 'status' => 0,
-                'message'=> 'Sparepart data not available in Stock Data'
+                'message'=> 'Sparepart data is not available'
             );
             $response = $error_response;
         }
+
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

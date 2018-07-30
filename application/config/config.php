@@ -371,8 +371,8 @@ $config['encryption_key'] = 'RSlGOouy6XMi7^Bw1!uhyasd87&*GS5nF|V)PaOexfjM<:e*9RB
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
 $config['sess_use_database'] = FALSE;
+$config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'eloqu';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = FCPATH . 'chc/cache/';

@@ -186,6 +186,43 @@ class CIncoming extends BaseController
     }
     
     /**
+     * This function is used to get lists for json or populate data
+     */
+    public function get_list_part_json(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+
+        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
+        if ($fname != "") $arrWhere['fname'] = $fname;
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $row['partno'] = $partnum;
+            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($data)
+        );
+    }
+    
+    /**
      * This function is used to print supply transaction
      */
     public function print_trans_supply($ftrans_in){
@@ -393,7 +430,11 @@ class CIncoming extends BaseController
         $rs_data = send_curl($arrWhere, $this->config->item('api_info_parts'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
+        $partname = null;
         if(!empty($rs)){
+            foreach($rs AS $r1){
+                $partname = filter_var($r1->part_name, FILTER_SANITIZE_STRING);
+            }
             $arrWhere2 = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
             //Parse Data for cURL
             $rs_data2 = send_curl($arrWhere2, $this->config->item('api_info_part_stock'), 'POST', FALSE);
@@ -402,7 +443,7 @@ class CIncoming extends BaseController
             if(!empty($rs2)){
                 $success_response = array(
                     'status' => 1,
-                    'message'=> 'Sparepart data is available'
+                    'message'=> 'Sparepart <strong>'.$partname.'</strong> is available'
                 );
                 $response = $success_response;
             }else{
@@ -414,7 +455,7 @@ class CIncoming extends BaseController
                 {
                     $success_response = array(
                         'status' => 1,
-                        'message'=> 'Sparepart data is available'
+                        'message'=> 'Sparepart <strong>'.$partname.'</strong> is available'
                     );
                     $response = $success_response;
                 }
@@ -661,83 +702,33 @@ class CIncoming extends BaseController
         $data = array();
         $partname = "";
         $partstock = "";
-        foreach ($rs as $r) {
-            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $rs_part = $this->get_info_part($partnum);
-            foreach ($rs_part as $p){
-                $partname = $p["name"];
+        if(!empty($rs)){
+            foreach ($rs as $r) {
+                $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
+                $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                $rs_part = $this->get_info_part($partnum);
+                foreach ($rs_part as $p){
+                    $partname = $p["name"];
+                }
+                $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+                foreach ($rs_stock as $s){
+                    $partstock = (int)$s["stock"];
+                }
+                $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+                $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
+                $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+
+                $row['id'] = $id;
+                $row['partno'] = $partnum;
+                $row['serialno'] = $serialnum;
+                $row['name'] = $partname;
+                $row['stock'] = $partstock;
+                $row['qty'] = (int)$qty;
+
+                $data[] = $row;
             }
-            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
-            foreach ($rs_stock as $s){
-                $partstock = (int)$s["stock"];
-            }
-            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
-            
-            $row['id'] = $id;
-            $row['partno'] = $partnum;
-            $row['serialno'] = $serialnum;
-            $row['name'] = $partname;
-            $row['stock'] = $partstock;
-            $row['qty'] = (int)$qty;
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
-    public function get_list_cart_datatable2(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        $fcode = $this->repo;
-        $cartid = $this->session->userdata ( 'cart_session' )."inr";
-        $arrWhere = array('funiqid'=>$cartid);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $partname = "";
-        $partstock = "";
-        foreach ($rs as $r) {
-            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $rs_part = $this->get_info_part($partnum);
-            foreach ($rs_part as $p){
-                $partname = $p["name"];
-            }
-            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
-            foreach ($rs_stock as $s){
-                $partstock = (int)$s["stock"];
-            }
-            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
-            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
-            
-            $row['id'] = $id;
-            $row['partno'] = $partnum;
-            $row['serialno'] = $serialnum;
-            $row['name'] = $partname;
-            $row['stock'] = $partstock;
-            $row['status'] = $status;
-            $row['qty'] = (int)$qty;
- 
-            $data[] = $row;
+        }else{
+            $data = array();
         }
         
         return $this->output
@@ -1017,7 +1008,7 @@ class CIncoming extends BaseController
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        if($rs){
+        if(!empty($rs)){
             $total_qty = 0;
             $status = "";
             foreach ($rs as $r){
@@ -1027,19 +1018,22 @@ class CIncoming extends BaseController
             if($status == "complete"){
                 $global_response = array(
                     'status' => 0,
+                    'total_qty' => 0,
                     'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
                 );
             }else{
                 $global_response = array(
                     'status' => 1,
-                    'total_qty' => $total_qty
+                    'total_qty' => $total_qty,
+                    'message'=> 'Transaction still open'
                 );
             }
             $response = $global_response;
         }else{
             $error_response = array(
                 'status' => 0,
-                'message'=> 'Data not available'
+                'total_qty'=> 0,
+                'message'=> 'Transaction is not available'
             );
             $response = $error_response;
         }
@@ -1124,10 +1118,7 @@ class CIncoming extends BaseController
             $partname = "";
             foreach ($rs as $r){
                 $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-                $rs_part = $this->get_info_part($partnum);
-                foreach ($rs_part as $p){
-                    $partname = $p["name"];
-                }
+                $partname = $this->get_info_part_name($fpartnum);
                 $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
                 $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                 
@@ -1203,31 +1194,6 @@ class CIncoming extends BaseController
         ->set_output(
             json_encode($response)
         );
-    }
-    
-    /**
-     * This function is used to clear cart when page is loaded or reloaded
-     */
-    public function clear_cart(){
-        $success_response = array(
-            'status' => 1
-        );
-        $error_response = array(
-            'status' => 0,
-            'message'=> 'Failed to clear cart'
-        );
-        
-        $fcode = $this->repo;
-        $cartid = $this->session->userdata ( 'cart_session' )."inr";
-        
-        //clear cart list data
-        $arrWhere = array('fcartid'=>$cartid);
-        $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
-        if($rem_res->status){
-            $response = $success_response;
-        }else{
-            $response = $error_response;
-        }
     }
     
     /**

@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="header-title m-b-20"><?php echo $contentTitle; ?></h4><hr>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
@@ -147,6 +147,23 @@
 
             <div class="card-body">
                 <div class="row">
+                    <div class="form-group form-group-sm col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select id="fpartname" name="fpartname" class="selectpicker" data-live-search="true" 
+                                    data-selected-text-format="values" title="Search Part Name.." data-style="btn-light">
+                                    <option value="0">Select Part Name</option>
+                                    <?php
+                                        foreach($list_part as $p){
+                                            echo '<option value="'.$p["partno"].'">'.$p['partno'].' - '.$p["name"].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="form-group form-group-sm col-sm-6">
                         <div class="row">
                             <div class="input-group col-sm-12">
@@ -261,6 +278,7 @@
     var e_notes2 = $('#fnotes2');
     
     var e_switch = $('#fswitch');
+    var e_partname = $('#fpartname');
     var e_partnum = $('#fpartnum');
     var e_partnum_notes = $('#fpartnum_notes');
     var e_serialnum = $('#fserialnum');
@@ -298,6 +316,8 @@
     //initial form order state
     function init_form_order(){
 //        e_switch.prop('checked', false);
+        e_partname.attr('disabled', true);
+        e_partname.selectpicker('refresh');
         e_partnum.val("");
         e_partnum.prop("readonly", true);
         e_partnum_notes.html("");
@@ -335,7 +355,7 @@
                 { "data": 'id' },
                 { "data": 'partno' },
                 { "data": 'serialno' },
-                { "data": 'name' },
+                { "data": 'partname' },
                 { "data": 'stock' },
                 { "data": 'qty' },
             ],
@@ -682,6 +702,37 @@
 //        return status;
     }
     
+    function check_part_name(partname){
+        var url = '<?php echo base_url('front/coutgoing/get_list_part_like'); ?>';
+        var type = 'POST';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fname : partname
+        };
+
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data:data,
+            success:function(jqXHR)
+            {
+                e_partname.empty();
+                $.each(data, function(key, value) {
+                    e_partname.append('<option value="'+ jqXHR.partno +'">'+ jqXHR.name +'</option>');
+                });
+                e_partname.selectpicker('refresh');
+            },
+            cache: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
     //add part sub number to part number field
     function add_part_sub(partno){
         e_partnum.prop("readonly", false);
@@ -915,6 +966,7 @@
                     });
                 }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
+                    window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -1076,10 +1128,19 @@
             if(this.checked === false){
                 init_form_order();
             }else{
+                e_partname.attr('disabled', false);
+                e_partname.selectpicker('refresh');
                 e_partnum.prop('readonly', false);
                 e_partnum.val('');
                 e_partnum.focus();
             }
+        });
+        
+        e_partname.on('change', function() {
+            var selectedText = $(this).find("option:selected").val();
+            e_partnum.prop('readonly', false);
+            e_partnum.val(selectedText);
+            e_partnum.focus();
         });
         
         e_partnum.on('keypress', function(e){
@@ -1167,17 +1228,16 @@
                         });
                     }else{
                         if(total_qty > 0){
-                            $('#confirmation').modal({
-                                show: true
-                            });
-                            $('#opt_yess').click(function () {
-                                complete_request();
-                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-                            });
-                            $('#opt_no').click(function () {
-                                complete_request();
-                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                            });
+                            complete_request();
+//                            $('#confirmation').modal({
+//                                show: true
+//                            });
+//                            $('#opt_yess').click(function () {
+//                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+//                            });
+//                            $('#opt_no').click(function () {
+//                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+//                            });
                         }else{
                             $("#error_modal .modal-title").html("Message");
                             $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
@@ -1210,17 +1270,16 @@
                         });
                     }else{
                         if(total_qty > 0){
-                            $('#confirmation').modal({
-                                show: true
-                            });
-                            $('#opt_yess').click(function () {
-                                complete_request();
-                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-                            });
-                            $('#opt_no').click(function () {
-                                complete_request();
-                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-                            });
+                            complete_request();
+//                            $('#confirmation').modal({
+//                                show: true
+//                            });
+//                            $('#opt_yess').click(function () {
+//                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+//                            });
+//                            $('#opt_no').click(function () {
+//                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+//                            });
                         }else{
                             $("#error_modal .modal-title").html("Message");
                             $("#error_modal .modal-body h4").html("You dont have any detail of transaction");

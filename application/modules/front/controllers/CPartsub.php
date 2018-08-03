@@ -81,10 +81,12 @@ class CPartsub extends BaseController
             if(!empty($part_sub)){
                 $names = '<ul class="list-unstyled">';
                 $e_partsub = explode(';', $part_sub);
+                $data_parts = array();
                 foreach ($e_partsub as $n){
-                    array_push($data_parts, $this->get_list_info_part($n));
+                    if(!empty($n)){
+                        array_push($data_parts, $this->get_list_info_part($n));
+                    }
                 }
-                
                 foreach ($data_parts as $datas){
                     foreach($datas as $d){
 //                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
@@ -141,7 +143,9 @@ class CPartsub extends BaseController
                 $names = '<ul class="list-unstyled">';
                 $e_partsub = explode(';', $part_sub);
                 foreach ($e_partsub as $n){
-                    array_push($data_parts, $this->get_list_info_part($n));
+                    if(!empty($n)){
+                        array_push($data_parts, $this->get_list_info_part($n));
+                    }
                 }
                 
                 foreach ($data_parts as $datas){

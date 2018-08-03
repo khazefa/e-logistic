@@ -15,6 +15,7 @@ class Login extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->library('encrypt');
     }
 
     /**
@@ -80,7 +81,7 @@ class Login extends CI_Controller
                     'vendorRepoName'=>$wh_name,          
                     'role'=>$res->role,
                     'roleText'=>$res->roleText,
-                    'cart_session'=> md5($res->accessUR."-".$res->accessName."-".$res->accessRepo."-".$res->roleText),
+                    'cart_session'=> sha1(microtime().$res->accessName.$res->accessRepo),
                     'isSessionFilled' => TRUE
                 );
                 $this->session->set_userdata($sessionArray);

@@ -318,7 +318,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'RSlGOouy6XMi7^Bw1!uhyasd87&*GS5nF|V)PaOexfjM<:e*9RBc@1tRVsgAHSBVZT@Ozhc^w!4Uluyvts7c65410y[20;cr*(&@*&$#AIUSTb';
+$config['encryption_key'] = 'RSlGOouy6XMi7^Bw1!546&*GS5nF|V)PaOexfjM<:e*9RBc@1tRVsgAHSBVZT@Ozhc^w!4Uluyvts7c65410y[20;cr*(&@*&$#AIUSTb';
 
 /*
 |--------------------------------------------------------------------------
@@ -373,9 +373,11 @@ $config['encryption_key'] = 'RSlGOouy6XMi7^Bw1!uhyasd87&*GS5nF|V)PaOexfjM<:e*9RB
 */
 $config['sess_use_database'] = FALSE;
 $config['sess_driver'] = 'files';
+//$config['sess_driver'] = 'redis';
 $config['sess_cookie_name'] = 'eloqu';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = FCPATH . 'chc/cache/';
+//$config['sess_save_path'] = 'tcp://localhost:6379';
 $config['sess_match_ip'] = TRUE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
@@ -416,13 +418,15 @@ $config['cookie_httponly'] 	= FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
+/**
 $exclude_urls = array('client/cart/add_cart_ret','client/cart/delete_cart_ret',
 'client/retrieve_folder/complete_trans');
+ */
 // $exclude_urls = array('client/cart/:any','client/cart/delete_cart_ret');
 
 $config['csrf_protection'] = FALSE;
-$config['csrf_token_name'] = 'X02_protection';
-$config['csrf_cookie_name'] = 'csrf_x02';
+$config['csrf_token_name'] = 'X0X_protection';
+$config['csrf_cookie_name'] = 'csrf_x0x';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = FALSE;
 // $config['csrf_exclude_uris'] = $exclude_urls;

@@ -60,6 +60,7 @@ $config['api_remove_engineers'] = constant('urlapi').'api/cengineers/delete/'; /
 //  Begin Spareparts
 // ===========================
 $config['api_list_parts'] = constant('urlapi').'api/cparts/list/'; //POST
+$config['api_list_parts_like'] = constant('urlapi').'api/cparts/list_like/'; //POST
 $config['api_info_parts'] = constant('urlapi').'api/cparts/info/'; //POST
 $config['api_add_parts'] = constant('urlapi').'api/cparts/insert/'; //POST
 $config['api_edit_parts'] = constant('urlapi').'api/cparts/update/'; //POST

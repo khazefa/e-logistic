@@ -47,7 +47,7 @@
                             <span class="logo-large"><i class="mdi mdi-radar"></i> Highdmin</span>
                         </a> -->
                         <!-- Image Logo -->
-                        <a href="index.html" class="logo">
+                        <a href="<?php echo base_url();?>" class="logo">
                             <img src="<?php echo base_url();?>assets/public/images/logo_sm.png" alt="" height="48" class="logo-small">
                             <img src="<?php echo base_url();?>assets/public/images/logo.png" alt="" height="48" class="logo-large">
                         </a>
@@ -134,7 +134,7 @@
                             ?>
                             
                             <?php
-                            if(($role == ROLE_SPV || $role == ROLE_AM)){
+                            if(($role == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-database"></i>Master</a>
@@ -147,11 +147,18 @@
                                     <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
                                 </ul>
                             </li>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if(($role == ROLE_AM)){
+                            ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
                                 </ul>
                             </li>
                             <?php

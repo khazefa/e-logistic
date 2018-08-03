@@ -85,7 +85,9 @@ class CWarehouse extends BaseController
                 $e_nearby = explode(';', $nearby);
                 $data_nearby = array();
                 foreach ($e_nearby as $n){
-                    array_push($data_nearby, $this->get_list_info($n));
+                    if(!empty($n)){
+                        array_push($data_nearby, $this->get_list_info($n));
+                    }
                 }
                 
                 foreach ($data_nearby as $datas){
@@ -107,7 +109,9 @@ class CWarehouse extends BaseController
                 $e_spv = explode(';', $listspv);
                 $data_spv = array();
                 foreach ($e_spv as $s){
-                    array_push($data_spv, $this->get_list_users($s));
+                    if(!empty($s)){
+                        array_push($data_spv, $this->get_list_users($s));
+                    }
                 }
                 
                 foreach ($data_spv as $datasp){
@@ -160,7 +164,9 @@ class CWarehouse extends BaseController
                 $e_nearby = explode(';', $nearby);
                 $data_nearby = array();
                 foreach ($e_nearby as $n){
-                    array_push($data_nearby, $this->get_list_info($n));
+                    if(!empty($n)){
+                        array_push($data_nearby, $this->get_list_info($n));
+                    }
                 }
                 
                 foreach ($data_nearby as $datas){
@@ -182,7 +188,9 @@ class CWarehouse extends BaseController
                 $e_spv = explode(';', $listspv);
                 $data_spv = array();
                 foreach ($e_spv as $s){
-                    array_push($data_spv, $this->get_list_users($s));
+                    if(!empty($s)){
+                        array_push($data_spv, $this->get_list_users($s));
+                    }
                 }
                 
                 foreach ($data_spv as $datasp){
@@ -244,7 +252,9 @@ class CWarehouse extends BaseController
                 $names = '<ul class="list-unstyled">';
                 $e_nearby = explode(';', $nearby);
                 foreach ($e_nearby as $n){
-                    array_push($data_nearby, $this->get_list_info($n));
+                    if(!empty($n)){
+                        array_push($data_nearby, $this->get_list_info($n));
+                    }
                 }
                 
                 foreach ($data_nearby as $datas){

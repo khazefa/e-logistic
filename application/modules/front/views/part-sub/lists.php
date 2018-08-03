@@ -58,6 +58,7 @@
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
+            stateSave: true,
             destroy: true,
             stateSave: false,
             deferRender: true,

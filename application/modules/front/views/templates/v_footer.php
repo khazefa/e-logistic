@@ -121,6 +121,8 @@
         <!-- Plugin js -->
         <script src="<?php echo base_url();?>assets/public/plugins/bootstrap-select/js/bootstrap-select.js" type="text/javascript"></script>
         <script src="<?php echo base_url();?>assets/public/plugins/switchery/switchery.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="<?php echo base_url();?>assets/public/plugins/autocomplete/jquery.mockjax.js"></script>
+        <script type="text/javascript" src="<?php echo base_url();?>assets/public/plugins/autocomplete/jquery.autocomplete.min.js"></script>
         
         <!-- App js -->
         <script src="<?php echo base_url();?>assets/public/js/jquery.core.js"></script>

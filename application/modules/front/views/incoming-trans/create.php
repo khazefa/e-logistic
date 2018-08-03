@@ -33,7 +33,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-sm col-sm-12">
-                                                <span id="fpartnum_s_notes" class="help-block text-danger"><small></small></span>
+                                                <span id="fpartnum_s_notes" class="help-block text-danger"></span>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -269,7 +269,8 @@
     
     var dataSet = [];
     
-    var outgoing_qty = 0;
+    var total_qty_outgoing = 0;
+    var total_verified = 0;
     var status_checkpart_s = 0;
     var status_checkpart_r = 0;
 
@@ -288,6 +289,7 @@
         e_serialnum_r.val("");
         e_verify_note_r.html("");
         e_total_qty_r.html("0");
+        e_fe_report.prop('disabled', true);
     }
     
     function init_form_c(){
@@ -618,8 +620,6 @@
     
     //check outgoing transaction
     function check_trans_out(transnum){
-        var status = 0;
-        
         var url = '<?php echo base_url('front/cincoming/check_outgoing'); ?>';
         var type = 'POST';
         var data = {
@@ -640,11 +640,9 @@
                     e_trans_out.prop("readonly", false);
                     e_trans_out.val("");
                     e_trans_out.focus();
-                    status = 0;
                 }else if(jqXHR.status === 1){
                     e_trans_out_notes.html("");
-                    outgoing_qty = jqXHR.total_qty;
-                    status = 1;
+                    total_qty_outgoing = jqXHR.total_qty;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -652,7 +650,6 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        return status;
     }
     
     //check data to outgoing data
@@ -690,42 +687,8 @@
                         table_match.row.add(
                             [object.partno, object.serialno, object.partname, object.qty, object.status]
                         ).draw();
-//                        $.each(object, function(property, data) {
-//                            table_match.row.add(
-//                                [data.partno, data.serialno, data.partname, data.qty, data.status]
-//                            ).draw();
-//                        });
+                        total_verified++;
                     });
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    //clear cart
-    function clear_cart(){        
-        var url = '<?php echo base_url('front/cincoming/clear_cart'); ?>';
-        var type = 'POST';
-        
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>"
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 1){
-                    //done
-                }else if(jqXHR.status === 0){
-                    alert(jqXHR.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -851,7 +814,6 @@
         
         init_form_r();
         init_table_r();
-        clear_cart();
         get_total_r();
         table_match.clear().draw();
         
@@ -969,9 +931,12 @@
         });
         
         $("#btn_submit_r").on("click", function(e){
-//            var total_qty = parseInt($('#ttl_qty_s').html());
-            
-//            if(total_qty > 0){
+            if(total_verified < total_qty_outgoing){
+                alert('Not all part has returned, please input FE Report!');
+                e_fe_report.prop('disabled', false);
+                e_fe_report.val('');
+                e_fe_report.focus();
+            }else{
                 $('#confirmation').modal({
                     show: true
                 });
@@ -983,13 +948,7 @@
                     complete_return();
                     window.location.href = "<?php echo base_url('incoming-trans'); ?>";
                 });
-//            }else{
-//                $("#error_modal .modal-title").html("Message");
-//                $("#error_modal .modal-body h4").html("You have not filled out the data");
-//                $('#error_modal').modal({
-//                    show: true
-//                });
-//            }
+            }
         });
         
         e_trans_out_c.on("keypress", function(e){

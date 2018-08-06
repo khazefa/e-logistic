@@ -78,16 +78,17 @@ class CEngineers extends BaseController
             $row['feid'] = $key;
             $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            if($code == "00"){
-                $names = "WH";
-            }else{
-                $data_warehouse = $this->get_list_info_wh($code);
-                foreach ($data_warehouse as $d){
-                    $names = $d["name"];
-                }
-            }
-            $row['warehouse'] = $names;
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+//            if($code == "00"){
+//                $names = "WH";
+//            }else{
+//                $data_warehouse = $this->get_list_info_wh($code);
+//                foreach ($data_warehouse as $d){
+//                    $names = $d["name"];
+//                }
+//            }
+            $row['warehouse'] = $fslname;
  
             $data[] = $row;
         }
@@ -120,16 +121,17 @@ class CEngineers extends BaseController
             $row['feid'] = $key;
             $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            if($code == "00"){
-                $names = "WH";
-            }else{
-                $data_warehouse = $this->get_list_info_wh($code);
-                foreach ($data_warehouse as $d){
-                    $names = $d["name"];
-                }
-            }
-            $row['warehouse'] = $names;
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+//            if($fslcode == "00"){
+//                $names = "WH";
+//            }else{
+//                $data_warehouse = $this->get_list_info_wh($code);
+//                foreach ($data_warehouse as $d){
+//                    $names = $d["name"];
+//                }
+//            }
+            $row['warehouse'] = $fslname;
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
             $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
@@ -166,7 +168,7 @@ class CEngineers extends BaseController
         if ($femail != "") $arrWhere['femail'] = $femail;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_engineers'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -177,16 +179,17 @@ class CEngineers extends BaseController
             $row['feid'] = $key;
             $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            if($code == "00"){
-                $names = "WH";
-            }else{
-                $data_warehouse = $this->get_list_info_wh($code);
-                foreach ($data_warehouse as $d){
-                    $names = $d["name"];
-                }
-            }
-            $row['warehouse'] = $names;
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+//            if($code == "00"){
+//                $names = "WH";
+//            }else{
+//                $data_warehouse = $this->get_list_info_wh($code);
+//                foreach ($data_warehouse as $d){
+//                    $names = $d["name"];
+//                }
+//            }
+            $row['warehouse'] = $fslname;
  
             $data[] = $row;
         }

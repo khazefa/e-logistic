@@ -1213,10 +1213,7 @@ class CIncoming extends BaseController
                
         $date = date('Y-m-d'); 
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
-//        $ffe_report = $this->input->post('ffe_report', TRUE);
-//        $fticket = $this->input->post('fticket', TRUE);
-//        $fengineer_id = $this->input->post('fengineer_id', TRUE);
-//        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
+        $ffe_report = $this->input->post('ffe_report', TRUE);
         $fpurpose = "RG";
         $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);

@@ -734,9 +734,7 @@
     }
     
     //check outgoing transaction
-    function check_trans_out_c(transnum){
-        var status = 0;
-        
+    function check_trans_out_c(transnum){        
         var url = '<?php echo base_url('front/cincoming/check_outgoing'); ?>';
         var type = 'POST';
         var data = {
@@ -757,11 +755,9 @@
                     e_trans_out_c.prop("readonly", false);
                     e_trans_out_c.val("");
                     e_trans_out_c.focus();
-                    status = 0;
                 }else if(jqXHR.status === 1){
                     e_trans_out_c_notes.html("");
                     e_fe_report_c.focus();
-                    status = 1;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -769,7 +765,6 @@
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
         });
-        return status;
     }
     
     //submit close transaction
@@ -932,10 +927,14 @@
         
         $("#btn_submit_r").on("click", function(e){
             if(total_verified < total_qty_outgoing){
-                alert('Not all part has returned, please input FE Report!');
-                e_fe_report.prop('disabled', false);
-                e_fe_report.val('');
-                e_fe_report.focus();
+                if(isEmpty(e_fe_report.val())){
+                    alert('Not all part has returned, please input FE Report!');
+                    e_fe_report.prop('disabled', false);
+                    e_fe_report.focus();
+                }else{
+                    complete_return();
+                    window.location.href = "<?php echo base_url('new-incoming-trans'); ?>";
+                }
             }else{
                 $('#confirmation').modal({
                     show: true
@@ -965,7 +964,7 @@
             }
         });
         
-        $("#btn_submit_c").on("click", function(e){     
+        $("#btn_submit_c").on("click", function(e){
             $('#confirmation').modal({
                 show: true
             });

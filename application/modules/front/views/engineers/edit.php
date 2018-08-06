@@ -2,7 +2,11 @@
 $fkey = '';
 $femail = '';
 $fname = '';
+$ftitle = '';
 $fpartner = '';
+$fphone = '';
+$farea = '';
+$fspv = '';
 $fcode = '';
 
 if(!empty($records))
@@ -12,7 +16,11 @@ if(!empty($records))
         $fkey = $r["feid"];
         $femail = $r["email"];
         $fname = $r["name"];
+        $ftitle = $r["title"];
         $fpartner = $r["partner"];
+        $fphone = $r["phone"];
+        $farea = $r["area"];
+        $fspv = $r["spv"];
         $fcode = $r["code"];
     }
 }
@@ -85,9 +93,33 @@ if(!empty($records))
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="ftitle" class="col-2 col-form-label">Title</label>
+                        <div class="col-4">
+                            <input type="text" name="ftitle" id="ftitle" required value="<?php echo $ftitle;?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="femail" class="col-2 col-form-label">Email</label>
                         <div class="col-3">
                             <input type="email" name="femail" id="femail" required parsley-type="email" value="<?php echo $femail;?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fphone" class="col-2 col-form-label">Phone</label>
+                        <div class="col-4">
+                            <input type="text" name="fphone" id="fphone" value="<?php echo $fphone;?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="farea" class="col-2 col-form-label">Service Area</label>
+                        <div class="col-4">
+                            <input type="text" name="farea" id="farea" required value="<?php echo $farea;?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fspv" class="col-2 col-form-label">FSSPV CODE</label>
+                        <div class="col-4">
+                            <input type="text" name="fspv" id="fspv" required value="<?php echo $fspv;?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

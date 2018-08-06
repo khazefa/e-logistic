@@ -354,14 +354,22 @@ class CEngineers extends BaseController
             $partner = filter_var($r->partner_id, FILTER_SANITIZE_STRING);
             $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
             $name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $title = filter_var($r->engineer_title, FILTER_SANITIZE_STRING);
             $email = filter_var($r->engineer_email, FILTER_SANITIZE_EMAIL);
+            $phone = filter_var($r->engineer_phone, FILTER_SANITIZE_STRING);
+            $area = filter_var($r->engineer_area, FILTER_SANITIZE_STRING);
+            $spv = filter_var($r->engineer_spv, FILTER_SANITIZE_STRING);
             $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
             
             $row['feid'] = $key;
             $row['partner'] = $partner;
             $row['name'] = $name;
+            $row['title'] = $title;
             $row['email'] = $email;
+            $row['phone'] = $phone;
+            $row['area'] = $area;
+            $row['spv'] = $spv;
             $row['code'] = $code;
             $row['deleted'] = $deleted;
  
@@ -404,11 +412,16 @@ class CEngineers extends BaseController
         $fpass = $this->input->post('fpass', TRUE);
         $fpartner = $this->input->post('fpartner', TRUE);
         $fname = $this->input->post('fname', TRUE);
+        $ftitle = $this->input->post('ftitle', TRUE);
         $femail = $this->input->post('femail', TRUE);
+        $fphone = $this->input->post('fphone', TRUE);
+        $farea = $this->input->post('farea', TRUE);
+        $fspv = $this->input->post('fspv', TRUE);
         $fcode = $this->input->post('fcode', TRUE);
 
         $dataInfo = array('fpartner'=>$fpartner, 'fkey'=>$fkey, 'fpass'=>$fpass, 
-            'fname'=>$fname, 'femail'=>$femail, 'fcode'=>$fcode);
+            'fname'=>$fname, 'ftitle'=>$ftitle, 'femail'=>$femail, 'fphone'=>$fphone, 
+            'farea'=>$farea, 'fspv'=>$fspv, 'fcode'=>$fcode);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_engineers'), 'POST', FALSE);
 
@@ -463,11 +476,16 @@ class CEngineers extends BaseController
         $fpass = $this->input->post('fpass', TRUE);
         $fpartner = $this->input->post('fpartner', TRUE);
         $fname = $this->input->post('fname', TRUE);
+        $ftitle = $this->input->post('ftitle', TRUE);
         $femail = $this->input->post('femail', TRUE);
+        $fphone = $this->input->post('fphone', TRUE);
+        $farea = $this->input->post('farea', TRUE);
+        $fspv = $this->input->post('fspv', TRUE);
         $fcode = $this->input->post('fcode', TRUE);
 
-        $dataInfo = array('fpartner'=>$fpartner, 'fkey'=>$fkey, 'fpass'=>$fpass, 
-            'fname'=>$fname, 'femail'=>$femail, 'fcode'=>$fcode);
+        $dataInfo = array('fkey'=>$fkey, 'fpass'=>$fpass, 'fpartner'=>$fpartner, 
+            'fname'=>$fname, 'ftitle'=>$ftitle, 'femail'=>$femail, 'fphone'=>$fphone, 
+            'farea'=>$farea, 'fspv'=>$fspv, 'fcode'=>$fcode);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_engineers'), 'POST', FALSE);
 

@@ -63,9 +63,33 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="ftitle" class="col-2 col-form-label">Title</label>
+                        <div class="col-4">
+                            <input type="text" name="ftitle" id="ftitle" required placeholder="Title" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="femail" class="col-2 col-form-label">Email</label>
                         <div class="col-4">
                             <input type="email" name="femail" id="femail" required parsley-type="email" placeholder="Email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fphone" class="col-2 col-form-label">Phone</label>
+                        <div class="col-4">
+                            <input type="text" name="fphone" id="fphone" placeholder="Phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="farea" class="col-2 col-form-label">Service Area</label>
+                        <div class="col-4">
+                            <input type="text" name="farea" id="farea" required placeholder="Service Area" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fspv" class="col-2 col-form-label">FSSPV CODE</label>
+                        <div class="col-4">
+                            <input type="text" name="fspv" id="fspv" required placeholder="FSSPV CODE" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

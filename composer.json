@@ -1,0 +1,17 @@
+{
+    "name": "khazefa/e-logistic",
+    "description": "DN E-Logistic App",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "khazefion",
+            "email": "cybergitt@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.2.4",
+        "phpoffice/phpspreadsheet": "dev-master"
+    }
+}

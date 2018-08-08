@@ -56,7 +56,7 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'B><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'i><'col-sm-3'p>>",
+            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -98,6 +98,11 @@
                 { "data": 'warehouse' },
                 { "data": 'button' },
             ],
+            order: [[ 1, "asc" ]],
+            columnDefs: [{ 
+                orderable: false,
+                targets: [ -1 ]
+            }],
         });
 
         table.buttons().container()

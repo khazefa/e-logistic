@@ -151,9 +151,10 @@
                                 <table id="match_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>&nbsp;</th>
                                         <th>Part Number</th>
-                                        <th>Serial Number</th>
                                         <th>Part Name</th>
+                                        <th>Serial Number</th>
                                         <th>Qty</th>
                                         <th>Status</th>
                                     </tr>
@@ -288,7 +289,7 @@
         e_partnum_r.prop("readonly", false);
         e_serialnum_r.val("");
         e_verify_note_r.html("");
-        e_total_qty_r.html("0");
+//        e_total_qty_r.html("0");
         e_fe_report.prop('disabled', true);
     }
     
@@ -321,13 +322,13 @@
                 dataType: "JSON",
                 contentType: "application/json",
                 data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                    <?php echo $this->security->get_csrf_token_name(); ?>: "<?php echo $this->security->get_csrf_hash(); ?>"
                 } ),
             },
             columns: [
                 { "data": 'id' },
                 { "data": 'partno' },
-                { "data": 'name' },
+                { "data": 'partname' },
                 { "data": 'stock' },
                 { "data": 'qty' },
             ],
@@ -360,29 +361,83 @@
     }
     
     //init table
+//    function init_table_r(){        
+//        table_match = $('#match_grid').DataTable({
+//            searching: false,
+//            ordering: false,
+//            info: false,
+//            paging: false,
+//            destroy: true,
+//            stateSave: false,
+//            deferRender: true,
+//            processing: true,
+//            lengthChange: false,
+//            data: dataSet,
+//            columns: [
+//                { "title": "Part Number", "class": "left" },
+//                { "title": "Serial Number", "class": "left" },
+//                { "title": "Part Name", "class": "left" },
+//                { "title": "Qty", "class": "left" },
+//                { "title": "Status", "class": "left" },
+//            ]
+//        });
+//
+//        table_match.buttons().container()
+//                .appendTo('#match_grid_wrapper .col-md-6:eq(0)');
+//    }
+    
+    //reload table
+//    function reload2(){
+//        table_match.ajax.reload();
+//    }
+    
+    //init table
     function init_table_r(){        
         table_match = $('#match_grid').DataTable({
-            searching: false,
-            ordering: false,
-            info: false,
-            paging: false,
             destroy: true,
             stateSave: false,
             deferRender: true,
             processing: true,
-            lengthChange: false,
-            data: dataSet,
+            ajax: {
+                url: "<?= base_url('front/cincoming/get_list_cart_datatable_r'); ?>",
+                type: "POST",
+                data: function(d){
+                    d.<?php echo $this->security->get_csrf_token_name(); ?>= "<?php echo $this->security->get_csrf_hash(); ?>";
+                    d.ftrans_out = e_trans_out.val();
+                }
+            },
             columns: [
-                { "title": "Part Number", "class": "left" },
-                { "title": "Serial Number", "class": "left" },
-                { "title": "Part Name", "class": "left" },
-                { "title": "Qty", "class": "left" },
-                { "title": "Status", "class": "left" },
+                { "data": 'id' },
+                { "data": 'partno' },
+                { "data": 'partname' },
+                { "data": 'serialno' },
+                { "data": 'qty' },
+                { "data": 'status' },
+            ],
+            columnDefs : [
+                {
+                    targets   : 0,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        return '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-trash"></i></button>';
+                    }
+                }
             ]
+        });
+        
+        //function for datatables button
+        $('#match_grid tbody').on( 'click', 'button', function (e) {        
+            var data = table_match.row( $(this).parents('tr') ).data();
+            fid = data['id'];
+            delete_cart_r(fid);
         });
 
         table_match.buttons().container()
                 .appendTo('#match_grid_wrapper .col-md-6:eq(0)');
+        
+        var total_qty = table_match.rows().count();
+        $('#ttl_qty_r').html(total_qty);
     }
     
     //reload table
@@ -496,12 +551,18 @@
         var url = '<?php echo base_url('front/cincoming/get_total_cart_return'); ?>';
         var type = 'POST';
         
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            ftrans_out : e_trans_out.val()
+        };
+        
         $.ajax({
             type: type,
             url: url,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             dataType: 'JSON',
             contentType:"application/json",
+            data: data,
             success:function(jqXHR)
             {
                 if(jqXHR.status === 1){
@@ -511,6 +572,38 @@
                 }
             },
             cache: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+    
+    //delete cart return
+    function delete_cart_r(id){
+        var url = '<?php echo base_url('front/cincoming/delete_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fid : id
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    reload2();
+                    get_total_r();
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
             error: function(jqXHR, textStatus, errorThrown) {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
@@ -643,6 +736,8 @@
                 }else if(jqXHR.status === 1){
                     e_trans_out_notes.html("");
                     total_qty_outgoing = jqXHR.total_qty;
+                    reload2();
+                    get_total_r();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -683,12 +778,15 @@
                     //jika sama maka tidak harus input FE Report
                     
                     //load part from nearby warehouse
-                    $.each(jqXHR.data, function(i, object) {
-                        table_match.row.add(
-                            [object.partno, object.serialno, object.partname, object.qty, object.status]
-                        ).draw();
-                        total_verified++;
-                    });
+//                    $.each(jqXHR.data, function(i, object) {
+//                        table_match.row.add(
+//                            [object.partno, object.serialno, object.partname, object.qty, object.status]
+//                        ).draw();
+//                        total_verified++;
+//                    });
+//                    $('#ttl_qty_r').html(total_qty);
+                    reload2();
+                    get_total_r();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -705,7 +803,8 @@
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
             ftrans_out : e_trans_out.val(),
-            ffe_report : e_fe_report.val()
+            ffe_report : e_fe_report.val(),
+            fqty : $('#ttl_qty_r').html()
         };
         
         $.ajax({
@@ -803,6 +902,23 @@
     }
     
     $(document).ready(function() {
+        // Setting datatable defaults
+        $.extend( $.fn.dataTable.defaults, {
+            searching: false,
+            paginate: false,
+            autoWidth: false,
+            columnDefs: [{ 
+                orderable: false,
+                targets: [ 0 ]
+            }],
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            language: {
+                search: '<span>Search:</span> _INPUT_',
+                lengthMenu: '<span>Show:</span> _MENU_',
+                paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+        });
+        
         init_form_s();
         init_table_s();
         get_total_s();
@@ -810,7 +926,6 @@
         init_form_r();
         init_table_r();
         get_total_r();
-        table_match.clear().draw();
         
         init_form_c();
         
@@ -916,7 +1031,6 @@
                         e_serialnum_r.focus();
                     }else{
                         verify_data();
-                        get_total_r();
                         init_form_r();
                         e_partnum_r.focus();
                     }

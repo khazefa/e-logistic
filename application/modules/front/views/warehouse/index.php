@@ -55,7 +55,7 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'B><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-10'i><'col-sm-2'p>>",
+            dom: "<'row'<'col-sm-10'B><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -67,17 +67,17 @@
             buttons: [
                 {
                     extend: 'copy',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:true
                 }, 
                 {
                     extend: 'excel',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:true
                 },
                 {
                     extend: 'pdf',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:true
                 }
             ],
@@ -99,6 +99,11 @@
                 { "data": 'phone' },
                 { "data": 'spv' },
             ],
+            order: [[ 0, "asc" ]],
+//            columnDefs: [{ 
+//                orderable: false,
+//                targets: [ -1 ]
+//            }],
         });
 
         table.buttons().container()

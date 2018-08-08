@@ -78,10 +78,10 @@ class Login extends CI_Controller
                     'vendorName'=>$res->accessName,          
                     'isAdm'=>$res->isAdmin,          
                     'vendorRepo'=>$res->accessRepo,          
-                    'vendorRepoName'=>$wh_name,          
+                    'vendorRepoName'=>$wh_name,
                     'role'=>$res->role,
                     'roleText'=>$res->roleText,
-                    'cart_session'=> sha1(microtime().$res->accessName.$res->accessRepo),
+                    'cart_session'=> sha1(microtime().$res->accessUR.$res->accessName.$res->accessRepo),
                     'isSessionFilled' => TRUE
                 );
                 $this->session->set_userdata($sessionArray);

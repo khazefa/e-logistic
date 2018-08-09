@@ -201,7 +201,8 @@ $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
-$route['print-incoming-trans/(:any)'] = 'front/cincoming/print_trans_supply/$1';
+$route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
+$route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 // ===========================
 //  End Routing Incoming Trans
 // ===========================

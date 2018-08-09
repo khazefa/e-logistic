@@ -115,6 +115,7 @@ $config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //PO
 $config['api_list_view_incomings'] = constant('urlapi').'api/cpincomings/list_view/'; //POST
 $config['api_list_view_detail_incomings'] = constant('urlapi').'api/cpincomings/list_view_detail/'; //POST
 $config['api_list_incomings_cart'] = constant('urlapi').'api/cpincomings/list_tmp/'; //POST
+$config['api_add_incomings_r_cart'] = constant('urlapi').'api/cpincomings/create_trans_tmp_r/'; //POST
 $config['api_add_incomings_cart'] = constant('urlapi').'api/cpincomings/create_trans_tmp/'; //POST
 $config['api_add_incomings_trans'] = constant('urlapi').'api/cpincomings/create_trans/'; //POST
 $config['api_add_incomings_trans_detail'] = constant('urlapi').'api/cpincomings/create_trans_detail/'; //POST

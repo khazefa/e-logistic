@@ -121,6 +121,11 @@ class CIncoming extends BaseController
         $fcode = $this->repo;
         //Parameters for cURL
         $arrWhere = array('fcode'=>$fcode);
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fpurpose'=>$fpurpose);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();

@@ -56,6 +56,23 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        // Setting datatable defaults
+        $.extend( $.fn.dataTable.defaults, {
+            searching: true,
+            paginate: true,
+            autoWidth: false,
+            columnDefs: [{ 
+                orderable: false,
+                targets: [ 0 ]
+            }],
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            language: {
+                search: '<span>Search:</span> _INPUT_',
+                lengthMenu: '<span>Show:</span> _MENU_',
+                paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            }
+        });
+        
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",

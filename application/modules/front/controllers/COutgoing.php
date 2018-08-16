@@ -117,8 +117,15 @@ class COutgoing extends BaseController
         $arrWhere = array();
         
         $fcode = $this->repo;
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fticket = $this->input->post('fticket', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
         //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode);
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
+            'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
+        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();

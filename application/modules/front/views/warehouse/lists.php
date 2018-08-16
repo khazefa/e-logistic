@@ -71,18 +71,46 @@
             buttons: [
                 {
                     extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
                 }, 
                 {
                     extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
                 },
                 {
                     extend: 'pdf',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i> All Page',
+                    titleAttr: 'Excel All Page',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    footer:false
                 }
             ],
             ajax: {                

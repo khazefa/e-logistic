@@ -86,6 +86,8 @@ $config['api_remove_part_sub'] = constant('urlapi').'api/cpartsub/delete/'; //PO
 //  Begin Stock Spareparts
 // ===========================
 $config['api_list_part_stock'] = constant('urlapi').'api/cstockwh/list/'; //POST
+$config['api_list_fsl_stock'] = constant('urlapi').'api/cstockwh/list_fsl_stock/'; //POST
+$config['api_list_fsl_sub_stock'] = constant('urlapi').'api/cstockwh/list_fsl_sub_stock/'; //POST
 $config['api_list_view_part_stock'] = constant('urlapi').'api/cstockwh/list_view/'; //POST
 $config['api_info_part_stock'] = constant('urlapi').'api/cstockwh/info/'; //POST
 $config['api_add_part_stock'] = constant('urlapi').'api/cstockwh/insert/'; //POST

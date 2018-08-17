@@ -1,4 +1,4 @@
-<form action="<?php echo base_url('print-replenish-plan');?>" method="POST" class="form-horizontal" role="form" target="_blank">
+<form action="<?php echo base_url('print-replenish-plan');?>" method="POST" class="form-horizontal" role="form">
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">

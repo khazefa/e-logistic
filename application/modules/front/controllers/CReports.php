@@ -532,6 +532,7 @@ class CReports extends BaseController
                 $x++;
             }
 
+            /**
             // Redirect output to a client’s web browser (Xlsx)
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
@@ -544,9 +545,32 @@ class CReports extends BaseController
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
             header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
             header('Pragma: public'); // HTTP/1.0
+            */
 
+            ob_start();
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-            $writer->save('php://output');
+            $writer->setOffice2003Compatibility(true);
+            // $writer->save('php://output');
+
+            $this->load->library('zip');
+
+            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+            $path .= '/tmp/'; // destination dir
+            $file_name = $title.'.xlsx'; // destination file
+            if (file_exists($path.$file_name)) {
+                unlink($path.$file_name);
+            } else {
+               echo "The file filename does not exist";
+            }
+            $writer->save($path.$file_name);
+			
+            $this->zip->read_file($path.$file_name,FALSE);
+            ob_end_clean();
+
+            // create zip file on server
+            $this->zip->archive($title.'.zip'); //archive zip file in web directory
+            // prompt user to download the zip file
+            $this->zip->download($title.'.zip');
             exit;
         }
     }
@@ -684,6 +708,7 @@ class CReports extends BaseController
                 $x++;
             }
 
+            /**
             // Redirect output to a client’s web browser (Xlsx)
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
@@ -696,9 +721,32 @@ class CReports extends BaseController
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
             header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
             header('Pragma: public'); // HTTP/1.0
+            */
 
+            ob_start();
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-            $writer->save('php://output');
+            $writer->setOffice2003Compatibility(true);
+            // $writer->save('php://output');
+
+            $this->load->library('zip');
+
+            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+            $path .= '/tmp/'; // destination dir
+            $file_name = $title.'.xlsx'; // destination file
+            if (file_exists($path.$file_name)) {
+                unlink($path.$file_name);
+            } else {
+               echo "The file filename does not exist";
+            }
+            $writer->save($path.$file_name);
+			
+            $this->zip->read_file($path.$file_name,FALSE);
+            ob_end_clean();
+
+            // create zip file on server
+            $this->zip->archive($title.'.zip'); //archive zip file in web directory
+            // prompt user to download the zip file
+            $this->zip->download($title.'.zip');
             exit;
         }
     }

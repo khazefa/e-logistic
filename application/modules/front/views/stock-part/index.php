@@ -76,6 +76,7 @@
                                                 <th>Part Number</th>
                                                 <th>Part Name</th>
                                                 <th>Last Stock</th>
+                                                <th>Part Subtitute</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -131,6 +132,12 @@
                         }
                     },
                     footer:false
+                },
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy All',
+                    footer:false
                 }
             ],
             ajax: {                
@@ -174,10 +181,16 @@
                         }
                     },
                     footer:false
+                },
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy All',
+                    footer:false
                 }
             ],
             ajax: {                
-                url: "<?= base_url('front/cstockpart/get_list_fsl_sub_datatable/').$repo; ?>",
+                url: "<?= base_url('front/cstockpart/get_list_partsub_datatable/').$repo; ?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -189,10 +202,8 @@
                 { "data": 'code' },
                 { "data": 'partno' },
                 { "data": 'partname' },
-//                { "data": 'partsub' },
-//                { "data": 'minstock' },
-//                { "data": 'initstock' },
                 { "data": 'stock' },
+                { "data": 'partnosub' },
             ],
             order: [[ 3, "desc" ]],
             columnDefs: [{ 

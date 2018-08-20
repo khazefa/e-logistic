@@ -854,7 +854,7 @@
         });
     }
     
-    //add to cart
+    //update cart
     function update_cart(id, qty){        
         var url = '<?php echo base_url('front/coutgoing/update_cart'); ?>';
         var type = 'POST';
@@ -990,6 +990,13 @@
         
         e_ticketnum.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
+	});
+        
+        e_serialnum.on("keyup", function(e) {
+            var sn = $(this).val();
+            if(sn.toUpperCase() == "NO SN"){
+                $(this).val("NOSN");
+            }
 	});
         
         /*

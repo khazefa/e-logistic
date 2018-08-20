@@ -1513,7 +1513,11 @@ class CIncoming extends BaseController
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
         
         if(empty($ftrans_out) || $ftrans_out == ""){
-            $data = array();
+            $error_response = array(
+                'status' => 0,
+                'ttl_cart'=> 0
+            );
+            $response = $error_response;
         }else{
             $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
             $arrWhere = array('funiqid'=>$cartid);

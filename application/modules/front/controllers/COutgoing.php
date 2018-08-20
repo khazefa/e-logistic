@@ -1071,7 +1071,7 @@ class COutgoing extends BaseController
     }
     
     /**
-     * This function is used to delete cart
+     * This function is used to update cart
      */
     public function update_cart(){
         $success_response = array(

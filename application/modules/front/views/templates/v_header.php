@@ -173,7 +173,7 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
                                     <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
-                                    <li><a href="<?php echo base_url("front/creports/print_phpspread");?>">PHP Spread</a></li>
+                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                 </ul>
                             </li>
                             <?php

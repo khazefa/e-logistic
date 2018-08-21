@@ -89,7 +89,7 @@
                                     </a>
 
                                     <!-- item-->
-                                    <a href="<?php echo base_url('logout');?>" class="dropdown-item notify-item">
+                                    <a href="<?php echo base_url('signout');?>" class="dropdown-item notify-item">
                                         <i class="fi-power"></i> <span>Logout</span>
                                     </a>
 

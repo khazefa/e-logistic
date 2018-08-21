@@ -72,7 +72,7 @@
                         <div class="col-3">
                             <select name="ffsl" id="ffsl" required class="selectpicker" data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                <option value="00">HQ</option>
+                                <option value="00">WH</option>
                                 <?php
                                     foreach($list_wr as $w){
                                         echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';

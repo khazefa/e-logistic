@@ -57,6 +57,8 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 /* END RESERVED ROUTES */
 
+/* BEGIN USER CONTROLLER */
+
 // ===========================
 //  Routing Front Auth
 // ===========================
@@ -221,3 +223,20 @@ $route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 // ===========================
 
 /* END USER CONTROLLER */
+
+/* BEGIN OVERSEE CONTROLLER */
+
+// ===========================
+//  Routing Superintend Auth
+// ===========================
+$route['oversee/login'] = 'superintend/login';
+$route['oversee/login/proccess'] = 'superintend/login/auth_log';
+$route['oversee/login/reset_pass'] = 'superintend/login/reset_pass';
+$route['oversee/login/reset_pass_confirm'] = 'superintend/login/reset_pass_confirm';
+$route['oversee/logout'] = 'handling/signout';
+$route['oversee'] = 'superintend/dashboard';
+// ===========================
+//  End Routing Superintend Auth
+// ===========================
+
+/* END OVERSEE CONTROLLER */

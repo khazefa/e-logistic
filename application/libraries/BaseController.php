@@ -25,6 +25,15 @@ class BaseController extends CI_Controller {
     protected $comRoleText = '';
     protected $comRepo = '';
     
+    protected $ovId = '';
+    protected $ovUR = '';
+    protected $ovPict = '';
+    protected $ovName = '';
+    protected $ovRole = '';
+    protected $ovRoleText = '';
+    protected $ovRepo = '';
+    protected $ovRepoName = '';
+    
     protected $global = array ();
 
     /**
@@ -114,6 +123,46 @@ class BaseController extends CI_Controller {
                 ,'isAdm','comRepo','comRole','comRoleText');
             $this->session->unset_userdata($sess_items);
             redirect ( 'signin' );
+        }
+    }
+    
+    
+    /**
+     * This function used to check the user is sign in or not
+     */
+    function isSignin() {
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
+
+        if (! isset ( $isSessionGett ) || $isSessionGett != TRUE) {
+            redirect ( 'oversee/login' );
+        } else {
+            $this->ovId = $this->session->userdata ( 'ovId' );
+            $this->ovUR = $this->session->userdata ( 'ovUR' );
+            $this->ovPict = $this->session->userdata ( 'ovPict' );
+            $this->ovName = $this->session->userdata ( 'ovName' );
+            $this->ovRole = $this->session->userdata ( 'ovRole' );
+            $this->ovRoleText = $this->session->userdata ( 'ovRoleText' );
+            $this->ovRepo = $this->session->userdata ( 'ovRepo' );
+            $this->ovRepoName = $this->session->userdata ( 'ovRepoName' );
+
+            $this->global ['ovName'] = $this->ovName;
+            $this->global ['ovRole'] = $this->ovRole;
+            $this->global ['ovRoleText'] = $this->ovRoleText;
+            $this->global ['ovRepo'] = $this->ovRepo;
+        }
+    }
+    
+    /**
+    * This function is used to logged out user from system
+    */
+    function signout_app() {
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
+    
+        if ( isset ( $isSessionSettled ) || $isSessionSettled == TRUE) {
+            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
+                'ovRepo','ovRepoName','ovRole','ovRoleText');
+            $this->session->unset_userdata($sess_items);
+            redirect ( 'oversee/login' );
         }
     }
 

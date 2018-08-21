@@ -23,23 +23,23 @@ class Login extends CI_Controller
      */
     public function index()
     {            
-        $this->isSessionFilled();
+        $this->isSessionSettled();
     }
     
     /**
      * This function used to check the user is logged in or not
      */
-    function isSessionFilled()
+    function isSessionSettled()
     {
-        $isSessionFilled = $this->session->userdata('isSessionFilled');
+        $isSessionSettled = $this->session->userdata('isSessionSettled');
         
-        if(!isset($isSessionFilled) || $isSessionFilled != TRUE)
+        if(!isset($isSessionSettled) || $isSessionSettled != TRUE)
         {
-            $this->load->view('front/v_login');
+            $this->load->view('superintend/v_login');
         }
         else
         {
-            redirect('cl');
+            redirect('oversee');
         }
     }
     
@@ -71,21 +71,21 @@ class Login extends CI_Controller
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
                 $wh_name = $this->get_info_warehouse_name($res->accessRepo);
+            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
+                'ovRepo','ovRepoName','ovRole','ovRoleText');
                 //Set Session for login
                 $sessionArray = array(
-                    'vendorId'=>$res->accessId,         
-                    'vendorUR'=>$res->accessUR,   
-                    'vendorName'=>$res->accessName,          
-                    'isAdm'=>$res->isAdmin,          
-                    'vendorRepo'=>$res->accessRepo,          
-                    'vendorRepoName'=>$wh_name,
-                    'role'=>$res->role,
-                    'roleText'=>$res->roleText,
-                    'cart_session'=> sha1(microtime().$res->accessUR.$res->accessName.$res->accessRepo),
-                    'isSessionFilled' => TRUE
+                    'ovId'=>$res->accessId,         
+                    'ovUR'=>$res->accessUR,   
+                    'ovName'=>$res->accessName,
+                    'ovRepo'=>$res->accessRepo,          
+                    'ovRepoName'=>$wh_name,
+                    'ovRole'=>$res->role,
+                    'ovRoleText'=>$res->roleText,
+                    'isSessionSettled' => TRUE
                 );
                 $this->session->set_userdata($sessionArray);
-                redirect('cl');
+                redirect('oversee');
             }
             else{
                 $this->session->set_flashdata('error', $res->message);

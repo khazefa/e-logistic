@@ -891,10 +891,24 @@ class COutgoing extends BaseController
                     $cname = $c['fullname'];
                 }
                 if($cuser === $fuser){
-                    $error_response = array(
-                        'status' => 2,
-                        'message'=> 'Part stock is limited!'
-                    );
+                    if($cstock === $fqty || $cstock < $fqty){
+                        $error_response = array(
+                            'status' => 2,
+                            'message'=> 'Part stock has run out!'
+                        );
+                    }else{
+                        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$partname, 'fserialnum'=>$fserialnum, 
+                            'fcartid'=>$cartid, 'fqty'=>$fqty, 'fuser'=>$fuser, 'fname'=>$fname, 'fcode'=>$fcode);
+                        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+                        if($rs_data->status)
+                        {
+                            $response = $success_response;
+                        }
+                        else
+                        {
+                            $response = $error_response;
+                        }
+                    }
                 }else{
                     $error_response = array(
                         'status' => 2,

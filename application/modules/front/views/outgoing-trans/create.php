@@ -457,9 +457,10 @@
             }else{
                 add_part_sub(fpartnum);
                 table2.clear().draw();
-                e_serialnum.prop('readonly', false);
-                e_serialnum.val('');
-                e_serialnum.focus();
+                e_partnum.focus();
+//                e_serialnum.prop('readonly', false);
+//                e_serialnum.val('');
+//                e_serialnum.focus();
             }
         });
 
@@ -523,6 +524,7 @@
     //get part replacement
     function get_part_sub(partno){
         var status = 0;
+        var total_stock_sub = 0;
         var url = '<?php echo base_url('front/coutgoing/get_list_part_sub'); ?>';
         var type = 'POST';
         
@@ -551,18 +553,22 @@
                                     table2.row.add(
                                         [detail_data.partno, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
+                                    total_stock_sub = total_stock_sub + parseInt(detail_data.stock);
 //                                }
                             });
                         });
                     });
 //                    e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
-                    table3.clear().draw();
+                    if(total_stock_sub === 0){
+                        get_nearby_wh(partno);
+                    }else{
+                        table3.clear().draw();
+                    }
                     status = 1;
                 }else if(jqXHR.status === 0){
                     e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_partnum.focus();
                     table2.clear().draw();
-                    get_nearby_wh(partno);
                     status = 0;
                 }
             },

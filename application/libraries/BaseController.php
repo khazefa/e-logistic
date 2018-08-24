@@ -162,7 +162,7 @@ class BaseController extends CI_Controller {
             $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
                 'ovRepo','ovRepoName','ovRole','ovRoleText');
             $this->session->unset_userdata($sess_items);
-            redirect ( 'oversee/login' );
+            redirect ( 'signin' );
         }
     }
 

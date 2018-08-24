@@ -229,11 +229,11 @@ $route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 // ===========================
 //  Routing Superintend Auth
 // ===========================
-$route['oversee/login'] = 'superintend/login';
-$route['oversee/login/proccess'] = 'superintend/login/auth_log';
-$route['oversee/login/reset_pass'] = 'superintend/login/reset_pass';
-$route['oversee/login/reset_pass_confirm'] = 'superintend/login/reset_pass_confirm';
-$route['oversee/logout'] = 'handling/signout';
+$route['signin'] = 'superintend/login';
+$route['signin/proccess'] = 'superintend/login/auth_log';
+$route['signin/reset_pass'] = 'superintend/login/reset_pass';
+$route['signin/reset_pass_confirm'] = 'superintend/login/reset_pass_confirm';
+$route['signout'] = 'handling/signout';
 $route['oversee'] = 'superintend/dashboard';
 // ===========================
 //  End Routing Superintend Auth

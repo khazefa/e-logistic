@@ -54,7 +54,7 @@
                     </div>
                     <?php } ?>
                 </p>
-                <form id="sign_in" action="<?php echo base_url('login/proccess'); ?>" method="POST" class="form-validate" ecntype="application/x-www-form-urlencoded">
+                <form id="sign_in" action="<?php echo base_url('signin/proccess'); ?>" method="POST" class="form-validate" ecntype="application/x-www-form-urlencoded">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group">
                         <div class="input-group">
@@ -90,7 +90,7 @@
     <div class="modal-dialog">
         <div class="modal-content login-form">
             <!-- Form -->
-            <form class="modal-body" action="<?php echo base_url('login/reset_pass'); ?>" method="POST" class="form-validate" ecntype="application/x-www-form-urlencoded">
+            <form class="modal-body" action="<?php echo base_url('signin/reset_pass'); ?>" method="POST" class="form-validate" ecntype="application/x-www-form-urlencoded">
                 <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                 <div class="text-center">
                         <div class="icon-object border-warning text-warning"><i class="icon-spinner11"></i></div>

@@ -89,7 +89,7 @@ class Login extends CI_Controller
             }
             else{
                 $this->session->set_flashdata('error', $res->message);
-                redirect('login');
+                redirect('signin');
             }
         }
     }
@@ -140,11 +140,11 @@ class Login extends CI_Controller
            //Check Result ( Get status TRUE or FALSE )
            if($res->status){
                $this->session->set_flashdata('success', $res->message);
-               redirect('login');
+               redirect('signin');
            }
            else{
                $this->session->set_flashdata('error', $res->message);
-               redirect('login');
+               redirect('signin');
            }
         }
     }
@@ -170,7 +170,7 @@ class Login extends CI_Controller
        }
        else{
            $this->session->set_flashdata('error', $res->message);
-           redirect('login');
+           redirect('signin');
        }
     }
     
@@ -199,11 +199,11 @@ class Login extends CI_Controller
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
                 $this->session->set_flashdata('success', $res->message);
-                redirect('login');
+                redirect('signin');
             }
             else{
                 $this->session->set_flashdata('error', $res->message);
-                redirect('login');
+                redirect('signin');
             }
         }
     }

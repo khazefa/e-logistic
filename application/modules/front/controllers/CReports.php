@@ -86,6 +86,7 @@ class CReports extends BaseController
             $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
+            $row['sort'] = stripslashes($r->field_order) ? filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT) : 0;
  
             $data[] = $row;
         }
@@ -554,7 +555,8 @@ class CReports extends BaseController
 
             $this->load->library('zip');
 
-            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+//            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+            $path = str_replace('\\', '/', FCPATH);
             $path .= '/tmp/'; // destination dir
             $file_name = $title.'.xlsx'; // destination file
             if (file_exists($path.$file_name)) {
@@ -568,7 +570,7 @@ class CReports extends BaseController
             ob_end_clean();
 
             // create zip file on server
-            $this->zip->archive($title.'.zip'); //archive zip file in web directory
+//            $this->zip->archive($title.'.zip'); //archive zip file in web directory
             // prompt user to download the zip file
             $this->zip->download($title.'.zip');
             exit;
@@ -730,7 +732,8 @@ class CReports extends BaseController
 
             $this->load->library('zip');
 
-            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+//            $path = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']); 
+            $path = str_replace('\\', '/', FCPATH);
             $path .= '/tmp/'; // destination dir
             $file_name = $title.'.xlsx'; // destination file
             if (file_exists($path.$file_name)) {
@@ -744,7 +747,7 @@ class CReports extends BaseController
             ob_end_clean();
 
             // create zip file on server
-            $this->zip->archive($title.'.zip'); //archive zip file in web directory
+//            $this->zip->archive($title.'.zip'); //archive zip file in web directory
             // prompt user to download the zip file
             $this->zip->download($title.'.zip');
             exit;

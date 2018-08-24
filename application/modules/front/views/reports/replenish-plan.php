@@ -47,20 +47,92 @@
                                                 Check All / Uncheck All
                                             </label>
                                         </div>
-                                        <table border="0" class="table-sm table-borderless table-responsive">
+                                        <div class="input-group col-sm-12">
                                             <?php
-                                                $a = 0;
-                                                foreach($list_wr as $w){
-//                                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                                    if($a++ %6 == 0) echo "<tr>";
-                                                        echo '<td align="center">'
-                                                            . '<input type="checkbox" name="fcode[]" value="'.$w["code"].'"/>'
-                                                            . '</td>';
-                                                        echo '<td style="text-align:left"><strong>'.$w["name"].'</strong></td>';
-                                                    if($a %6 == 0) echo "</tr>";
+                                                $col1 = 0;
+                                                $col2 = 0;
+                                                $col3 = 0;
+                                                $col4 = 0;
+                                                $arr_col1 = array();
+                                                $arr_col2 = array();
+                                                $arr_col3 = array();
+                                                $arr_col4 = array();
+                                                $t_list = count($list_wr);
+                                                $t_divide = (int) round($t_list/4);
+                                                
+                                                $arr_col1 = array_slice($list_wr, 0, (int) round($t_list/4));
+                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
+                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
+                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
+                                                
+                                            ?>
+                                            <div class="col-sm-3">
+                                            <?php
+                                                foreach($arr_col1 as $c1){
+                                                    $code = filter_var($c1["code"], FILTER_SANITIZE_STRING);
+                                                    $name = filter_var($c1["name"], FILTER_SANITIZE_STRING);
+                                                    
+                                                    echo '<div class="col-sm-12">';
+                                                        echo '<div class="checkbox checkbox-custom">';
+                                                            echo '<input type="checkbox" id="checkbox'.$col1.'" name="fcode[]" value="'.$code.'" />'
+                                                                    . '<label for="checkbox'.$col1.'">'.$name.'</label>';
+                                                        echo '</div>';
+                                                    echo '</div>';
+                                                    $col1++;
                                                 }
                                             ?>
-                                        </table>
+                                            </div>
+                                            <div class="col-sm-3">
+                                            <?php
+                                                foreach($arr_col2 as $c2){
+                                                    $code = filter_var($c2["code"], FILTER_SANITIZE_STRING);
+                                                    $name = filter_var($c2["name"], FILTER_SANITIZE_STRING);
+                                                    $col2 = $col1 + $col2;
+                                                    echo '<div class="col-sm-12">';
+                                                        echo '<div class="checkbox checkbox-custom">';
+                                                            echo '<input type="checkbox" id="checkbox'.$col2.'" name="fcode[]" value="'.$code.'" />'
+                                                                    . '<label for="checkbox'.$col2.'">'.$name.'</label>';
+                                                        echo '</div>';
+                                                    echo '</div>';
+                                                    $col2++;
+                                                }
+                                            ?>
+                                            </div>
+                                            <div class="col-sm-3">
+                                            <?php
+                                                foreach($arr_col3 as $c3){
+                                                    $code = filter_var($c3["code"], FILTER_SANITIZE_STRING);
+                                                    $name = filter_var($c3["name"], FILTER_SANITIZE_STRING);
+                                                    $col3 = $col2 + $col3;
+                                                    
+                                                    echo '<div class="col-sm-12">';
+                                                        echo '<div class="checkbox checkbox-custom">';
+                                                            echo '<input type="checkbox" id="checkbox'.$col3.'" name="fcode[]" value="'.$code.'" />'
+                                                                    . '<label for="checkbox'.$col3.'">'.$name.'</label>';
+                                                        echo '</div>';
+                                                    echo '</div>';
+                                                    $col3++;
+                                                }
+                                            ?>
+                                            </div>
+                                            <div class="col-sm-3">
+                                            <?php
+                                                foreach($arr_col4 as $c4){
+                                                    $code = filter_var($c4["code"], FILTER_SANITIZE_STRING);
+                                                    $name = filter_var($c4["name"], FILTER_SANITIZE_STRING);
+                                                    $col4 = $col3 + $col4;
+                                                    
+                                                    echo '<div class="col-sm-12">';
+                                                        echo '<div class="checkbox checkbox-custom">';
+                                                            echo '<input type="checkbox" id="checkbox'.$col4.'" name="fcode[]" value="'.$code.'" />'
+                                                                    . '<label for="checkbox'.$col4.'">'.$name.'</label>';
+                                                        echo '</div>';
+                                                    echo '</div>';
+                                                    $col4++;
+                                                }
+                                            ?>
+                                            </div>
+                                        </div>
                                         <!--</select>-->
                                     </div>
                                 </div>

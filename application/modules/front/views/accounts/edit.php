@@ -7,6 +7,7 @@ $fgid = '';
 $fgroup = '';
 $fgroupname = '';
 $ffsl = '';
+$fcoverage = '';
 
 if(!empty($records))
 {
@@ -20,6 +21,7 @@ if(!empty($records))
         $fgroup = $r["group"];
         $fgroupname = $r["group_name"];
         $ffsl = $r["fsl"];
+        $fcoverage = $r["coverage"];
     }
 }
 ?>
@@ -101,8 +103,12 @@ if(!empty($records))
                         <div class="col-3">
                             <select name="ffsl" id="ffsl" required class="selectpicker" data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                <option value="00">WH</option>
                                 <?php
+                                    $default_check = "";
+                                    if($ffsl == "00"){
+                                        $default_check = "selected";
+                                    }
+                                    echo '<option value="00" '.$default_check.'>WH</option>';
                                     foreach($list_wr as $w){
                                         if($w["code"] == $ffsl){
                                             echo '<option value="'.$w["code"].'" selected>'.$w["name"].'</option>';
@@ -112,6 +118,131 @@ if(!empty($records))
                                     }
                                 ?>
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row d-none" id="fcoverage">
+                        <label for="fcode" class="col-2 col-form-label">Coverage Warehouse</label>
+                        <div class="col-10">
+                            <div class="checkbox checkbox-info checkbox-circle">
+                                <input name="fcode_all" id="fcode_all" type="checkbox" value="*">
+                                <label for="fcode_all">
+                                    Check All / Uncheck All
+                                </label>
+                            </div>
+                            <div class="input-group col-sm-12">
+                                <?php
+                                    $col1 = 0;
+                                    $col2 = 0;
+                                    $col3 = 0;
+                                    $col4 = 0;
+                                    $arr_col1 = array();
+                                    $arr_col2 = array();
+                                    $arr_col3 = array();
+                                    $arr_col4 = array();
+                                    $t_list = count($list_wr);
+                                    $t_divide = (int) round($t_list/4);
+
+                                    $arr_col1 = array_slice($list_wr, 0, (int) round($t_list/4));
+                                    $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
+                                    $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
+                                    $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
+
+                                    $data_coverage = array();
+                                    if(!empty($fcoverage)){
+                                        $e_fcoverage = explode(';', $fcoverage);
+                                        foreach ($e_fcoverage as $e){
+                                            if(!empty($e)){
+                                                array_push($data_coverage, trim($e));
+                                            }
+                                        }
+                                    }
+                                ?>
+                                <div class="col-sm-3">
+                                <?php
+                                    foreach($arr_col1 as $c1){
+                                        $code = filter_var($c1["code"], FILTER_SANITIZE_STRING);
+                                        $name = filter_var($c1["name"], FILTER_SANITIZE_STRING);
+                                        $checked = "";
+                                        
+                                        if (in_array($code, $data_coverage)){
+                                            $checked = "checked";
+                                        }
+                                        echo '<div class="col-sm-12">';
+                                            echo '<div class="checkbox checkbox-custom">';
+                                                echo '<input type="checkbox" id="checkbox'.$col1.'" name="fcode[]" value="'.$code.'" '.$checked.'/>'
+                                                        . '<label for="checkbox'.$col1.'">'.$name.'</label>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        $col1++;
+                                    }
+                                ?>
+                                </div>
+                                <div class="col-sm-3">
+                                <?php
+                                    foreach($arr_col2 as $c2){
+                                        $code = filter_var($c2["code"], FILTER_SANITIZE_STRING);
+                                        $name = filter_var($c2["name"], FILTER_SANITIZE_STRING);
+                                        $col2 = $col1 + $col2;
+                                        $checked = "";
+                                        
+                                        if (in_array($code, $data_coverage)){
+                                            $checked = "checked";
+                                        }
+                                        echo '<div class="col-sm-12">';
+                                            echo '<div class="checkbox checkbox-custom">';
+                                                echo '<input type="checkbox" id="checkbox'.$col2.'" name="fcode[]" value="'.$code.'" '.$checked.'/>'
+                                                        . '<label for="checkbox'.$col2.'">'.$name.'</label>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        $col2++;
+                                    }
+                                ?>
+                                </div>
+                                <div class="col-sm-3">
+                                <?php
+                                    foreach($arr_col3 as $c3){
+                                        $code = filter_var($c3["code"], FILTER_SANITIZE_STRING);
+                                        $name = filter_var($c3["name"], FILTER_SANITIZE_STRING);
+                                        $col3 = $col2 + $col3;
+                                        $checked = "";
+                                        
+                                        if (in_array($code, $data_coverage)){
+                                            $checked = "checked";
+                                        }
+
+                                        echo '<div class="col-sm-12">';
+                                            echo '<div class="checkbox checkbox-custom">';
+                                                echo '<input type="checkbox" id="checkbox'.$col3.'" name="fcode[]" value="'.$code.'" '.$checked.'/>'
+                                                        . '<label for="checkbox'.$col3.'">'.$name.'</label>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        $col3++;
+                                    }
+                                ?>
+                                </div>
+                                <div class="col-sm-3">
+                                <?php
+                                    foreach($arr_col4 as $c4){
+                                        $code = filter_var($c4["code"], FILTER_SANITIZE_STRING);
+                                        $name = filter_var($c4["name"], FILTER_SANITIZE_STRING);
+                                        $col4 = $col3 + $col4;
+                                        $checked = "";
+                                        
+                                        if (in_array($code, $data_coverage)){
+                                            $checked = "checked";
+                                        }
+
+                                        echo '<div class="col-sm-12">';
+                                            echo '<div class="checkbox checkbox-custom">';
+                                                echo '<input type="checkbox" id="checkbox'.$col4.'" name="fcode[]" value="'.$code.'" '.$checked.'/>'
+                                                        . '<label for="checkbox'.$col4.'">'.$name.'</label>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        $col4++;
+                                    }
+                                ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -141,6 +272,18 @@ if(!empty($records))
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var group = "<?php echo BASE_SPV;?>";
         
+        if($('#fgroup').val() === group){
+            $( "#fcoverage" ).removeClass( "d-none" );
+        }
+        
+        $('#fgroup').on('change', function(e){
+            if(this.value === group){
+                $( "#fcoverage" ).removeClass( "d-none" );
+            }else{
+                $( "#fcoverage" ).addClass( "d-none" );
+            }
+        });
     });
 </script>

@@ -42,6 +42,7 @@
                                 <th>PIC</th>
                                 <th>Phone</th>
                                 <th>Supervisor</th>
+                                <th>Sort Order</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -130,9 +131,10 @@
                 { "data": 'pic' },
                 { "data": 'phone' },
                 { "data": 'spv' },
+                { "data": 'sort' },
                 { "data": 'button' },
             ],
-            order: [[ 0, "asc" ]],
+            order: [[ 7, "asc" ]],
 //            columnDefs: [{ 
 //                orderable: false,
 //                targets: [ -1 ]

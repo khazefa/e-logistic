@@ -204,7 +204,9 @@ class CUsers extends BaseController
             $row['display'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
             $row['enc'] = filter_var($r->group_enc, FILTER_SANITIZE_STRING);
  
-            $data[] = $row;
+            if($row['enc'] != ROLE_SU){
+                $data[] = $row;
+            }
         }
         
         return $data;
@@ -286,7 +288,8 @@ class CUsers extends BaseController
             $row['gid'] = filter_var($r->group_id, FILTER_SANITIZE_STRING);
             $row['group'] = filter_var($r->group_name, FILTER_SANITIZE_STRING);
             $row['group_name'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            $row['fsl'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['fsl'] = empty($r->fsl_code) ? "00" : filter_var($r->fsl_code, FILTER_SANITIZE_STRING) ;
+            $row['coverage'] = filter_var($r->coverage_fsl, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }
@@ -324,10 +327,11 @@ class CUsers extends BaseController
         $fname = $this->input->post('fname', TRUE);
         $femail = $this->input->post('femail', TRUE);
         $ffsl = $this->input->post('ffsl', TRUE);
+        $fcode = !empty($_POST['fcode']) ? implode(';',$_POST['fcode']) : "";
         $fisadm = $this->input->post('fisadm', TRUE);
 
         $dataInfo = array('fgroup'=>$fgroup, 'fkey'=>$fkey, 'fpass'=>$fpass, 'fname'=>$fname, 'femail'=>$femail, 
-        'ffsl'=>$ffsl, 'fisadm'=>$fisadm);
+        'ffsl'=>$ffsl, 'fcoverage'=>$fcode, 'fisadm'=>$fisadm);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_users'), 'POST', FALSE);
 
@@ -380,10 +384,11 @@ class CUsers extends BaseController
         $fname = $this->input->post('fname', TRUE);
         $femail = $this->input->post('femail', TRUE);
         $ffsl = $this->input->post('ffsl', TRUE);
+        $fcode = !empty($_POST['fcode']) ? implode(';',$_POST['fcode']) : "";
         $fisadm = $this->input->post('fisadm', TRUE);
 
         $dataInfo = array('fgroup'=>$fgroup, 'fkey'=>$fkey, 'fpass'=>$fpass, 'fname'=>$fname, 'femail'=>$femail, 
-        'ffsl'=>$ffsl, 'fisadm'=>$fisadm);
+        'ffsl'=>$ffsl, 'fcoverage'=>$fcode, 'fisadm'=>$fisadm);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_users'), 'POST', FALSE);
 

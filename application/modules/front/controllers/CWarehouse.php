@@ -125,6 +125,7 @@ class CWarehouse extends BaseController
                 $spvs = '-';
             }
             $row['spv'] = $spvs;
+            $row['sort'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
  
             $data[] = $row;
         }
@@ -204,6 +205,7 @@ class CWarehouse extends BaseController
                 $spvs = '-';
             }
             $row['spv'] = $spvs;
+            $row['sort'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
             
             $row['button'] = '<div class="btn-group dropdown">';
             $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
@@ -346,6 +348,7 @@ class CWarehouse extends BaseController
             $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
             $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
+            $row['sort_order'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
  
             $data[] = $row;
         }
@@ -442,9 +445,10 @@ class CWarehouse extends BaseController
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
         $fspv = !empty($_POST['fspv']) ? implode(';',$_POST['fspv']) : "";
+        $forder = $this->input->post('forder', TRUE);
 
         $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv);
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv, 'forder'=>$forder);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_warehouses'), 'POST', FALSE);
 
@@ -502,9 +506,10 @@ class CWarehouse extends BaseController
         $fpic = $this->input->post('fpic', TRUE);
         $fphone = $this->input->post('fphone', TRUE);
         $fspv = !empty($_POST['fspv']) ? implode(';',$_POST['fspv']) : "";
+        $forder = $this->input->post('forder', TRUE);
 
         $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv);
+        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv, 'forder'=>$forder);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_warehouses'), 'POST', FALSE);
 

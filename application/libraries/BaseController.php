@@ -117,12 +117,8 @@ class BaseController extends CI_Controller {
                 ,'isAdm','vendorRepo','vendorRepoName','role','roleText');
             $this->session->unset_userdata($sess_items);
             redirect ( 'login' );
-        }
-        if ( isset ( $isSessionGett ) || $isSessionGett == TRUE) {
-            $sess_items = array('isSessionGett','comId','comUR','comName'
-                ,'isAdm','comRepo','comRole','comRoleText');
-            $this->session->unset_userdata($sess_items);
-            redirect ( 'signin' );
+        }else{
+            redirect ( 'login' );
         }
     }
     
@@ -133,8 +129,8 @@ class BaseController extends CI_Controller {
     function isSignin() {
         $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
 
-        if (! isset ( $isSessionGett ) || $isSessionGett != TRUE) {
-            redirect ( 'oversee/login' );
+        if (! isset ( $isSessionSettled ) || $isSessionSettled != TRUE) {
+            redirect ( 'signin' );
         } else {
             $this->ovId = $this->session->userdata ( 'ovId' );
             $this->ovUR = $this->session->userdata ( 'ovUR' );
@@ -149,6 +145,7 @@ class BaseController extends CI_Controller {
             $this->global ['ovRole'] = $this->ovRole;
             $this->global ['ovRoleText'] = $this->ovRoleText;
             $this->global ['ovRepo'] = $this->ovRepo;
+            $this->global ['ovRepoName'] = $this->ovRepoName;
         }
     }
     
@@ -162,6 +159,8 @@ class BaseController extends CI_Controller {
             $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
                 'ovRepo','ovRepoName','ovRole','ovRoleText');
             $this->session->unset_userdata($sess_items);
+            redirect ( 'signin' );
+        }else{
             redirect ( 'signin' );
         }
     }
@@ -247,5 +246,19 @@ class BaseController extends CI_Controller {
         $this->load->view('backside/templates/v_header', $headerInfo);
         $this->load->view($viewName, $pageInfo);
         $this->load->view('backside/templates/v_footer', $footerInfo);
+    }
+    
+    /**
+     * This function used to load views
+     * @param {string} $viewName : This is view name
+     * @param {mixed} $headerInfo : This is array of header information
+     * @param {mixed} $pageInfo : This is array of page information
+     * @param {mixed} $footerInfo : This is array of footer information
+     * @return {null} $result : null
+     */
+    function loadViews2($viewName = "", $headerInfo = NULL, $pageInfo = NULL, $footerInfo = NULL){
+        $this->load->view('superintend/templates/v_header', $headerInfo);
+        $this->load->view($viewName, $pageInfo);
+        $this->load->view('superintend/templates/v_footer', $footerInfo);
     }
 }

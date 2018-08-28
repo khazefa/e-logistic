@@ -239,4 +239,39 @@ $route['oversee'] = 'superintend/dashboard';
 //  End Routing Superintend Auth
 // ===========================
 
+// ===========================
+//  Routing Superintend My Accounts
+// ===========================
+$route['oversee/my-account'] = 'superintend/cprofile';
+// ===========================
+//  End Routing Superintend My Accounts
+// ===========================
+
+// ===========================
+//  Routing Superintend Spareparts
+// ===========================
+$route['oversee/data-spareparts'] = 'superintend/cparts';
+// ===========================
+//  End Routing Superintend Spareparts
+// ===========================
+
+// ===========================
+//  Routing Superintend Outgoing Trans
+// ===========================
+$route['oversee/outgoing-trans'] = 'superintend/coutgoing';
+$route['oversee/print-outgoing-trans/(:any)'] = 'superintend/coutgoing/print_transaction/$1';
+// ===========================
+//  End Routing Superintend Outgoing Trans
+// ===========================
+
+// ===========================
+//  Routing Superintend Incoming Trans
+// ===========================
+$route['oversee/incoming-trans'] = 'superintend/cincoming';
+$route['oversee/print-incoming-supply/(:any)'] = 'superintend/cincoming/print_trans_supply/$1';
+$route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_trans_return/$1';
+// ===========================
+//  End Routing Superintend Incoming Trans
+// ===========================
+
 /* END OVERSEE CONTROLLER */

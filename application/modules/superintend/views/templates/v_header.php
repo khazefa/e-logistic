@@ -75,7 +75,7 @@
                             <li class="dropdown notification-list">
                                 <a class="nav-link dropdown-toggle waves-effect nav-user" data-toggle="dropdown" href="#" role="button"
                                    aria-haspopup="false" aria-expanded="false">
-                                    <img src="<?php echo base_url();?>assets/public/images/users/avatar-1.jpg" alt="user" class="rounded-circle"> <span class="ml-1 pro-user-name"><?php echo $name;?> <i class="mdi mdi-chevron-down"></i> </span>
+                                    <img src="<?php echo base_url();?>assets/public/images/users/avatar-1.jpg" alt="user" class="rounded-circle"> <span class="ml-1 pro-user-name"><?php echo $ovName;?> <i class="mdi mdi-chevron-down"></i> </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                                     <!-- item-->
@@ -84,12 +84,12 @@
                                     </div>
 
                                     <!-- item-->
-                                    <a href="<?php echo base_url('my-account');?>" class="dropdown-item notify-item">
+                                    <a href="<?php echo base_url('oversee/my-account');?>" class="dropdown-item notify-item">
                                         <i class="fi-head"></i> <span>My Account</span>
                                     </a>
 
                                     <!-- item-->
-                                    <a href="<?php echo base_url('logout');?>" class="dropdown-item notify-item">
+                                    <a href="<?php echo base_url('signout');?>" class="dropdown-item notify-item">
                                         <i class="fi-power"></i> <span>Logout</span>
                                     </a>
 
@@ -116,30 +116,12 @@
                             </li>
                             
                             <?php
-                            if(($role == ROLE_SPV || $role == ROLE_AM)){
-                            ?>
-                            <li class="has-submenu">
-                                <a href="#"><i class="icon-basket"></i>Transaction</a>
-                                <ul class="submenu">
-                                    <li>
-                                        <a href="<?php echo base_url("incoming-trans");?>">Incoming Parts</a>
-                                    </li>
-                                    <li>
-                                        <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <?php
-                            }
-                            ?>
-                            
-                            <?php
-                            if(($role == ROLE_SPV)){
+                            if(($ovRole == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-database"></i>Master</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
+                                    <li><a href="<?php echo base_url("oversee/data-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
                                     <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
@@ -150,55 +132,19 @@
                             <?php
                             }
                             ?>
-                            <?php
-                            if(($role == ROLE_AM)){
-                            ?>
-                            <li class="has-submenu">
-                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
-                                <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
-                                    <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
-                                </ul>
-                            </li>
-                            <?php
-                            }
-                            ?>
                             
                             <?php
-                            if(($role == ROLE_SU)){
+                            if(($ovRole == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-gears"></i>Manage</a>
+                                <a href="#"><i class="icon-basket"></i>Transaction</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
-                                    <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
-                                    <li><a href="<?php echo base_url("front/creports/print_phpspread");?>">PHP Spread</a></li>
-                                </ul>
-                            </li>
-                            <?php
-                            }
-                            ?>
-                            
-                            <?php
-                            if(($role == ROLE_WA)){
-                            ?>
-                            <li class="has-submenu">
-                                <a href="#"><i class="fa fa-gears"></i>Manage</a>
-                                <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("manage-spareparts-stock");?>">Stock</a></li>
-                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
-                                    <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
-                                    <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
-                                </ul>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
-                                <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
-                                    <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li>
+                                        <a href="<?php echo base_url("oversee/incoming-trans");?>">Incoming Parts</a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo base_url("oversee/outgoing-trans");?>">Outgoing Parts</a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php
@@ -225,7 +171,7 @@
                                     <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">FSL - <span id="glob_fsl"><?php echo $repo." (".$repoName.")";?></span></h4>
+                            <h4 class="page-title">FSL - <span id="glob_fsl"><?php echo $ovRepo." (".$ovRepoName.")";?></span></h4>
                         </div>
                     </div>
                 </div>

@@ -70,22 +70,25 @@ class Login extends CI_Controller
             
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
-                $wh_name = $this->get_info_warehouse_name($res->accessRepo);
-            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
-                'ovRepo','ovRepoName','ovRole','ovRoleText');
-                //Set Session for login
-                $sessionArray = array(
-                    'ovId'=>$res->accessId,         
-                    'ovUR'=>$res->accessUR,   
-                    'ovName'=>$res->accessName,
-                    'ovRepo'=>$res->accessRepo,          
-                    'ovRepoName'=>$wh_name,
-                    'ovRole'=>$res->role,
-                    'ovRoleText'=>$res->roleText,
-                    'isSessionSettled' => TRUE
-                );
-                $this->session->set_userdata($sessionArray);
-                redirect('oversee');
+                if($res->role === ROLE_SPV){
+                    $wh_name = $res->accessRepo === "00" ? "WH" : $this->get_info_warehouse_name($res->accessRepo);
+                    //Set Session for login
+                    $sessionArray = array(
+                        'ovId'=>$res->accessId,         
+                        'ovUR'=>$res->accessUR,   
+                        'ovName'=>$res->accessName,
+                        'ovRepo'=>$res->accessRepo,          
+                        'ovRepoName'=>$wh_name,
+                        'ovRole'=>$res->role,
+                        'ovRoleText'=>$res->roleText,
+                        'isSessionSettled' => TRUE
+                    );
+                    $this->session->set_userdata($sessionArray);
+                    redirect('oversee');
+                }else{
+                    $this->session->set_flashdata('error', 'You don\'t have access rights to enter this page!');
+                    redirect('signin');
+                }
             }
             else{
                 $this->session->set_flashdata('error', $res->message);
@@ -166,7 +169,7 @@ class Login extends CI_Controller
            $this->session->set_flashdata('success', $res->message);
            $data['email'] = $res->email;
            $data['activation_code'] = $res->activation_code;
-           $this->load->view('front/auth/newPassword', $data);
+           $this->load->view('superintend/auth/newPassword', $data);
        }
        else{
            $this->session->set_flashdata('error', $res->message);

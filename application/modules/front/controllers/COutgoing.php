@@ -1356,8 +1356,9 @@ class COutgoing extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
+            
             $transnum = "";
             $purpose = "";
             $transdate = "";
@@ -1407,7 +1408,7 @@ class COutgoing extends BaseController
                 $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                 if(!empty($engineer2_id)){
                     $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_sign = $r->engineer_2_name == "" ? $engineer_name : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                 }else{
                     $engineer_sign = $engineer_name;
                 }

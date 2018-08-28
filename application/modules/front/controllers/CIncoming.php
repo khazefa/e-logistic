@@ -42,10 +42,7 @@ class CIncoming extends BaseController
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
-            $cartid = $this->session->userdata ( 'cart_session' )."in";
-            $data['cartid'] = $cartid;
-            
-            $this->loadViews('front/incoming-trans/index', $this->global, $data);
+            $this->loadViews('front/incoming-trans/index', $this->global, NULL);
             
         }else{
             redirect('cl');
@@ -310,7 +307,7 @@ class CIncoming extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_incomings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
             $transnum = "";
             $purpose = "";
@@ -463,7 +460,7 @@ class CIncoming extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data1 = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+            $rs_data1 = send_curl($arrWhere, $this->config->item('api_info_view_incomings'), 'POST', FALSE);
             $results1 = $rs_data1->status ? $rs_data1->result : array();
             $ftrans_out = "";
             $ftransin = "";
@@ -474,8 +471,9 @@ class CIncoming extends BaseController
             
             $arrWhere2 = array('ftrans_out'=>$ftrans_out);
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere2, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere2, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
+            
             $transnum = "";
             $purpose = "";
             $transdate = "";
@@ -526,7 +524,7 @@ class CIncoming extends BaseController
                 $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                 if(!empty($engineer2_id)){
                     $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_sign = $r->engineer_2_name == "" ? $engineer_name : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                 }else{
                     $engineer_sign = $engineer_name;
                 }

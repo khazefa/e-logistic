@@ -70,7 +70,7 @@ class Login extends CI_Controller
             
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
-                $wh_name = $this->get_info_warehouse_name($res->accessRepo);
+                $wh_name = $res->accessRepo === "00" ? "WH" : $this->get_info_warehouse_name($res->accessRepo);
                 //Set Session for login
                 $sessionArray = array(
                     'vendorId'=>$res->accessId,         

@@ -42,7 +42,7 @@ class CParts extends BaseController
      */
     public function lists()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = 'Manage Sparepart - '.APP_NAME;
             $this->global['pageMenu'] = 'Manage Sparepart';
             $this->global['contentHeader'] = 'Manage Sparepart';
@@ -335,7 +335,7 @@ class CParts extends BaseController
      */
     function add()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = "Add New Sparepart - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Sparepart';
             $this->global['contentHeader'] = 'Add New Sparepart';
@@ -384,7 +384,7 @@ class CParts extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-spareparts');
@@ -460,7 +460,7 @@ class CParts extends BaseController
      */
     function add_import()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = "Import Data Sparepart - ".APP_NAME;
             $this->global['pageMenu'] = 'Import Data Sparepart';
             $this->global['contentHeader'] = 'Import Data Sparepart';

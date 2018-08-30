@@ -89,6 +89,16 @@ class MyPDF extends PDF {
 
             return $this;
 	}
+        
+        public function footer(){
+            $this->SetY(-15);
+            // Select Arial italic 8
+            $this->SetFont('Arial','I',8);
+            // Print centered page number
+            $this->Cell(0,10,'Page '.$this->PageNo(),0,0,'L');
+            $date = DateTime::createFromFormat('U.u', microtime(TRUE));
+            $this->Cell(0,10,'PT. Diebold Nixdorf Indonesia '.$date->format('Y:m:d H:i:s.u'),0,0,'R');
+        }
 
 
 }

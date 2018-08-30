@@ -66,8 +66,9 @@ class Login extends CI_Controller
                 "username"=>$this->security->xss_clean($username),
                 "password"=>$this->security->xss_clean($password)
             );
-            $res = send_curl($arrWhere, $this->config->item('api_auth'), 'POST', FALSE);
             
+            $res = send_curl($arrWhere, $this->config->item('api_auth'), 'POST', FALSE);
+            //var_dump( $this->config->item('api_auth'));
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
                 $wh_name = $this->get_info_warehouse_name($res->accessRepo);

@@ -1104,6 +1104,7 @@
         });
         
         $("#btn_submit_r").on("click", function(e){
+            total_verified = $('#ttl_qty_r').html();
             if(total_verified < total_qty_outgoing){
                 if(isEmpty(e_fe_report.val())){
                     alert('Not all part has returned, please input FE Report!');

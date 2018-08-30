@@ -1,0 +1,90 @@
+# ======================================================
+#  Begin Create Procedure Get List FSL Table Name
+# ======================================================
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE get_tblstocks
+(
+    IN fsl_param VARCHAR(15)
+)
+BEGIN
+	SELECT table_name FROM information_schema.tables where table_schema='dbaze_logistic' AND table_name LIKE CONCAT('%', fsl_param);
+END $$
+DELIMITER ;
+# ======================================================
+#  End Create Procedure Get List FSL Table Name
+# ======================================================
+
+# ======================================================
+#  Begin Create Procedure sp_detail_outgoings
+# ======================================================
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE sp_detail_outgoings
+(
+    IN ptransno VARCHAR(50)
+)
+BEGIN
+
+SELECT od.outgoing_num, od.part_number, p.part_name, od.serial_number, od.dt_outgoing_qty, od.created_at, od.is_deleted FROM outgoings_detail AS od 
+RIGHT JOIN outgoings AS o ON od.outgoing_num = o.outgoing_num 
+INNER JOIN parts AS p ON od.part_number = p.part_number 
+WHERE o.outgoing_num = ptransno
+
+END $$
+DELIMITER ;
+# ======================================================
+#  End Create Procedure sp_detail_outgoings
+# ======================================================
+
+# ======================================================
+#  Begin Create Procedure sp_daily_reports
+# ======================================================
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE sp_daily_reports
+(
+    IN pfslcode VARCHAR(10),
+    IN pdate1 DATE,
+    IN pdate2 DATE
+)
+BEGIN
+
+SELECT DISTINCT od.part_number, p.part_name, od.serial_number, o.outgoing_ticket, o.engineer_key, e.engineer_name 
+FROM outgoings_detail AS od 
+INNER JOIN outgoings AS o ON od.outgoing_num = o.outgoing_num 
+INNER JOIN parts AS p ON od.part_number = p.part_number 
+INNER JOIN engineers AS e ON o.engineer_key = e.engineer_key 
+WHERE o.fsl_code = pfslcode 
+AND (o.outgoing_date BETWEEN pdate1 AND pdate2)
+
+END $$
+DELIMITER ;
+# ======================================================
+#  End Create Procedure sp_daily_reports
+# ======================================================
+
+# ======================================================
+#  Begin Create Procedure sp_replenish_plan
+# ======================================================
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE sp_replenish_plan
+(
+    IN pfslcode VARCHAR(10),
+    IN pdate1 DATE,
+    IN pdate2 DATE,
+    IN pstatus VARCHAR(10)
+)
+BEGIN
+
+SELECT od.part_number, p.part_name, SUM(od.dt_outgoing_qty) AS qty, o.o_delivery_notes 
+FROM outgoings_detail AS od 
+INNER JOIN outgoings AS o ON od.outgoing_num = o.outgoing_num 
+INNER JOIN parts AS p ON od.part_number = p.part_number  
+WHERE o.fsl_code = pfslcode 
+AND (o.outgoing_date BETWEEN pdate1 AND pdate2) 
+AND o.outgoing_status = pstatus 
+GROUP BY od.part_number 
+
+END $$
+DELIMITER ;
+# ======================================================
+#  End Create Procedure sp_replenish_plan
+# ======================================================

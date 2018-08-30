@@ -7,12 +7,18 @@
             <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/controllers/Login.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/parts/index.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/templates/v_header.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/libraries/BaseController.php</file>
-            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/profiles/edit.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/v_login.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/controllers/CIncoming.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/endpoint.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/controllers/CProfile.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/outgoing-trans/index.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/controllers/Handling.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/controllers/Dashboard.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/libraries/BaseController.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/profiles/edit.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/incoming-trans/index.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/views/templates/v_footer.php</file>
+            <file>file:/D:/laragon/www/e-logistic/application/modules/superintend/controllers/COutgoing.php</file>
             <file>file:/D:/laragon/www/e-logistic/application/config/routes.php</file>
         </group>
     </open-files>

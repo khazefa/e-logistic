@@ -26,6 +26,19 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
+                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
+                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
+                            <?php
+                                foreach($list_coverage as $w){
+                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
+                                }
+                            ?>
+                        </select>
+                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-ticket"></i> </span>
                          </div>
@@ -101,12 +114,12 @@
                                 <tr>
                                     <th>Trans No</th>
                                     <th>Date</th>
+                                    <th>FSL</th>
                                     <th>Ticket No</th>
                                     <th>Requested by</th>
                                     <th>Take by</th>
                                     <th>Purpose</th>
                                     <th>Qty</th>
-                                    <!--<th>FSL Admin</th>-->
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -125,6 +138,7 @@
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
+    var e_coverage = $('#fcoverage');
     var e_ticket = $('#fticket');
     var e_purpose = $('#fpurpose');
     var e_status = $('#fstatus');
@@ -132,6 +146,8 @@
     function init_form(){
         e_date1.val('');
         e_date2.val('');
+        e_coverage.val('');
+        e_coverage.selectpicker('refresh');
         e_ticket.val('');
         e_purpose.val('');
         e_status.val('');
@@ -169,6 +185,7 @@
                     titleAttr: 'Copy',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -181,6 +198,7 @@
                     titleAttr: 'Excel',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -193,6 +211,7 @@
                     titleAttr: 'PDF',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -203,7 +222,9 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)'
+                    },
                     footer:false
                 }
             ],
@@ -217,6 +238,7 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
+                    d.fcoverage = e_coverage.val();
                     d.fticket = e_ticket.val();
                     d.fpurpose = e_purpose.val();
                     d.fstatus = e_status.val();
@@ -225,12 +247,12 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
+                { "data": 'fsl' },
                 { "data": 'transticket' },
                 { "data": 'reqby' },
                 { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
-//                { "data": 'user' },
                 { "data": 'status' },
                 { "data": 'button' },
             ],

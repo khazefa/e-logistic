@@ -26,23 +26,37 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-lg-12">
-                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
-                            <?php
-                                foreach($list_coverage as $w){
-                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                }
-                            ?>
-                        </select>
-                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
+                        <small>Please start typing 'c' that refef to FSL Code, to find FSL Coverage Data</small>
+                        <input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-ticket"></i> </span>
+                         </div>
+                        <input type="text" name="fticket" id="fticket" class="form-control" placeholder="By Ticket No.">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
                         <select name="fpurpose" id="fpurpose" class="form-control" placeholder="By Purpose">
                             <option value="">By Purpose</option>
-                            <option value="RG">Return Good</option>
-                            <option value="S">Supply</option>
+                            <option value="SP">Sales/Project</option>
+                            <option value="W">Warranty</option>
+                            <option value="M">Maintenance</option>
+                            <option value="I">Investment</option>
+                            <option value="B">Borrowing</option>
+                            <option value="RWH">Transfer Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
+                            <option value="">By Status</option>
+                            <option value="open">Open</option>
+                            <option value="complete">Complete</option>
                         </select>
                     </div>
                 </div>
@@ -86,22 +100,27 @@
             
             <div class="card-body">
                 <div class="row">
-                    <div class="table-responsive">
-                        <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                            <thead>
-                            <tr>
-                                <th>Trans No</th>
-                                <th>Date</th>
-                                <th>FSL</th>
-                                <th>Purpose</th>
-                                <th>Outgoing No.</th>
-                                <th>Qty</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Trans No</th>
+                                    <th>Date</th>
+                                    <th>FSL</th>
+                                    <th>Ticket No</th>
+                                    <th>Requested by</th>
+                                    <th>Take by</th>
+                                    <th>Purpose</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,17 +132,75 @@
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
     var e_coverage = $('#fcoverage');
+    var e_ticket = $('#fticket');
     var e_purpose = $('#fpurpose');
+    var e_status = $('#fstatus');
     
     function init_form(){
         e_date1.val('');
         e_date2.val('');
         e_coverage.val('');
-        e_coverage.selectpicker('refresh');
+        e_coverage.tagsinput('removeAll');
+        e_ticket.val('');
         e_purpose.val('');
+        e_status.val('');
     }
     
-    $(document).ready(function() {        
+    $(document).ready(function() {
+        var fslnames = new Bloodhound({
+            datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: '<?php echo base_url('superintend/coutgoing/get_list_coverage'); ?>',
+                filter: function(list) {
+                    // This should not be required, but I have left it incase you still need some sort of filtering on your server response
+                    return $.map(list, function(data) { 
+                        return { name: data.name, code: data.code }; 
+                    });
+                }
+            }
+        });
+        fslnames.initialize();
+
+        $('#fcoverage').tagsinput({
+            itemValue: 'code',
+            itemText: 'name',
+            typeaheadjs: {
+                name: 'fslnames',
+//                displayKey: 'name',
+                displayKey: function(data) {
+                   return data.name;
+                },
+//                valueKey: 'code',
+                source: fslnames.ttAdapter(),
+                classNames: {
+                    input: 'Typeahead-input',
+                    hint: 'Typeahead-hint',
+                    selectable: 'Typeahead-selectable'
+                },
+                templates: {
+                    suggestion: function (fsl) {
+                        return '<strong>' + fsl.name + '</strong>';
+                    }
+                }
+            }
+        });
+        fslnames.clearPrefetchCache();
+        $('#fcoverage').on('itemAdded', function(event) {
+            // event.item: contains the item
+            if(event.item.name === "FSL All"){
+                //event after select All
+                alert("If you select All for FSL Coverage, then you don\'t have to select another FSL Coverage.");
+                e_ticket.focus();
+            }else{
+                //event after select exclude All
+            }
+        });
+        
+        $('#fcoverage').on('change', function(e) {
+//            alert('Val:'+this.value);
+        });
+
         // Setting datatable defaults
         $.extend( $.fn.dataTable.defaults, {
             searching: true,
@@ -140,6 +217,7 @@
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             }
         });
+        
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
@@ -152,6 +230,7 @@
                     extend: 'copy',
                     text: '<i class="fa fa-copy"></i>',
                     titleAttr: 'Copy',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
                         columns: ':visible:not(:last-child)',
                         modifier: {
@@ -164,6 +243,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
                         columns: ':visible:not(:last-child)',
                         modifier: {
@@ -176,6 +256,7 @@
                     extend: 'pdf',
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
                         columns: ':visible:not(:last-child)',
                         modifier: {
@@ -195,7 +276,7 @@
                 }
             ],
             ajax: {                
-                url: '<?php echo base_url('superintend/cincoming/get_list_view_datatable'); ?>',
+                url: '<?php echo base_url('superintend/coutgoing/get_list_view_datatable'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -205,16 +286,21 @@
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
                     d.fcoverage = e_coverage.val();
+                    d.fticket = e_ticket.val();
                     d.fpurpose = e_purpose.val();
+                    d.fstatus = e_status.val();
                 }
             },
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
                 { "data": 'fsl' },
+                { "data": 'transticket' },
+                { "data": 'reqby' },
+                { "data": 'takeby' },
                 { "data": 'purpose' },
-                { "data": 'transout' },
                 { "data": 'qty' },
+                { "data": 'status' },
                 { "data": 'button' },
             ],
             order: [[ 0, "desc" ]],

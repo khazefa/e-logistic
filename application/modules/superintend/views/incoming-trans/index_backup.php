@@ -26,15 +26,8 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-lg-12">
-                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
-                            <?php
-                                foreach($list_coverage as $w){
-                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                }
-                            ?>
-                        </select>
-                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
+                        <small>Please start typing 'c' that refef to FSL Code, to find FSL Coverage Data</small>
+                        <input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -119,11 +112,65 @@
         e_date1.val('');
         e_date2.val('');
         e_coverage.val('');
-        e_coverage.selectpicker('refresh');
+        e_coverage.tagsinput('removeAll');
         e_purpose.val('');
     }
     
-    $(document).ready(function() {        
+    $(document).ready(function() {
+        var fslnames = new Bloodhound({
+            datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: '<?php echo base_url('superintend/coutgoing/get_list_coverage'); ?>',
+                filter: function(list) {
+                    // This should not be required, but I have left it incase you still need some sort of filtering on your server response
+                    return $.map(list, function(data) { 
+                        return { name: data.name, code: data.code }; 
+                    });
+                }
+            }
+        });
+        fslnames.initialize();
+
+        $('#fcoverage').tagsinput({
+            itemValue: 'code',
+            itemText: 'name',
+            typeaheadjs: {
+                name: 'fslnames',
+//                displayKey: 'name',
+                displayKey: function(data) {
+                   return data.name;
+                },
+//                valueKey: 'code',
+                source: fslnames.ttAdapter(),
+                classNames: {
+                    input: 'Typeahead-input',
+                    hint: 'Typeahead-hint',
+                    selectable: 'Typeahead-selectable'
+                },
+                templates: {
+                    suggestion: function (fsl) {
+                        return '<strong>' + fsl.name + '</strong>';
+                    }
+                }
+            }
+        });
+        fslnames.clearPrefetchCache();
+        $('#fcoverage').on('itemAdded', function(event) {
+            // event.item: contains the item
+            if(event.item.name === "FSL All"){
+                //event after select All
+                alert("If you select All for FSL Coverage, then you don\'t have to select another FSL Coverage.");
+                e_purpose.focus();
+            }else{
+                //event after select exclude All
+            }
+        });
+        
+        $('#fcoverage').on('change', function(e) {
+//            alert('Val:'+this.value);
+        });
+        
         // Setting datatable defaults
         $.extend( $.fn.dataTable.defaults, {
             searching: true,

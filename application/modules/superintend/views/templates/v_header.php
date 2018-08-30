@@ -16,6 +16,8 @@
         <!-- Plugins css-->
         <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/switchery/switchery.min.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/typehead/css/typeahead.css" rel="stylesheet" />
         
         <!-- App css -->
         <link href="<?php echo base_url();?>assets/public/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -47,7 +49,7 @@
                             <span class="logo-large"><i class="mdi mdi-radar"></i> Highdmin</span>
                         </a> -->
                         <!-- Image Logo -->
-                        <a href="<?php echo base_url();?>" class="logo">
+                        <a href="<?php echo base_url('oversee');?>" class="logo">
                             <img src="<?php echo base_url();?>assets/public/images/logo_sm.png" alt="" height="48" class="logo-small">
                             <img src="<?php echo base_url();?>assets/public/images/logo.png" alt="" height="48" class="logo-large">
                         </a>
@@ -112,7 +114,7 @@
                         <ul class="navigation-menu">
 
                             <li class="has-submenu">
-                                <a href="<?php echo base_url();?>"><i class="icon-speedometer"></i>Dashboard</a>
+                                <a href="<?php echo base_url('oversee');?>"><i class="icon-speedometer"></i>Dashboard</a>
                             </li>
                             
                             <?php
@@ -137,13 +139,13 @@
                             if(($ovRole == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="icon-basket"></i>Transaction</a>
+                                <a href="#"><i class="icon-book-open"></i>Report</a>
                                 <ul class="submenu">
                                     <li>
-                                        <a href="<?php echo base_url("oversee/incoming-trans");?>">Incoming Parts</a>
+                                        <a href="<?php echo base_url("oversee/incoming-report");?>">Incoming</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo base_url("oversee/outgoing-trans");?>">Outgoing Parts</a>
+                                        <a href="<?php echo base_url("oversee/outgoing-report");?>">Outgoing</a>
                                     </li>
                                 </ul>
                             </li>

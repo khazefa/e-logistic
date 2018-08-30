@@ -26,15 +26,83 @@ class COutgoing extends BaseController
      */
     public function index()
     {     
-        $this->global['pageTitle'] = 'Outgoing Transaction - '.APP_NAME;
-        $this->global['pageMenu'] = 'Outgoing Transaction';
-        $this->global['contentHeader'] = 'Outgoing Transaction';
-        $this->global['contentTitle'] = 'Outgoing Transaction';
+        $this->global['pageTitle'] = 'Outgoing Report - '.APP_NAME;
+        $this->global['pageMenu'] = 'Outgoing Report';
+        $this->global['contentHeader'] = 'Outgoing Report';
+        $this->global['contentTitle'] = 'Outgoing Report';
         $this->global ['ovRole'] = $this->ovRole;
         $this->global ['ovName'] = $this->ovName;
         $this->global ['ovRepo'] = $this->ovRepo;
+        
+        $data['list_coverage'] = $this->get_list_wh();
 
-        $this->loadViews2('superintend/outgoing-trans/index', $this->global, NULL);
+        $this->loadViews2('superintend/outgoing-trans/index', $this->global, $data);
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    public function get_list_wh(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+ 
+            if(in_array($row['code'], $e_coverage)){
+                $data[] = $row;
+            }
+        }
+        
+        return $data;
+    }
+    
+    public function get_list_coverage()
+    {
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        array_push($data, array('code'=>'C000','name'=>'FSL All'));
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+ 
+            if(in_array($row['code'], $e_coverage)){
+                $data[] = $row;
+            }
+        }
+
+//        echo json_encode( $data);
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($data)
+        );
     }
     
     /**
@@ -50,6 +118,30 @@ class COutgoing extends BaseController
         $fticket = $this->input->post('fticket', TRUE);
         $fpurpose = $this->input->post('fpurpose', TRUE);
         $fstatus = $this->input->post('fstatus', TRUE);
+//        $coverage = $this->input->post('fcoverage', TRUE);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+//        $coverage = "CID3;CID5;CID4;CID8";
+        
+        if(empty($coverage)){
+            $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        }else{
+            if (strpos($coverage, 'C000') !== false) {
+                $fcoverage = $this->session->userdata ( 'ovCoverage' );;
+            }else{
+                if (strpos($coverage, ',') !== false) {
+                    $fcoverage = str_replace(',', ';', $coverage);
+                }else{
+                    $fcoverage = $coverage;
+                }
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
         //Parameters for cURL
         $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
             'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
@@ -71,6 +163,8 @@ class COutgoing extends BaseController
             $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             $requestby = "";
@@ -111,12 +205,12 @@ class COutgoing extends BaseController
             
             $row['transnum'] = $transnum;
             $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            $row['fsl'] = $fslname;
             $row['transticket'] = $transticket;
             $row['reqby'] = $requestby;
             $row['takeby'] = $takeby;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
-            $row['user'] = $user_fullname;
 //            $row['notes'] = "-";
             $row['status'] = strtoupper($status);
             
@@ -132,7 +226,9 @@ class COutgoing extends BaseController
                 $row['button'] = '<a href="'.base_url("oversee/print-outgoing-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
 //            }
  
-            $data[] = $row;
+            if(in_array($fslcode, $e_coverage)){
+                $data[] = $row;
+            }
         }
         
         return $this->output

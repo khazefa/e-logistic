@@ -274,4 +274,24 @@ $route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_tr
 //  End Routing Superintend Incoming Trans
 // ===========================
 
+// ===========================
+//  Routing Superintend Reports
+// ===========================
+$route['oversee/report-consumed-parts'] = 'superintend/creports/report_consumed_part';
+$route['oversee/report-replenish-plan'] = 'superintend/creports/report_replenish_plan';
+$route['oversee/print-consumed-parts'] = 'superintend/creports/export_consumed_part';
+$route['oversee/print-replenish-plan'] = 'superintend/creports/export_replenish_plan';
+// ===========================
+//  End Routing Superintend Reports
+// ===========================
+
+// ===========================
+//  Routing Front Stock Spareparts
+// ===========================
+$route['oversee/data-spareparts-stock'] = 'superintend/cstockpart';
+$route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detail/$1';
+// ===========================
+//  End Routing Front Stock Spareparts
+// ===========================
+
 /* END OVERSEE CONTROLLER */

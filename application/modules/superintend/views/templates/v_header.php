@@ -124,11 +124,11 @@
                                 <a href="#"><i class="fa fa-database"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("oversee/data-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
-                                    <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
-                                    <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
-                                    <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
+                                    <!--<li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>-->
+                                    <li><a href="<?php echo base_url("oversee/data-spareparts-stock");?>">Stock</a></li>
+                                    <!--<li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>-->
+                                    <!--<li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>-->
+                                    <!--<li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>-->
                                 </ul>
                             </li>
                             <?php
@@ -139,14 +139,12 @@
                             if(($ovRole == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="icon-book-open"></i>Report</a>
+                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li>
-                                        <a href="<?php echo base_url("oversee/incoming-report");?>">Incoming</a>
-                                    </li>
-                                    <li>
-                                        <a href="<?php echo base_url("oversee/outgoing-report");?>">Outgoing</a>
-                                    </li>
+                                    <li><a href="<?php echo base_url("oversee/incoming-report");?>">Incoming</a></li>
+                                    <li><a href="<?php echo base_url("oversee/outgoing-report");?>">Outgoing</a></li>
+                                    <li><a href="<?php echo base_url("oversee/report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("oversee/report-replenish-plan");?>">Replenishment Plan</a></li>
                                 </ul>
                             </li>
                             <?php

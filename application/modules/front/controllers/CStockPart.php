@@ -168,6 +168,7 @@ class CStockPart extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+        exit();
     }
     
     /**
@@ -396,6 +397,7 @@ class CStockPart extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+        exit();
     }
     
     /**
@@ -407,10 +409,10 @@ class CStockPart extends BaseController
         $lofcode = strtolower($fcode);
         $fslname = $this->get_info_warehouse_name($upfcode);
         if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Manage Stock Warehouse '.$fslname.' - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Stock Warehouse '.$fslname;
-            $this->global['contentHeader'] = 'Manage Stock Warehouse '.$fslname;
-            $this->global['contentTitle'] = 'Manage Stock Warehouse '.$fslname;
+            $this->global['pageTitle'] = 'Manage Stock '.$fslname.' - '.APP_NAME;
+            $this->global['pageMenu'] = 'Manage Stock '.$fslname;
+            $this->global['contentHeader'] = 'Manage Stock '.$fslname;
+            $this->global['contentTitle'] = 'Manage Stock '.$fslname;
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
@@ -670,7 +672,7 @@ class CStockPart extends BaseController
      */
     function add()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = "Add New Stock Parts - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Stock Parts';
             $this->global['contentHeader'] = 'Add New Stock Parts';
@@ -719,7 +721,7 @@ class CStockPart extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             if($fkey == NULL)
             {
                 redirect('manage-spareparts-stock');

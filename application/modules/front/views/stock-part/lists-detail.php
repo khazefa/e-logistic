@@ -152,60 +152,68 @@
 
         table.buttons().container()
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
-                
-        // Responsive Datatable with Buttons
-        var tablesub = $('#datasub_grid').DataTable({
-            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
-            destroy: true,
-            stateSave: false,
-            deferRender: true,
-            processing: true,
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy',
-                    exportOptions: {
-//                        columns: ':visible:not(:last-child)',
-                        modifier: {
-                            page: 'current'
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            if ((target == '#nav-subtitute')) {
+                // Responsive Datatable with Buttons
+                var tablesub = $('#datasub_grid').DataTable({
+                    dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
+                    destroy: true,
+                    stateSave: false,
+                    deferRender: true,
+                    processing: true,
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            text: '<i class="fa fa-copy"></i>',
+                            titleAttr: 'Copy',
+                            exportOptions: {
+        //                        columns: ':visible:not(:last-child)',
+                                modifier: {
+                                    page: 'current'
+                                }
+                            },
+                            footer:false
+                        },
+                        {
+                            extend: 'copy',
+                            text: '<i class="fa fa-copy"></i>',
+                            titleAttr: 'Copy All',
+                            footer:false
                         }
+                    ],
+                    ajax: {                
+                        url: "<?= base_url('front/cstockpart/get_list_partsub_datatable/').$code; ?>",
+                        type: "POST",
+                        dataType: "JSON",
+                        contentType: "application/json",
+                        data: JSON.stringify( {
+                            "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                        } ),
                     },
-                    footer:false
-                },
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy All',
-                    footer:false
-                }
-            ],
-            ajax: {                
-                url: "<?= base_url('front/cstockpart/get_list_partsub_datatable/').$code; ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-                data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
-                } ),
-            },
-            columns: [
-                { "data": 'code' },
-                { "data": 'partno' },
-                { "data": 'partname' },
-                { "data": 'stock' },
-                { "data": 'partnosub' },
-            ],
-            order: [[ 3, "desc" ]],
-            columnDefs: [{ 
-                orderable: false,
-                targets: [ 0 ]
-            }],
+                    columns: [
+                        { "data": 'code' },
+                        { "data": 'partno' },
+                        { "data": 'partname' },
+                        { "data": 'stock' },
+                        { "data": 'partnosub' },
+                    ],
+                    order: [[ 3, "desc" ]],
+                    columnDefs: [{ 
+                        orderable: false,
+                        targets: [ 0 ]
+                    }],
+                });
+
+                tablesub.buttons().container()
+                        .appendTo('#datasub_grid_wrapper .col-md-12:eq(0)');
+
+                tablesub.column(1).data().unique();
+            } else {
+                //
+            }
         });
 
-        tablesub.buttons().container()
-                .appendTo('#datasub_grid_wrapper .col-md-12:eq(0)');
-        
-        tablesub.column(1).data().unique();
     });
 </script>

@@ -258,7 +258,7 @@ $route['oversee/data-spareparts'] = 'superintend/cparts';
 // ===========================
 //  Routing Superintend Outgoing Trans
 // ===========================
-$route['oversee/outgoing-trans'] = 'superintend/coutgoing';
+$route['oversee/outgoing-report'] = 'superintend/coutgoing';
 $route['oversee/print-outgoing-trans/(:any)'] = 'superintend/coutgoing/print_transaction/$1';
 // ===========================
 //  End Routing Superintend Outgoing Trans
@@ -267,7 +267,7 @@ $route['oversee/print-outgoing-trans/(:any)'] = 'superintend/coutgoing/print_tra
 // ===========================
 //  Routing Superintend Incoming Trans
 // ===========================
-$route['oversee/incoming-trans'] = 'superintend/cincoming';
+$route['oversee/incoming-report'] = 'superintend/cincoming';
 $route['oversee/print-incoming-supply/(:any)'] = 'superintend/cincoming/print_trans_supply/$1';
 $route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_trans_return/$1';
 // ===========================

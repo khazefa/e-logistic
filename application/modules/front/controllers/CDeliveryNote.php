@@ -1059,7 +1059,7 @@ class CDeliveryNote extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
 
         $arrWhere = array('fid'=>$fid, 'fqty'=>$fqty);
-        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_cart'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_delivery_note_cart'), 'POST', FALSE);
 
         if($rs_data->status)
         {
@@ -1154,7 +1154,7 @@ class CDeliveryNote extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>"DN", 'fcode'=>$fcode);
+        $arrParam = array('fparam'=>"DN-CWH", 'fcode'=>$fcode);
         $rs_transnum = send_curl($arrParam, $this->config->item('api_get_delivery_note_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
@@ -1168,7 +1168,6 @@ class CDeliveryNote extends BaseController
             }else{
                 //get cart list by retnum
                 $data_tmp = $this->get_list_cart();
-                var_dump($data_tmp);
                 $dataDetail = array();
                 $total_qty = 0;
                 if(!empty($data_tmp)){
@@ -1315,15 +1314,15 @@ class CDeliveryNote extends BaseController
         //$pdf->Image(base_url().'assets/public/images/DHL-Supply.png',($width*(70/100)),8,($width*(20/100)),20); //IMAGE DHL
         
         //barcode
-        $pdf->SetFont('Arial','B',11); //ARIAL BOLD 11
-        $pdf->Code39(($width*(60/100)),10,$transnum,1,10);
+        $pdf->SetFont('Arial','B',9); //ARIAL BOLD 11
+        $pdf->Code39(($width*(50/100)),10,$transnum,1,10);
         $pdf->ln(20);
         
         //row Header
-        $pdf->setFont('Arial','B',10);
-        $pdf->Cell(($width*(15/100)),7,'Purpose',0,0,'L');
         $pdf->setFont('Arial','',10);
-        $pdf->Cell(($width*(25/100)),7,': '.$purpose,0,1, 'L');
+        $pdf->Cell(($width*(15/100)),7,'Purpose '.': '.$purpose.' SPAREPART TO FSL',0,0,'L');
+        $pdf->setFont('Arial','',10);
+        $pdf->Cell(($width*(25/100)),7,'',0,1, 'L');
         
         //row 1
         //$pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
@@ -1341,7 +1340,7 @@ class CDeliveryNote extends BaseController
         //col 2 Wrap
         $px += ($width*(67.5/100));
         $pdf->SetXY($px,$py);
-        $pdf->MultiCell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_date'], 'string'),1,'C');
+        $pdf->MultiCell(($width*(22.5/100)),7,date("d-F-Y",strtotime($this->snt($rs['delivery_note_date'], 'string'))),1,'C');
         
         //row 3
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
@@ -1369,7 +1368,7 @@ class CDeliveryNote extends BaseController
         
         //row 7
         $pdf->setFont('Arial','B',10); //ARIAL BOLD 10
-        $pdf->Cell(($width*(22.5/100)),7,'       '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'         '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,1,'L');
@@ -1384,47 +1383,78 @@ class CDeliveryNote extends BaseController
         //row 10
         $pdf->SetFont('Arial','B',10); //ARIAL BOLD 10
         $pdf->Cell(($width*(7.5/100)),6,'Item',1,0,'C');
-        $pdf->Cell(($width*(20/100)),6,'Part #',1,0,'C');
-        $pdf->Cell(($width*(35/100)),6,'Description',1,0,'C');
-        $pdf->Cell(($width*(20/100)),6,'Serial No.',1,0,'C');
+        $pdf->Cell(($width*(15/100)),6,'Part #',1,0,'C');
+        $pdf->Cell(($width*(45/100)),6,'Description',1,0,'C');
+        $pdf->Cell(($width*(15/100)),6,'Serial No.',1,0,'C');
         $pdf->Cell(($width*(7.5/100)),6,'Qty',1,1,'C');
         
         //row Data
+        $start_awal=$pdf->GetX(); 
+        $get_xxx = $pdf->GetX();
+        $get_yyy = $pdf->GetY();
+        
+        $height = 7;
+        
         $i = 1;
-        $pdf->SetFont('Arial','',10); //ARIAL NORMAL 10
+        $pdf->SetFont('Arial','',9); //ARIAL NORMAL 10
         if(count($rs)>0 AND count($rs['detail'])>0){
             $detail = $rs['detail'];
             foreach($detail as $dt){
-                $pdf->Cell(($width*(7.5/100)),6,$i,1,0,'C');
-                $pdf->Cell(($width*(20/100)),6,$this->snt($dt['part_number'], 'string'),1,0,'L');
-                $pdf->Cell(($width*(35/100)),6,$this->snt($dt['part_name'], 'string'),1,0,'C');
-                $pdf->Cell(($width*(20/100)),6,$this->snt($dt['serial_number'], 'string'),1,0,'L');
-                $pdf->Cell(($width*(7.5/100)),6,$this->snt($dt['dt_delivery_note_qty'], 'string'),1,1,'C');
+                if($i>1){
+                    $get_yyy += $height;
+                    $get_xxx = $start_awal;
+                }
+                $pdf->SetXY($get_xxx,$get_yyy);
+                $pdf->MultiCell(($width*(7.5/100)),$height,$i,1,'C');
+                $get_xxx+=($width*(7.5/100));
+                
+                $pdf->SetXY($get_xxx,$get_yyy);
+                $pdf->MultiCell(($width*(15/100)),$height,$this->snt($dt['part_number'], 'string'),1,'L');
+                $get_xxx+=($width*(15/100));
+                
+                $pdf->SetXY($get_xxx,$get_yyy);
+                $pdf->MultiCell(($width*(45/100)),$height,$this->snt($dt['part_name'], 'string'),1,'L');
+                $get_xxx+=($width*(45/100));
+                
+                $pdf->SetXY($get_xxx,$get_yyy);
+                $pdf->MultiCell(($width*(15/100)),$height,$this->snt($dt['serial_number'], 'string'),1,'L');
+                $get_xxx+=($width*(15/100));
+                
+                $pdf->SetXY($get_xxx,$get_yyy);
+                $pdf->MultiCell(($width*(7.5/100)),$height,$this->snt($dt['dt_delivery_note_qty'], 'string'),1,'C');
+                $get_xxx+=($width*(7.5/100));
+                
+//                $pdf->Cell(($width*(7.5/100)),6,$i,1,0,'C');
+//                $pdf->Cell(($width*(20/100)),6,$this->snt($dt['part_number'], 'string'),1,0,'L');
+//                $pdf->Cell(($width*(35/100)),6,$this->snt($dt['part_name'], 'string'),1,0,'C');
+//                $pdf->Cell(($width*(20/100)),6,$this->snt($dt['serial_number'], 'string'),1,0,'L');
+//                $pdf->Cell(($width*(7.5/100)),6,$this->snt($dt['dt_delivery_note_qty'], 'string'),1,1,'C');
                 $i++;
             }
         }
         
         //row 11
-        $static_note = 'NOTE : Mohon cek kelengkapan barang dan segera mem-fax kembali Delivery Note yang sudah ditandatangani ini ke Warehouse Manggarai.';
+        $pdf->SetFont('Arial','',9); //ARIAL NORMAL 10
+        $static_note = 'NOTE : Mohon cek kelengkapan barang dan mohon infokan ke Warehouse Pusat, jika ada ketidaksesuaian.';
         $pdf->MultiCell(($width*(90/100)),7,$static_note,1,'C');
         
         //row 12-13
         $pdf->Ln(15);
         
         //row 14 TTD 3 kolom
-        $pdf->SetFont('Arial','B',10); //ARIAL BOLD 10
+        $pdf->SetFont('Arial','B',9); //ARIAL BOLD 10
         $pdf->Cell(($width*(30/100)),7,'Sent By,',0,0,'L');
         $pdf->Cell(($width*(30/100)),7,'Courier By,',0,0,'C');
         $pdf->Cell(($width*(30/100)),7,'Received By,',0,1,'C');
         
         //row 15 TTD
-        $pdf->SetFont('Arial','',10); //ARIAL NORMAL 10
+        $pdf->SetFont('Arial','',9); //ARIAL NORMAL 10
         $pdf->Cell(($width*(30/100)),6,'PT. Diebold Nixdorf Indonesia',0,0,'L');
         $pdf->Cell(($width*(30/100)),6,'',0,0,'C');
         $pdf->Cell(($width*(30/100)),6,'',0,1,'C');
         
         //row 16 TTD
-        $pdf->Cell(($width*(30/100)),6,'C/O PT.DHL Suply Chain',0,0,'L');
+        $pdf->Cell(($width*(30/100)),6,'',0,0,'L');
         $pdf->Cell(($width*(30/100)),6,'',0,0,'C');
         $pdf->Cell(($width*(30/100)),6,'',0,1,'C');
         
@@ -1432,7 +1462,7 @@ class CDeliveryNote extends BaseController
         $pdf->Ln(20);
         
         //row 19
-        $pdf->SetFont('Arial','B',10); //ARIAL BOLD 10
+        $pdf->SetFont('Arial','B',9); //ARIAL BOLD 10
         $pdf->Cell(($width*(30/100)),7,'______________',0,0,'L');
         $pdf->Cell(($width*(30/100)),7,'______________',0,0,'C');
         $pdf->Cell(($width*(30/100)),7,'______________',0,1,'C');
@@ -1507,277 +1537,6 @@ class CDeliveryNote extends BaseController
         return $rs;
     }
     
-    public function print_transaction($ftrans_out){
-        $rs = array();
-        $arrWhere = array();
-        $arrWhere2 = array();
-
-        //Parameters for cURL
-        $arrWhere = array('ftrans_out'=>$ftrans_out);
-            
-        if(empty($ftrans_out) || $ftrans_out = ""){
-            redirect('cl');
-        }else{
-            $orientation = "P";
-            $paper_size = "A4";
-            $width = 0;
-            $height = 0;
-
-            switch ($orientation) {
-                case "P":
-                   switch ($paper_size) {
-                        case "A4":
-                            $width = 210;
-                            $height = 297;
-                        break;
-                        case "A5":
-                            $width = 148;
-                            $height = 210;
-                        break;
-                        default:
-                            $width = 210;
-                            $height = 297;
-                        break;
-                    }
-                break;
-
-                case "L":
-                    switch ($paper_size) {
-                        case "A4":
-                            $width = 297;
-                            $height = 210;
-                        break;
-                        case "A5":
-                            $width = 210;
-                            $height = 148;
-                        break;
-                        default:
-                            $width = 297;
-                            $height = 210;
-                        break;
-                    }
-                break;
-
-                default:
-                    switch ($paper_size) {
-                        case "A4":
-                            $width = 210;
-                            $height = 297;
-                        break;
-                        case "A5":
-                            $width = 148;
-                            $height = 210;
-                        break;
-                        default:
-                            $width = 210;
-                            $height = 297;
-                        break;
-                    }
-                break;
-            }
-
-            // config fpdf options
-            $config=array($orientation=>'P','size'=>$paper_size);
-            $this->load->library('mypdf',$config);
-            $this->mypdf->AliasNbPages();
-            $this->mypdf->AddPage();
-            $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
-            
-            //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_get_data_detail'), 'POST', FALSE);
-            $results = $rs_data->status ? $rs_data->result : array();
-            $transnum = "";
-            $purpose = "";
-            $transdate = "";
-            $ticket = "";
-            $partner = "";
-            $engineer_id = "";
-            $engineer2_id = "";
-            $engineer_name = "";
-            $engineer_mess = "";
-            $engineer_sign = "";
-            $fpurpose = "";
-            $customer = "";
-            $location = "";
-            $ssb_id = "";
-            $fslname = "";
-            foreach ($results as $r){
-                $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
-                switch ($fpurpose){
-                    case "SP";
-                        $purpose = "Sales/Project";
-                    break;
-                    case "W";
-                        $purpose = "Warranty";
-                    break;
-                    case "M";
-                        $purpose = "Maintenance";
-                    break;
-                    case "I";
-                        $purpose = "Investments";
-                    break;
-                    case "B";
-                        $purpose = "Borrowing";
-                    break;
-                    case "RWH";
-                        $purpose = "Transfer Stock";
-                    break;
-                    default;
-                        $purpose = "-";
-                    break;
-                }
-                $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-                $ticket = $r->outgoing_ticket == "" ? "-" : filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                $transdate = date("d/m/Y H:i:s", strtotime(filter_var($r->created_at, FILTER_SANITIZE_STRING)));
-                $partner = $r->partner_name == "" ? "-" : filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-                $engineer_id = $r->engineer_key == "" ? "-" : filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-                $engineer2_id = $r->engineer_2_key == "" ? "-" : filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
-                $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-                if(!empty($engineer2_id)){
-                    $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                }else{
-                    $engineer_sign = $engineer_name;
-                }
-                $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-                $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-                $notes = $r->outgoing_notes == "" ? "-" : filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
-                $customer = $r->outgoing_cust == "" ? "-" : filter_var($r->outgoing_cust, FILTER_SANITIZE_STRING);
-                $location = $r->outgoing_loc == "" ? "-" : filter_var($r->outgoing_loc, FILTER_SANITIZE_STRING);
-                $ssb_id = $r->outgoing_ssbid == "" ? "-" : filter_var($r->outgoing_ssbid, FILTER_SANITIZE_STRING);
-            }
-
-//            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
-            $this->mypdf->SetFont('Arial','B',11);
-            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
-            $this->mypdf->ln(20);
-
-            $this->mypdf->setFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),7,'Purpose',0,0,'L');
-            $this->mypdf->setFont('Arial','',10);
-            $this->mypdf->Cell(($width*(25/100)),7,$purpose,1,1, 'L');
-
-            if($fpurpose != "RWH"){
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Stock Location',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$fslname,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Ticket Number',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$ticket,1,1, 'L');
-
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Service Partner',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$partner,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$customer,1,1, 'L');
-
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Assigned FSE',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$engineer_name,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$location,1,1, 'L');
-
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'FSE ID Number',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$engineer_id,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$ssb_id,1,1, 'L');
-
-                $this->mypdf->ln(5);
-                $this->mypdf->setFont('Arial','B',13);
-                $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
-                $this->mypdf->ln(5);
-                // Garis atas untuk header
-//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
-            }else{
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Delivery Notes',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->CellFitScale(($width*(35/100)),7,$notes,1,1, 'L');
-                
-                $this->mypdf->ln(5);
-                $this->mypdf->setFont('Arial','B',13);
-                $this->mypdf->Cell(($width*(60/100)),7,'STOCK TRANSFER FORM',0,0,'R');
-                $this->mypdf->ln(5);
-                // Garis atas untuk header
-//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
-            }
-
-            $this->mypdf->ln(5);
-
-            $this->mypdf->SetFont('Arial','B',10);
-            $this->mypdf->Cell(($width*(15/100)),6,'Requested PN',1,0);
-            $this->mypdf->Cell(($width*(20/100)),6,'Description',1,0);
-            $this->mypdf->Cell(($width*(7.5/100)),6,'Qty',1,0);
-            $this->mypdf->Cell(($width*(15/100)),6,'Issued PN',1,0);
-            $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,0);
-            $this->mypdf->Cell(($width*(5/100)),6,'Bin',1,0);
-            $this->mypdf->Cell(($width*(10/100)),6,'Status',1,1);
-
-            $this->mypdf->SetFont('Arial','',9);
-            
-            //Parse Data for cURL
-            $rs_data2 = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
-            $rslist = $rs_data2->status ? $rs_data2->result : array();
-            
-            foreach( $rslist as $row )
-            {
-                $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
-                $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
-                $qty = filter_var($row->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
-                $serialnum = filter_var($row->serial_number, FILTER_SANITIZE_STRING);
-
-                $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
-                $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
-                $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
-                $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
-                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
-                $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
-                $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
-            }
-
-            $this->mypdf->ln(1);
-            $this->mypdf->SetFont('Arial','',10);
-            $this->mypdf->drawTextBox('Notes:', $width-20, 12, 'L', 'T');
-            $this->mypdf->ln(10);
-            $this->mypdf->Cell(($width*(25/100)),6,'Requested by:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Approved by:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Processed by:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Received by:',0,1,'L');
-            $this->mypdf->ln(12);
-            $this->mypdf->Cell(($width*(25/100)),6,'Name:'.$engineer_sign,0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,1,'L');
-            $this->mypdf->ln(0.1);
-            $this->mypdf->Cell(($width*(25/100)),6,'Date:'.$transdate,0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
-            $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,1,'L');
-
-            $title = 'Request #'.$transnum;
-            $this->mypdf->SetTitle($title);
-    //        $this->mypdf->Output('D', $title.'.pdf');
-            return $this->mypdf->Output('D', $title.'.pdf');
-        }
-    }
     
     
 ////////////////////////////////////////////////////////////////////////////////    

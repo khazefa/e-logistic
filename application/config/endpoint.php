@@ -163,7 +163,7 @@ $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdelive
 
 $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
 $config['api_update_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/update_detail/'; //POST
-$config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/update_cart/'; //POST
+
 
 $config['api_get_cart_delivery_note_info'] = constant('urlapi').'api/cpdeliverynote/get_cart_info/'; //POST
 
@@ -179,6 +179,7 @@ $config['api_clear_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote
 $config['api_list_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list/'; //POST
 $config['api_list_view_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view/';
 $config['api_get_data_detail'] = constant('urlapi').'api/cpdeliverynote/get_data_detail/';//get
+$config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/update_cart/'; //POST
 // ===========================
 //  End Delivery Note  Trans
 // ===========================

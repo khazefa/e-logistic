@@ -7,12 +7,12 @@
             <file>file:/D:/web/GIT/e-logistic/application/config/main_endpoint.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/helpers/Api_helper.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/rest.php</file>
-            <file>file:/D:/web/GIT/e-logistic/application/modules/front/views/delivery-note/index.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/controllers/CParts.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/database.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/endpoint.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/routes.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/views/outgoing-trans/create.php</file>
+            <file>file:/D:/web/GIT/e-logistic/application/modules/front/controllers/CDeliveryNote.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/views/delivery-note/create.php</file>
         </group>
     </open-files>

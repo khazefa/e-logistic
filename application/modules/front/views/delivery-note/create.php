@@ -25,7 +25,7 @@
                                 Delivery Sparepart to FSL
                             </div>
                             <div class="card-body">
-                                <p>Please use this form section <strong>for purpose Transfer Stock</strong></p>
+                                <p>Please use this form section <strong>for purpose Supply Stock</strong></p>
                                 <div class="form-group row">
                                     <label for="fdest_fsl" class="col-sm-3 col-form-label">FSL Destination</label>
                                     <div class="col-sm-8">
@@ -78,7 +78,7 @@
         </div>
     </div>
     
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card-box">
             <div class="card-header bg-primary text-white">
                 <input type="checkbox" name="fswitch" id="fswitch" data-plugin="switchery" data-color="#f1b53d"/>
@@ -224,7 +224,7 @@
                 alert( "Please choose fsl!" );
                 init_form();
             }else{
-                e_transnote.val("Transfer stock to "+selectedText);
+                e_transnote.val("Supply stock to "+selectedText);
                 e_airwaybill.prop("readonly", false);
                 e_service.prop("disabled", false);
                 e_service.selectpicker('refresh');
@@ -580,7 +580,8 @@
                     });
                 }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
-                    window.location.href = "<?php echo base_url('new-delivery-note-trans'); ?>";
+                    console.log(jqXHR.message);
+                    //window.location.href = "<?php echo base_url('new-delivery-note-trans'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -841,7 +842,7 @@
     //print to pdf
     function print_transaction(ftransno){
         var param = ftransno;
-        var url = '<?php echo base_url('print-outgoing-trans/'); ?>'+param;
+        var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
         var newWindow=window.open(url);
 //        window.location.assign(url);
     }

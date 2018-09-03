@@ -30,7 +30,13 @@
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-all-tab" data-toggle="tab" href="#nav-all" role="tab" aria-controls="nav-all" aria-selected="true">All Stock</a>
+                        <?php
+                        if($role !== ROLE_AM){
+                        ?>
                         <a class="nav-item nav-link " id="nav-subtitute-tab" data-toggle="tab" href="#nav-subtitute" role="tab" aria-controls="nav-subtitute" aria-selected="false">Subtitution Stock</a>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -64,6 +70,9 @@
                     <!-- End Content Panel All Stock -->
                     
                     <!-- Begin Content Panel Subtitute Stock -->
+                    <?php
+                    if($role !== ROLE_AM){
+                    ?>
                     <div class="tab-pane fade " id="nav-subtitute" role="tabpanel" aria-labelledby="nav-subtitute-tab">
                         <div class="row">
                             <div class="col-md-12">
@@ -87,6 +96,9 @@
                             </div>
                         </div>
                     </div>
+                    <?php
+                    }
+                    ?>
                     <!-- End Content Panel Subtitute Stock -->
                 </div>
             </div>

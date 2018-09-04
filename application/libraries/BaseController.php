@@ -110,12 +110,18 @@ class BaseController extends CI_Controller {
     */
     function logout_app() {
         $isSessionFilled = $this->session->userdata ( 'isSessionFilled' );
-        $isSessionGett = $this->session->userdata ( 'isSessionGett' );
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
         
         if ( isset ( $isSessionFilled ) || $isSessionFilled == TRUE) {
             $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
                 ,'isAdm','vendorRepo','vendorRepoName','role','roleText');
             $this->session->unset_userdata($sess_items);
+            redirect ( 'login' );
+        }elseif ( isset ( $isSessionSettled ) || $isSessionSettled == TRUE) {
+            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
+                'ovRepo','ovRepoName','ovRole','ovRoleText');
+            $this->session->unset_userdata($sess_items);
+//            redirect ( 'signin' );
             redirect ( 'login' );
         }else{
             redirect ( 'login' );

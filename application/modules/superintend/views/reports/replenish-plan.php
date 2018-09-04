@@ -57,6 +57,7 @@
                                                 $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
                                                 $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
                                                 $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
+//                                                var_dump($list_wr);
                                                 
                                             ?>
                                             <div class="col-sm-3">

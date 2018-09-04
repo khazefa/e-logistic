@@ -91,7 +91,7 @@
                                     </a>
 
                                     <!-- item-->
-                                    <a href="<?php echo base_url('signout');?>" class="dropdown-item notify-item">
+                                    <a href="<?php echo base_url('logout');?>" class="dropdown-item notify-item">
                                         <i class="fi-power"></i> <span>Logout</span>
                                     </a>
 
@@ -171,7 +171,7 @@
                                     <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">FSL - <span id="glob_fsl"><?php echo $ovRepo." (".$ovRepoName.")";?></span></h4>
+                            <h4 class="page-title">Welcome</h4>
                         </div>
                     </div>
                 </div>

@@ -190,7 +190,7 @@
                     <div class="form-group row">
                         <label for="btn" class="col-2 col-form-label">&nbsp;</label>
                         <div class="col-6">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button id="btn_submit" type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </form>
@@ -205,6 +205,16 @@
         $('#fgroup').on('change', function(e){
             if(this.value === group){
                 $( "#fcoverage" ).removeClass( "d-none" );
+                $('#fcode_all').on("click", function(e){
+                    $('input:checkbox').not(this).prop('checked', this.checked);
+                });
+//                $("#btn_submit").on("click", function(e){
+//                    var checked = $("input[type=checkbox]:checked").length;
+//                    if(!checked) {
+//                      alert("You must check at least one FSL.");
+//                      return false;
+//                    }
+//                });
             }else{
                 $( "#fcoverage" ).addClass( "d-none" );
             }

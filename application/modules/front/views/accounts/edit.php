@@ -83,7 +83,7 @@ if(!empty($records))
                     <div class="form-group row">
                         <label for="fpass" class="col-2 col-form-label">Change Password</label>
                         <div class="col-3">
-                            <input type="password" name="fpass" id="fpass" data-parsley-minlength="6" placeholder="******" class="form-control">
+                            <input type="password" name="fpass" id="fpass" data-parsley-minlength="3" placeholder="******" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -95,7 +95,7 @@ if(!empty($records))
                     <div class="form-group row">
                         <label for="femail" class="col-2 col-form-label">Email</label>
                         <div class="col-3">
-                            <input type="email" name="femail" id="femail" required parsley-type="email" value="<?php echo $femail;?>" class="form-control">
+                            <input type="email" name="femail" id="femail" parsley-type="email" value="<?php echo $femail;?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

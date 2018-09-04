@@ -46,13 +46,13 @@
                     <div class="form-group row">
                         <label for="fkey" class="col-2 col-form-label">Username</label>
                         <div class="col-3">
-                            <input type="text" name="fkey" id="fkey" required data-parsley-minlength="6" placeholder="Username" class="form-control">
+                            <input type="text" name="fkey" id="fkey" required data-parsley-minlength="3" placeholder="Username" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="fpass" class="col-2 col-form-label">Password</label>
                         <div class="col-3">
-                            <input type="password" name="fpass" id="fpass" required data-parsley-minlength="6" placeholder="******" class="form-control">
+                            <input type="password" name="fpass" id="fpass" required data-parsley-minlength="3" placeholder="******" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -64,7 +64,7 @@
                     <div class="form-group row">
                         <label for="femail" class="col-2 col-form-label">Email</label>
                         <div class="col-3">
-                            <input type="email" name="femail" id="femail" required parsley-type="email" placeholder="Email" class="form-control">
+                            <input type="email" name="femail" id="femail" parsley-type="email" placeholder="Email" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

@@ -1277,8 +1277,8 @@ class CIncoming extends BaseController
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){
@@ -1573,8 +1573,8 @@ class CIncoming extends BaseController
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){

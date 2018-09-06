@@ -437,10 +437,19 @@ class CReports extends BaseController
         }else{            
             $curdateID = tgl_indo(date('Y-m-d'));
             $curdate = date('dmY');
-            $reportdate = date('dmY', strtotime($fdate1));
-            $reportdate2 = date('dmY', strtotime($fdate2));
-            $reportdateID = tgl_indo($fdate1);
-            $reportdateID2 = tgl_indo($fdate2);
+            
+            $parseDate1 = empty($fdate1) ? date("d/m/Y") : substr($fdate1, 0, 10);
+            $parseDate2 = empty($fdate2) ? date("d/m/Y") : substr($fdate2, 0, 10);
+        
+            $reportdate = date('dmY', strtotime($parseDate1));
+            $reportdate2 = date('dmY', strtotime($parseDate2));
+            
+            $sqlDate1 = date( "Y-m-d H:i", strtotime($fdate1));
+            $sqlDate2 = date( "Y-m-d H:i", strtotime($fdate2));
+            
+            $reportdateID = tgl_indo(date('Y-m-d', strtotime($parseDate1)));
+            $reportdateID2 = tgl_indo(date('Y-m-d', strtotime($parseDate2)));
+            
             $title = 'Replenish Plan ('.$reportdate.'-'.$reportdate2.')';
             
             // Create new Spreadsheet object
@@ -483,8 +492,8 @@ class CReports extends BaseController
                 $spreadsheet->setActiveSheetIndex($x);
                 $activeSheet = $spreadsheet->getActiveSheet();
                 
-                $activeSheet->mergeCells('A1:D1');
-                $activeSheet->mergeCells('A2:D2');
+                $activeSheet->mergeCells('A1:E1');
+                $activeSheet->mergeCells('A2:E2');
                 $activeSheet
                 ->setCellValue('A1', $fslname)
                 ->setCellValue('A2', 'Report Date: '.$reportdateID.' to '.$reportdateID2);
@@ -495,12 +504,14 @@ class CReports extends BaseController
                 ->setCellValue('A4', 'Requested PN')
                 ->setCellValue('B4', 'Description')
                 ->setCellValue('C4', 'Qty')
-                ->setCellValue('D4', 'Delivery Notes')
+                ->setCellValue('D4', 'Last Stock')
+                ->setCellValue('E4', 'Delivery Notes')
                 ;
-                $activeSheet->getStyle('A4:D4')->applyFromArray($styleHeaderArray);
+                $activeSheet->getStyle('A4:E4')->applyFromArray($styleHeaderArray);
 
                 //Parameters for cURL
-                $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $fdate1.' 00:00:00', 'fdate2'=> $fdate2.' 23:59:59');
+//                $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $fdate1.' 00:00:00', 'fdate2'=> $fdate2.' 23:59:59');
+                $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $sqlDate1, 'fdate2'=> $sqlDate2);
                 //Parse Data for cURL
                 $rs_data = send_curl($arrWhere, $this->config->item('api_replenish_plan'), 'POST', FALSE);
                 $rs = $rs_data->status ? $rs_data->result : array();
@@ -511,6 +522,7 @@ class CReports extends BaseController
                     $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
                     $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
                     $qty = filter_var($row->qty, FILTER_SANITIZE_NUMBER_INT);
+                    $last_stock = filter_var($row->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
     //                $notes = $row->o_delivery_notes === "" ? "-" : filter_var($row->o_delivery_notes, FILTER_SANITIZE_STRING);
                     $notes = "-";
 
@@ -519,14 +531,18 @@ class CReports extends BaseController
                     $activeSheet->getColumnDimension('B')->setAutoSize(true);
                     $activeSheet->getColumnDimension('C')->setAutoSize(true);
                     $activeSheet->getColumnDimension('D')->setAutoSize(true);
+                    $activeSheet->getColumnDimension('E')->setAutoSize(true);
+                    $activeSheet->getStyle('C')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $activeSheet->getStyle('D')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $activeSheet->getStyle('E')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
                     //fill data row
                     $activeSheet
                     ->setCellValue('A'.$i, $partnum)
                     ->setCellValue('B'.$i, $partname)
                     ->setCellValue('C'.$i, $qty)
-                    ->setCellValue('D'.$i, $notes);
+                    ->setCellValue('D'.$i, $last_stock)
+                    ->setCellValue('E'.$i, $notes);
 
                     $i++;
                 }

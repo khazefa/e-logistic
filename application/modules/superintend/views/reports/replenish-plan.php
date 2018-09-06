@@ -19,13 +19,13 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
                                          </div>
-                                        <input type="date" name="fdate1" id="fdate1" class="form-control" placeholder="MM/DD/YYYY" required="required">
+                                        <input type="text" name="fdate1" id="fdate1" class="form-control" required="required">
                                     </div>
                                     <div class="input-group col-sm-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
                                          </div>
-                                        <input type="date" name="fdate2" id="fdate2" class="form-control" placeholder="MM/DD/YYYY" required="required">
+                                        <input type="text" name="fdate2" id="fdate2" class="form-control" required="required">
                                     </div>
                                     <div class="input-group col-sm-12">
                                         <div id="fsearch_notes"></div>
@@ -51,13 +51,12 @@
                                                 $arr_col3 = array();
                                                 $arr_col4 = array();
                                                 $t_list = count($list_wr);
-                                                $t_divide = (int) round($t_list/4);
+                                                $t_divide = (int) ceil($t_list/4);
                                                 
-                                                $arr_col1 = array_slice($list_wr, 0, (int) round($t_list/4));
-                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
-                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
-                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
-//                                                var_dump($list_wr);
+                                                $arr_col1 = array_slice($list_wr, 0, (int) ceil($t_list/4));
+                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) ceil($t_list/4));
+                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) ceil($t_list/4));
+                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) ceil($t_list/4));
                                                 
                                             ?>
                                             <div class="col-sm-3">
@@ -147,6 +146,69 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var today = new Date();
+        var tomorrow = new Date().setDate(new Date().getDate() + 1);
+        jQuery.datetimepicker.setLocale('id');
+        jQuery('#fdate1').datetimepicker({
+            i18n:{
+                id:{
+                    months:[
+                     'Januari','Februari','Maret','April',
+                     'Mei','Juni','Juli','Agustus',
+                     'September','Oktober','November','Desember',
+                    ],
+                    dayOfWeek:[
+                     "Minggu", "Senin", "Selasa", "Rabu", 
+                     "Kamis", "Jumat", "Sabtu",
+                    ]
+                }
+            },
+            timepicker:true,
+            mask:true,
+            format: 'Y/m/d H:i',
+            formatTime: 'H:i',
+            formatDate: 'Y-m-d',
+            startDate:  false, // new Date(), '1986/12/08', '-1970/01/05','-1970/01/05',
+            step: 60,
+            monthChangeSpinner: true,
+            
+            defaultTime: '00:00', // use formatTime format (ex. '10:00' for formatTime: 'H:i')
+            defaultDate: today, // use formatDate format (ex new Date() or '1986/12/08' or '-1970/01/05' or '-1970/01/05')
+            minDate: '2018/06/01',
+            maxDate: false,
+            
+            withoutCopyright: true,
+        });
+        
+        jQuery('#fdate2').datetimepicker({
+            i18n:{
+                id:{
+                    months:[
+                     'Januari','Februari','Maret','April',
+                     'Mei','Juni','Juli','Agustus',
+                     'September','Oktober','November','Desember',
+                    ],
+                    dayOfWeek:[
+                     "Minggu", "Senin", "Selasa", "Rabu", 
+                     "Kamis", "Jumat", "Sabtu",
+                    ]
+                }
+            },
+            timepicker:true,
+            mask:true,
+            format: 'Y/m/d H:i',
+            formatTime: 'H:i',
+            formatDate: 'Y-m-d',
+            startDate:  false, // new Date(), '1986/12/08', '-1970/01/05','-1970/01/05',
+            step: 60,
+            monthChangeSpinner: true,
+            
+            defaultTime: '00:00', // use formatTime format (ex. '10:00' for formatTime: 'H:i')
+            defaultDate: tomorrow, // use formatDate format (ex new Date() or '1986/12/08' or '-1970/01/05' or '-1970/01/05')
+            
+            withoutCopyright: true,
+        });
+        
         $('#fcode_all').on("click", function(e){
             $('input:checkbox').not(this).prop('checked', this.checked);
         });

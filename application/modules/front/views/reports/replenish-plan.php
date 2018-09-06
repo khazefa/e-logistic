@@ -11,6 +11,11 @@
                                 <strong class="card-title">Report Replenish Plan</strong>
                             </div>
                             <div class="card-body">
+                                <?php
+                                $show_fsl = 0;
+                                if(($role == ROLE_WA)){
+                                    $show_fsl = 1;
+                                ?>
                                 <div class="form-row">
                                     <div class="input-group col-sm-12">
                                         <p>Please select the same date to select report on the same day (Daily)</p>
@@ -19,22 +24,18 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
                                          </div>
-                                        <input type="date" name="fdate1" id="fdate1" class="form-control" placeholder="MM/DD/YYYY" required="required">
+                                        <input type="text" name="fdate1" id="fdate1" class="form-control" required="required">
                                     </div>
                                     <div class="input-group col-sm-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
                                          </div>
-                                        <input type="date" name="fdate2" id="fdate2" class="form-control" placeholder="MM/DD/YYYY" required="required">
+                                        <input type="text" name="fdate2" id="fdate2" class="form-control" required="required">
                                     </div>
                                     <div class="input-group col-sm-12">
                                         <div id="fsearch_notes"></div>
                                     </div>
                                 </div>
-                                <?php
-                                if(($role == ROLE_WA)){
-                                    $show_fsl = TRUE;
-                                ?>
                                 <div class="mt-4"></div>
                                 <div class="form-row">
                                     <div class="col-sm-12">
@@ -58,12 +59,12 @@
                                                 $arr_col3 = array();
                                                 $arr_col4 = array();
                                                 $t_list = count($list_wr);
-                                                $t_divide = (int) round($t_list/4);
+                                                $t_divide = (int) ceil($t_list/4);
                                                 
-                                                $arr_col1 = array_slice($list_wr, 0, (int) round($t_list/4));
-                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
-                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
-                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
+                                                $arr_col1 = array_slice($list_wr, 0, (int) ceil($t_list/4));
+                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) ceil($t_list/4));
+                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) ceil($t_list/4));
+                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) ceil($t_list/4));
                                                 
                                             ?>
                                             <div class="col-sm-3">
@@ -138,7 +139,29 @@
                                 </div>
                                 <?php
                                 }else{
-                                    $show_fsl = FALSE;
+                                    $show_fsl = 0;
+                                ?>
+                                <div class="form-row">
+                                    <div class="input-group col-sm-12">
+                                        <p>Please select the same date to select report on the same day (Daily)</p>
+                                    </div>
+                                    <div class="input-group col-sm-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
+                                         </div>
+                                        <input type="text" name="fdate1" id="fdate1" class="form-control" required="required">
+                                    </div>
+                                    <div class="input-group col-sm-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
+                                         </div>
+                                        <input type="text" name="fdate2" id="fdate2" class="form-control" required="required">
+                                    </div>
+                                    <div class="input-group col-sm-12">
+                                        <div id="fsearch_notes"></div>
+                                    </div>
+                                </div>
+                                <?php
                                 }
                                 ?>
                             </div>
@@ -158,20 +181,82 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#fcode_all').on("click", function(e){
-            $('input:checkbox').not(this).prop('checked', this.checked);
-        });
         var show_fsl = <?php echo $show_fsl; ?>;
-        $("#btn_generate_plan").on("click", function(e){
-            if(show_fsl){
+        var today = new Date();
+        var tomorrow = new Date().setDate(new Date().getDate() + 1);
+        jQuery.datetimepicker.setLocale('id');
+        jQuery('#fdate1').datetimepicker({
+            i18n:{
+                id:{
+                    months:[
+                     'Januari','Februari','Maret','April',
+                     'Mei','Juni','Juli','Agustus',
+                     'September','Oktober','November','Desember',
+                    ],
+                    dayOfWeek:[
+                     "Minggu", "Senin", "Selasa", "Rabu", 
+                     "Kamis", "Jumat", "Sabtu",
+                    ]
+                }
+            },
+            timepicker:true,
+            mask:true,
+            format: 'Y/m/d H:i',
+            formatTime: 'H:i',
+            formatDate: 'Y-m-d',
+            startDate:  false, // new Date(), '1986/12/08', '-1970/01/05','-1970/01/05',
+            step: 60,
+            monthChangeSpinner: true,
+            
+            defaultTime: '00:00', // use formatTime format (ex. '10:00' for formatTime: 'H:i')
+            defaultDate: today, // use formatDate format (ex new Date() or '1986/12/08' or '-1970/01/05' or '-1970/01/05')
+            minDate: '2018/06/01',
+            maxDate: false,
+            
+            withoutCopyright: true,
+        });
+        
+        jQuery('#fdate2').datetimepicker({
+            i18n:{
+                id:{
+                    months:[
+                     'Januari','Februari','Maret','April',
+                     'Mei','Juni','Juli','Agustus',
+                     'September','Oktober','November','Desember',
+                    ],
+                    dayOfWeek:[
+                     "Minggu", "Senin", "Selasa", "Rabu", 
+                     "Kamis", "Jumat", "Sabtu",
+                    ]
+                }
+            },
+            timepicker:true,
+            mask:true,
+            format: 'Y/m/d H:i',
+            formatTime: 'H:i',
+            formatDate: 'Y-m-d',
+            startDate:  false, // new Date(), '1986/12/08', '-1970/01/05','-1970/01/05',
+            step: 60,
+            monthChangeSpinner: true,
+            
+            defaultTime: '00:00', // use formatTime format (ex. '10:00' for formatTime: 'H:i')
+            defaultDate: tomorrow, // use formatDate format (ex new Date() or '1986/12/08' or '-1970/01/05' or '-1970/01/05')
+            
+            withoutCopyright: true,
+        });
+        
+        if(show_fsl > 0){
+            $('#fcode_all').on("click", function(e){
+                $('input:checkbox').not(this).prop('checked', this.checked);
+            });
+            $("#btn_generate_plan").on("click", function(e){
+                e.preventDefault();
                 var checked = $("input[type=checkbox]:checked").length;
                 if(!checked) {
                   alert("You must check at least one FSL.");
                   return false;
                 }
-            }else{
-                return true;
-            }
-        });
+            });
+        }
     });
 </script>

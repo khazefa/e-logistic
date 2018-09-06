@@ -55,12 +55,12 @@
                                                 $arr_col3 = array();
                                                 $arr_col4 = array();
                                                 $t_list = count($list_wr);
-                                                $t_divide = (int) round($t_list/4);
+                                                $t_divide = (int) ceil($t_list/4);
                                                 
-                                                $arr_col1 = array_slice($list_wr, 0, (int) round($t_list/4));
-                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) round($t_list/4));
-                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) round($t_list/4));
-                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) round($t_list/4));
+                                                $arr_col1 = array_slice($list_wr, 0, (int) ceil($t_list/4));
+                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) ceil($t_list/4));
+                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) ceil($t_list/4));
+                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) ceil($t_list/4));
                                                 
                                             ?>
                                             <div class="col-sm-3">

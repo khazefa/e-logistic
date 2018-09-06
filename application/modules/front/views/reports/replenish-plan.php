@@ -17,9 +17,22 @@
                                     $show_fsl = 1;
                                 ?>
                                 <div class="form-row">
-                                    <div class="input-group col-sm-12">
-                                        <p>Please select the same date to select report on the same day (Daily)</p>
+                                    <div class="mt-12 d-none d-xl-block">
+                                        <h5 class="text-left">How It Works ?</h5>
+                                        <ul class="pl-3">
+                                            <li class="text-dark mb-1">
+                                                Please select start date (left side) and end date (right side) along with their time to generate your data
+                                            </li>
+                                            <li class="text-dark mb-1">
+                                                If you need to generate daily data, please set end date to (start date + 1 day). for example; 01/08/2018 14:00 to 02/08/2018 00:00
+                                            </li>
+                                            <li class="text-dark mb-1">
+                                                For FSL Selection, you can select All checklist or just check some FSL.
+                                            </li>
+                                        </ul>
                                     </div>
+                                </div>
+                                <div class="form-row">
                                     <div class="input-group col-sm-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
@@ -142,9 +155,19 @@
                                     $show_fsl = 0;
                                 ?>
                                 <div class="form-row">
-                                    <div class="input-group col-sm-12">
-                                        <p>Please select the same date to select report on the same day (Daily)</p>
+                                    <div class="mt-12 d-none d-xl-block">
+                                        <h5 class="text-left">How It Works ?</h5>
+                                        <ul class="pl-3">
+                                            <li class="text-dark mb-1">
+                                                Please select start date (left side) and end date (right side) along with their time to generate your data
+                                            </li>
+                                            <li class="text-dark mb-1">
+                                                If you need to generate daily data, please set end date to (start date + 1 day). for example; 01/08/2018 14:00 to 02/08/2018 00:00
+                                            </li>
+                                        </ul>
                                     </div>
+                                </div>
+                                <div class="form-row">
                                     <div class="input-group col-sm-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
@@ -250,11 +273,13 @@
                 $('input:checkbox').not(this).prop('checked', this.checked);
             });
             $("#btn_generate_plan").on("click", function(e){
-                e.preventDefault();
+//                e.preventDefault();
                 var checked = $("input[type=checkbox]:checked").length;
                 if(!checked) {
                   alert("You must check at least one FSL.");
                   return false;
+                }else{
+                    return true;
                 }
             });
         }

@@ -18,6 +18,7 @@
         <link href="<?php echo base_url();?>assets/public/plugins/switchery/switchery.min.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/typehead/css/typeahead.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/jquery-datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
         
         <!-- App css -->
         <link href="<?php echo base_url();?>assets/public/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

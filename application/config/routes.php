@@ -198,6 +198,17 @@ $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 // ===========================
 
 // ===========================
+//  Delivary Note
+// ===========================
+$route['delivery-note-trans'] = 'front/cdeliverynote';
+$route['view-delivery-note-trans'] = 'front/cdeliverynote/views';
+$route['new-delivery-note-trans'] = 'front/cdeliverynote/add';
+$route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1';
+// ===========================
+//  End Routing Delivery Note Trans
+// ===========================
+
+// ===========================
 //  Routing Front Incoming Trans
 // ===========================
 $route['incoming-trans'] = 'front/cincoming';

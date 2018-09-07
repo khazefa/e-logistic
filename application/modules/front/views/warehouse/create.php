@@ -89,6 +89,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="forder" class="col-2 col-form-label">Sort Order</label>
+                        <div class="col-2">
+                            <input type="number" name="forder" id="forder" min="0" data-parsley-type="number" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="btn" class="col-2 col-form-label">&nbsp;</label>
                         <div class="col-6">
                             <button type="submit" class="btn btn-primary">Submit</button>

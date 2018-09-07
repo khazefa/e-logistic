@@ -67,31 +67,31 @@
                                 <div class="form-group row">
                                     <label for="fdelivery" class="col-sm-3 col-form-label">Delivery Notes</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fdelivery" id="fdelivery" class="form-control">
+                                        <input type="text" name="fdelivery" id="fdelivery" class="form-control" placeholder="Please fill it with some text instead of Blank">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="fnotes1" class="col-sm-3 col-form-label">Transaction Notes</label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fnotes1" id="fnotes1" class="form-control">
+                                        <input type="text" name="fnotes1" id="fnotes1" class="form-control" placeholder="Please fill it with some text instead of Blank">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fcust" class="col-sm-3 col-form-label">Customer</label>
+                                    <label for="fcust" class="col-sm-3 col-form-label">Customer <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fcust" id="fcust" class="form-control">
+                                        <input type="text" name="fcust" id="fcust" class="form-control" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="floc" class="col-sm-3 col-form-label">Location</label>
+                                    <label for="floc" class="col-sm-3 col-form-label">Location <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="floc" id="floc" class="form-control">
+                                        <input type="text" name="floc" id="floc" class="form-control" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fssb_id" class="col-sm-3 col-form-label">SSB/ID</label>
+                                    <label for="fssb_id" class="col-sm-3 col-form-label">SSB/ID <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fssb_id" id="fssb_id" class="form-control">
+                                        <input type="text" name="fssb_id" id="fssb_id" class="form-control" required="true">
                                     </div>
                                 </div>
                             </div>
@@ -119,15 +119,15 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fdelivery2" class="col-sm-3 col-form-label">Delivery Notes</label>
+                                    <label for="fdelivery2" class="col-sm-3 col-form-label">Delivery Notes <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fdelivery2" id="fdelivery2" class="form-control">
+                                        <input type="text" name="fdelivery2" id="fdelivery2" class="form-control" required="true" placeholder="Please fill it with some text instead of Blank">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fnotes2" class="col-sm-3 col-form-label">Transaction Notes</label>
+                                    <label for="fnotes2" class="col-sm-3 col-form-label">Transaction Notes <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fnotes2" id="fnotes2" class="form-control">
+                                        <input type="text" name="fnotes2" id="fnotes2" class="form-control" required="true" placeholder="Please fill it with some text instead of Blank">
                                     </div>
                                 </div>
                             </div>
@@ -457,9 +457,10 @@
             }else{
                 add_part_sub(fpartnum);
                 table2.clear().draw();
-                e_serialnum.prop('readonly', false);
-                e_serialnum.val('');
-                e_serialnum.focus();
+                e_partnum.focus();
+//                e_serialnum.prop('readonly', false);
+//                e_serialnum.val('');
+//                e_serialnum.focus();
             }
         });
 
@@ -523,6 +524,7 @@
     //get part replacement
     function get_part_sub(partno){
         var status = 0;
+        var total_stock_sub = 0;
         var url = '<?php echo base_url('front/coutgoing/get_list_part_sub'); ?>';
         var type = 'POST';
         
@@ -551,18 +553,22 @@
                                     table2.row.add(
                                         [detail_data.partno, detail_data.partno, detail_data.part, detail_data.stock]
                                     ).draw();
+                                    total_stock_sub = total_stock_sub + parseInt(detail_data.stock);
 //                                }
                             });
                         });
                     });
 //                    e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
-                    table3.clear().draw();
+                    if(total_stock_sub === 0){
+                        get_nearby_wh(partno);
+                    }else{
+                        table3.clear().draw();
+                    }
                     status = 1;
                 }else if(jqXHR.status === 0){
                     e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
                     e_partnum.focus();
                     table2.clear().draw();
-                    get_nearby_wh(partno);
                     status = 0;
                 }
             },
@@ -854,7 +860,7 @@
         });
     }
     
-    //add to cart
+    //update cart
     function update_cart(id, qty){        
         var url = '<?php echo base_url('front/coutgoing/update_cart'); ?>';
         var type = 'POST';
@@ -990,6 +996,13 @@
         
         e_ticketnum.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
+	});
+        
+        e_serialnum.on("keyup", function(e) {
+            var sn = $(this).val();
+            if(sn.toUpperCase() == "NO SN"){
+                $(this).val("NOSN");
+            }
 	});
         
         /*
@@ -1212,7 +1225,9 @@
                     if(isEmpty(e_dest_fsl.val()) || e_dest_fsl.val() === "0"){
                         alert('Please select your FSL Destination!');
                         e_dest_fsl.focus();
-                    }else if(isEmpty(e_delivery2.val())){
+                    }
+                    /*
+                    else if(isEmpty(e_delivery2.val())){
                         $("#global_confirm .modal-title").html("Message");
                         $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
                         $('#global_confirm').modal({
@@ -1226,7 +1241,9 @@
                             e_notes2.prop('readonly', false);
                             e_notes2.focus();
                         });
-                    }else{
+                    }
+                    */
+                    else{
                         if(total_qty > 0){
                             complete_request();
 //                            $('#confirmation').modal({
@@ -1254,7 +1271,9 @@
                     }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === "0"){
                         alert('Please select the FSE data!');
                         e_engineer_id.focus();
-                    }else if(isEmpty(e_delivery1.val())){
+                    }
+                    /*
+                    else if(isEmpty(e_delivery1.val())){
                         $("#global_confirm .modal-title").html("Message");
                         $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
                         $('#global_confirm').modal({
@@ -1268,7 +1287,9 @@
                             e_notes1.prop('readonly', false);
                             e_notes1.focus();
                         });
-                    }else{
+                    }
+                    */
+                    else{
                         if(total_qty > 0){
                             complete_request();
 //                            $('#confirmation').modal({

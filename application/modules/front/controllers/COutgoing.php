@@ -117,8 +117,15 @@ class COutgoing extends BaseController
         $arrWhere = array();
         
         $fcode = $this->repo;
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fticket = $this->input->post('fticket', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
         //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode);
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
+            'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
+        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -884,10 +891,24 @@ class COutgoing extends BaseController
                     $cname = $c['fullname'];
                 }
                 if($cuser === $fuser){
-                    $error_response = array(
-                        'status' => 2,
-                        'message'=> 'Part stock is limited!'
-                    );
+                    if($cstock === $fqty || $cstock < $fqty){
+                        $error_response = array(
+                            'status' => 2,
+                            'message'=> 'Part stock has run out!'
+                        );
+                    }else{
+                        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$partname, 'fserialnum'=>$fserialnum, 
+                            'fcartid'=>$cartid, 'fqty'=>$fqty, 'fuser'=>$fuser, 'fname'=>$fname, 'fcode'=>$fcode);
+                        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+                        if($rs_data->status)
+                        {
+                            $response = $success_response;
+                        }
+                        else
+                        {
+                            $response = $error_response;
+                        }
+                    }
                 }else{
                     $error_response = array(
                         'status' => 2,
@@ -1064,7 +1085,7 @@ class COutgoing extends BaseController
     }
     
     /**
-     * This function is used to delete cart
+     * This function is used to update cart
      */
     public function update_cart(){
         $success_response = array(
@@ -1175,8 +1196,8 @@ class COutgoing extends BaseController
         $fssb_id = $this->input->post('fssb_id', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
+        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode, 'fdigits'=>4);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num_ext'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if(($fqty < 1) || (empty($fqty))){
@@ -1335,8 +1356,9 @@ class COutgoing extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
+            
             $transnum = "";
             $purpose = "";
             $transdate = "";
@@ -1386,7 +1408,7 @@ class COutgoing extends BaseController
                 $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                 if(!empty($engineer2_id)){
                     $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_sign = $r->engineer_2_name == "" ? $engineer_name : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                 }else{
                     $engineer_sign = $engineer_name;
                 }
@@ -1400,7 +1422,7 @@ class COutgoing extends BaseController
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
             $this->mypdf->SetFont('Arial','B',11);
-            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
+            $this->mypdf->Code39(($width*(50/100)),10,$transnum,1,10);
             $this->mypdf->ln(20);
 
             $this->mypdf->setFont('Arial','B',10);

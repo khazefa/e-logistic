@@ -6,6 +6,7 @@ $fnearby = '';
 $fpic = '';
 $fphone = '';
 $fspv = '';
+$fsort = '';
 
 if(!empty($records))
 {
@@ -19,6 +20,7 @@ if(!empty($records))
         $fpic = $r["pic"];
         $fphone = $r["phone"];
         $fspv = $r["spv"];
+        $fsort = $r["sort_order"];
     }
 }
 ?>
@@ -128,6 +130,12 @@ if(!empty($records))
                                 ?>
                             </select>
                             <span class="help-block"><small>Warehouse Supervisors</small></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="forder" class="col-2 col-form-label">Sort Order</label>
+                        <div class="col-2">
+                            <input type="number" name="forder" id="forder" min="0" data-parsley-type="number" required value="<?php echo $fsort; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

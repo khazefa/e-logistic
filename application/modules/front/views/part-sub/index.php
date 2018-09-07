@@ -51,16 +51,25 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
-            language: {
-                paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
-            },
-            stateSave: true,
+            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             destroy: true,
             stateSave: false,
             deferRender: true,
             processing: true,
-            lengthChange: true,
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)',
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                }
+            ],
             ajax: {                
                 url: "<?= base_url('front/cpartsub/get_list_datatable'); ?>",
                 type: "POST",

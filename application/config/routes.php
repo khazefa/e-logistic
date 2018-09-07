@@ -51,14 +51,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 // $route['default_controller'] = 'welcome';
 
-/* GLOBAL CONTROLLER */
+/* RESERVED ROUTES */
 $route['default_controller'] = 'front/login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-/* END GLOBAL CONTROLLER */
+/* END RESERVED ROUTES */
+
+/* BEGIN USER CONTROLLER */
 
 // ===========================
-//  Routing Auth
+//  Routing Front Auth
 // ===========================
 $route['login'] = 'front/login';
 $route['login/proccess'] = 'front/login/auth_log';
@@ -67,41 +69,41 @@ $route['login/reset_pass_confirm'] = 'front/login/reset_pass_confirm';
 $route['logout'] = 'handling/logout';
 $route['cl'] = 'front/dashboard';
 // ===========================
-//  End Routing Auth
+//  End Routing Front Auth
 // ===========================
 
 // ===========================
-//  Routing Accounts
+//  Routing Front Accounts
 // ===========================
 $route['manage-users'] = 'front/cusers';
 $route['add-users'] = 'front/cusers/add';
 $route['edit-users/(:any)'] = 'front/cusers/edit/$1';
 $route['remove-users/(:any)'] = 'front/cusers/delete/$1';
 // ===========================
-//  End Routing Accounts
+//  End Routing Front Accounts
 // ===========================
 
 // ===========================
-//  Routing My Accounts
+//  Routing Front My Accounts
 // ===========================
 $route['my-account'] = 'front/cprofile';
 // ===========================
-//  End Routing My Accounts
+//  End Routing Front My Accounts
 // ===========================
 
 // ===========================
-//  Routing Accounts Group
+//  Routing Front Accounts Group
 // ===========================
 $route['manage-groups'] = 'front/cusersgroup';
 $route['add-groups'] = 'front/cusersgroup/add';
 $route['edit-groups/(:num)'] = 'front/cusersgroup/edit/$1';
 $route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
 // ===========================
-//  End Routing Accounts Group
+//  End Routing Front Accounts Group
 // ===========================
 
 // ===========================
-//  Routing Spareparts
+//  Routing Front Spareparts
 // ===========================
 $route['manage-spareparts'] = 'front/cparts/lists';
 $route['data-spareparts'] = 'front/cparts';
@@ -110,11 +112,11 @@ $route['import-spareparts'] = 'front/cparts/add_import';
 $route['edit-spareparts/(:any)'] = 'front/cparts/edit/$1';
 $route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
-//  End Routing Spareparts
+//  End Routing Front Spareparts
 // ===========================
 
 // ===========================
-//  Routing Spareparts Subtitute
+//  Routing Front Spareparts Subtitute
 // ===========================
 $route['manage-spareparts-sub'] = 'front/cpartsub/lists';
 $route['data-spareparts-sub'] = 'front/cpartsub';
@@ -123,11 +125,11 @@ $route['import-spareparts-sub'] = 'front/cpartsub/add_import';
 $route['edit-spareparts-sub/(:num)'] = 'front/cpartsub/edit/$1';
 $route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
 // ===========================
-//  End Routing Spareparts Subtitute
+//  End Routing Front Spareparts Subtitute
 // ===========================
 
 // ===========================
-//  Routing Stock Spareparts
+//  Routing Front Stock Spareparts
 // ===========================
 $route['manage-spareparts-stock'] = 'front/cstockpart/lists';
 $route['data-spareparts-stock'] = 'front/cstockpart';
@@ -137,11 +139,11 @@ $route['detail-spareparts-stock/(:any)'] = 'front/cstockpart/detail/$1';
 $route['edit-spareparts-stock/(:num)'] = 'front/cstockpart/edit/$1';
 $route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
 // ===========================
-//  End Routing Stock Spareparts
+//  End Routing Front Stock Spareparts
 // ===========================
 
 // ===========================
-//  Routing Partners
+//  Routing Front Partners
 // ===========================
 $route['manage-partners'] = 'front/cpartners/lists';
 $route['data-partners'] = 'front/cpartners';
@@ -149,11 +151,11 @@ $route['add-partners'] = 'front/cpartners/add';
 $route['edit-partners/(:any)'] = 'front/cpartners/edit/$1';
 $route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
 // ===========================
-//  End Routing Partners
+//  End Routing Front Partners
 // ===========================
 
 // ===========================
-//  Routing Engineers
+//  Routing Front Engineers
 // ===========================
 $route['manage-engineers'] = 'front/cengineers/lists';
 $route['data-engineers'] = 'front/cengineers';
@@ -161,11 +163,11 @@ $route['add-engineers'] = 'front/cengineers/add';
 $route['edit-engineers/(:any)'] = 'front/cengineers/edit/$1';
 $route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
 // ===========================
-//  End Routing Engineers
+//  End Routing Front Engineers
 // ===========================
 
 // ===========================
-//  Routing Warehouses
+//  Routing Front Warehouses
 // ===========================
 $route['manage-warehouses'] = 'front/cwarehouse/lists';
 $route['data-warehouses'] = 'front/cwarehouse';
@@ -173,26 +175,26 @@ $route['add-warehouses'] = 'front/cwarehouse/add';
 $route['edit-warehouses/(:any)'] = 'front/cwarehouse/edit/$1';
 $route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
 // ===========================
-//  End Routing Warehouses
+//  End Routing Front Warehouses
 // ===========================
 
 // ===========================
-//  Routing Tickets
+//  Routing Front Tickets
 // ===========================
 $route['tickets'] = 'front/ctickets';
 // ===========================
-//  End Routing Tickets
+//  End Routing Front Tickets
 // ===========================
 
 // ===========================
-//  Routing Outgoing Trans
+//  Routing Front Outgoing Trans
 // ===========================
 $route['outgoing-trans'] = 'front/coutgoing';
 $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 // ===========================
-//  End Routing Outgoing Trans
+//  End Routing Front Outgoing Trans
 // ===========================
 
 // ===========================
@@ -207,7 +209,7 @@ $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1
 // ===========================
 
 // ===========================
-//  Routing Incoming Trans
+//  Routing Front Incoming Trans
 // ===========================
 $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
@@ -215,18 +217,94 @@ $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 // ===========================
-//  End Routing Incoming Trans
+//  End Routing Front Incoming Trans
 // ===========================
 
 // ===========================
-//  Routing Reports
+//  Routing Front Reports
 // ===========================
 $route['report-consumed-parts'] = 'front/creports/report_consumed_part';
+$route['report-used-parts'] = 'front/creports/report_used_part';
 $route['report-replenish-plan'] = 'front/creports/report_replenish_plan';
-$route['print-consumed-parts'] = 'front/creports/print_daily_report';
-$route['print-replenish-plan'] = 'front/creports/print_replenish_plan';
+//$route['print-consumed-parts'] = 'front/creports/print_daily_report';
+$route['print-consumed-parts'] = 'front/creports/export_consumed_part';
+$route['print-used-parts'] = 'front/creports/export_used_part';
+//$route['print-replenish-plan'] = 'front/creports/print_replenish_plan';
+$route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 // ===========================
-//  End Routing Reports
+//  End Routing Front Reports
 // ===========================
 
 /* END USER CONTROLLER */
+
+/* BEGIN OVERSEE CONTROLLER */
+
+// ===========================
+//  Routing Superintend Auth
+// ===========================
+$route['signin'] = 'superintend/login';
+$route['signin/proccess'] = 'superintend/login/auth_log';
+$route['signin/reset_pass'] = 'superintend/login/reset_pass';
+$route['signin/reset_pass_confirm'] = 'superintend/login/reset_pass_confirm';
+$route['signout'] = 'handling/signout';
+$route['oversee'] = 'superintend/dashboard';
+// ===========================
+//  End Routing Superintend Auth
+// ===========================
+
+// ===========================
+//  Routing Superintend My Accounts
+// ===========================
+$route['oversee/my-account'] = 'superintend/cprofile';
+// ===========================
+//  End Routing Superintend My Accounts
+// ===========================
+
+// ===========================
+//  Routing Superintend Spareparts
+// ===========================
+$route['oversee/data-spareparts'] = 'superintend/cparts';
+// ===========================
+//  End Routing Superintend Spareparts
+// ===========================
+
+// ===========================
+//  Routing Superintend Outgoing Trans
+// ===========================
+$route['oversee/outgoing-report'] = 'superintend/coutgoing';
+$route['oversee/print-outgoing-trans/(:any)'] = 'superintend/coutgoing/print_transaction/$1';
+// ===========================
+//  End Routing Superintend Outgoing Trans
+// ===========================
+
+// ===========================
+//  Routing Superintend Incoming Trans
+// ===========================
+$route['oversee/incoming-report'] = 'superintend/cincoming';
+$route['oversee/print-incoming-supply/(:any)'] = 'superintend/cincoming/print_trans_supply/$1';
+$route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_trans_return/$1';
+// ===========================
+//  End Routing Superintend Incoming Trans
+// ===========================
+
+// ===========================
+//  Routing Superintend Reports
+// ===========================
+$route['oversee/report-consumed-parts'] = 'superintend/creports/report_consumed_part';
+$route['oversee/report-replenish-plan'] = 'superintend/creports/report_replenish_plan';
+$route['oversee/print-consumed-parts'] = 'superintend/creports/export_consumed_part';
+$route['oversee/print-replenish-plan'] = 'superintend/creports/export_replenish_plan';
+// ===========================
+//  End Routing Superintend Reports
+// ===========================
+
+// ===========================
+//  Routing Superintend Stock Spareparts
+// ===========================
+$route['oversee/data-spareparts-stock'] = 'superintend/cstockpart';
+$route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detail/$1';
+// ===========================
+//  End Routing Superintend Stock Spareparts
+// ===========================
+
+/* END OVERSEE CONTROLLER */

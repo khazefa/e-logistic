@@ -1,0 +1,26 @@
+SELECT 
+	stock_fsl_code,
+    stock_part_number, 
+    COUNT(stock_part_number) AS duplicate 
+FROM
+    view_warehouses_stock 
+#WHERE stock_part_number = '01803530361'
+GROUP BY stock_fsl_code, stock_part_number
+HAVING COUNT(stock_part_number) > 1;
+
+
+SELECT 
+	o.outgoing_num,
+    COUNT(o.outgoing_num) AS duplicate 
+FROM
+    outgoings AS o 
+GROUP BY o.outgoing_num
+HAVING COUNT(o.outgoing_num) > 1
+
+SELECT 
+	i.incoming_num,
+    COUNT(i.incoming_num) AS duplicate 
+FROM
+    incomings AS i 
+GROUP BY i.incoming_num
+HAVING COUNT(i.incoming_num) > 1

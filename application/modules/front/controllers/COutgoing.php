@@ -1422,7 +1422,7 @@ class COutgoing extends BaseController
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
             $this->mypdf->SetFont('Arial','B',11);
-            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
+            $this->mypdf->Code39(($width*(50/100)),10,$transnum,1,10);
             $this->mypdf->ln(20);
 
             $this->mypdf->setFont('Arial','B',10);

@@ -68,7 +68,6 @@ class Login extends CI_Controller
             );
             
             $res = send_curl($arrWhere, $this->config->item('api_auth'), 'POST', FALSE);
-            //var_dump( $this->config->item('api_auth'));
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
                 $wh_name = $res->accessRepo === "00" ? "WH" : $this->get_info_warehouse_name($res->accessRepo);

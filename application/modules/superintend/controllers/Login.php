@@ -34,7 +34,6 @@ class Login extends CI_Controller
             if(time() - filectime($file) > 86400){
                 if (file_exists($file)) {
                     delete_files($file);
-                    rmdir($file);
                 }
             }
         }

@@ -22,7 +22,22 @@ class Login extends CI_Controller
      * Index Page for this controller.
      */
     public function index()
-    {            
+    {     
+        /** define the directory **/
+        $dir = "tmp/";
+        $path = $dir."*.xlsx";
+        $path_all = $dir."*";
+
+        /*** cycle through all files in the directory ***/
+        foreach (glob($path_all) as $file) {
+            /*** if file is 24 hours (86400 seconds) old then delete it ***/
+            if(time() - filectime($file) > 86400){
+                if (file_exists($file)) {
+                    delete_files($file);
+                    rmdir($file);
+                }
+            }
+        }
         $this->isSessionFilled();
     }
     

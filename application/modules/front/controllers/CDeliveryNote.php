@@ -498,7 +498,7 @@ class CDeliveryNote extends BaseController
             }else{
                 $error_response = array(
                     'status' => 0,
-                    'message'=> 'Out of stock, please choose part number subtitution!'
+                    'message'=> 'Out of stock.'
                 );
                 $response = $error_response;
             }

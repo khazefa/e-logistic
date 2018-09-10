@@ -6,9 +6,9 @@ require APPPATH . '/libraries/BaseController.php';
 /**
  * Class : COutgoing (TicketsController)
  * COutgoing Class to control Tickets.
- * @author : Sigit Prayitno
+ * @author : Aris Baskoro
  * @version : 1.0
- * @since : Mei 2017
+ * @since : August 2018
  */
 class CDeliveryNote extends BaseController
 {
@@ -152,13 +152,8 @@ class CDeliveryNote extends BaseController
 //            $row['notes'] = "-";
             $row['delivery_note_status'] = strtoupper($status);
             
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-outgoing-trans/").$transnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-outgoing-trans/").$transnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
+            $row['button'] = '<a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+            
             
  
             $data[] = $row;
@@ -498,7 +493,7 @@ class CDeliveryNote extends BaseController
             }else{
                 $error_response = array(
                     'status' => 0,
-                    'message'=> 'Out of stock, please choose part number subtitution!'
+                    'message'=> 'Out of stock.'
                 );
                 $response = $error_response;
             }
@@ -1148,6 +1143,7 @@ class CDeliveryNote extends BaseController
         $fairwaybill = $this->input->post('fairwaybill', TRUE);
         $ftransnotes = $this->input->post('ftransnote', TRUE);
         $fservice = $this->input->post('fservice', TRUE);
+        $fdeliveryby = $this->input->post('fdeliveryby', TRUE);
         $feta = $this->input->post('feta', TRUE);
         $fdest_fsl = $this->input->post('fdest_fsl', TRUE);
         $fpurpose = $this->input->post('fpurpose', TRUE);
@@ -1216,6 +1212,7 @@ class CDeliveryNote extends BaseController
                             'fdest_fsl'=>$fdest_fsl,
                             'fairwaybill'=>$fairwaybill,
                             'fservice'=>$fservice,
+                            'fdeliveryby'=>$fdeliveryby,
                             'feta'=>$feta,
                             'fqty'=>$total_qty, 
                             'fuser'=>$createdby
@@ -1330,8 +1327,8 @@ class CDeliveryNote extends BaseController
         $pdf->Cell(($width*(45/100)),7,$this->snt($rs['fsl_name'], 'string'),0,0,'L');
         $pdf->setFont('Arial','',10); //ARIAL NORMAL 10
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'Date / Tanggal',1,1,'C');
-        
+        $pdf->Cell(($width*(22.5/100)),7,'D-D: '.$this->snt($rs['delivery_note_date'], 'string'),1,1,'C');
+            
         //row 2
         //col 1 Wrap
         $py = $pdf->GetY();
@@ -1340,41 +1337,33 @@ class CDeliveryNote extends BaseController
         //col 2 Wrap
         $px += ($width*(67.5/100));
         $pdf->SetXY($px,$py);
-        $pdf->MultiCell(($width*(22.5/100)),7,date("d-F-Y",strtotime($this->snt($rs['delivery_note_date'], 'string'))),1,'C');
+        $pdf->MultiCell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_num'],'string'),1,'C');
         
         //row 3
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_num'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_airwaybill'], 'string'),1,1,'C');
         
         //row 4
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_airwaybill'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_by'], 'string').' - '.$this->snt($rs['delivery_time_type'], 'string'),1,1,'C');
         
         //row 5
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_time_type'], 'string'),0,1,'C');
-        
-        //row 6
         $pdf->Cell(($width*(22.5/100)),7,'Attn : '.$this->snt($rs['fsl_pic'], 'string').' :',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,1,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['delivery_note_eta'], 'string'),1,1,'C');
         
-        //row 7
-        $pdf->setFont('Arial','B',10); //ARIAL BOLD 10
+        //row 6
         $pdf->Cell(($width*(22.5/100)),7,'         '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,1,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'',0,1,'C');
         
-        //row 8
-        $pdf->Ln();
+        
         
         //row 9
         $pdf->setFont('Arial','B',11); //ARIAL BOLD 11
@@ -1459,7 +1448,7 @@ class CDeliveryNote extends BaseController
         $pdf->Cell(($width*(30/100)),6,'',0,1,'C');
         
         //row 16-18
-        $pdf->Ln(20);
+        $pdf->Ln(17);
         
         //row 19
         $pdf->SetFont('Arial','B',9); //ARIAL BOLD 10
@@ -1549,8 +1538,9 @@ class CDeliveryNote extends BaseController
         
         $ffsl_code = $this->input->post('ffsl_code', TRUE);
         $fdelivery_type = $this->input->post('fdelivery_type', TRUE);
+        $fdelivery_by = $this->input->post('fdelivery_by', TRUE);
         
-        $arrPOST = array('ffsl_code'=>$ffsl_code,'fdelivery_type'=>$fdelivery_type);
+        $arrPOST = array('ffsl_code'=>$ffsl_code,'fdelivery_type'=>$fdelivery_type, 'fdelivery_by' => $fdelivery_by);
         //var_dump($arrPOST);
         //Parse Data for cURL
         $rs = send_curl($arrPOST, $this->config->item('api_get_eta_time'), 'POST', FALSE);

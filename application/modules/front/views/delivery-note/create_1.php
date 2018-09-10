@@ -71,7 +71,7 @@
                                             <option value="0">Select Service</option>
                                             <option value="DHL">DHL</option>
                                             <option value="POS">POS</option>
-                                            <option value="JNE">JNE</option>
+                                            <option value="JNE">POS</option>
                                             <option value="YCH">YCH</option>
                                         </select>
                                     </div>
@@ -90,7 +90,7 @@
         </div>
     </div>
     
-    <div class="col-md-12">
+    <div class="col-md-8">
         <div class="card-box">
             <div class="card-header bg-primary text-white">
                 <input type="checkbox" name="fswitch" id="fswitch" data-plugin="switchery" data-color="#f1b53d"/>
@@ -174,7 +174,26 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box table-responsive">
+            <h4 class="m-b-30 header-title">Part Subtitusi</h4>
+            <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Part Number</th>
+                    <th>Part Name</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+  
+    
 </div>
 </form>
 <script type="text/javascript">
@@ -233,15 +252,12 @@
             
             if(v === "0"){
                 alert( "Please choose fsl!" );
-                e_dest_fsl.focus();
-                //init_form();
+                init_form();
             }else{
                 e_transnote.val("Supply stock to "+selectedText);
                 e_airwaybill.prop("readonly", false);
                 e_service.prop("disabled", false);
                 e_service.selectpicker('refresh');
-                e_deliveryby.prop("disabled", false);
-                e_deliveryby.selectpicker('refresh');
                 get_eta_time();
             }
         });
@@ -250,8 +266,7 @@
             var v = $(this).length;
             
             if(v === 0){
-                //init_form();
-                e_airwaybill.focus();
+                init_form();
             }else{
                e_service.prop('disabled', false);
             }
@@ -263,8 +278,7 @@
             
             if(v === "0"){
                 alert( "Please choose Service!" );
-                e_service.focus();
-                //init_form();
+                init_form();
             }else{
                 get_eta_time();
             }
@@ -276,8 +290,7 @@
             
             if(v === "0"){
                 alert( "Please choose delivery By!" );
-                //init_form();
-                e_deliveryby.focus();
+                init_form();
             }else{
                 get_eta_time();
             }
@@ -358,7 +371,6 @@
         });
         
         $("#btn_complete").on("click", function(e){        
-            $(this).prop('disabled', true);
             var total_qty = parseInt($('#ttl_qty').html());
             
             if(e_purpose.val() === "0"){
@@ -418,14 +430,10 @@
     //initial form state
     function init_form(){
         e_purpose.focus();
-        e_dest_fsl.prop('disabled', true);
-        e_dest_fsl.selectpicker('refresh');
+        e_dest_fsl.attr('disabled', true);
         e_airwaybill.prop("readonly", true);
         e_transnote.prop("readonly", true);
         e_service.prop("disabled", true);
-        e_service.selectpicker('refresh');
-        e_deliveryby.prop("disabled", true);
-        e_deliveryby.selectpicker('refresh');
         e_eta.prop("readonly", true);
     }
     
@@ -667,9 +675,9 @@
                         show: true
                     });
                 }else if(jqXHR.status === 1){
-                    //print_transaction(jqXHR.message);
-                    //console.log(jqXHR.message);
-                    window.location.href = "<?php echo base_url('delivery-note-trans'); ?>";
+                    print_transaction(jqXHR.message);
+                    console.log(jqXHR.message);
+                    //window.location.href = "<?php echo base_url('new-delivery-note-trans'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -995,11 +1003,11 @@
     //  PRINT FUNCTION
     //==========================================================================
     //print to pdf
-//    function print_transaction(ftransno){
-//        var param = ftransno;
-//        var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
-//        var newWindow=window.open(url);
-////        window.location.assign(url);
-//    }
+    function print_transaction(ftransno){
+        var param = ftransno;
+        var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
+        var newWindow=window.open(url);
+//        window.location.assign(url);
+    }
     
 </script>

@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/web/GIT/e-logistic/application/config/constants.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/main_endpoint.php</file>
+            <file>file:/D:/web/GIT/e-logistic/application/modules/front/views/search-parts/index.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/helpers/Api_helper.php</file>
+            <file>file:/D:/web/GIT/e-logistic/application/config/endpoint.php</file>
+            <file>file:/D:/web/GIT/e-logistic/application/config/constants.php</file>
+            <file>file:/D:/web/GIT/e-logistic/application/modules/front/controllers/CSearchParts.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/rest.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/controllers/CParts.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/database.php</file>
-            <file>file:/D:/web/GIT/e-logistic/application/config/endpoint.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/config/routes.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/views/outgoing-trans/create.php</file>
             <file>file:/D:/web/GIT/e-logistic/application/modules/front/controllers/CDeliveryNote.php</file>

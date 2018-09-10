@@ -42,10 +42,7 @@ class CIncoming extends BaseController
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
-            $cartid = $this->session->userdata ( 'cart_session' )."in";
-            $data['cartid'] = $cartid;
-            
-            $this->loadViews('front/incoming-trans/index', $this->global, $data);
+            $this->loadViews('front/incoming-trans/index', $this->global, NULL);
             
         }else{
             redirect('cl');
@@ -121,6 +118,11 @@ class CIncoming extends BaseController
         $fcode = $this->repo;
         //Parameters for cURL
         $arrWhere = array('fcode'=>$fcode);
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fpurpose'=>$fpurpose);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -305,7 +307,7 @@ class CIncoming extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_incomings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
             $transnum = "";
             $purpose = "";
@@ -333,7 +335,7 @@ class CIncoming extends BaseController
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
             $this->mypdf->SetFont('Arial','B',11);
-            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
+            $this->mypdf->Code39(($width*(50/100)),10,$transnum,1,10);
             $this->mypdf->ln(20);
 
             $this->mypdf->setFont('Arial','B',10);
@@ -458,7 +460,7 @@ class CIncoming extends BaseController
             $this->mypdf->Image(base_url().'assets/public/images/logo.png',10,8,($width*(15/100)),15);
             
             //Parse Data for cURL
-            $rs_data1 = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+            $rs_data1 = send_curl($arrWhere, $this->config->item('api_info_view_incomings'), 'POST', FALSE);
             $results1 = $rs_data1->status ? $rs_data1->result : array();
             $ftrans_out = "";
             $ftransin = "";
@@ -469,8 +471,9 @@ class CIncoming extends BaseController
             
             $arrWhere2 = array('ftrans_out'=>$ftrans_out);
             //Parse Data for cURL
-            $rs_data = send_curl($arrWhere2, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+            $rs_data = send_curl($arrWhere2, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
             $results = $rs_data->status ? $rs_data->result : array();
+            
             $transnum = "";
             $purpose = "";
             $transdate = "";
@@ -521,7 +524,7 @@ class CIncoming extends BaseController
                 $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                 if(!empty($engineer2_id)){
                     $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $engineer_sign = $r->engineer_2_name == "" ? $engineer_name : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                 }else{
                     $engineer_sign = $engineer_name;
                 }
@@ -536,7 +539,7 @@ class CIncoming extends BaseController
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
             $this->mypdf->SetFont('Arial','B',11);
-            $this->mypdf->Code39(($width*(65/100)),10,$transnum,1,10);
+            $this->mypdf->Code39(($width*(50/100)),10,$transnum,1,10);
             $this->mypdf->ln(20);
 
             $this->mypdf->setFont('Arial','B',10);
@@ -1274,8 +1277,8 @@ class CIncoming extends BaseController
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){
@@ -1508,7 +1511,11 @@ class CIncoming extends BaseController
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
         
         if(empty($ftrans_out) || $ftrans_out == ""){
-            $data = array();
+            $error_response = array(
+                'status' => 0,
+                'ttl_cart'=> 0
+            );
+            $response = $error_response;
         }else{
             $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
             $arrWhere = array('funiqid'=>$cartid);
@@ -1566,8 +1573,8 @@ class CIncoming extends BaseController
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){

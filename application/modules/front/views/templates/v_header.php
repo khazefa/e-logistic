@@ -16,6 +16,9 @@
         <!-- Plugins css-->
         <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/switchery/switchery.min.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/typehead/css/typeahead.css" rel="stylesheet" />
+        <link href="<?php echo base_url();?>assets/public/plugins/jquery-datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
         
         <!-- App css -->
         <link href="<?php echo base_url();?>assets/public/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -156,7 +159,7 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
                                 </ul>
@@ -173,7 +176,7 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
                                     <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
-                                    <li><a href="<?php echo base_url("front/creports/print_phpspread");?>">PHP Spread</a></li>
+                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                 </ul>
                             </li>
                             <?php
@@ -197,7 +200,8 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
+                                    <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                 </ul>
                             </li>

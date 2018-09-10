@@ -52,7 +52,7 @@
     $(document).ready(function() {
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
+            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -61,6 +61,51 @@
             deferRender: true,
             processing: true,
             lengthChange: true,
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: {
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i> All Page',
+                    titleAttr: 'Excel All Page',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    footer:false
+                }
+            ],
             ajax: {                
                 url: "<?= base_url('front/cpartners/get_list_datatable'); ?>",
                 type: "POST",

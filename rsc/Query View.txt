@@ -1,0 +1,237 @@
+# ============================================================
+#  Begin Create View Users
+# ============================================================
+CREATE OR REPLACE VIEW viewusers AS 
+SELECT u.user_key, u.user_email, u.user_fullname, u.user_token, u.is_admin, 
+g.group_id, g.group_name, g.group_enc, g.group_display, u.fsl_code, u.coverage_fsl, w.fsl_name, 
+u.created_at, u.is_deleted 
+FROM users AS u 
+INNER JOIN user_group AS g ON u.group_id = g.group_id 
+LEFT JOIN warehouse_fsl AS w ON u.fsl_code = w.fsl_code
+# ============================================================
+#  End Create View Users
+# ============================================================
+
+# ============================================================
+#  Begin Create View Users Warehouse
+# ============================================================
+CREATE OR REPLACE VIEW viewusers_wh AS 
+SELECT vu.*, w.fsl_location, w.fsl_nearby, w.fsl_pic, w.fsl_phone
+FROM viewusers AS vu 
+INNER JOIN warehouse_fsl AS w ON vu.fsl_code = w.fsl_code
+# ============================================================
+#  End Create View Users Warehouse
+# ============================================================
+
+# ============================================================
+#  Begin Create View Engineers
+# ============================================================
+CREATE OR REPLACE VIEW viewengineers AS 
+SELECT e.engineer_key, e.engineer_email, e.engineer_name, e.engineer_token, 
+s.partner_uniqid, s.partner_name, s.partner_contact, e.fsl_code, w.fsl_name, e.created_at, e.is_deleted
+FROM engineers AS e 
+INNER JOIN service_partners AS s ON e.partner_id = s.partner_id 
+LEFT JOIN warehouse_fsl AS w ON e.fsl_code = w.fsl_code 
+# ============================================================
+#  End Create View Engineers
+# ============================================================
+
+# ============================================================
+#  Begin Create View Get List FSL Table Name
+# ============================================================
+CREATE OR REPLACE VIEW viewtblstocks AS 
+SELECT table_name FROM information_schema.tables where table_schema='dbaze_logistic' AND table_name LIKE '%stock_fsl%';
+# ============================================================
+#  End Create View Get List FSL Table Name
+# ============================================================
+
+# ============================================================
+#  Begin Create View Incoming Relation
+# ============================================================
+CREATE OR REPLACE VIEW viewincomings AS 
+SELECT i.incoming_num, i.outgoing_num, o.outgoing_status, i.incoming_date, i.incoming_purpose, i.incoming_qty, 
+u.user_fullname, w.fsl_code, w.fsl_name, i.incoming_notes, 
+i.created_at, i.is_deleted 
+FROM incomings AS i 
+INNER JOIN users AS u ON u.user_key = i.user_key 
+INNER JOIN warehouse_fsl AS w ON i.fsl_code = w.fsl_code 
+LEFT JOIN outgoings AS o ON i.outgoing_num = o.outgoing_num 
+WHERE u.is_admin = 0
+# ============================================================
+#  End Create View Incoming Relation
+# ============================================================
+
+# ============================================================
+#  Begin Create View Detail Incoming Relation
+# ============================================================
+CREATE OR REPLACE VIEW viewdetailincomings AS 
+SELECT id.incoming_num, id.part_number, p.part_name, id.serial_number, id.dt_incoming_qty, id.created_at, id.is_deleted 
+FROM incomings_detail AS id 
+RIGHT JOIN incomings AS o ON id.incoming_num = o.incoming_num 
+INNER JOIN parts AS p ON id.part_number = p.part_number
+# ============================================================
+#  End Create View Detail Incoming Relation
+# ============================================================
+
+# ============================================================
+#  Begin Create View Outgoing Relation
+# ============================================================
+CREATE OR REPLACE VIEW viewoutgoings AS 
+SELECT o.outgoing_num, o.outgoing_date, o.outgoing_ticket, e.engineer_key, e.engineer_name, o.engineer_2_key, e2.engineer_name AS engineer_2_name,  
+s.partner_uniqid, s.partner_name, s.partner_location, o.outgoing_purpose, o.outgoing_qty, u.user_fullname, w.fsl_code, w.fsl_name, o.outgoing_notes, 
+o.outgoing_cust, o.outgoing_loc, o.outgoing_ssbid, o.outgoing_status, o.fe_report, o.created_at, o.is_deleted 
+FROM outgoings AS o 
+LEFT JOIN engineers AS e ON o.engineer_key = e.engineer_key  
+LEFT JOIN engineers AS e2 ON o.engineer_2_key = e2.engineer_key  
+LEFT JOIN service_partners AS s ON e.partner_id = s.partner_id 
+INNER JOIN users AS u ON u.user_key = o.user_key 
+INNER JOIN warehouse_fsl AS w ON o.fsl_code = w.fsl_code 
+WHERE u.is_admin = 0
+# ============================================================
+#  End Create View Outgoing Relation
+# ============================================================
+
+# ============================================================
+#  Begin Create View Detail Outgoing Relation
+# ============================================================
+CREATE OR REPLACE VIEW viewdetailoutgoings AS 
+SELECT od.outgoing_num, od.part_number, p.part_name, od.serial_number, od.dt_outgoing_qty, od.return_status, od.created_at, od.is_deleted 
+FROM outgoings_detail AS od 
+INNER JOIN outgoings AS o ON od.outgoing_num = o.outgoing_num 
+INNER JOIN parts AS p ON od.part_number = p.part_number
+# ============================================================
+#  End Create View Detail Outgoing Relation
+# ============================================================
+
+# ============================================================
+#  Begin Create View Warehouse Stock
+# ============================================================
+CREATE OR REPLACE VIEW view_warehouses_stock AS 
+SELECT * FROM p_stock_fsl_chb1	
+UNION ALL
+SELECT * FROM p_stock_fsl_chb2	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid3	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid4	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid5	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid7	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid8	
+UNION ALL
+SELECT * FROM p_stock_fsl_cid9	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidb	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidc	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidd	
+UNION ALL
+SELECT * FROM p_stock_fsl_cide	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidh	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidi	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidj	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidk	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidl	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidm	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidn	
+UNION ALL
+SELECT * FROM p_stock_fsl_cido	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidq	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidr	
+UNION ALL
+SELECT * FROM p_stock_fsl_cids	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidt	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidu	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidy	
+UNION ALL
+SELECT * FROM p_stock_fsl_cidz	
+UNION ALL
+SELECT * FROM p_stock_fsl_cieb	
+UNION ALL
+SELECT * FROM p_stock_fsl_ciec	
+UNION ALL
+SELECT * FROM p_stock_fsl_cief	
+UNION ALL
+SELECT * FROM p_stock_fsl_cieg	
+UNION ALL
+SELECT * FROM p_stock_fsl_ciei	
+UNION ALL
+SELECT * FROM p_stock_fsl_ciel	
+UNION ALL
+SELECT * FROM p_stock_fsl_cieq	
+UNION ALL
+SELECT * FROM p_stock_fsl_cies	
+UNION ALL
+SELECT * FROM p_stock_fsl_ciet	
+UNION ALL
+SELECT * FROM p_stock_fsl_cieu	
+UNION ALL
+SELECT * FROM p_stock_fsl_ciev	
+# ============================================================
+#  End Create View Warehouse Stock
+# ============================================================
+
+# ============================================================
+#  Begin Create View Stock Part Subtitute
+# ============================================================
+CREATE OR REPLACE VIEW view_part_sub_stock AS 
+SELECT pf.stock_part_number, p.part_name, pf.stock_min_value, pf.stock_init_value, pf.stock_last_value, pf.stock_init_flag, ps.part_number_sub  
+FROM p_stock_fsl_cidb AS pf 
+LEFT JOIN parts_subtitute AS ps ON pf.stock_part_number = ps.part_number 
+LEFT JOIN parts AS p ON pf.stock_part_number = p.part_number
+# ============================================================
+#  End Create View Stock Part Subtitute
+# ============================================================
+
+# ============================================================
+#  VIEW GET STOCK AND PART SUBTITUTE DATA
+# ============================================================
+SELECT pst.stock_part_number, ps.part_number_sub, pst.stock_last_value FROM p_stock_fsl_cidj AS pst 
+LEFT JOIN parts_subtitute AS ps ON pst.stock_part_number = ps.part_number 
+WHERE pst.stock_part_number IS NOT NULL 
+AND ps.is_deleted = 0 
+ORDER BY pst.stock_last_value DESC
+# ============================================================
+#  END VIEW GET STOCK AND PART SUBTITUTE DATA
+# ============================================================
+
+# ============================================================
+#  Begin Query Update Transaction Outgoing
+# ============================================================
+
+UPDATE outgoings AS o INNER JOIN outgoings_detail AS od ON (o.outgoing_num = od.outgoing_num)
+SET
+  o.is_deleted = 1, od.is_deleted = 1  
+WHERE o.fsl_code = 'CIDK';
+
+# ============================================================
+#  End Query Update Transaction Outgoing
+# ============================================================
+
+# ============================================================
+#  Begin Query Update Transaction Incoming
+# ============================================================
+
+UPDATE incomings AS o INNER JOIN incomings_detail AS od ON (o.incoming_num = od.incoming_num)
+SET
+  o.is_deleted = 1, od.is_deleted = 1  
+WHERE o.fsl_code = 'CIDK';
+
+# ============================================================
+#  End Query Update Transaction Incoming
+# ============================================================

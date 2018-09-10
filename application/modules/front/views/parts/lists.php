@@ -73,18 +73,48 @@
             buttons: [
                 {
                     extend: 'copy',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)',
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
                 }, 
                 {
                     extend: 'excel',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)',
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
                 },
                 {
                     extend: 'pdf',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
-                    footer:true
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)',
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i> All Page',
+                    titleAttr: 'Excel All Page',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)'
+                    },
+                    footer:false
                 }
             ],
             ajax: {

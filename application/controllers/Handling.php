@@ -37,6 +37,14 @@ class Handling extends BaseController
     }
     
     /**
+     * This function used to signout
+     */
+    public function signout()
+    {
+        $this->signout_app();
+    }
+    
+    /**
      * This function used to logout client
      */
     public function logoutClient()

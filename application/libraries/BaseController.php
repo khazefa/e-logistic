@@ -25,6 +25,15 @@ class BaseController extends CI_Controller {
     protected $comRoleText = '';
     protected $comRepo = '';
     
+    protected $ovId = '';
+    protected $ovUR = '';
+    protected $ovPict = '';
+    protected $ovName = '';
+    protected $ovRole = '';
+    protected $ovRoleText = '';
+    protected $ovRepo = '';
+    protected $ovRepoName = '';
+    
     protected $global = array ();
 
     /**
@@ -101,18 +110,63 @@ class BaseController extends CI_Controller {
     */
     function logout_app() {
         $isSessionFilled = $this->session->userdata ( 'isSessionFilled' );
-        $isSessionGett = $this->session->userdata ( 'isSessionGett' );
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
         
         if ( isset ( $isSessionFilled ) || $isSessionFilled == TRUE) {
             $sess_items = array('isSessionFilled','vendorId','vendorUR','vendorName'
                 ,'isAdm','vendorRepo','vendorRepoName','role','roleText');
             $this->session->unset_userdata($sess_items);
             redirect ( 'login' );
-        }
-        if ( isset ( $isSessionGett ) || $isSessionGett == TRUE) {
-            $sess_items = array('isSessionGett','comId','comUR','comName'
-                ,'isAdm','comRepo','comRole','comRoleText');
+        }elseif ( isset ( $isSessionSettled ) || $isSessionSettled == TRUE) {
+            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
+                'ovRepo','ovRepoName','ovRole','ovRoleText');
             $this->session->unset_userdata($sess_items);
+//            redirect ( 'signin' );
+            redirect ( 'login' );
+        }else{
+            redirect ( 'login' );
+        }
+    }
+    
+    
+    /**
+     * This function used to check the user is sign in or not
+     */
+    function isSignin() {
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
+
+        if (! isset ( $isSessionSettled ) || $isSessionSettled != TRUE) {
+            redirect ( 'signin' );
+        } else {
+            $this->ovId = $this->session->userdata ( 'ovId' );
+            $this->ovUR = $this->session->userdata ( 'ovUR' );
+            $this->ovPict = $this->session->userdata ( 'ovPict' );
+            $this->ovName = $this->session->userdata ( 'ovName' );
+            $this->ovRole = $this->session->userdata ( 'ovRole' );
+            $this->ovRoleText = $this->session->userdata ( 'ovRoleText' );
+            $this->ovRepo = $this->session->userdata ( 'ovRepo' );
+            $this->ovRepoName = $this->session->userdata ( 'ovRepoName' );
+
+            $this->global ['ovName'] = $this->ovName;
+            $this->global ['ovRole'] = $this->ovRole;
+            $this->global ['ovRoleText'] = $this->ovRoleText;
+            $this->global ['ovRepo'] = $this->ovRepo;
+            $this->global ['ovRepoName'] = $this->ovRepoName;
+        }
+    }
+    
+    /**
+    * This function is used to logged out user from system
+    */
+    function signout_app() {
+        $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
+    
+        if ( isset ( $isSessionSettled ) || $isSessionSettled == TRUE) {
+            $sess_items = array('isSessionSettled','ovId','ovUR','ovPict','ovName',
+                'ovRepo','ovRepoName','ovRole','ovRoleText');
+            $this->session->unset_userdata($sess_items);
+            redirect ( 'signin' );
+        }else{
             redirect ( 'signin' );
         }
     }
@@ -198,5 +252,19 @@ class BaseController extends CI_Controller {
         $this->load->view('backside/templates/v_header', $headerInfo);
         $this->load->view($viewName, $pageInfo);
         $this->load->view('backside/templates/v_footer', $footerInfo);
+    }
+    
+    /**
+     * This function used to load views
+     * @param {string} $viewName : This is view name
+     * @param {mixed} $headerInfo : This is array of header information
+     * @param {mixed} $pageInfo : This is array of page information
+     * @param {mixed} $footerInfo : This is array of footer information
+     * @return {null} $result : null
+     */
+    function loadViews2($viewName = "", $headerInfo = NULL, $pageInfo = NULL, $footerInfo = NULL){
+        $this->load->view('superintend/templates/v_header', $headerInfo);
+        $this->load->view($viewName, $pageInfo);
+        $this->load->view('superintend/templates/v_footer', $footerInfo);
     }
 }

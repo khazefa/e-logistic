@@ -86,6 +86,8 @@ $config['api_remove_part_sub'] = constant('urlapi').'api/cpartsub/delete/'; //PO
 //  Begin Stock Spareparts
 // ===========================
 $config['api_list_part_stock'] = constant('urlapi').'api/cstockwh/list/'; //POST
+$config['api_list_fsl_stock'] = constant('urlapi').'api/cstockwh/list_fsl_stock/'; //POST
+$config['api_list_fsl_sub_stock'] = constant('urlapi').'api/cstockwh/list_fsl_sub_stock/'; //POST
 $config['api_list_view_part_stock'] = constant('urlapi').'api/cstockwh/list_view/'; //POST
 $config['api_info_part_stock'] = constant('urlapi').'api/cstockwh/info/'; //POST
 $config['api_info_part_stock_wh'] = constant('urlapi').'api/cstockwh/info_wh/'; //POST
@@ -114,6 +116,7 @@ $config['api_remove_warehouses'] = constant('urlapi').'api/cwarehouse/delete/'; 
 // ===========================
 $config['api_list_incomings'] = constant('urlapi').'api/cpincomings/list/'; //POST
 $config['api_list_view_incomings'] = constant('urlapi').'api/cpincomings/list_view/'; //POST
+$config['api_info_view_incomings'] = constant('urlapi').'api/cpincomings/info_view/'; //POST
 $config['api_list_view_detail_incomings'] = constant('urlapi').'api/cpincomings/list_view_detail/'; //POST
 $config['api_list_incomings_cart'] = constant('urlapi').'api/cpincomings/list_tmp/'; //POST
 $config['api_add_incomings_r_cart'] = constant('urlapi').'api/cpincomings/create_trans_tmp_r/'; //POST
@@ -125,6 +128,7 @@ $config['api_delete_incomings_cart'] = constant('urlapi').'api/cpincomings/delet
 $config['api_clear_incomings_cart'] = constant('urlapi').'api/cpincomings/delete_multi_cart/'; //POST
 $config['api_total_incomings_cart'] = constant('urlapi').'api/cpincomings/total_cart/'; //POST
 $config['api_get_incoming_num'] = constant('urlapi').'api/cpincomings/grab_ticket_num/'; //POST
+$config['api_get_incoming_num_ext'] = constant('urlapi').'api/cpincomings/grab_ticket_num_ext/'; //POST
 $config['api_get_cart_in_info'] = constant('urlapi').'api/cpincomings/get_cart_info/'; //POST
 // ===========================
 //  End Incoming Trans
@@ -136,6 +140,7 @@ $config['api_get_cart_in_info'] = constant('urlapi').'api/cpincomings/get_cart_i
 $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //POST
 $config['api_list_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_detail/'; //POST
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
+$config['api_info_view_outgoings'] = constant('urlapi').'api/cpoutgoings/info_view/'; //POST
 $config['api_list_view_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view_detail/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
@@ -148,6 +153,7 @@ $config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delet
 $config['api_clear_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_multi_cart/'; //POST
 $config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
 $config['api_get_outgoing_num'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num/'; //POST
+$config['api_get_outgoing_num_ext'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num_ext/'; //POST
 $config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info/'; //POST
 // ===========================
 //  End Outgoing Trans
@@ -183,6 +189,7 @@ $config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynot
 // ===========================
 $config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
 $config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_daily_reports/'; //POST
+$config['api_used_reports'] = constant('urlapi').'api/cpreports/list_outgoing_used_part/'; //POST
 $config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_replenish_plan/'; //POST
 // ===========================
 //  End Procedure

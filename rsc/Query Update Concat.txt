@@ -1,0 +1,12 @@
+#concat outgoing num, fsl code
+SELECT concat(substring(outgoing_num,1,2),fsl_code,substring(outgoing_num,3,8)) AS New_Trans_Num FROM outgoings
+
+#concat outgoing num, outgoing id
+SELECT concat(substring(outgoing_num,1,2),RIGHT(outgoing_id,1),substring(outgoing_num,3,8)) AS New_Trans_Num FROM outgoings
+
+#concat outgoing num, 2 random digits
+SELECT concat(substring(outgoing_num,1,2),FLOOR( 10 + ( RAND() * 99 ) ),substring(outgoing_num,3,8)) AS New_Trans_Num FROM outgoings
+
+UPDATE outgoings AS o INNER JOIN outgoings_detail AS od ON od.outgoing_num = o.outgoing_num 
+SET o.outgoing_num = concat(substring(o.outgoing_num,1,2),o.fsl_code,substring(o.outgoing_num,3,8)), 
+od.outgoing_num = concat(substring(od.outgoing_num,1,2),o.fsl_code,substring(od.outgoing_num,3,8)) 

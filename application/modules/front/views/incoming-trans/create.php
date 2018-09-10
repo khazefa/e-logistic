@@ -422,6 +422,18 @@
                     render    : function ( data, type, full, meta ) {
                         return '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-trash"></i></button>';
                     }
+                },
+                {
+                    targets   : 4,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        if(full.serialno === "NOSN"){
+                            return '<input type="number" id="fqty" min="0" value="'+full.qty+'" style="width: 100%;">';
+                        }else{
+                            return data;
+                        }
+                    }
                 }
             ]
         });
@@ -431,6 +443,18 @@
             var data = table_match.row( $(this).parents('tr') ).data();
             fid = data['id'];
             delete_cart_r(fid);
+        });
+        
+        //function for datatables button
+        $('#match_grid tbody').on( 'keypress', 'input', function (e) {        
+            var data = table_match.row( $(this).parents('tr') ).data();
+            fid = data['id'];
+            fqty = this.value;
+            if (e.keyCode == 13) {
+                //update cart by cart id
+                update_cart_r(fid, fqty);
+                return false;
+            }
         });
 
         table_match.buttons().container()
@@ -443,6 +467,39 @@
     //reload table
     function reload2(){
         table_match.ajax.reload();
+    }
+    
+    //update cart
+    function update_cart_r(id, qty){        
+        var url = '<?php echo base_url('front/cincoming/update_cart'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fid : id,
+            fqty : qty
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    reload2();
+                    get_total_r();
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
     }
     
     //check part
@@ -785,6 +842,7 @@
 //                        total_verified++;
 //                    });
 //                    $('#ttl_qty_r').html(total_qty);
+                    total_verified++;
                     reload2();
                     get_total_r();
                 }
@@ -941,6 +999,13 @@
             }
         });
         
+        e_serialnum_r.on("keyup", function(e) {
+            var sn = $(this).val();
+            if(sn.toUpperCase() == "NO SN"){
+                $(this).val("NOSN");
+            }
+	});
+        
         e_qty_s.on("keypress", function(e){
             if (e.keyCode == 13) {
                 if(isEmpty(e_partnum_s.val())){
@@ -1040,6 +1105,7 @@
         });
         
         $("#btn_submit_r").on("click", function(e){
+//            total_verified = $('#ttl_qty_r').html();
             if(total_verified < total_qty_outgoing){
                 if(isEmpty(e_fe_report.val())){
                     alert('Not all part has returned, please input FE Report!');

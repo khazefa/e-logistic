@@ -120,6 +120,7 @@
                                     <th>Take by</th>
                                     <th>Purpose</th>
                                     <th>Qty</th>
+                                    <th>Partner</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -253,6 +254,7 @@
                 { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
+                { "data": 'partner' },
                 { "data": 'status' },
                 { "data": 'button' },
             ],

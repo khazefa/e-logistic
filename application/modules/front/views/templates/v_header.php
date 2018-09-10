@@ -179,6 +179,17 @@
                                     <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                 </ul>
                             </li>
+                            <li class="has-submenu">
+                                <a href="#"><i class="fa fa-file-text"></i>History</a>
+                                <ul class="submenu">
+                                    <li>
+                                        <a href="<?php echo base_url("history-outgoing");?>">Outgoing</a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo base_url("history-incoming");?>">Incoming</a>
+                                    </li>
+                                </ul>
+                            </li>
                             <?php
                             }
                             ?>
@@ -195,6 +206,14 @@
                                     <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
+                                </ul>
+                            </li>
+                            <li class="has-submenu">
+                                <a href="#"><i class="icon-basket"></i>Transaction</a>
+                                <ul class="submenu">
+                                    <li>
+                                        <a href="<?php echo base_url("delivery-note-trans");?>">Delivery Note</a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

@@ -213,7 +213,7 @@
                                 <a href="#"><i class="icon-basket"></i>Transaction</a>
                                 <ul class="submenu">
                                     <li>
-                                        <a href="<?php echo base_url("delivery-note-trans");?>">Delivery Note</a>
+                                        <a href="<?php echo base_url("delivery-note-trans");?>">CWH Outgoing to FSL</a>
                                     </li>
                                 </ul>
                             </li>

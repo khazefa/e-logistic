@@ -28,10 +28,10 @@ class CDeliveryNote extends BaseController
     public function index(){        
        
             
-        $this->global['pageTitle'] = 'Delivery Note - '.APP_NAME;
-        $this->global['pageMenu'] = 'Delivery Note';
-        $this->global['contentHeader'] = 'Delivery Note';
-        $this->global['contentTitle'] = 'Delivery Note';
+        $this->global['pageTitle'] = 'CWH Outgoing to FSL - '.APP_NAME;
+        $this->global['pageMenu'] = 'CWH Outgoing to FSL';
+        $this->global['contentHeader'] = 'CWH Outgoing to FSL';
+        $this->global['contentTitle'] = 'CWH Outgoing to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
 
@@ -46,10 +46,10 @@ class CDeliveryNote extends BaseController
      * This function used to load the first screen of the user
      */
     public function views() {
-        $this->global['pageTitle'] = 'Delivery Note - '.APP_NAME;
-        $this->global['pageMenu'] = 'Delivery Note';
-        $this->global['contentHeader'] = 'Delivery Note';
-        $this->global['contentTitle'] = 'Delivery Note';
+        $this->global['pageTitle'] = 'CWH Outgoing to FSL - '.APP_NAME;
+        $this->global['pageMenu'] = 'CWH Outgoing to FSL';
+        $this->global['contentHeader'] = 'CWH Outgoing to FSL';
+        $this->global['contentTitle'] = 'CWH Outgoing to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         

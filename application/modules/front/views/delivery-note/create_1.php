@@ -174,7 +174,26 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-box table-responsive">
+            <h4 class="m-b-30 header-title">Part Subtitusi</h4>
+            <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Part Number</th>
+                    <th>Part Name</th>
+                    <th>Stock</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+  
+    
 </div>
 </form>
 <script type="text/javascript">

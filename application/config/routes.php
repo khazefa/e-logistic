@@ -207,6 +207,17 @@ $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1
 // ===========================
 
 // ===========================
+//  Search Parts
+// ===========================
+$route['search-parts'] = 'front/csearchparts';
+$route['view-delivery-note-trans'] = 'front/cdeliverynote/views';
+$route['new-delivery-note-trans'] = 'front/cdeliverynote/add';
+$route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1';
+// ===========================
+//  End Routing search Parts
+// ===========================
+
+// ===========================
 //  Routing Incoming Trans
 // ===========================
 $route['incoming-trans'] = 'front/cincoming';

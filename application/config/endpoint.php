@@ -156,17 +156,11 @@ $config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info
 // ===========================
 //  Begin Delivery Note Trans
 // ===========================
-
 $config['api_list_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_detail/'; //POST
-
 $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
-
 $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
 $config['api_update_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/update_detail/'; //POST
-
-
 $config['api_get_cart_delivery_note_info'] = constant('urlapi').'api/cpdeliverynote/get_cart_info/'; //POST
-
 $config['api_get_eta_time'] = constant('urlapi').'api/cpdeliverynote/list_delivery_time/';
 $config['api_add_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/create_trans_tmp/'; //POST
 $config['api_total_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/total_cart/'; //POST

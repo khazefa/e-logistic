@@ -145,6 +145,7 @@
                                     <li><a href="<?php echo base_url("oversee/incoming-report");?>">Incoming</a></li>
                                     <li><a href="<?php echo base_url("oversee/outgoing-report");?>">Outgoing</a></li>
                                     <li><a href="<?php echo base_url("oversee/report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("oversee/report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("oversee/report-replenish-plan");?>">Replenishment Plan</a></li>
                                 </ul>
                             </li>

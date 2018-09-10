@@ -291,8 +291,10 @@ $route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_tr
 //  Routing Superintend Reports
 // ===========================
 $route['oversee/report-consumed-parts'] = 'superintend/creports/report_consumed_part';
+$route['oversee/report-used-parts'] = 'superintend/creports/report_used_part';
 $route['oversee/report-replenish-plan'] = 'superintend/creports/report_replenish_plan';
 $route['oversee/print-consumed-parts'] = 'superintend/creports/export_consumed_part';
+$route['oversee/print-used-parts'] = 'superintend/creports/export_used_part';
 $route['oversee/print-replenish-plan'] = 'superintend/creports/export_replenish_plan';
 // ===========================
 //  End Routing Superintend Reports

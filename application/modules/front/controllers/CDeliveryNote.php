@@ -456,7 +456,7 @@ class CDeliveryNote extends BaseController
         $success_response = array();
         $error_response = array();
         
-        $fcode = $this->repo;
+        $fcode = 'WSPS';
         $fpartnum = $this->input->post('fpartnum', TRUE);
         
         $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
@@ -1540,34 +1540,41 @@ class CDeliveryNote extends BaseController
         $fdelivery_type = $this->input->post('fdelivery_type', TRUE);
         $fdelivery_by = $this->input->post('fdelivery_by', TRUE);
         
-        $arrPOST = array('ffsl_code'=>$ffsl_code,'fdelivery_type'=>$fdelivery_type, 'fdelivery_by' => $fdelivery_by);
-        //var_dump($arrPOST);
-        //Parse Data for cURL
-        $rs = send_curl($arrPOST, $this->config->item('api_get_eta_time'), 'POST', FALSE);
-        $result = $rs->status ? $rs->result : array();
-        if(!empty($result)){
-            foreach ($result as $r){
-                $eta = !empty($r->ETA) ? $r->ETA : '';
-                
-            }
+        if($fdelivery_type == 'INTCOURIER'){
+            $date_now = date("Y-m-d", time() + 86400);
             $response = array(
                 'status' => 1,
-                'ETA'=> $eta
+                'ETA'=> $date_now
             );
         }else{
-            $response = array(
-                'status' => 0,
-                'ETA'=> 0
-            );
+            $arrPOST = array('ffsl_code'=>$ffsl_code,'fdelivery_type'=>$fdelivery_type, 'fdelivery_by' => $fdelivery_by);
+            //var_dump($arrPOST);
+            //Parse Data for cURL
+            $rs = send_curl($arrPOST, $this->config->item('api_get_eta_time'), 'POST', FALSE);
+            $result = $rs->status ? $rs->result : array();
+            if(!empty($result)){
+                foreach ($result as $r){
+                    $eta = !empty($r->ETA) ? $r->ETA : '';
+
+                }
+                $response = array(
+                    'status' => 1,
+                    'ETA'=> $eta
+                );
+            }else{
+                $response = array(
+                    'status' => 0,
+                    'ETA'=> 0
+                );
+            }
+            
         }
-        
         return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($response)
-        );
+            ->set_content_type('application/json')
+            ->set_output(
+                json_encode($response)
+            );
         
-        return $rs;
     }
     
     

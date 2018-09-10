@@ -160,6 +160,7 @@
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
+                                    <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
                                 </ul>

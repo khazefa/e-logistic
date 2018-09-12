@@ -336,4 +336,12 @@ $route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detai
 //  End Routing Superintend Stock Spareparts
 // ===========================
 
+// ===========================
+//  Routing Superintend Search
+// ===========================
+$route['oversee/search-part-number-f'] = 'superintend/csearch/search_part_number_f';
+// ===========================
+//  End Routing Superintend Search
+// ===========================
+
 /* END OVERSEE CONTROLLER */

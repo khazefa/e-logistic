@@ -668,7 +668,7 @@
                         show: true
                     });
                 }else if(jqXHR.status === 1){
-                    //print_transaction(jqXHR.message);
+                    print_transaction(jqXHR.message);
                     //console.log(jqXHR.message);
                     window.location.href = "<?php echo base_url('delivery-note-trans'); ?>";
                 }
@@ -996,11 +996,11 @@
     //  PRINT FUNCTION
     //==========================================================================
     //print to pdf
-//    function print_transaction(ftransno){
-//        var param = ftransno;
-//        var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
-//        var newWindow=window.open(url);
-////        window.location.assign(url);
-//    }
+    function print_transaction(ftransno){
+        var param = ftransno;
+        var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
+        var newWindow=window.open(url);
+//        window.location.assign(url);
+    }
     
 </script>

@@ -26,10 +26,39 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                         </div>
+                        <input type="text" name="ftransnum" id="ftransnum" class="form-control" placeholder="By Outgoing No.">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-ticket"></i> </span>
+                         </div>
+                        <input type="text" name="fticket" id="fticket" class="form-control" placeholder="By Ticket No.">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
                         <select name="fpurpose" id="fpurpose" class="form-control" placeholder="By Purpose">
                             <option value="">By Purpose</option>
-                            <option value="RG">Return Good</option>
-                            <option value="S">Supply</option>
+                            <option value="SP">Sales/Project</option>
+                            <option value="W">Warranty</option>
+                            <option value="M">Maintenance</option>
+                            <option value="I">Investment</option>
+                            <option value="B">Borrowing</option>
+                            <option value="RWH">Transfer Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
+                            <option value="">By Status</option>
+                            <option value="open">Open</option>
+                            <option value="complete">Complete</option>
                         </select>
                     </div>
                 </div>
@@ -46,9 +75,6 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo base_url("new-incoming-trans");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -76,25 +102,28 @@
             
             <div class="card-body">
                 <div class="row">
-                    <div class="table-responsive">
-                        <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                            <thead>
-                            <tr>
-                                <th>Trans No</th>
-                                <th>Date</th>
-                                <!--<th>Ticket No</th>-->
-                                <!--<th>Engineer</th>-->
-                                <th>Purpose</th>
-                                <th>Outgoing No.</th>
-                                <th>Qty</th>
-                                <!--<th>FSL Admin</th>-->
-                                <!--<th>Notes</th>-->
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Trans No</th>
+                                    <th>Date</th>
+                                    <th>Ticket No</th>
+                                    <th>Requested by</th>
+                                    <!--<th>Take by</th>-->
+                                    <th>Purpose</th>
+                                    <th>Qty</th>
+                                    <!--<th>FSL Admin</th>-->
+                                    <th>Status</th>
+                                    <th>Deleted</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,12 +134,18 @@
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
+    var e_transnum = $('#ftransnum');
+    var e_ticket = $('#fticket');
     var e_purpose = $('#fpurpose');
+    var e_status = $('#fstatus');
     
     function init_form(){
         e_date1.val('');
         e_date2.val('');
+        e_transnum.val('');
+        e_ticket.val('');
         e_purpose.val('');
+        e_status.val('');
     }
     
     $(document).ready(function() {
@@ -130,6 +165,7 @@
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             }
         });
+        
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
@@ -142,8 +178,8 @@
                     extend: 'copy',
                     text: '<i class="fa fa-copy"></i>',
                     titleAttr: 'Copy',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -154,8 +190,8 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -166,8 +202,8 @@
                     extend: 'pdf',
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -178,14 +214,12 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
-                    exportOptions: {
-                        columns: ':visible:not(:last-child)'
-                    },
+//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:false
                 }
             ],
             ajax: {                
-                url: '<?php echo base_url('front/cincoming/get_list_view_datatable'); ?>',
+                url: '<?php echo base_url('front/chistorytrans/get_list_view_datatable'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -194,19 +228,23 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
+                    d.ftransnum = e_transnum.val();
+                    d.fticket = e_ticket.val();
                     d.fpurpose = e_purpose.val();
+                    d.fstatus = e_status.val();
                 }
             },
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
-//                { "data": 'transticket' },
-//                { "data": 'engineer' },
+                { "data": 'transticket' },
+                { "data": 'reqby' },
+//                { "data": 'takeby' },
                 { "data": 'purpose' },
-                { "data": 'transout' },
                 { "data": 'qty' },
 //                { "data": 'user' },
-//                { "data": 'notes' },
+                { "data": 'status' },
+                { "data": 'deleted' },
                 { "data": 'button' },
             ],
             order: [[ 0, "desc" ]],

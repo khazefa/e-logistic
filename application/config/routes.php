@@ -246,6 +246,22 @@ $route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 //  End Routing Front Reports
 // ===========================
 
+// ===========================
+//  Routing Front History
+// ===========================
+$route['history-outgoing'] = 'front/chistorytrans/history_outgoing';
+// ===========================
+//  End Routing Front History
+// ===========================
+
+// ===========================
+//  Routing Front Search
+// ===========================
+$route['search-part-number-f'] = 'front/csearch/search_part_number_f';
+// ===========================
+//  End Routing Front Search
+// ===========================
+
 /* END USER CONTROLLER */
 
 /* BEGIN OVERSEE CONTROLLER */

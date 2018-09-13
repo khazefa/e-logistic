@@ -231,11 +231,9 @@
                                     <li>
                                         <a href="<?php echo base_url("search-part-number-f");?>">Part Number in FSL</a>
                                     </li>
-                                    <!--
                                     <li>
                                         <a href="<?php echo base_url("search-part-number-e");?>">Part Number in Engineer</a>
                                     </li>
-                                    -->
                                 </ul>
                             </li>
                             <?php

@@ -143,6 +143,24 @@ class CSearch extends BaseController
     }
     
     /**
+     * This function used to load the first screen of the user
+     */
+    public function search_part_number_e()
+    {
+        $this->global['pageTitle'] = 'Search Part Number in Engineer - '.APP_NAME;
+        $this->global['pageMenu'] = 'Search Part Number in Engineer';
+        $this->global['contentHeader'] = 'Search Part Number in Engineer';
+        $this->global['contentTitle'] = 'Search Part Number in Engineer';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        $this->global ['repo'] = $this->repo;
+        
+        $data['list_part'] = $this->get_list_part();
+        $data['list_coverage'] = $this->get_list_data_wh();        
+        $this->loadViews('front/search-data/v_partnum_e', $this->global, $data);
+    }
+    
+    /**
      * This function is used to get lists for populate data
      */
     public function get_list_data_wh(){
@@ -220,6 +238,64 @@ class CSearch extends BaseController
             }
         }
         
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    public function get_list_datatable_eg(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcoverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $active_fsl = $this->get_list_data_wh_stock();
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        $data = array();
+        foreach($e_coverage AS $e){
+            if(in_array(trim(strtoupper($e)), $active_fsl)){
+                $arrWhere = array('fcode'=> trim(strtoupper($e)), 'fpartnum'=>$fpartnum);
+                //Parse Data for cURL
+                $rs_data = send_curl($arrWhere, $this->config->item('api_list_history_part_e'), 'POST', FALSE);
+                $rs = $rs_data->status ? $rs_data->result : array();
+
+                foreach ($rs as $r) {                    
+                    $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $ticketnum = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+                    $eg_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+                    $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                    $eg_name_2 = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+                    $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                    $fe_report = filter_var($r->fe_report, FILTER_SANITIZE_STRING);
+                    $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                    $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $return_status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+                    $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+
+                    $row['fullname'] = $eg_name;
+                    $row['partner'] = $partner;
+                    $row['fullname_2'] = $eg_name_2;
+                    $row['transdate'] = $transdate;
+                    $row['ticket'] = $ticketnum;
+                    $row['fsl'] = $fslname;
+                    $row['transnum'] = $transnum;
+                    $row['qty'] = $qty;
+
+                    $data[] = $row;
+                }
+            }
+        }
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

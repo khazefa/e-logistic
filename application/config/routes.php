@@ -258,6 +258,7 @@ $route['history-outgoing'] = 'front/chistorytrans/history_outgoing';
 //  Routing Front Search
 // ===========================
 $route['search-part-number-f'] = 'front/csearch/search_part_number_f';
+$route['search-part-number-e'] = 'front/csearch/search_part_number_e';
 // ===========================
 //  End Routing Front Search
 // ===========================
@@ -340,6 +341,7 @@ $route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detai
 //  Routing Superintend Search
 // ===========================
 $route['oversee/search-part-number-f'] = 'superintend/csearch/search_part_number_f';
+$route['oversee/search-part-number-e'] = 'superintend/csearch/search_part_number_e';
 // ===========================
 //  End Routing Superintend Search
 // ===========================

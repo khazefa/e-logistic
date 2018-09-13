@@ -186,6 +186,14 @@ $config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynot
 // ===========================
 
 // ===========================
+//  Begin History Trans
+// ===========================
+$config['api_list_history_part_e'] = constant('urlapi').'api/chistorytrans/list_part_e/'; //POST
+// ===========================
+//  End History Trans
+// ===========================
+
+// ===========================
 //  Begin Procedure
 // ===========================
 $config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST

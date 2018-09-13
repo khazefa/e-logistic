@@ -136,7 +136,7 @@ class BaseController extends CI_Controller {
         $isSessionSettled = $this->session->userdata ( 'isSessionSettled' );
 
         if (! isset ( $isSessionSettled ) || $isSessionSettled != TRUE) {
-            redirect ( 'signin' );
+            redirect ( 'login' );
         } else {
             $this->ovId = $this->session->userdata ( 'ovId' );
             $this->ovUR = $this->session->userdata ( 'ovUR' );

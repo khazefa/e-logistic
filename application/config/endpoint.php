@@ -196,6 +196,25 @@ $config['api_list_history_part_e'] = constant('urlapi').'api/chistorytrans/list_
 // ===========================
 //  Begin Procedure
 // ===========================
+$config['api_list_search_parts'] = constant('urlapi').'api/csearchparts/list/'; //POST
+// ===========================
+//  End Procedure
+// ===========================
+
+// ===========================
+//  Begin Procedure
+// ===========================
+$config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
+$config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_daily_reports/'; //POST
+$config['api_used_reports'] = constant('urlapi').'api/cpreports/list_outgoing_used_part/'; //POST
+$config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_replenish_plan/'; //POST
+// ===========================
+//  End Procedure
+// ===========================
+
+// ===========================
+//  Begin Procedure
+// ===========================
 $config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
 $config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_daily_reports/'; //POST
 $config['api_used_reports'] = constant('urlapi').'api/cpreports/list_outgoing_used_part/'; //POST

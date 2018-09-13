@@ -1385,11 +1385,23 @@ class CDeliveryNote extends BaseController
         $height = 7;
         
         $i = 1;
+        $j = 1;
+        $batas_page = 20;
         $pdf->SetFont('Arial','',9); //ARIAL NORMAL 10
         if(count($rs)>0 AND count($rs['detail'])>0){
+            
             $detail = $rs['detail'];
             foreach($detail as $dt){
-                if($i>1){
+                if(count($rs)>$batas_page){
+                    if($j > 25){
+                        $pdf->AddPage();    
+                        $j = 1;
+                        $start_awal=$pdf->GetX();
+                        $get_xxx = $pdf->GetX();
+                        $get_yyy = $pdf->GetY();
+                    }
+                }
+                if($j>1){
                     $get_yyy += $height;
                     $get_xxx = $start_awal;
                 }
@@ -1419,6 +1431,7 @@ class CDeliveryNote extends BaseController
 //                $pdf->Cell(($width*(20/100)),6,$this->snt($dt['serial_number'], 'string'),1,0,'L');
 //                $pdf->Cell(($width*(7.5/100)),6,$this->snt($dt['dt_delivery_note_qty'], 'string'),1,1,'C');
                 $i++;
+                $j++;
             }
         }
         

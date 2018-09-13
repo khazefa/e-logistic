@@ -82,10 +82,11 @@
 <script type="text/javascript">
     var e_search = $('#fsearch');
     var b_search = $('#btn_search');
+    var table;
     
     $(document).ready(function() {
         // Responsive Datatable with Buttons
-        var table = $('#data_grid').DataTable({
+        table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -99,11 +100,12 @@
                 url: "<?= base_url('front/csearchparts/get_list_view_datatable'); ?>",
                 type: "POST",
                 dataType: "JSON",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 contentType: "application/json",
-                data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>",
-                    fsearch : e_search.val()
-                } ),
+                data: function(p){
+                    p.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
+                    p.fsearch = e_search.val();
+                }
             },
             columns: [
                 { "data": 'part_number' },

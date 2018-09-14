@@ -82,12 +82,16 @@
                             <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
+                                    <th>Part No</th>
+                                    <th>Serial No</th>
                                     <th>Engineer</th>
                                     <th>Partner</th>
-                                    <th>Messenger</th>
+                                    <!--<th>Messenger</th>-->
                                     <th>Trans. Date</th>
                                     <th>Ticket No.</th>
                                     <th>FSL</th>
+                                    <th>Trans. No.</th>
+                                    <th>Qty</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -197,12 +201,16 @@
                 }
             },
             columns: [
+                { "data": 'partnum' },
+                { "data": 'serialnum' },
                 { "data": 'fullname' },
                 { "data": 'partner' },
-                { "data": 'fullname_2' },
+//                { "data": 'fullname_2' },
                 { "data": 'transdate' },
                 { "data": 'ticket' },
                 { "data": 'fsl' },
+                { "data": 'transnum' },
+                { "data": 'qty' },
             ],
             order: [[ 1, "asc" ]],
             columnDefs: [{ 

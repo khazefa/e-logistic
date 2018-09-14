@@ -283,21 +283,25 @@ class CSearch extends BaseController
                     $eg_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
                     $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
                     $eg_name_2 = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
-                    $fe_report = filter_var($r->fe_report, FILTER_SANITIZE_STRING);
+//                    $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+//                    $fe_report = filter_var($r->fe_report, FILTER_SANITIZE_STRING);
                     $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
                     $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
-                    $return_status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+//                    $return_status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                     $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
 
+                    $row['partnum'] = $partnum;
+                    $row['serialnum'] = $serialnum;
                     $row['fullname'] = $eg_name;
                     $row['partner'] = $partner;
                     $row['fullname_2'] = $eg_name_2;
                     $row['transdate'] = $transdate;
                     $row['ticket'] = $ticketnum;
                     $row['fsl'] = $fslname;
+                    $row['transnum'] = $transnum;
+                    $row['qty'] = $qty;
 
                     $data[] = $row;
                 }

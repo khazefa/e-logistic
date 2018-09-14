@@ -148,6 +148,11 @@ class COutgoing extends BaseController
             $requestby = "";
             $takeby = "";
             $purpose = "";
+            $curdatetime = new DateTime();
+            $datetime2 = new DateTime($transdate);
+            $interval = $curdatetime->diff($datetime2);
+//            $elapsed = $interval->format('%a days %h hours');
+            $elapsed = $interval->format('%a days');
             
             if(empty($engineer2) || $engineer2 == ""){
                 $requestby = $engineer_name;
@@ -190,7 +195,7 @@ class COutgoing extends BaseController
             $row['qty'] = $qty;
             $row['user'] = $user_fullname;
 //            $row['notes'] = "-";
-            $row['status'] = strtoupper($status);
+            $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
             
             if($this->isSpv()){
                 $row['button'] = '<div class="btn-group dropdown">';

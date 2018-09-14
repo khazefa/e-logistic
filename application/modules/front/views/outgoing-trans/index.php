@@ -174,7 +174,8 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        }
+                        },
+                        columns: ':visible:not(:last-child)'
                     },
                     footer:false
                 }, 
@@ -186,7 +187,8 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        }
+                        },
+                        columns: ':visible:not(:last-child)'
                     },
                     footer:false
                 },
@@ -198,7 +200,8 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        }
+                        },
+                        columns: ':visible:not(:last-child)'
                     },
                     footer:false
                 }, 

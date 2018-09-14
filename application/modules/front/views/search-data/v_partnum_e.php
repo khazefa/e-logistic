@@ -82,9 +82,11 @@
                             <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
+                                    <th>Part No</th>
+                                    <th>Serial No</th>
                                     <th>Engineer</th>
                                     <th>Partner</th>
-                                    <th>Messenger</th>
+                                    <!--<th>Messenger</th>-->
                                     <th>Trans. Date</th>
                                     <th>Ticket No.</th>
                                     <th>FSL</th>
@@ -199,9 +201,11 @@
                 }
             },
             columns: [
+                { "data": 'partnum' },
+                { "data": 'serialnum' },
                 { "data": 'fullname' },
                 { "data": 'partner' },
-                { "data": 'fullname_2' },
+//                { "data": 'fullname_2' },
                 { "data": 'transdate' },
                 { "data": 'ticket' },
                 { "data": 'fsl' },

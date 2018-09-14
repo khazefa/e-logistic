@@ -4,15 +4,15 @@
 if(file_exists(FCPATH.'local.txt')) {
     // Local Server
 //    define('urlapi',   "https://localhost:8080/dn-logistic-api/");
-    define('urlapi',   "http://localhost/git/dn-logistic-api/");
+    define('urlapi',   "http://localhost/dn-logistic-api/");
     $config['emailsender']  = "noreplyplease@service-division.com";
 }elseif(file_exists(FCPATH.'dev.txt')) {
     // Development Server
-    define('urlapi',   "http://localhost/git/dn-logistic-api/");
+    define('urlapi',   "http://localhost/dn-logistic-api/");
     $config['emailsender']  = "noreplyplease@service-division.com";
 }else{
     // Live Server
-    define('urlapi',   "http://localhost/git/dn-logistic-api/");
+    define('urlapi',   "http://localhost/dn-logistic-api/");
     $config['emailsender']  = "noreplyplease@service-division.com";
 }
 

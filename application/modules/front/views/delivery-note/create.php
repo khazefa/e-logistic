@@ -61,6 +61,7 @@
                                             <option value="REG">Regular</option>
                                             <option value="EXPRESS">Overnight / Express</option>
                                             <option value="INTCOURIER">Internal Courier</option>
+                                            <option value="SAMEDAY">Sameday Service</option>
                                         </select>
                                     </div>
                                 </div>

@@ -317,6 +317,7 @@
     function init_form_order(){
 //        e_switch.prop('checked', false);
         e_partname.attr('disabled', true);
+        e_partname.val('');
         e_partname.selectpicker('refresh');
         e_partnum.val("");
         e_partnum.prop("readonly", true);
@@ -1142,6 +1143,7 @@
                 init_form_order();
             }else{
                 e_partname.attr('disabled', false);
+                e_partname.val('');
                 e_partname.selectpicker('refresh');
                 e_partnum.prop('readonly', false);
                 e_partnum.val('');

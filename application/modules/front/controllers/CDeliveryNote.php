@@ -1559,6 +1559,12 @@ class CDeliveryNote extends BaseController
                 'status' => 1,
                 'ETA'=> $date_now
             );
+        }else if($fdelivery_type == 'SAMEDAY'){
+            $date_now = date("Y-m-d");
+            $response = array(
+                'status' => 1,
+                'ETA'=> $date_now
+            );
         }else{
             $arrPOST = array('ffsl_code'=>$ffsl_code,'fdelivery_type'=>$fdelivery_type, 'fdelivery_by' => $fdelivery_by);
             //var_dump($arrPOST);

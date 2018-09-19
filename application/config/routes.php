@@ -246,6 +246,23 @@ $route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 //  End Routing Front Reports
 // ===========================
 
+// ===========================
+//  Routing Front History
+// ===========================
+$route['history-outgoing'] = 'front/chistorytrans/history_outgoing';
+// ===========================
+//  End Routing Front History
+// ===========================
+
+// ===========================
+//  Routing Front Search
+// ===========================
+$route['search-part-number-f'] = 'front/csearch/search_part_number_f';
+$route['search-part-number-e'] = 'front/csearch/search_part_number_e';
+// ===========================
+//  End Routing Front Search
+// ===========================
+
 /* END USER CONTROLLER */
 
 /* BEGIN OVERSEE CONTROLLER */
@@ -302,8 +319,10 @@ $route['oversee/print-incoming-return/(:any)'] = 'superintend/cincoming/print_tr
 //  Routing Superintend Reports
 // ===========================
 $route['oversee/report-consumed-parts'] = 'superintend/creports/report_consumed_part';
+$route['oversee/report-used-parts'] = 'superintend/creports/report_used_part';
 $route['oversee/report-replenish-plan'] = 'superintend/creports/report_replenish_plan';
 $route['oversee/print-consumed-parts'] = 'superintend/creports/export_consumed_part';
+$route['oversee/print-used-parts'] = 'superintend/creports/export_used_part';
 $route['oversee/print-replenish-plan'] = 'superintend/creports/export_replenish_plan';
 // ===========================
 //  End Routing Superintend Reports
@@ -316,6 +335,15 @@ $route['oversee/data-spareparts-stock'] = 'superintend/cstockpart';
 $route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detail/$1';
 // ===========================
 //  End Routing Superintend Stock Spareparts
+// ===========================
+
+// ===========================
+//  Routing Superintend Search
+// ===========================
+$route['oversee/search-part-number-f'] = 'superintend/csearch/search_part_number_f';
+$route['oversee/search-part-number-e'] = 'superintend/csearch/search_part_number_e';
+// ===========================
+//  End Routing Superintend Search
 // ===========================
 
 /* END OVERSEE CONTROLLER */

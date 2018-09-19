@@ -27,6 +27,14 @@
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
                         <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                         </div>
+                        <input type="text" name="ftransnum" id="ftransnum" class="form-control" placeholder="By Outgoing No.">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-ticket"></i> </span>
                          </div>
                         <input type="text" name="fticket" id="fticket" class="form-control" placeholder="By Ticket No.">
@@ -67,9 +75,6 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo base_url("new-outgoing-trans");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -106,11 +111,12 @@
                                     <th>Date</th>
                                     <th>Ticket No</th>
                                     <th>Requested by</th>
-                                    <th>Take by</th>
+                                    <!--<th>Take by</th>-->
                                     <th>Purpose</th>
                                     <th>Qty</th>
                                     <!--<th>FSL Admin</th>-->
                                     <th>Status</th>
+                                    <th>Deleted</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -128,6 +134,7 @@
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
+    var e_transnum = $('#ftransnum');
     var e_ticket = $('#fticket');
     var e_purpose = $('#fpurpose');
     var e_status = $('#fstatus');
@@ -135,6 +142,7 @@
     function init_form(){
         e_date1.val('');
         e_date2.val('');
+        e_transnum.val('');
         e_ticket.val('');
         e_purpose.val('');
         e_status.val('');
@@ -174,8 +182,7 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        },
-                        columns: ':visible:not(:last-child)'
+                        }
                     },
                     footer:false
                 }, 
@@ -187,8 +194,7 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        },
-                        columns: ':visible:not(:last-child)'
+                        }
                     },
                     footer:false
                 },
@@ -200,8 +206,7 @@
                     exportOptions: {
                         modifier: {
                             page: 'current'
-                        },
-                        columns: ':visible:not(:last-child)'
+                        }
                     },
                     footer:false
                 }, 
@@ -214,7 +219,7 @@
                 }
             ],
             ajax: {                
-                url: '<?php echo base_url('front/coutgoing/get_list_view_datatable'); ?>',
+                url: '<?php echo base_url('front/chistorytrans/get_list_view_datatable'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -223,6 +228,7 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
+                    d.ftransnum = e_transnum.val();
                     d.fticket = e_ticket.val();
                     d.fpurpose = e_purpose.val();
                     d.fstatus = e_status.val();
@@ -233,11 +239,12 @@
                 { "data": 'transdate' },
                 { "data": 'transticket' },
                 { "data": 'reqby' },
-                { "data": 'takeby' },
+//                { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
 //                { "data": 'user' },
                 { "data": 'status' },
+                { "data": 'deleted' },
                 { "data": 'button' },
             ],
             order: [[ 0, "desc" ]],

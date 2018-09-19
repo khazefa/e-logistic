@@ -145,7 +145,19 @@
                                     <li><a href="<?php echo base_url("oversee/incoming-report");?>">Incoming</a></li>
                                     <li><a href="<?php echo base_url("oversee/outgoing-report");?>">Outgoing</a></li>
                                     <li><a href="<?php echo base_url("oversee/report-consumed-parts");?>">Consumed Part</a></li>
+                                    <li><a href="<?php echo base_url("oversee/report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("oversee/report-replenish-plan");?>">Replenishment Plan</a></li>
+                                </ul>
+                            </li>
+                            <li class="has-submenu">
+                                <a href="#"><i class="icon-magnifier"></i>Search</a>
+                                <ul class="submenu">
+                                    <li>
+                                        <a href="<?php echo base_url("oversee/search-part-number-f");?>">Part Number in FSL</a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo base_url("oversee/search-part-number-e");?>">Part Number in Engineer</a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php

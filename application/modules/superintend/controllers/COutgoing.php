@@ -120,7 +120,6 @@ class COutgoing extends BaseController
         $fstatus = $this->input->post('fstatus', TRUE);
 //        $coverage = $this->input->post('fcoverage', TRUE);
         $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
-//        $coverage = "CID3;CID5;CID4;CID8";
         
         if(empty($coverage)){
             $fcoverage = $this->session->userdata ( 'ovCoverage' );
@@ -165,6 +164,7 @@ class COutgoing extends BaseController
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $partnername = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             $requestby = "";
@@ -211,6 +211,7 @@ class COutgoing extends BaseController
             $row['takeby'] = $takeby;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
+            $row['partner'] = $partnername;
 //            $row['notes'] = "-";
             $row['status'] = strtoupper($status);
             

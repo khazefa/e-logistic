@@ -18,9 +18,10 @@ application/logs/*
 
 #netbeans specific
 nbproject/*
-!nbproject/project.properties
-!nbproject/project.xml
+nbproject/private/
 nbproject/private/private.xml
 application/config/main_endpoint.php
-*/tmp/*
 *.pdf
+
+#temporary files
+tmp/*

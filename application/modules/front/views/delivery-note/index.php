@@ -108,6 +108,7 @@
                     titleAttr: 'Copy',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -120,6 +121,7 @@
                     titleAttr: 'Excel',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -132,6 +134,7 @@
                     titleAttr: 'PDF',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
+                        columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -142,7 +145,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:false
                 }
             ],

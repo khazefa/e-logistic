@@ -140,6 +140,7 @@ $config['api_get_cart_in_info'] = constant('urlapi').'api/cpincomings/get_cart_i
 $config['api_list_outgoings'] = constant('urlapi').'api/cpoutgoings/list/'; //POST
 $config['api_list_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_detail/'; //POST
 $config['api_list_view_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view/'; //POST
+$config['api_list_view_outgoings_history'] = constant('urlapi').'api/cpoutgoings/list_view_history/'; //POST
 $config['api_info_view_outgoings'] = constant('urlapi').'api/cpoutgoings/info_view/'; //POST
 $config['api_list_view_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view_detail/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
@@ -182,6 +183,14 @@ $config['api_get_data_detail'] = constant('urlapi').'api/cpdeliverynote/get_data
 $config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/update_cart/'; //POST
 // ===========================
 //  End Delivery Note  Trans
+// ===========================
+
+// ===========================
+//  Begin History Trans
+// ===========================
+$config['api_list_history_part_e'] = constant('urlapi').'api/chistorytrans/list_part_e/'; //POST
+// ===========================
+//  End History Trans
 // ===========================
 
 // ===========================

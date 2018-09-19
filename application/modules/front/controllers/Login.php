@@ -22,7 +22,21 @@ class Login extends CI_Controller
      * Index Page for this controller.
      */
     public function index()
-    {            
+    {     
+        /** define the directory **/
+        $dir = "tmp/";
+        $path = $dir."*.xlsx";
+        $path_all = $dir."*";
+
+        /*** cycle through all files in the directory ***/
+        foreach (glob($path_all) as $file) {
+            /*** if file is 24 hours (86400 seconds) old then delete it ***/
+            if(time() - filectime($file) > 86400){
+                if (file_exists($file)) {
+                    delete_files($file);
+                }
+            }
+        }
         $this->isSessionFilled();
     }
     
@@ -68,7 +82,6 @@ class Login extends CI_Controller
             );
             
             $res = send_curl($arrWhere, $this->config->item('api_auth'), 'POST', FALSE);
-            //var_dump( $this->config->item('api_auth'));
             //Check Result ( Get status TRUE or FALSE )
             if($res->status){
                 $wh_name = $res->accessRepo === "00" ? "WH" : $this->get_info_warehouse_name($res->accessRepo);

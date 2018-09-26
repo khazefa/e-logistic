@@ -225,6 +225,7 @@ $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1
 $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
+$route['close-transfer-stock'] = 'front/cincoming/close_transfer_stock';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 // ===========================
@@ -250,6 +251,7 @@ $route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 //  Routing Front History
 // ===========================
 $route['history-outgoing'] = 'front/chistorytrans/history_outgoing';
+$route['edit-outgoing/(:any)'] = 'front/chistorytrans/edit_outgoing/$1';
 // ===========================
 //  End Routing Front History
 // ===========================

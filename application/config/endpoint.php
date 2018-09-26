@@ -220,5 +220,37 @@ $config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_d
 $config['api_used_reports'] = constant('urlapi').'api/cpreports/list_outgoing_used_part/'; //POST
 $config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_replenish_plan/'; //POST
 // ===========================
+//  End Procedureview
+// ===========================
+
+// ===========================
+//  Begin Procedure
+// ===========================
+//$config['api_list_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_detail/'; //POST
+$config['api_list_view_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_view/'; //POST
+$config['api_add_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/create_trans_tmp/'; //POST
+$config['api_list_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/list_tmp/'; //POST
+$config['api_total_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/total_cart/'; //POST
+$config['api_delete_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_cart/'; //POST
+$config['api_get_fsltocwh_num'] = constant('urlapi').'api/cpfsltocwh/grab_ticket_num/'; //POST
+$config['api_add_fsltocwh_trans'] = constant('urlapi').'api/cpfsltocwh/create_trans/'; //POST
+$config['api_add_fsltocwh_trans_detail'] = constant('urlapi').'api/cpfsltocwh/create_trans_detail/'; //POST
+$config['api_clear_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_multi_cart/'; //POST
+
+// $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
+// $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
+// $config['api_update_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/update_detail/'; //POST
+// $config['api_get_cart_delivery_note_info'] = constant('urlapi').'api/cpdeliverynote/get_cart_info/'; //POST
+// $config['api_get_eta_time'] = constant('urlapi').'api/cpdeliverynote/list_delivery_time/';
+// $config['api_add_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/create_trans_tmp/'; //POST
+// $config['api_get_delivery_note_num'] = constant('urlapi').'api/cpdeliverynote/grab_ticket_num/'; //POST
+// $config['api_add_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/create_trans_detail/'; //POST
+// $config['api_add_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/create_trans/'; //POST
+// $config['api_clear_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/delete_multi_cart/'; //POST
+// $config['api_list_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list/'; //POST
+// $config['api_list_view_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view/';
+// $config['api_get_data_detail'] = constant('urlapi').'api/cpdeliverynote/get_data_detail/';//get
+// $config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/update_cart/'; //POST
+// ===========================
 //  End Procedure
 // ===========================

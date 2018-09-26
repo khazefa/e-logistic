@@ -975,7 +975,7 @@ class CFsltocwh extends BaseController
                                 $this->config->item('api_add_'.$this->apirole.'_trans_detail'), 
                                 'POST', FALSE);
                             $total_qty += (int)$d['qty'];
-                            echo $partstock+$d['qty'].$purpose_tbl.$d['partno'];
+                            //echo $partstock+$d['qty'].$purpose_tbl.$d['partno'];
 
                             $dataUpdateStock = array(
                                 'fcode'=>$purpose_tbl, 

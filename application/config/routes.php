@@ -209,12 +209,20 @@ $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1
 // ===========================
 
 // ===========================
+//  Delivary Note
+// ===========================
+$route['fsltocwh-trans'] = 'front/cfsltocwh';
+$route['view-fsltocwh-trans'] = 'front/cfsltocwh/views';
+$route['new-fsltocwh-trans'] = 'front/cfsltocwh/add';
+$route['print-fsltocwh-trans/(:any)'] = 'front/cfsltocwh/print_trans/$1';
+// ===========================
+//  End Routing Delivery Note Trans
+// ===========================
+
+// ===========================
 //  Search Parts
 // ===========================
 $route['search-parts'] = 'front/csearchparts';
-$route['view-delivery-note-trans'] = 'front/cdeliverynote/views';
-$route['new-delivery-note-trans'] = 'front/cdeliverynote/add';
-$route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1';
 // ===========================
 //  End Routing search Parts
 // ===========================

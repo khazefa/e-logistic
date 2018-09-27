@@ -38,50 +38,57 @@
                                                 }
                                             ?>
                                         </select>
+                                        <span class="text-danger" id="msg_fdest_fsl"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fairwaybill" class="col-sm-3 col-form-label">No Airwaybill</label>
+                                    <label for="fairwaybill" class="col-sm-3 col-form-label">No Airwaybill <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="fairwaybill" id="fairwaybill" class="form-control">
+                                        <input type="text" name="fairwaybill" id="fairwaybill" class="form-control" required>
+                                        <span class="text-danger" id="msg_fairwaybill"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="ftransnotes" class="col-sm-3 col-form-label">Transaction Notes</label>
+                                    <label for="ftransnotes" class="col-sm-3 col-form-label">Transaction Notes </label>
                                     <div class="col-sm-9">
                                         <input type="text" name="ftransnotes" id="ftransnotes" class="form-control">
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
-                                    <label for="fservice" class="col-sm-3 col-form-label">Service</label>
-                                    <div class="col-sm-8">
-                                        <select name="fservice" id="fservice" class="selectpicker" data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                            <option value="0">Select Service</option>
-                                            <option value="REG">Regular</option>
-                                            <option value="EXPRESS">Overnight / Express</option>
-                                            <option value="INTCOURIER">Internal Courier</option>
-                                            <option value="SAMEDAY">Sameday Service</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fdeliveryby" class="col-sm-3 col-form-label">Delivery By</label>
+                                    <label for="fdeliveryby" class="col-sm-3 col-form-label">Delivered By <span class="text-danger">*</span></label>
                                     <div class="col-sm-8">
                                         <select name="fdeliveryby" id="fdeliveryby" class="selectpicker" data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light" required>
                                             <option value="0">Select Service</option>
                                             <option value="DHL">DHL</option>
                                             <option value="POS">POS</option>
                                             <option value="JNE">JNE</option>
                                             <option value="YCH">YCH</option>
+                                            <option value="INTCOURIER">Internal Courier</option>
                                         </select>
+                                        <span class="text-danger" id="msg_fdeliveryby"></span>
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
-                                    <label for="feta" class="col-sm-3 col-form-label">ETA</label>
+                                    <label for="fservice" class="col-sm-3 col-form-label">Service <span class="text-danger">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select name="fservice" id="fservice" class="selectpicker" data-live-search="true" 
+                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light" required>
+                                            <option value="0">Select Service</option>
+                                            <option value="REG">Regular</option>
+                                            <option value="EXPRESS">Overnight / Express</option>
+                                            <option value="SAMEDAY">Sameday Service</option>
+                                        </select>
+                                        <span class="text-danger" id="msg_fservice"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group row">
+                                    <label for="feta" class="col-sm-3 col-form-label">ETA <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <input type="text" name="feta" id="feta" class="form-control">
+                                        <input type="text" name="feta" id="feta" class="form-control" required><span class="text-danger" id="msg_feta"></span>
                                     </div>
                                 </div>
                             </div>
@@ -203,9 +210,11 @@
     var status_checkpart = 0;
     var status_checkticket = 0;
     var link = function(link){return '<?=base_url('front/cdeliverynote/');?>'+link;};
+
+    var btn_submit = $('#btn_complete');
     
     $(document).ready(function() {
-        
+        $('form').parsley();
         //inisiasi awal
         init_form();
         init_form_order();
@@ -213,6 +222,10 @@
         init_table2();
         get_total();
         
+        $('#fpurpose, #fdest_fsl, #fservice, #fairwaybill, fdeliveryby').on('focusout', function(evt){
+            validation();
+        });
+
         e_purpose.on("change", function(e) {
             var valpurpose = $(this).val();
             
@@ -281,6 +294,15 @@
                 //init_form();
                 e_deliveryby.focus();
             }else{
+                if(e_deliveryby.val()==='INTCOURIER'){
+                    e_service.val('SAMEDAY');
+                    e_service.prop('disabled',true);
+                    e_service.selectpicker('refresh');
+                }else{
+                    e_service.prop('disabled',false);
+                    e_service.selectpicker('refresh');
+                }
+
                 get_eta_time();
             }
         });
@@ -326,11 +348,9 @@
                     e_serialnum.focus();
                 }else{
                     check_part(e_partnum.val());
-//                    alert(status_checkpart);
                     if(status_checkpart === 1){
                         add_cart(e_partnum.val(), e_serialnum.val());
                         reload();
-//                        init_form_order();
                         e_partnum.prop('readonly', false);
                         e_partnum.val('');
                         e_partnum.focus();
@@ -374,7 +394,7 @@
                  
                 if(total_qty > 0){
                     complete_request();
-//                           
+                         
                 }else{
                     $("#error_modal .modal-title").html("Message");
                     $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
@@ -419,6 +439,7 @@
     //==========================================================================
     //initial form state
     function init_form(){
+        btn_submit.prop('disabled', true);
         e_purpose.focus();
         e_dest_fsl.prop('disabled', true);
         e_dest_fsl.selectpicker('refresh');
@@ -629,8 +650,20 @@
             if(jqXHR.status === 0){
                 console.log("ERROR : GET_ETA "+ jqXHR.message);
             }else if(jqXHR.status === 1){
-                e_eta.val(jqXHR.ETA);
+                if(jqXHR.ETA === ""){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html("The delivered service is not Available on your FSL.");
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                    e_eta.val('');  
+                    e_service.focus();
+                }else{
+                    e_eta.val(jqXHR.ETA);    
+                }
+                
             }
+            validation();
         };
         
         xhqr(url, type, data, success, error_xhqr);
@@ -645,7 +678,7 @@
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
            
             fairwaybill : e_airwaybill.val(),
-            ftransnote : e_transnote.val(),
+            ftransnote : e_transnote.val(), 
             fservice : e_service.val(),
             feta : e_eta.val(),
             fdest_fsl : e_dest_fsl.val(),
@@ -1000,8 +1033,33 @@
     function print_transaction(ftransno){
         var param = ftransno;
         var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
-        var newWindow=window.open(url);
+        //var newWindow=window.open(url);
 //        window.location.assign(url);
+    }
+
+    function falert(fobj,val){
+        var msg = $('#msg_'+fobj.attr('id'));
+        if(!val){
+            msg.html('* Required');
+        }else{
+            msg.html('');
+        }
+        return val;
+    }
+    function validation(){
+        var ret = false;
+        ret1 = (e_purpose.val()=='0'|| e_purpose.val()=='')?falert(e_purpose,false):falert(e_purpose,true);
+        ret2 = (e_airwaybill.val()=='')?falert(e_airwaybill,false):falert(e_airwaybill,true);
+        ret3 = (e_deliveryby.val()=='0'|| e_deliveryby.val()=='')?falert(e_deliveryby,false):falert(e_deliveryby,true);
+        ret4 = (e_service.val()=='0' || e_service.val()=='')?falert(e_service,false):falert(e_service,true);
+        ret5 = (e_eta.val()=='')?falert(e_eta,false):falert(e_eta,true);
+        if(ret1 && ret2 && ret3 && ret4 && ret5){
+            btn_submit.prop('disabled',true);
+        }else{
+            btn_submit.prop('disabled',true);
+        }
+        console.log('validation :' + ret)
+
     }
     
 </script>

@@ -39,19 +39,7 @@
                                         <input type="text" name="ftransnotes" id="ftransnotes" class="form-control">
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="fservice" class="col-sm-3 col-form-label">Service</label>
-                                    <div class="col-sm-8">
-                                        <select name="fservice" id="fservice" class="selectpicker" data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                            <option value="0">Select Service</option>
-                                            <option value="REG">Regular</option>
-                                            <option value="EXPRESS">Overnight / Express</option>
-                                            <option value="INTCOURIER">Internal Courier</option>
-                                            <option value="SAMEDAY">Sameday Service</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                
                                 <div class="form-group row">
                                     <label for="fdeliveryby" class="col-sm-3 col-form-label">Delivery By</label>
                                     <div class="col-sm-8">
@@ -62,9 +50,24 @@
                                             <option value="POS">POS</option>
                                             <option value="JNE">JNE</option>
                                             <option value="YCH">YCH</option>
+                                            <option value="INTCOURIER">Internal Courier</option>
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label for="fservice" class="col-sm-3 col-form-label">Service</label>
+                                    <div class="col-sm-8">
+                                        <select name="fservice" id="fservice" class="selectpicker" data-live-search="true" 
+                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
+                                            <option value="0">Select Service</option>
+                                            <option value="REG">Regular</option>
+                                            <option value="EXPRESS">Overnight / Express</option>
+                                            <option value="SAMEDAY">Sameday Service</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group row">
                                     <label for="feta" class="col-sm-3 col-form-label">ETA</label>
                                     <div class="col-sm-9">
@@ -597,7 +600,17 @@
             if(jqXHR.status === 0){
                 console.log("ERROR : GET_ETA "+ jqXHR.message);
             }else if(jqXHR.status === 1){
-                e_eta.val(jqXHR.ETA);
+                if(jqXHR.ETA === ""){
+                    $("#error_modal .modal-title").html("Message");
+                    $("#error_modal .modal-body h4").html("The delivered service is not Available on your FSL.");
+                    $('#error_modal').modal({
+                        show: true
+                    });
+                    e_service.focus();
+                }else{
+                    e_eta.val(jqXHR.ETA);    
+                }
+                
             }
         };
         

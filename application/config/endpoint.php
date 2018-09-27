@@ -236,6 +236,7 @@ $config['api_get_fsltocwh_num'] = constant('urlapi').'api/cpfsltocwh/grab_ticket
 $config['api_add_fsltocwh_trans'] = constant('urlapi').'api/cpfsltocwh/create_trans/'; //POST
 $config['api_add_fsltocwh_trans_detail'] = constant('urlapi').'api/cpfsltocwh/create_trans_detail/'; //POST
 $config['api_clear_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_multi_cart/'; //POST
+$config['api_get_data_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/get_data_detail/';//POST
 
 // $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
 // $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST

@@ -1073,7 +1073,7 @@ class CFsltocwh extends BaseController
         );
         
         //Ambil Database
-        $rs_data = json_decode(json_encode(send_curl($params, $this->config->item('api_get_data_detail'), 'POST', FALSE)),TRUE);
+        $rs_data = json_decode(json_encode(send_curl($params, $this->config->item('api_get_data_detail_fsltocwh'), 'POST', FALSE)),TRUE);
         $rs = $rs_data['status'] ? $rs_data['result'] : array();
         
         
@@ -1120,7 +1120,7 @@ class CFsltocwh extends BaseController
         $pdf->Cell(($width*(45/100)),7,$this->snt($rs['fsl_name'], 'string'),0,0,'L');
         $pdf->setFont('Arial','',10); //ARIAL NORMAL 10
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'D-D: '.$this->snt($rs['delivery_note_date'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,'D-D: '.$this->snt($rs['fsltocwh_date'], 'string'),1,1,'C');
             
         //row 2
         //col 1 Wrap
@@ -1130,13 +1130,13 @@ class CFsltocwh extends BaseController
         //col 2 Wrap
         $px += ($width*(67.5/100));
         $pdf->SetXY($px,$py);
-        $pdf->MultiCell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_num'],'string'),1,'C');
+        $pdf->MultiCell(($width*(22.5/100)),7,$this->snt($rs['fsltocwh_num'],'string'),1,'C');
         
         //row 3
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_airwaybill'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['fsltocwh_airwaybill'], 'string'),1,1,'C');
         
         //row 4
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
@@ -1148,7 +1148,7 @@ class CFsltocwh extends BaseController
         $pdf->Cell(($width*(22.5/100)),7,'Attn : '.$this->snt($rs['fsl_pic'], 'string').' :',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['delivery_note_eta'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['fsltocwh_eta'], 'string'),1,1,'C');
         
         //row 6
         $pdf->Cell(($width*(22.5/100)),7,'         '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
@@ -1215,7 +1215,7 @@ class CFsltocwh extends BaseController
                 $get_xxx+=($width*(15/100));
                 
                 $pdf->SetXY($get_xxx,$get_yyy);
-                $pdf->MultiCell(($width*(7.5/100)),$height,$this->snt($dt['dt_delivery_note_qty'], 'string'),1,'C');
+                $pdf->MultiCell(($width*(7.5/100)),$height,$this->snt($dt['dt_fsltocwh_qty'], 'string'),1,'C');
                 $get_xxx+=($width*(7.5/100));
                 
 //                $pdf->Cell(($width*(7.5/100)),6,$i,1,0,'C');
@@ -1345,14 +1345,7 @@ class CFsltocwh extends BaseController
         $ffsl_code = $this->repo;
         $fdelivery_type = $this->input->post('fdelivery_type', TRUE);
         $fdelivery_by = $this->input->post('fdelivery_by', TRUE);
-        
-        if($fdelivery_type == 'INTCOURIER'){
-            $date_now = date("Y-m-d", time() + 86400);
-            $response = array(
-                'status' => 1,
-                'ETA'=> $date_now
-            );
-        }else if($fdelivery_type == 'SAMEDAY'){
+        if($fdelivery_type == 'SAMEDAY'){
             $date_now = date("Y-m-d");
             $response = array(
                 'status' => 1,
@@ -1381,6 +1374,15 @@ class CFsltocwh extends BaseController
             }
             
         }
+
+        if($fdelivery_by == 'INTCOURIER'){
+            $date_now = date("Y-m-d", time() + 86400);
+            $response = array(
+                'status' => 1,
+                'ETA'=> $date_now
+            );
+        }
+
         return $this->output
             ->set_content_type('application/json')
             ->set_output(

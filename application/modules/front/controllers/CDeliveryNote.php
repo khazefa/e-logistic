@@ -1552,14 +1552,7 @@ class CDeliveryNote extends BaseController
         $ffsl_code = $this->input->post('ffsl_code', TRUE);
         $fdelivery_type = $this->input->post('fdelivery_type', TRUE);
         $fdelivery_by = $this->input->post('fdelivery_by', TRUE);
-        
-        if($fdelivery_type == 'INTCOURIER'){
-            $date_now = date("Y-m-d", time() + 86400);
-            $response = array(
-                'status' => 1,
-                'ETA'=> $date_now
-            );
-        }else if($fdelivery_type == 'SAMEDAY'){
+        if($fdelivery_type == 'SAMEDAY'){
             $date_now = date("Y-m-d");
             $response = array(
                 'status' => 1,
@@ -1588,6 +1581,15 @@ class CDeliveryNote extends BaseController
             }
             
         }
+
+        if($fdelivery_by == 'INTCOURIER'){
+            $date_now = date("Y-m-d", time() + 86400);
+            $response = array(
+                'status' => 1,
+                'ETA'=> $date_now
+            );
+        }
+
         return $this->output
             ->set_content_type('application/json')
             ->set_output(

@@ -1033,7 +1033,7 @@
     function print_transaction(ftransno){
         var param = ftransno;
         var url = '<?php echo base_url('print-delivery-note-trans/'); ?>'+param;
-        //var newWindow=window.open(url);
+        var newWindow=window.open(url);
 //        window.location.assign(url);
     }
 

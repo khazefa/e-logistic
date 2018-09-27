@@ -19,7 +19,7 @@
                 </div>
                 <div class="row">
                     
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
                                 Delivery Sparepart to FSL
@@ -1054,11 +1054,11 @@
         ret4 = (e_service.val()=='0' || e_service.val()=='')?falert(e_service,false):falert(e_service,true);
         ret5 = (e_eta.val()=='')?falert(e_eta,false):falert(e_eta,true);
         if(ret1 && ret2 && ret3 && ret4 && ret5){
-            btn_submit.prop('disabled',true);
+            btn_submit.prop('disabled',false);
         }else{
             btn_submit.prop('disabled',true);
         }
-        console.log('validation :' + ret)
+        
 
     }
     

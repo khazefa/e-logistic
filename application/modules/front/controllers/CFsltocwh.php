@@ -1110,14 +1110,14 @@ class CFsltocwh extends BaseController
         
         //row Header
         $pdf->setFont('Arial','',10);
-        $pdf->Cell(($width*(15/100)),7,'Purpose '.': '.$purpose.' SPAREPART TO FSL',0,0,'L');
+        $pdf->Cell(($width*(15/100)),7,'Purpose '.': '.$purpose.' SPAREPART FSL TO CWH',0,0,'L');
         $pdf->setFont('Arial','',10);
         $pdf->Cell(($width*(25/100)),7,'',0,1, 'L');
         
         //row 1
         //$pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->setFont('Arial','BU',11); //ARIAL BOLD 10
-        $pdf->Cell(($width*(45/100)),7,$this->snt($rs['fsl_name'], 'string'),0,0,'L');
+        $pdf->Cell(($width*(45/100)),7,'Warehouse Pusat',0,0,'L');
         $pdf->setFont('Arial','',10); //ARIAL NORMAL 10
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'D-D: '.$this->snt($rs['fsltocwh_date'], 'string'),1,1,'C');
@@ -1126,7 +1126,7 @@ class CFsltocwh extends BaseController
         //col 1 Wrap
         $py = $pdf->GetY();
         $px = $pdf->GetX();
-        $pdf->MultiCell(($width*(45/100)),7,$this->snt($rs['fsl_location'], 'string'),0,'L');
+        $pdf->MultiCell(($width*(45/100)),7,'PT. Wincor Nixdorf Indonesia ( DIEBOLD NIXDORF )     Komplek Infinia Park NO. 10E                                          Jakarta 12940',0,'L');
         //col 2 Wrap
         $px += ($width*(67.5/100));
         $pdf->SetXY($px,$py);
@@ -1145,13 +1145,13 @@ class CFsltocwh extends BaseController
         $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_by'], 'string').' - '.$this->snt($rs['delivery_time_type'], 'string'),1,1,'C');
         
         //row 5
-        $pdf->Cell(($width*(22.5/100)),7,'Attn : '.$this->snt($rs['fsl_pic'], 'string').' :',0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'Attn : '.'Ibu Siti Aisah'.' :',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['fsltocwh_eta'], 'string'),1,1,'C');
         
         //row 6
-        $pdf->Cell(($width*(22.5/100)),7,'         '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'         '.'021-25527763',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,1,'C');
@@ -1244,7 +1244,7 @@ class CFsltocwh extends BaseController
         
         //row 15 TTD
         $pdf->SetFont('Arial','',9); //ARIAL NORMAL 10
-        $pdf->Cell(($width*(30/100)),6,'PT. Diebold Nixdorf Indonesia',0,0,'L');
+        $pdf->Cell(($width*(30/100)),6,$rs['fsl_name'],0,0,'L');
         $pdf->Cell(($width*(30/100)),6,'',0,0,'C');
         $pdf->Cell(($width*(30/100)),6,'',0,1,'C');
         

@@ -2614,49 +2614,8 @@ INSERT INTO `p_stock_fsl_wsps_badstock` (`stock_id`, `stock_fsl_code`, `stock_pa
 /*!40000 ALTER TABLE `p_stock_fsl_wsps_badstock` ENABLE KEYS */;
 
 -- membuang struktur untuk view dbaze_logistic.viewdetailfsltocwh
--- Membuat tabel sementara untuk menangani kesalahan ketergantungan VIEW
-CREATE TABLE `viewdetailfsltocwh` (
-	`fsltocwh_num` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_date` DATE NOT NULL,
-	`fsltocwh_notes` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_status` VARCHAR(30) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_purpose` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_airwaybill` TEXT NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_qty` INT(5) NOT NULL,
-	`delivery_time_type` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_eta` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`user_fullname` VARCHAR(255) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsl_code` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsl_name` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fe_report` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`created_at` DATETIME NULL,
-	`is_deleted` TINYINT(4) NOT NULL
-) ENGINE=MyISAM;
-
--- membuang struktur untuk view dbaze_logistic.viewfsltocwh
--- Membuat tabel sementara untuk menangani kesalahan ketergantungan VIEW
-CREATE TABLE `viewfsltocwh` (
-	`fsltocwh_num` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_date` DATE NOT NULL,
-	`fsltocwh_notes` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_status` VARCHAR(30) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_purpose` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_airwaybill` TEXT NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_qty` INT(5) NOT NULL,
-	`delivery_time_type` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsltocwh_eta` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`user_fullname` VARCHAR(255) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsl_code` VARCHAR(50) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fsl_name` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`fe_report` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci',
-	`created_at` DATETIME NULL,
-	`is_deleted` TINYINT(4) NOT NULL
-) ENGINE=MyISAM;
-
--- membuang struktur untuk view dbaze_logistic.viewdetailfsltocwh
 -- Menghapus tabel sementara dan menciptakan struktur VIEW terakhir
-DROP TABLE IF EXISTS `viewdetailfsltocwh`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `viewdetailfsltocwh` AS SELECT 
+CREATE OR REPLACE VIEW `viewdetailfsltocwh` AS SELECT 
 	`dn`.`fsltocwh_num` AS `fsltocwh_num`,
 	`dn`.`fsltocwh_date` AS `fsltocwh_date`,
 	`dn`.`fsltocwh_notes` AS `fsltocwh_notes`,
@@ -2679,8 +2638,7 @@ WHERE (`u`.`is_admin` = 0) ;
 
 -- membuang struktur untuk view dbaze_logistic.viewfsltocwh
 -- Menghapus tabel sementara dan menciptakan struktur VIEW terakhir
-DROP TABLE IF EXISTS `viewfsltocwh`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `viewfsltocwh` AS SELECT 
+CREATE OR REPLACE VIEW `viewfsltocwh` AS SELECT 
 	`dn`.`fsltocwh_num` AS `fsltocwh_num`,
 	`dn`.`fsltocwh_date` AS `fsltocwh_date`,
 	`dn`.`fsltocwh_notes` AS `fsltocwh_notes`,

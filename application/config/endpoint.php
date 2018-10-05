@@ -255,3 +255,24 @@ $config['api_get_data_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/get
 // ===========================
 //  End Procedure
 // ===========================
+
+// ===========================
+//  Begin Procedure
+// ===========================
+//transaction
+$config['api_list_view_supplyfromvendor'] = constant('urlapi').'api/cpsupplyfromvendor/list_view/'; //POST
+$config['api_get_supplyfromvendor_num'] = constant('urlapi').'api/cpsupplyfromvendor/get_key_num/'; //POST
+$config['api_cancel_trans_supplyfromvendor'] = constant('urlapi').'api/cpsupplyfromvendor/delete_trans/'; //POST
+$config['api_add_supplyfromvendor_trans'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans/'; //POST
+$config['api_add_supplyfromvendor_trans_detail'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans_detail/'; //POST
+
+//temporary cart
+$config['api_add_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans_tmp/'; //POST
+$config['api_list_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/list_tmp/'; //POST
+$config['api_delete_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/delete_cart/'; //POST
+$config['api_total_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/total_cart/'; //POST
+$config['api_clear_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/delete_multi_cart/'; //POST
+
+// ===========================
+//  End Procedure
+// ===========================

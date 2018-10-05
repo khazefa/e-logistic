@@ -209,14 +209,39 @@ $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1
 // ===========================
 
 // ===========================
-//  Delivary Note
+//  FSL To CWH Trans
 // ===========================
 $route['fsltocwh-trans'] = 'front/cfsltocwh';
 $route['view-fsltocwh-trans'] = 'front/cfsltocwh/views';
 $route['new-fsltocwh-trans'] = 'front/cfsltocwh/add';
 $route['print-fsltocwh-trans/(:any)'] = 'front/cfsltocwh/print_trans/$1';
 // ===========================
-//  End Routing Delivery Note Trans
+//  End Routing FSL To CWH Trans
+// ===========================
+
+// ===========================
+//  Supply From Vendor Trans
+// ===========================
+
+//menu
+$route['supply-from-vendor-trans']              = 'front/csupplyfromvendor';
+$route['view-supply-from-vendor-trans']         = 'front/csupplyfromvendor/views';
+$route['new-supply-from-vendor-trans']          = 'front/csupplyfromvendor/add';
+$route['print-supply-from-vendor-trans/(:any)'] = 'front/csupplyfromvendor/print_trans/$1';
+
+//api index.php
+$route['api-supply-from-vendor-get-datatable']  = 'front/csupplyfromvendor/get_list_datatable';
+
+//api create.php
+$route['api-supply-from-vendor-submit-trans']   = 'front/csupplyfromvendor/submit_trans';
+$route['api-supply-from-vendor-add-cart']       = 'front/csupplyfromvendor/add_cart';
+$route['api-supply-from-vendor-delete-cart']    = 'front/csupplyfromvendor/delete_cart';
+$route['api-supply-from-vendor-get-cart-table'] = 'front/csupplyfromvendor/get_list_cart_datatable';
+$route['api-supply-from-vendor-check-partnum']  = 'front/csupplyfromvendor/checkpartnum';
+$route['api-supply-from-vendor-get-total-cart'] = 'front/csupplyfromvendor/get_total_cart';
+
+// ===========================
+//  End Routing Supply From Vendor Trans
 // ===========================
 
 // ===========================

@@ -142,6 +142,7 @@ function init_form(){
     e_total_qty.html('0');
     btn_submit.prop('disabled',true);
     get_total();
+    reload();
 }
 
 //Create data table
@@ -236,8 +237,14 @@ function complete_supply(){
             $('#error_modal').modal({
                 show: true
             });
+            btn_submit.prop('disabled',false);
         }else if(jqXHR.status == 1){
-            //print_transaction(jqXHR.trans_num);
+            var q = confirm('Transaksi Sukses, ingin tambah transaksi lain?');
+            if (q){
+                init_form();
+            }else{
+                window.location = "<?php echo base_url('supply-from-vendor-trans')?>";
+            }
         }
     };
     xhqr(url,type,data,success,error_xhqr);
@@ -373,8 +380,9 @@ function validation(){
 // when document ready to execute 
 ////////////////////////////////////////////////////////////
 $(document).ready(function(ex){
-    init_form();
     init_table();
+    init_form();
+    
 
     $('input[type=text]').on('focusout',function(e){
         validation();

@@ -15,6 +15,7 @@ class CSupplyFromVendor extends BaseController
 
     private $alias_controller_name = 'supply-from-vendor';
     private $stock_want_to_update = 'wsps';
+    private $api_role = 'supplyfromvendor';
 
     /**
      * This is default constructor of the class
@@ -37,9 +38,10 @@ class CSupplyFromVendor extends BaseController
         $this->global['pageMenu'] = 'Supply From Vendor';
         $this->global['contentHeader'] = 'Supply From Vendor';
         $this->global['contentTitle'] = 'Supply From Vendor';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        
+        $this->global['role'] = $this->role;
+        $this->global['name'] = $this->name;
+        $this->global['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
+        $this->global['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
         $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, NULL);
     }
 
@@ -59,12 +61,13 @@ class CSupplyFromVendor extends BaseController
             redirect('cl');
             
         }else{
-            $this->global['pageTitle'] = 'New Incoming Transaction - '.APP_NAME;
-            $this->global['pageMenu'] = 'New Incoming Transaction';
-            $this->global['contentHeader'] = 'New Incoming Transaction';
-            $this->global['contentTitle'] = 'New Incoming Transaction';
+            $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
+            $this->global['pageMenu'] = 'Supply From Vendor';
+            $this->global['contentHeader'] = 'Supply From Vendor';
+            $this->global['contentTitle'] = 'Supply From Vendor';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
+            $this->global['alias_controller_name']=$this->alias_controller_name;
             $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, NULL);
         }
     }
@@ -81,11 +84,12 @@ class CSupplyFromVendor extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $fcode = $this->repo;
-        //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode);
+        $fcode ='WSPS';
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $arrWhere = array('fcode'=>$fcode,'fdate1'=>$fdate1,'fdate2'=>$fdate2);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_supplyfromvendor'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_'.$this->api_role), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -96,7 +100,8 @@ class CSupplyFromVendor extends BaseController
             $qty = filter_var($r->sfvendor_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->sfvendor_notes, FILTER_SANITIZE_STRING);
-            
+            //$button = '<a href="'.base_url("print-incoming-supply/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
             $row['purpose'] = $purpose;
@@ -140,7 +145,7 @@ class CSupplyFromVendor extends BaseController
             'fname'=>$fname,
             'fcode'=>$fcode
         );
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_supplyfromvendor_cart'), 'POST', FALSE);
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_'.$this->api_role.'_cart'), 'POST', FALSE);
 
         if($rs_data->status)
         {
@@ -166,7 +171,7 @@ class CSupplyFromVendor extends BaseController
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         $arrWhere = array('funiqid'=>$cartid);
         
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_supplyfromvendor_cart'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_'.$this->api_role.'_cart'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
 
         $data = array();
@@ -212,7 +217,7 @@ class CSupplyFromVendor extends BaseController
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         $arrWhere = array('funiqid'=>$cartid);
         
-        $rs_data = send_curl($arrWhere, $this->config->item('api_total_supplyfromvendor_cart'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_total_'.$this->api_role.'_cart'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if(!empty($rs)){
@@ -252,7 +257,7 @@ class CSupplyFromVendor extends BaseController
         $fid = $this->input->post('fid', TRUE);
 
         $arrWhere = array('fid'=>$fid);
-        $rs_data = send_curl($arrWhere, $this->config->item('api_delete_supplyfromvendor_cart'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_delete_'.$this->api_role.'_cart'), 'POST', FALSE);
 
         if($rs_data->status)
         {
@@ -294,7 +299,7 @@ class CSupplyFromVendor extends BaseController
         
         //post doc
         $arrParam = array('fparam'=>$kode, 'fcode'=>$fcode);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_supplyfromvendor_num'), 'POST', FALSE);
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_'.$this->api_role.'_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         //result if no qty
@@ -322,7 +327,7 @@ class CSupplyFromVendor extends BaseController
                 $total_qty = 0;
                 $main_res = send_curl(
                         $this->security->xss_clean($dataTrans), 
-                        $this->config->item('api_add_supplyfromvendor_trans'), 
+                        $this->config->item('api_add_'.$this->api_role.'_trans'), 
                         'POST', FALSE);
                 //if transaction is success        
                 if($main_res->status)
@@ -345,7 +350,7 @@ class CSupplyFromVendor extends BaseController
                         );
                         $sec_res = send_curl(
                             $this->security->xss_clean($dataDetail), 
-                            $this->config->item('api_add_supplyfromvendor_trans_detail'), 
+                            $this->config->item('api_add_'.$this->api_role.'_trans_detail'), 
                             'POST', FALSE
                         );
                         
@@ -388,7 +393,7 @@ class CSupplyFromVendor extends BaseController
 
                     //clear cart list data
                     $arrWhere = array('fcartid'=>$cartid);
-                    $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_supplyfromvendor_cart'), 'POST', FALSE);
+                    $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_'.$this->api_role.'_cart'), 'POST', FALSE);
                     if($rem_res->status){
                         $success_response = array(
                             'status' => 1,
@@ -549,7 +554,7 @@ class CSupplyFromVendor extends BaseController
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         $arrWhere = array('funiqid'=>$cartid);
         
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_supplyfromvendor_cart'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_'.$this->api_role.'_cart'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
        
         $data = array();
@@ -574,7 +579,7 @@ class CSupplyFromVendor extends BaseController
 
     private function cancel_trans($id){
         $arrWHere = array('fid' => $id);
-        $rs_data = send_curl($arrWhere, $this->config->item('api_cancel_trans_supplyfromvendor'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_cancel_trans_'.$this->api_role.''), 'POST', FALSE);
         $rs = $rs_data->status;
         return $rs;
     }

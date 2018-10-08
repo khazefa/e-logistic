@@ -158,7 +158,7 @@ function init_table(){
         processing: true,
         lengthChange: false,
         ajax: {
-            url: '<?php echo base_url('api-supply-from-vendor-get-cart-table'); ?>',
+            url: '<?php echo base_url('api-'.$alias_controller_name.'-get-cart-table'); ?>',
             type: "POST",
             dataType: "JSON",
             contentType: "application/json",
@@ -222,7 +222,7 @@ function reload(){
 
 //submit supply transaction
 function complete_supply(){
-    var url = '<?php echo base_url('api-supply-from-vendor-submit-trans'); ?>';
+    var url = '<?php echo base_url('api-'.$alias_controller_name.'-submit-trans'); ?>';
     var type = 'POST';
     var data = {
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -243,7 +243,7 @@ function complete_supply(){
             if (q){
                 init_form();
             }else{
-                window.location = "<?php echo base_url('supply-from-vendor-trans')?>";
+                window.location = "<?php echo base_url(''.$alias_controller_name.'-trans')?>";
             }
         }
     };
@@ -252,7 +252,7 @@ function complete_supply(){
 
 //add part to cart
 function add_cart(){
-    var url = '<?php echo base_url('api-supply-from-vendor-add-cart'); ?>';
+    var url = '<?php echo base_url('api-'.$alias_controller_name.'-add-cart'); ?>';
     var type = 'POST';
     var data = {
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -282,7 +282,7 @@ function add_cart(){
 
 //delete cart
 function delete_cart(id){
-    var url = '<?php echo base_url('api-supply-from-vendor-delete-cart'); ?>';
+    var url = '<?php echo base_url('api-'.$alias_controller_name.'-delete-cart'); ?>';
     var type = 'POST';
     var data = {
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -300,7 +300,7 @@ function delete_cart(id){
 
 //function get total of table cart
 function get_total(){
-    var url = '<?php echo base_url('api-supply-from-vendor-get-total-cart'); ?>';
+    var url = '<?php echo base_url('api-'.$alias_controller_name.'-get-total-cart'); ?>';
     var type = 'POST';
     var data = {
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -317,7 +317,7 @@ function get_total(){
 
 //check part number
 function check_parts(){
-    var url = '<?php echo base_url('api-supply-from-vendor-check-partnum'); ?>';
+    var url = '<?php echo base_url('api-'.$alias_controller_name.'-check-partnum'); ?>';
     var type = 'POST';
     var data = {
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",

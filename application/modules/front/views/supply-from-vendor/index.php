@@ -37,7 +37,7 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=base_url("new-supply-from-vendor-trans"); ?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <button type="button" onclick="location.href='<?=$link_new;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
@@ -74,9 +74,7 @@
                                 <th>Trans No</th>
                                 <th>Date</th>
                                 <th>Purpose</th>
-                                <th>Outgoing No.</th>
                                 <th>Qty</th>
-                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -92,7 +90,6 @@
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
-    var link = function(link){return '<?=base_url();?>'+link;};
 
     function init_form(){
         e_date1.val('');
@@ -171,7 +168,7 @@
                 }
             ],
             ajax: {                
-                url: link('api-supply-from-vendor-get-datatable'),
+                url: '<?=$link_get_data;?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -186,9 +183,8 @@
                 { "data": 'transnum' },
                 { "data": 'transdate' },
                 { "data": 'purpose' },
-                { "data": 'transout' },
                 { "data": 'qty' },
-                { "data": 'button' },
+                
             ],
             order: [[ 0, "desc" ]],
             columnDefs: [{ 

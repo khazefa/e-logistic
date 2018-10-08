@@ -290,6 +290,7 @@ $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['close-transfer-stock'] = 'front/cincoming/close_transfer_stock';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
+$route['return-parts'] = 'front/creturnparts/add';
 // ===========================
 //  End Routing Front Incoming Trans
 // ===========================

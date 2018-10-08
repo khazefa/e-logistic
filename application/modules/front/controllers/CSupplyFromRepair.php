@@ -4,18 +4,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/BaseController.php';
 
 /**
- * Class : CSupplyFromVendor (TicketsController)
- * CSupplyFromVendor Class to control Tickets.
+ * Class : CSupplyFromrepair (TicketsController)
+ * CSupplyFromrepair Class to control Tickets.
  * @author : Sigit Pray & Abas
  * @version : 2.0
  * @since : sept 2018
  */
-class CSupplyFromVendor extends BaseController
+class CSupplyFromRepair extends BaseController
 {
 
-    private $alias_controller_name = 'supply-from-vendor';
+    private $alias_controller_name = 'supply-from-repair';
     private $stock_want_to_update = 'wsps';
-    private $api_role = 'supplyfromvendor';
+    private $api_role = 'supplyfromrepair';
 
     /**
      * This is default constructor of the class
@@ -34,22 +34,22 @@ class CSupplyFromVendor extends BaseController
        if($this->isStaff()){
             redirect('cl');
         }
-        $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
-        $this->global['pageMenu'] = 'Supply From Vendor';
-        $this->global['contentHeader'] = 'Supply From Vendor';
-        $this->global['contentTitle'] = 'Supply From Vendor';
-        $this->global['role'] = $this->role;
-        $this->global['name'] = $this->name;
+        $this->global['pageTitle'] = 'Supply From Repair - '.APP_NAME;
+        $this->global['pageMenu'] = 'Supply From Repair';
+        $this->global['contentHeader'] = 'Supply From Repair';
+        $this->global['contentTitle'] = 'Supply From Repair';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
         $this->global['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
         $this->global['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
         $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, NULL);
     }
 
     public function views(){
-        $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
-        $this->global['pageMenu'] = 'Supply From Vendor';
-        $this->global['contentHeader'] = 'Supply From Vendor';
-        $this->global['contentTitle'] = 'Supply From Vendor';
+        $this->global['pageTitle'] = 'Supply From Repair - '.APP_NAME;
+        $this->global['pageMenu'] = 'Supply From Repair';
+        $this->global['contentHeader'] = 'Supply From Repair';
+        $this->global['contentTitle'] = 'Supply From Repair';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -61,10 +61,10 @@ class CSupplyFromVendor extends BaseController
             redirect('cl');
             
         }else{
-            $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
-            $this->global['pageMenu'] = 'Supply From Vendor';
-            $this->global['contentHeader'] = 'Supply From Vendor';
-            $this->global['contentTitle'] = 'Supply From Vendor';
+            $this->global['pageTitle'] = 'Supply From Repair - '.APP_NAME;
+            $this->global['pageMenu'] = 'Supply From Repair';
+            $this->global['contentHeader'] = 'Supply From Repair';
+            $this->global['contentTitle'] = 'Supply From Repair';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             $this->global['alias_controller_name']=$this->alias_controller_name;
@@ -84,24 +84,22 @@ class CSupplyFromVendor extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $fcode ='WSPS';
-        $fdate1 = $this->input->post('fdate1', TRUE);
-        $fdate2 = $this->input->post('fdate2', TRUE);
-        $arrWhere = array('fcode'=>$fcode,'fdate1'=>$fdate1,'fdate2'=>$fdate2);
+        $fcode = 'WSPS';
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_'.$this->api_role), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
-            $transnum = filter_var($r->sfvendor_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->sfvendor_date, FILTER_SANITIZE_STRING);
-            $purpose = filter_var($r->sfvendor_purpose, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->sfvendor_qty, FILTER_SANITIZE_NUMBER_INT);
+            $transnum = filter_var($r->sfrepair_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->sfrepair_date, FILTER_SANITIZE_STRING);
+            $purpose = filter_var($r->sfrepair_purpose, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
-            $notes = filter_var($r->sfvendor_notes, FILTER_SANITIZE_STRING);
-            //$button = '<a href="'.base_url("print-incoming-supply/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-
+            $notes = filter_var($r->sfrepair_notes, FILTER_SANITIZE_STRING);
+            
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
             $row['purpose'] = $purpose;
@@ -179,15 +177,15 @@ class CSupplyFromVendor extends BaseController
         $partstock = "";
         if(!empty($rs)){
             foreach ($rs as $r) {
-                $id = filter_var($r->tmp_sfvendor_id, FILTER_SANITIZE_NUMBER_INT);
+                $id = filter_var($r->tmp_sfrepair_id, FILTER_SANITIZE_NUMBER_INT);
                 $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
                 $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
                 $rs_stock = $this->get_info_part_stock($this->stock_want_to_update, $partnum);
                 foreach ($rs_stock as $s){
                     $partstock = (int)$s["stock"];
                 }
-                $cartid = filter_var($r->tmp_sfvendor_uniqid, FILTER_SANITIZE_STRING);
-                $qty = filter_var($r->tmp_sfvendor_qty, FILTER_SANITIZE_NUMBER_INT);
+                $cartid = filter_var($r->tmp_sfrepair_uniqid, FILTER_SANITIZE_STRING);
+                $qty = filter_var($r->tmp_sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
 
                 $row['id'] = $id;
                 $row['partno'] = $partnum;
@@ -291,11 +289,11 @@ class CSupplyFromVendor extends BaseController
         $date = date('Y-m-d');
         $fqty = $this->input->post('fqty', TRUE);
         $ftransnotes = $this->input->post('fnotes', TRUE);
-        $fponum = $this->input->post('fponum', TRUE);
+        //$fponum = $this->input->post('fponum', TRUE); //NOT USE FOR REPAIR
         
         //var form static
-        $kode = 'IN-VDR';
-        $fpurpose = 'VDR';
+        $kode = 'IN-DRC';
+        $fpurpose = 'DRC';
         
         //post doc
         $arrParam = array('fparam'=>$kode, 'fcode'=>$fcode);
@@ -316,7 +314,7 @@ class CSupplyFromVendor extends BaseController
                 //insert transaction
                 $dataTrans = array(
                     'ftransno'=>$transnum, 
-                    'fponum' => $fponum,
+                    //'fponum' => $fponum, // NOT USE FOR REPAIR
                     'fdate'=>$date, 
                     'fpurpose'=>$fpurpose, 
                     'ftransnotes'=>$ftransnotes, 
@@ -560,11 +558,11 @@ class CSupplyFromVendor extends BaseController
         $data = array();
         $partstock = "";
         foreach ($rs as $r) {
-            $id = filter_var($r->tmp_sfvendor_id, FILTER_SANITIZE_NUMBER_INT);
+            $id = filter_var($r->tmp_sfrepair_id, FILTER_SANITIZE_NUMBER_INT);
             $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $cartid = filter_var($r->tmp_sfvendor_uniqid, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->tmp_sfvendor_qty, FILTER_SANITIZE_NUMBER_INT);
+            $cartid = filter_var($r->tmp_sfrepair_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
             
             $row['id'] = $id;
             $row['partno'] = $partnum;

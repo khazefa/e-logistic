@@ -39,13 +39,7 @@
                                     </div>
                                 </div>
 
-                                <?php $input = 'fponumber';?>
-                                <div class="form-group row">
-                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">PO Number <span class="text-info">(optional)</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="<?=$input;?>" id="<?=$input;?>" class="form-control"><span class="text-danger" id="msg_<?=$input;?>"></span>
-                                    </div>
-                                </div>
+                               
                                 <!-- <div class="row">
                                     <div class="col-sm-12">
                                         <button type="button" id="btn_add" class="btn btn-warning waves-effect waves-light">

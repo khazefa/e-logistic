@@ -257,8 +257,9 @@ $config['api_get_data_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/get
 // ===========================
 
 // ===========================
-//  Begin Procedure
+//  Begin Procedure SUPPLY FROM VENDOR
 // ===========================
+
 //transaction
 $config['api_list_view_supplyfromvendor'] = constant('urlapi').'api/cpsupplyfromvendor/list_view/'; //POST
 $config['api_get_supplyfromvendor_num'] = constant('urlapi').'api/cpsupplyfromvendor/get_key_num/'; //POST
@@ -272,6 +273,28 @@ $config['api_list_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfrom
 $config['api_delete_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/delete_cart/'; //POST
 $config['api_total_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/total_cart/'; //POST
 $config['api_clear_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/delete_multi_cart/'; //POST
+
+// ===========================
+//  End Procedure
+// ===========================
+
+// ===========================
+//  Begin Procedure SUPPLY FROM REPAIR
+// ===========================
+
+//transaction
+$config['api_list_view_supplyfromrepair'] = constant('urlapi').'api/cpsupplyfromrepair/list_view/'; //POST
+$config['api_get_supplyfromrepair_num'] = constant('urlapi').'api/cpsupplyfromrepair/get_key_num/'; //POST
+$config['api_cancel_trans_supplyfromrepair'] = constant('urlapi').'api/cpsupplyfromrepair/delete_trans/'; //POST
+$config['api_add_supplyfromrepair_trans'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans/'; //POST
+$config['api_add_supplyfromrepair_trans_detail'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans_detail/'; //POST
+
+//temporary cart
+$config['api_add_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans_tmp/'; //POST
+$config['api_list_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/list_tmp/'; //POST
+$config['api_delete_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/delete_cart/'; //POST
+$config['api_total_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/total_cart/'; //POST
+$config['api_clear_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/delete_multi_cart/'; //POST
 
 // ===========================
 //  End Procedure

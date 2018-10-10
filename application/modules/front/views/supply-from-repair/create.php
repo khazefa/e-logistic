@@ -11,7 +11,23 @@
                                 <strong class="card-title">Input Data</strong>
                             </div>
                             <div class="card-body">
-                                
+
+                                <?php $input = 'fpartname';?>
+                                <div class="form-group row">
+                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">Search Parts </label>
+                                    <div class="col-sm-9">
+                                        <select id="<?=$input;?>" name="<?=$input;?>" class="selectpicker" data-live-search="true" 
+                                        data-selected-text-format="values" title="Search Part Name.." data-style="btn-light">
+                                            <option value="0">Select Part Name</option>
+                                            <?php
+                                                foreach($list_part as $p){
+                                                    echo '<option value="'.$p["partno"].'">'.$p['partno'].' - '.$p["name"].'</option>';
+                                                }
+                                            ?>
+                                        </select>   
+                                    </div>
+                                </div>
+
                                 <?php $input = 'fpartnum';?>
                                 <div class="form-group row">
                                     <label for="<?=$input;?>" class="col-sm-3 col-form-label">Part Number <span class="text-danger">*</span></label>
@@ -95,6 +111,7 @@
 /*
 * variable for supply transaction
 */
+var e_partname = $('#fpartname');
 var e_partnum = $('#fpartnum');
 var e_qty = $('#fqty');
 var e_delivery_notes = $('#fdeliverynotes');
@@ -233,12 +250,16 @@ function complete_supply(){
             });
             btn_submit.prop('disabled',false);
         }else if(jqXHR.status == 1){
-            var q = confirm('Transaksi Sukses, ingin tambah transaksi lain?');
-            if (q){
-                init_form();
-            }else{
-                window.location = "<?php echo base_url(''.$alias_controller_name.'-trans')?>";
-            }
+            set_confirm("Transaction Success, is there any other transaction?")
+            modalConfirm(function(conf){
+                console.log(conf);
+                if(conf){
+                    init_form();
+                }else{
+                    window.location = "<?php echo base_url(''.$alias_controller_name.'-trans')?>";
+                }
+            });
+
         }
     };
     xhqr(url,type,data,success,error_xhqr);
@@ -352,6 +373,7 @@ function falerts(fobj,val,msg){
         msgs.html(msg);
     }
 }
+
 //function validation form
 function validation(){
     var ret = false;
@@ -368,6 +390,24 @@ function validation(){
     return ret;
 }
 
+var modalConfirm = function(callback){
+    $("#ans_yess").on("click", function(){
+        callback(true);
+        $("#global_confirm").modal('hide');
+    });
+    
+    $("#ans_no").on("click", function(){
+        callback(false);
+        $("#global_confirm").modal('hide');
+    });
+};
+
+function set_confirm(message){
+    $("#global_confirm .modal-title").html("Confirmation");
+    $("#global_confirm .modal-body h4").html(""+message);
+    $('#global_confirm').modal("show");
+    
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -396,14 +436,16 @@ $(document).ready(function(ex){
             if(e.which == 13) {
                 if($(this).val() > 0){
                     if(add_cart()){
-                        q = confirm("is there any other parts?");
-                        if(q){
-                            e_qty.val('1');
-                            e_partnum.val('');
-                            e_partnum.focus();
-                        }else{
-                            e_delivery_notes.focus();
-                        }
+                        set_confirm("is there any other parts?");
+                        modalConfirm(function(conf){
+                            if(conf){
+                                e_qty.val('1');
+                                e_partnum.val('');
+                                e_partnum.focus();
+                            }else{
+                                e_delivery_notes.focus();
+                            }
+                        });
                     }
                 }else{
                     falerts($(this),false,'* Min Value is 1.')
@@ -418,6 +460,13 @@ $(document).ready(function(ex){
             }
         }
 
+    });
+
+    e_partname.on('change', function() {
+        var selectedText = $(this).find("option:selected").val();
+        e_partnum.prop('readonly', false);
+        e_partnum.val(selectedText);
+        e_partnum.focus();
     });
 
     btn_submit.on('click',function(e){

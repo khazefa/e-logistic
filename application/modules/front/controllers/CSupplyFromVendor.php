@@ -31,7 +31,8 @@ class CSupplyFromVendor extends BaseController
 
     public function index()
     {        
-       if($this->isStaff()){
+        $data = array();
+        if($this->isStaff()){
             redirect('cl');
         }
         $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
@@ -40,23 +41,13 @@ class CSupplyFromVendor extends BaseController
         $this->global['contentTitle'] = 'Supply From Vendor';
         $this->global['role'] = $this->role;
         $this->global['name'] = $this->name;
-        $this->global['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
-        $this->global['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
-        $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, NULL);
-    }
-
-    public function views(){
-        $this->global['pageTitle'] = 'Supply From Vendor - '.APP_NAME;
-        $this->global['pageMenu'] = 'Supply From Vendor';
-        $this->global['contentHeader'] = 'Supply From Vendor';
-        $this->global['contentTitle'] = 'Supply From Vendor';
-        $this->global ['role'] = $this->role;
-        $this->global ['name'] = $this->name;
-        
-        $this->loadViews('front/'.$this->alias_controller_name.'/lists', $this->global, NULL);
+        $data['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, $data);
     }
 
     public function add(){
+        $data = array();
         if($this->isStaff()){
             redirect('cl');
             
@@ -67,14 +58,12 @@ class CSupplyFromVendor extends BaseController
             $this->global['contentTitle'] = 'Supply From Vendor';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
-            $this->global['alias_controller_name']=$this->alias_controller_name;
-            $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, NULL);
+            $data['alias_controller_name']=$this->alias_controller_name;
+            $data['list_part'] = $this->get_list_part();
+            $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, $data);
         }
     }
     
-    public function print_trans(){
-        
-    }
 
 ///////////////////////////////////////////////////////////////////////////
 //FUNCTION API
@@ -582,5 +571,37 @@ class CSupplyFromVendor extends BaseController
         $rs_data = send_curl($arrWhere, $this->config->item('api_cancel_trans_'.$this->api_role.''), 'POST', FALSE);
         $rs = $rs_data->status;
         return $rs;
+    }
+
+    public function get_list_part(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fpartname = $this->input->post('fpartname', TRUE);
+
+        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
+        if ($fpartname != "") $arrWhere['fname'] = $fpartname;
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            
+            $row['pid'] = $pid;
+            $row['partno'] = $partnum;
+            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
     }
 }

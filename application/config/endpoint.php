@@ -299,3 +299,13 @@ $config['api_clear_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfro
 // ===========================
 //  End Procedure
 // ===========================
+
+// ===========================
+//  Begin Procedure VENDOR SUPPLY
+// ===========================
+
+$config['api_list_vendor'] = constant('urlapi').'api/cvendor/list/'; //POST
+
+// ===========================
+//  End Procedure
+// ===========================

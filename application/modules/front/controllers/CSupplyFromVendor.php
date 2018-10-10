@@ -60,6 +60,7 @@ class CSupplyFromVendor extends BaseController
             $this->global ['name'] = $this->name;
             $data['alias_controller_name']=$this->alias_controller_name;
             $data['list_part'] = $this->get_list_part();
+            $data['list_vendor'] = $this->get_list_vendor();
             $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, $data);
         }
     }
@@ -281,7 +282,8 @@ class CSupplyFromVendor extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $ftransnotes = $this->input->post('fnotes', TRUE);
         $fponum = $this->input->post('fponum', TRUE);
-        
+        $fvendor = $this->input->post('fvendor', TRUE);
+
         //var form static
         $kode = 'IN-VDR';
         $fpurpose = 'VDR';
@@ -309,6 +311,7 @@ class CSupplyFromVendor extends BaseController
                     'fdate'=>$date, 
                     'fpurpose'=>$fpurpose, 
                     'ftransnotes'=>$ftransnotes, 
+                    'fvendor'=>$fvendor,
                     'fcode'=>$fcode,
                     'fqty'=>$fqty, 
                     'fuser'=>$createdby
@@ -573,7 +576,7 @@ class CSupplyFromVendor extends BaseController
         return $rs;
     }
 
-    public function get_list_part(){
+    private function get_list_part(){
         $rs = array();
         $arrWhere = array();
         
@@ -602,6 +605,25 @@ class CSupplyFromVendor extends BaseController
             $data[] = $row;
         }
         
+        return $data;
+    }
+
+    private function get_list_vendor(){
+        $rs = array();
+        $arrWhere = array();
+
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_vendor'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result :array();
+
+        $data = array();
+        foreach($rs as $r){
+            $dat = (array)$r;
+            foreach($dat as $k=>$v){
+                $row[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+            }
+            $data[] = $row;
+        }
+
         return $data;
     }
 }

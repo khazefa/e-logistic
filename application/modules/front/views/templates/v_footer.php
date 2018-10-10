@@ -6,8 +6,13 @@
         <footer class="footer">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 text-center">
+                    <div class="col-8 text-left">
                         2018 © Diebold Nixdorf Indonesia - Service Division
+                    </div>
+                    <div class="col-4 text-right">
+                        <script language="JavaScript" type="text/javascript">
+                        TrustLogo("https://elogistic.id/assets/public/images/comodo_secure_seal_76x26_transp.png", "CL1", "none");
+                        </script>
                     </div>
                 </div>
             </div>

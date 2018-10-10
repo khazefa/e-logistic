@@ -43,6 +43,7 @@ class CSupplyFromRepair extends BaseController
         $this->global ['name'] = $this->name;
         $data['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
         $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $data['alias_controller_name']=$this->alias_controller_name;
         $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, $data);
     }
 
@@ -104,13 +105,15 @@ class CSupplyFromRepair extends BaseController
             $qty = filter_var($r->sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->sfrepair_notes, FILTER_SANITIZE_STRING);
+            $button = '<a href="javascript:viewdetail(\''.$transnum.'\');" target="_blank"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
             
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
-            $row['purpose'] = $purpose;
+            $row['purpose'] = 'Supply From Vendor';
             $row['qty'] = $qty;
             $row['user'] = $user;
             $row['notes'] = $notes;
+            $row['button'] = $button;
  
             $data[] = $row;
         }
@@ -122,6 +125,42 @@ class CSupplyFromRepair extends BaseController
         );
     }
 
+    public function get_trans(){
+        $rs = array();
+        $arrWhere = array();
+        $res = array('status'=>FALSE);
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->api_role.'_get_trans'), 'POST', FALSE);
+        //var_dump($rs_data); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($rdata)
+        );
+    }
+    public function get_trans_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->api_role.'_get_trans_detail'), 'POST', FALSE);
+        //var_dump($rs_data ); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$rdata))
+        );
+    }
+    
     public function add_cart(){
         $success_response = array(
             'status' => 1

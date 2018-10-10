@@ -266,6 +266,8 @@ $config['api_get_supplyfromvendor_num'] = constant('urlapi').'api/cpsupplyfromve
 $config['api_cancel_trans_supplyfromvendor'] = constant('urlapi').'api/cpsupplyfromvendor/delete_trans/'; //POST
 $config['api_add_supplyfromvendor_trans'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans/'; //POST
 $config['api_add_supplyfromvendor_trans_detail'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans_detail/'; //POST
+$config['api_get_supplyfromvendor_get_trans'] = constant('urlapi').'api/cpsupplyfromvendor/get_trans/'; //POST
+$config['api_get_supplyfromvendor_get_trans_detail'] = constant('urlapi').'api/cpsupplyfromvendor/get_trans_detail/'; //POST
 
 //temporary cart
 $config['api_add_supplyfromvendor_cart'] = constant('urlapi').'api/cpsupplyfromvendor/create_trans_tmp/'; //POST
@@ -288,6 +290,8 @@ $config['api_get_supplyfromrepair_num'] = constant('urlapi').'api/cpsupplyfromre
 $config['api_cancel_trans_supplyfromrepair'] = constant('urlapi').'api/cpsupplyfromrepair/delete_trans/'; //POST
 $config['api_add_supplyfromrepair_trans'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans/'; //POST
 $config['api_add_supplyfromrepair_trans_detail'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans_detail/'; //POST
+$config['api_get_supplyfromrepair_get_trans'] = constant('urlapi').'api/cpsupplyfromrepair/get_trans/'; //POST
+$config['api_get_supplyfromrepair_get_trans_detail'] = constant('urlapi').'api/cpsupplyfromrepair/get_trans_detail/'; //POST
 
 //temporary cart
 $config['api_add_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfromrepair/create_trans_tmp/'; //POST

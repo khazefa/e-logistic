@@ -49,8 +49,9 @@
                                                 <th>FSL</th>
                                                 <th>Part Number</th>
                                                 <th>Part Name</th>
-                                                <th>Min Stock</th>
                                                 <th>Init Stock</th>
+                                                <th>Min Stock</th>
+                                                <th>On hand FSE</th>
                                                 <th>Last Stock</th>
                                                 <!--<th>Action</th>-->
                                             </tr>
@@ -138,12 +139,13 @@
                 { "data": 'code' },
                 { "data": 'partno' },
                 { "data": 'partname' },
-                { "data": 'minstock' },
                 { "data": 'initstock' },
+                { "data": 'minstock' },
+                { "data": 'onhand' },
                 { "data": 'stock' },
 //                { "data": 'button' },
             ],
-            order: [[ 5, "desc" ]],
+            order: [[ 6, "desc" ]],
             columnDefs: [{ 
                 orderable: false,
                 targets: [ 0 ]

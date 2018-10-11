@@ -218,12 +218,9 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="icon-basket"></i>Transaction</a>
                                 <ul class="submenu">
-                                    <li>
-                                        <a href="<?php echo base_url("delivery-note-trans");?>">CWH Outgoing to FSL</a>
-                                    </li>
-                                    <li>
-                                        <a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a>
-                                    </li>
+                                    <li><a href="<?php echo base_url("supply-from-vendor-trans");?>">Supply from Vendor</a></li>
+                                    <li><a href="<?php echo base_url("supply-from-repair-trans");?>">Supply from Repair Center</a></li>
+                                    <li><a href="<?php echo base_url("delivery-note-trans");?>">Send Parts to FSL</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">
@@ -232,6 +229,8 @@
                                     <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
                                     <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a></li>
+                                    <li><a href="<?php echo base_url("view-incoming-trans");?>">Incoming</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

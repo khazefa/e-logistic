@@ -91,7 +91,7 @@ class CSupplyFromVendor extends BaseController
             $qty = filter_var($r->sfvendor_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->sfvendor_notes, FILTER_SANITIZE_STRING);
-            $button = '<a href="javascript:viewdetail(\''.$transnum.'\');" target="_blank"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
+            $button = '<a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
 
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;

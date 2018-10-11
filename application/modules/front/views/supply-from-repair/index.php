@@ -268,8 +268,8 @@
         var success = function (jqXHR) {
                 var rs = jqXHR[0];
                 console.log(rs);
-                $('#trans_code').html(rs.sfvendor_num);
-                $('#trans_date').html(rs.sfvendor_date);
+                $('#trans_code').html(rs.sfrepair_num);
+                $('#trans_date').html(rs.sfrepair_date);
                 
 
                 

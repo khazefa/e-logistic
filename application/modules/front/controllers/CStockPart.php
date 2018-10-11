@@ -184,7 +184,7 @@ class CStockPart extends BaseController
         if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_fsl_stock'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -195,6 +195,7 @@ class CStockPart extends BaseController
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
             $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
@@ -203,6 +204,7 @@ class CStockPart extends BaseController
             $row['partname'] = $partname;
             $row['minstock'] = $minstock;
             $row['initstock'] = $initstock;
+            $row['onhand'] = $qtyonhand;
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
             }else{
@@ -240,16 +242,18 @@ class CStockPart extends BaseController
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+//            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
             $row['partname'] = $partname;
-            $row['minstock'] = $minstock;
             $row['initstock'] = $initstock;
+            $row['minstock'] = $minstock;
+//            $row['onhand'] = $qtyonhand;
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
             }else{
@@ -353,7 +357,7 @@ class CStockPart extends BaseController
         if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_fsl_stock'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -362,16 +366,18 @@ class CStockPart extends BaseController
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
             $row['partname'] = $partname;
-            $row['minstock'] = $minstock;
             $row['initstock'] = $initstock;
+            $row['minstock'] = $minstock;
+            $row['onhand'] = $qtyonhand;
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
             }else{

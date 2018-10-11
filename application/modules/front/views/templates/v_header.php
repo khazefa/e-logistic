@@ -34,6 +34,12 @@
         <script src="<?php echo base_url();?>assets/public/js/waves.js"></script>
         <script src="<?php echo base_url();?>assets/public/js/jquery.slimscroll.js"></script>        
 
+        <script type="text/javascript"> //<![CDATA[ 
+        var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.comodo.com/" : "http://www.trustlogo.com/");
+        document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
+        //]]>
+        </script>
+        
     </head>
     <body>
 
@@ -212,9 +218,9 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="icon-basket"></i>Transaction</a>
                                 <ul class="submenu">
-                                    <li>
-                                        <a href="<?php echo base_url("delivery-note-trans");?>">CWH Outgoing to FSL</a>
-                                    </li>
+                                    <li><a href="<?php echo base_url("supply-from-vendor-trans");?>">Supply from Vendor</a></li>
+                                    <li><a href="<?php echo base_url("supply-from-repair-trans");?>">Supply from Repair Center</a></li>
+                                    <li><a href="<?php echo base_url("delivery-note-trans");?>">Send Parts to FSL</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">
@@ -223,6 +229,8 @@
                                     <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
                                     <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a></li>
+                                    <li><a href="<?php echo base_url("view-incoming-trans");?>">Incoming</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

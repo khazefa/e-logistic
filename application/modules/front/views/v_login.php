@@ -20,13 +20,19 @@
 
         <script src="<?php echo base_url();?>assets/public/js/modernizr.min.js"></script>
 
+        <script type="text/javascript"> //<![CDATA[ 
+        var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.comodo.com/" : "http://www.trustlogo.com/");
+        document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
+        //]]>
+        </script>
+        
     </head>
     <!-- Begin page -->
     <div class="container">
     <br>
     <h3 class="text-center"><?php echo APP_NAME;?> Diebold Nixdorf Indonesia</h3>
     <hr>
-        <div class="row">
+        <div class="row m-b-30">
         <aside class="col-md-4 offset-md-4">
             <div class="card">
             <article class="card-body">
@@ -80,6 +86,16 @@
             </article>
             </div> <!-- card.// -->
         </aside>
+        </div>
+        <div class="row">
+                <div class="col-3 mx-auto">
+                        <div class="text-center">
+                                <script language="JavaScript" type="text/javascript">
+                                TrustLogo("https://elogistic.id/assets/public/images/comodo_secure_seal_76x26_transp.png", "CL1", "none");
+                                </script>
+                                <a class="text-center" href="https://www.positivessl.com/" id="comodoTL">Positive SSL</a>
+                        </div>
+                </div>
         </div>
     </div>
     <!-- End page -->

@@ -375,11 +375,11 @@ $config['sess_use_database'] = FALSE;
 $config['sess_driver'] = 'files';
 //$config['sess_driver'] = 'redis';
 $config['sess_cookie_name'] = 'eloqu';
-$config['sess_expiration'] = 7200;
+$config['sess_expiration'] = 86400;
 $config['sess_save_path'] = FCPATH . 'chc/cache/';
 //$config['sess_save_path'] = 'tcp://localhost:6379';
 $config['sess_match_ip'] = TRUE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 0;
 $config['sess_regenerate_destroy'] = FALSE;
 
 /*

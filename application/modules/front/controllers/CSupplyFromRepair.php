@@ -109,7 +109,7 @@ class CSupplyFromRepair extends BaseController
             
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
-            $row['purpose'] = 'Supply From Vendor';
+            $row['purpose'] = 'Supply From Repair';
             $row['qty'] = $qty;
             $row['user'] = $user;
             $row['notes'] = $notes;

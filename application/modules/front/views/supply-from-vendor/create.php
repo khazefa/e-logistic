@@ -5,13 +5,29 @@
             <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-5">
                         <div class="card-box">
                             <div class="card-header bg-primary text-white">
                                 <strong class="card-title">Input Data</strong>
                             </div>
                             <div class="card-body">
                                 
+                                <?php $input = 'fpartname';?>
+                                <div class="form-group row">
+                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">Search Parts </label>
+                                    <div class="col-sm-9">
+                                        <select id="<?=$input;?>" name="<?=$input;?>" class="selectpicker" data-live-search="true" 
+                                        data-selected-text-format="values" title="Search Part Name.." data-style="btn-light">
+                                            <option value="0">Select Part Name</option>
+                                            <?php
+                                                foreach($list_part as $p){
+                                                    echo '<option value="'.$p["partno"].'">'.$p['partno'].' - '.$p["name"].'</option>';
+                                                }
+                                            ?>
+                                        </select>   
+                                    </div>
+                                </div>
+
                                 <?php $input = 'fpartnum';?>
                                 <div class="form-group row">
                                     <label for="<?=$input;?>" class="col-sm-3 col-form-label">Part Number <span class="text-danger">*</span></label>
@@ -39,6 +55,22 @@
                                     </div>
                                 </div>
 
+                                <?php $input = 'fvendor';?>
+                                <div class="form-group row">
+                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">Search Vendor <span class="text-danger">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select id="<?=$input;?>" name="<?=$input;?>" class="selectpicker" data-live-search="true" 
+                                        data-selected-text-format="values" title="Search Vendor Name.." data-style="btn-light">
+                                            <option value="0">Select Vendor Name</option>
+                                            <?php
+                                                foreach($list_vendor as $p){
+                                                    echo '<option value="'.$p["vendor_code"].'">'.$p['vendor_code'].' - '.$p["vendor_name"].'</option>';
+                                                }
+                                            ?>
+                                        </select><span class="text-danger" id="msg_<?=$input;?>"></span>
+                                    </div>
+                                </div>
+
                                 <?php $input = 'fponumber';?>
                                 <div class="form-group row">
                                     <label for="<?=$input;?>" class="col-sm-3 col-form-label">PO Number <span class="text-info">(optional)</span></label>
@@ -59,9 +91,9 @@
                             
                         </div>
                     </div>
-                </div>
-                <div class="row">  
-                    <div class="col-md-12">
+                <!-- </div>
+                <div class="row">   -->
+                    <div class="col-md-7">
                         <div class="card-box table-responsive">
                             <h4 class="m-b-30 header-title">Detail Transaction</h4>
                             <table id="cart_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
@@ -94,6 +126,8 @@
         </div>
     </div>
 </form>
+
+
 <!-- End Content Panel Supply -->
 
 <script type="text/javascript">
@@ -101,9 +135,11 @@
 /*
 * variable for supply transaction
 */
+var e_partname = $('#fpartname');
 var e_partnum = $('#fpartnum');
 var e_qty = $('#fqty');
 var e_delivery_notes = $('#fdeliverynotes');
+var e_vendor = $('#fvendor');
 var e_po_num = $('#fponumber');
 var e_total_qty = $('#ttl_qty');
 var btn_submit = $('#btn_submit');
@@ -135,6 +171,10 @@ function error_xhqr(jqXHR, textStatus, errorThrown){
 
 //INIT FORM
 function init_form(){
+    e_partname.val(0);
+    e_partname.selectpicker('refresh');
+    e_vendor.val(0);
+    e_vendor.selectpicker('refresh');
     e_partnum.val('');
     e_qty.val('1');
     e_delivery_notes.val('');
@@ -228,6 +268,7 @@ function complete_supply(){
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
         fqty : parseInt($('#ttl_qty').html()),
         fnotes : e_delivery_notes.val(),
+        fvendor : e_vendor.val(),
         fponum : e_po_num.val()
     };
     var success = function (jqXHR) {
@@ -239,12 +280,16 @@ function complete_supply(){
             });
             btn_submit.prop('disabled',false);
         }else if(jqXHR.status == 1){
-            var q = confirm('Transaksi Sukses, ingin tambah transaksi lain?');
-            if (q){
-                init_form();
-            }else{
-                window.location = "<?php echo base_url(''.$alias_controller_name.'-trans')?>";
-            }
+            set_confirm("Transaction Success, is there any other transaction?")
+            modalConfirm(function(conf){
+                console.log(conf);
+                if(conf){
+                    init_form();
+                }else{
+                    window.location = "<?php echo base_url(''.$alias_controller_name.'-trans')?>";
+                }
+            });
+            
         }
     };
     xhqr(url,type,data,success,error_xhqr);
@@ -358,13 +403,14 @@ function falerts(fobj,val,msg){
         msgs.html(msg);
     }
 }
+
 //function validation form
 function validation(){
     var ret = false;
     // ret1 = (e_partnum.val()=='')?falert(e_partnum,false):falert(e_partnum,true);
-    // ret2 = (e_qty.val()=='0'|| e_qty.val()=='')?falert(e_qty,false):falert(e_qty,true);
+    ret2 = (e_vendor.val()=='0'|| e_vendor.val()=='')?falert(e_vendor,false):falert(e_vendor,true);
     ret3 = (e_delivery_notes.val()=='')?falert(e_delivery_notes,false):falert(e_delivery_notes,true);
-    if(ret3){
+    if(ret3 && ret2){
         ret = true;
         btn_submit.prop('disabled',false);
     }else{
@@ -374,7 +420,24 @@ function validation(){
     return ret;
 }
 
+var modalConfirm = function(callback){
+    $("#ans_yess").on("click", function(){
+        callback(true);
+        $("#global_confirm").modal('hide');
+    });
+    
+    $("#ans_no").on("click", function(){
+        callback(false);
+        $("#global_confirm").modal('hide');
+    });
+};
 
+function set_confirm(message){
+    $("#global_confirm .modal-title").html("Confirmation");
+    $("#global_confirm .modal-body h4").html(""+message);
+    $('#global_confirm').modal("show");
+    
+}
 
 ////////////////////////////////////////////////////////////
 // when document ready to execute 
@@ -383,13 +446,27 @@ $(document).ready(function(ex){
     init_table();
     init_form();
     
-
     $('input[type=text]').on('focusout',function(e){
         validation();
         if($(this).attr('id') == 'fpartnum'){
             check_parts();
         }
     });
+
+    e_vendor.on('change', function() {
+        var selectedText = $(this).find("option:selected").text();
+        var v = $(this).val();
+        
+        if(v === "0"){
+            alert( "Please choose Vendor!" );
+            e_vendor.focus();
+            //init_form();
+        }else{
+            validation();
+            e_po_num.focus();
+        }
+    });
+
     $('input[type=text], input[type=number]').on('keypress',function(e){
         
         if($(this).attr('id') == 'fpartnum'){
@@ -402,14 +479,17 @@ $(document).ready(function(ex){
             if(e.which == 13) {
                 if($(this).val() > 0){
                     if(add_cart()){
-                        q = confirm("is there any other parts?");
-                        if(q){
-                            e_qty.val('1');
-                            e_partnum.val('');
-                            e_partnum.focus();
-                        }else{
-                            e_delivery_notes.focus();
-                        }
+                        set_confirm("is there any other parts?");
+                        modalConfirm(function(conf){
+                            if(conf){
+                                e_qty.val('1');
+                                e_partnum.val('');
+                                e_partnum.focus();
+                            }else{
+                                e_delivery_notes.focus();
+                            }
+                        });
+                        
                     }
                 }else{
                     falerts($(this),false,'* Min Value is 1.')
@@ -420,10 +500,18 @@ $(document).ready(function(ex){
 
         if($(this).attr('id') == 'fdeliverynotes'){
             if(e.which == 13) {
-                e_po_num.focus();
+                e_vendor.focus();
             }
         }
+        
 
+    });
+
+    e_partname.on('change', function() {
+        var selectedText = $(this).find("option:selected").val();
+        e_partnum.prop('readonly', false);
+        e_partnum.val(selectedText);
+        e_partnum.focus();
     });
 
     btn_submit.on('click',function(e){

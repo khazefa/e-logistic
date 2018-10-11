@@ -31,7 +31,8 @@ class CSupplyFromRepair extends BaseController
 
     public function index()
     {        
-       if($this->isStaff()){
+        $data = array();
+        if($this->isStaff()){
             redirect('cl');
         }
         $this->global['pageTitle'] = 'Supply From Repair - '.APP_NAME;
@@ -40,9 +41,10 @@ class CSupplyFromRepair extends BaseController
         $this->global['contentTitle'] = 'Supply From Repair';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
-        $this->global['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
-        $this->global['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
-        $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, NULL);
+        $data['link_new'] = base_url('new-'.$this->alias_controller_name.'-trans');
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $data['alias_controller_name']=$this->alias_controller_name;
+        $this->loadViews('front/'.$this->alias_controller_name.'/index', $this->global, $data);
     }
 
     public function views(){
@@ -57,6 +59,7 @@ class CSupplyFromRepair extends BaseController
     }
 
     public function add(){
+        $data = array();
         if($this->isStaff()){
             redirect('cl');
             
@@ -67,8 +70,10 @@ class CSupplyFromRepair extends BaseController
             $this->global['contentTitle'] = 'Supply From Repair';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
-            $this->global['alias_controller_name']=$this->alias_controller_name;
-            $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, NULL);
+            $data['alias_controller_name']=$this->alias_controller_name;
+            $data['list_part'] = $this->get_list_part();
+            $data['list_vendor'] = $this->get_list_vendor();
+            $this->loadViews('front/'.$this->alias_controller_name.'/create', $this->global, $data);
         }
     }
     
@@ -85,8 +90,9 @@ class CSupplyFromRepair extends BaseController
         $arrWhere = array();
         
         $fcode = 'WSPS';
-        //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode);
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $arrWhere = array('fcode'=>$fcode,'fdate1'=>$fdate1,'fdate2'=>$fdate2);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_'.$this->api_role), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -99,13 +105,15 @@ class CSupplyFromRepair extends BaseController
             $qty = filter_var($r->sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->sfrepair_notes, FILTER_SANITIZE_STRING);
+            $button = '<a href="javascript:viewdetail(\''.$transnum.'\');" target="_blank"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
             
             $row['transnum'] = $transnum;
             $row['transdate'] = $transdate;
-            $row['purpose'] = $purpose;
+            $row['purpose'] = 'Supply From Vendor';
             $row['qty'] = $qty;
             $row['user'] = $user;
             $row['notes'] = $notes;
+            $row['button'] = $button;
  
             $data[] = $row;
         }
@@ -117,6 +125,42 @@ class CSupplyFromRepair extends BaseController
         );
     }
 
+    public function get_trans(){
+        $rs = array();
+        $arrWhere = array();
+        $res = array('status'=>FALSE);
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->api_role.'_get_trans'), 'POST', FALSE);
+        //var_dump($rs_data); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($rdata)
+        );
+    }
+    public function get_trans_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->api_role.'_get_trans_detail'), 'POST', FALSE);
+        //var_dump($rs_data ); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$rdata))
+        );
+    }
+    
     public function add_cart(){
         $success_response = array(
             'status' => 1
@@ -290,6 +334,7 @@ class CSupplyFromRepair extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $ftransnotes = $this->input->post('fnotes', TRUE);
         //$fponum = $this->input->post('fponum', TRUE); //NOT USE FOR REPAIR
+        $fvendor = $this->input->post('fvendor', TRUE);
         
         //var form static
         $kode = 'IN-DRC';
@@ -318,6 +363,7 @@ class CSupplyFromRepair extends BaseController
                     'fdate'=>$date, 
                     'fpurpose'=>$fpurpose, 
                     'ftransnotes'=>$ftransnotes, 
+                    'fvendor'=>$fvendor,
                     'fcode'=>$fcode,
                     'fqty'=>$fqty, 
                     'fuser'=>$createdby
@@ -580,5 +626,56 @@ class CSupplyFromRepair extends BaseController
         $rs_data = send_curl($arrWhere, $this->config->item('api_cancel_trans_'.$this->api_role.''), 'POST', FALSE);
         $rs = $rs_data->status;
         return $rs;
+    }
+
+    private function get_list_part(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fpartname = $this->input->post('fpartname', TRUE);
+
+        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
+        if ($fpartname != "") $arrWhere['fname'] = $fpartname;
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            
+            $row['pid'] = $pid;
+            $row['partno'] = $partnum;
+            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+
+    private function get_list_vendor(){
+        $rs = array();
+        $arrWhere = array();
+
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_vendor'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result :array();
+
+        $data = array();
+        foreach($rs as $r){
+            $dat = (array)$r;
+            foreach($dat as $k=>$v){
+                $row[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+            }
+            $data[] = $row;
+        }
+
+        return $data;
     }
 }

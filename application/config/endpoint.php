@@ -217,17 +217,6 @@ $config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_
 // ===========================
 //  Begin Procedure
 // ===========================
-$config['api_detail_outgoings'] = constant('urlapi').'api/cprocedures/list_detail_outgoings/'; //POST
-$config['api_daily_reports'] = constant('urlapi').'api/cpreports/list_outgoing_daily_reports/'; //POST
-$config['api_used_reports'] = constant('urlapi').'api/cpreports/list_outgoing_used_part/'; //POST
-$config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_replenish_plan/'; //POST
-// ===========================
-//  End Procedureview
-// ===========================
-
-// ===========================
-//  Begin Procedure
-// ===========================
 //$config['api_list_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_detail/'; //POST
 $config['api_list_view_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_view/'; //POST
 $config['api_add_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/create_trans_tmp/'; //POST

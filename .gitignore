@@ -25,3 +25,4 @@ application/config/main_endpoint.php
 
 #temporary files
 tmp/*
+*.bck

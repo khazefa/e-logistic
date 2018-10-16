@@ -40,10 +40,10 @@ class CSearchParts extends BaseController{
         $rs = $rs_data->status ? $rs_data->result : array();
         $data = array();
         foreach ($rs as $r) {
-            $row = array();
+            $row = array(); 
             $row['part_number'] = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             $row['part_name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $row['stock_last_value'] = filter_var($r->stock_last_value, FILTER_SANITIZE_STRING);
+            $row['stock_last_value'] = filter_var($r->Stock, FILTER_SANITIZE_STRING);
             $row['part_subtitute'] = filter_var($r->part_subtitute, FILTER_SANITIZE_STRING);
 //            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
             $data[] = $row;

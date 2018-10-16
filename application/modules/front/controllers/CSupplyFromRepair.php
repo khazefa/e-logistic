@@ -100,7 +100,7 @@ class CSupplyFromRepair extends BaseController
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->sfrepair_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->sfrepair_date, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
             $purpose = filter_var($r->sfrepair_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->sfrepair_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_key, FILTER_SANITIZE_STRING);
@@ -108,7 +108,7 @@ class CSupplyFromRepair extends BaseController
             $button = '<a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
             
             $row['transnum'] = $transnum;
-            $row['transdate'] = $transdate;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
             $row['purpose'] = 'Supply From Repair';
             $row['qty'] = $qty;
             $row['user'] = $user;

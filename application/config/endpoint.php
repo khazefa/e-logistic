@@ -183,6 +183,8 @@ $config['api_list_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list/
 $config['api_list_view_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view/';
 $config['api_get_data_detail'] = constant('urlapi').'api/cpdeliverynote/get_data_detail/';//get
 $config['api_update_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/update_cart/'; //POST
+$config['api_get_delivery_note_get_trans'] = constant('urlapi').'api/cpdeliverynote/get_trans/'; //POST
+$config['api_get_delivery_note_get_trans_detail'] = constant('urlapi').'api/cpdeliverynote/get_trans_detail/'; //POST
 // ===========================
 //  End Delivery Note  Trans
 // ===========================
@@ -218,6 +220,7 @@ $config['api_replenish_plan'] = constant('urlapi').'api/cpreports/list_outgoing_
 //  Begin Procedure
 // ===========================
 //$config['api_list_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_detail/'; //POST
+$config['api_list_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list/'; //POST
 $config['api_list_view_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_view/'; //POST
 $config['api_add_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/create_trans_tmp/'; //POST
 $config['api_list_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/list_tmp/'; //POST
@@ -228,7 +231,8 @@ $config['api_add_fsltocwh_trans'] = constant('urlapi').'api/cpfsltocwh/create_tr
 $config['api_add_fsltocwh_trans_detail'] = constant('urlapi').'api/cpfsltocwh/create_trans_detail/'; //POST
 $config['api_clear_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_multi_cart/'; //POST
 $config['api_get_data_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/get_data_detail/';//POST
-
+$config['api_get_fsltocwh_get_trans'] = constant('urlapi').'api/cpfsltocwh/get_trans/'; //POST
+$config['api_get_fsltocwh_get_trans_detail'] = constant('urlapi').'api/cpfsltocwh/get_trans_detail/'; //POST
 // $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
 // $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
 // $config['api_update_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/update_detail/'; //POST

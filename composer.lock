@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "markbaker/complex",
-            "version": "1.4.6",
+            "version": "1.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MarkBaker/PHPComplex.git",
-                "reference": "a78d82ae4e682c3809fc3023d1b0ce654f6ab12b"
+                "reference": "1ea674a8308baf547cbcbd30c5fcd6d301b7c000"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/a78d82ae4e682c3809fc3023d1b0ce654f6ab12b",
-                "reference": "a78d82ae4e682c3809fc3023d1b0ce654f6ab12b",
+                "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/1ea674a8308baf547cbcbd30c5fcd6d301b7c000",
+                "reference": "1ea674a8308baf547cbcbd30c5fcd6d301b7c000",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
                 "complex",
                 "mathematics"
             ],
-            "time": "2018-07-31T08:38:40+00:00"
+            "time": "2018-10-13T23:28:42+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",
@@ -107,12 +107,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "125f462a718956f37d81305ca0df4f17cef0f3b9"
+                "reference": "57404f43742a8164b5eac3ab03b962d8740885c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/125f462a718956f37d81305ca0df4f17cef0f3b9",
-                "reference": "125f462a718956f37d81305ca0df4f17cef0f3b9",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/57404f43742a8164b5eac3ab03b962d8740885c1",
+                "reference": "57404f43742a8164b5eac3ab03b962d8740885c1",
                 "shasum": ""
             },
             "require": {
@@ -145,7 +145,7 @@
                 "dompdf/dompdf": "Option for rendering PDF with PDF Writer",
                 "jpgraph/jpgraph": "Option for rendering charts, or including charts with PDF or HTML Writers",
                 "mpdf/mpdf": "Option for rendering PDF with PDF Writer",
-                "tecnick.com/tcpdf": "Option for rendering PDF with PDF Writer"
+                "tecnickcom/tcpdf": "Option for rendering PDF with PDF Writer"
             },
             "type": "library",
             "autoload": {
@@ -186,7 +186,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2018-08-06T02:58:06+00:00"
+            "time": "2018-09-30T03:57:24+00:00"
         },
         {
             "name": "psr/simple-cache",

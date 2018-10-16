@@ -294,6 +294,7 @@ $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['supply-from-other-fsl'] = 'front/cincoming/supply_from_other_fsl';
+$route['supply-from-other-fsl'] = 'front/cincoming/supply_from_warehouse';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 $route['return-parts'] = 'front/creturnparts/add';

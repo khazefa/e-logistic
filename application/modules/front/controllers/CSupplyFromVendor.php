@@ -94,7 +94,7 @@ class CSupplyFromVendor extends BaseController
             $button = '<a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
 
             $row['transnum'] = $transnum;
-            $row['transdate'] = $transdate;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
             $row['purpose'] = 'Supply From Vendor';
             $row['qty'] = $qty;
             $row['user'] = $user;

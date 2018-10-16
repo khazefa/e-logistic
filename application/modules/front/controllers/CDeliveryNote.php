@@ -12,6 +12,31 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CDeliveryNote extends BaseController
 {
+    private $alias_controller_name = 'delivery-note';
+    private $field_modal = array(
+        'trans_num' => 'Trans Num',
+        'trans_date' => 'Trans Date',
+        'fsl_name' => 'To FSL',
+        'trans_notes' => 'Notes',
+        'trans_purpose' => 'Purpose',
+        'airwaybill' => 'Airway Bill',
+        'delivery_by' => 'Delivered By',
+        'delivery_type' => 'Service',
+        'eta' => 'ETA'
+    );
+
+    private $field_value = array(
+        'trans_num' => 'delivery_note_num',
+        'trans_date' => 'delivery_note_date',
+        'fsl_name' => 'fsl_name',
+        'trans_notes' => 'delivery_note_notes',
+        'trans_purpose' => 'delivery_note_purpose',
+        'airwaybill' => 'delivery_note_airwaybill',
+        'delivery_by' => 'delivery_by',
+        'delivery_type' => 'delivery_time_type',
+        'eta' => 'delivery_note_eta'
+    );
+
     /**
      * This is default constructor of the class
      */
@@ -34,8 +59,14 @@ class CDeliveryNote extends BaseController
         $this->global['contentTitle'] = 'CWH Outgoing to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
-
-        $this->loadViews('front/delivery-note/index', $this->global, NULL);
+        $data['list_coverage'] = $this->get_list_warehouse("array");
+        $data['link_add'] = base_url('new-'.$this->alias_controller_name.'-trans');
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $data['link_modal_detail'] = base_url('api-'.$this->alias_controller_name.'-get-trans-detail');
+        $data['link_modal'] = base_url('api-'.$this->alias_controller_name.'-get-trans');
+        $data['field_modal_popup'] = $this->field_modal;
+        $data['field_modal_js'] = $this->field_value;
+        $this->loadViews('front/delivery-note/index', $this->global, $data);
             
        
     }
@@ -52,8 +83,13 @@ class CDeliveryNote extends BaseController
         $this->global['contentTitle'] = 'CWH Outgoing to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
-        
-        $this->loadViews('front/delivery-note/lists', $this->global, NULL);
+        $data['list_coverage'] = $this->get_list_warehouse("array");
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $data['link_modal_detail'] = base_url('api-'.$this->alias_controller_name.'-get-trans-detail');
+        $data['link_modal'] = base_url('api-'.$this->alias_controller_name.'-get-trans');
+        $data['field_modal_popup'] = $this->field_modal;
+        $data['field_modal_js'] = $this->field_value;
+        $this->loadViews('front/delivery-note/view', $this->global, $data);
     }
     
     /**
@@ -108,61 +144,230 @@ class CDeliveryNote extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $fcode = $this->repo;
-        //Parameters for cURL
-        $arrWhere = array('fcode'=>'WSPS');
+        //$fcode ='';
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $arrWhere = array('fdate1'=>$fdate1,'fdate2'=>$fdate2);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        
+        if (strpos($coverage, 'C000') !== false) {
+            $fcoverage = array();
+        }else{
+            if (strpos($coverage, ',') !== false) {
+                $fcoverage = str_replace(',', ';', $coverage);
+            }else{
+                $fcoverage = $coverage;
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_delivery_note'), 'POST', FALSE);
-        //var_dump($rs_data);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_delivery_note'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
-//            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
-           
-            $fpurpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->delivery_note_date, FILTER_SANITIZE_STRING);
+            $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
-            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
-            $status = filter_var($r->delivery_note_status, FILTER_SANITIZE_STRING);
-            $requestby = "";
-            $takeby = "";
-            $purpose = "";
-            
-            
-            
-            switch ($fpurpose){
+            $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            switch ($purpose){
                 case "SPL";
-                    $purpose = "SUPPLY";
+                    $purpose = "Supply";
                 break;
                 
+                default;
+                    $purpose = "-";
+                break;
             }
+
+            $row['transnum'] = $transnum;
+            $row['transdate'] = $transdate;
             
-            $row['delivery_note_num'] = $transnum;
-            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
-           
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
-            $row['user'] = $user_fullname;
-            $row['delivery_note_notes'] = $notes;
-            $row['delivery_note_status']= $status;
-            
-//            $row['notes'] = "-";
-            $row['delivery_note_status'] = strtoupper($status);
-            
-            $row['button'] = '<a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-            
-            
+            $row['user'] = $user;
+            $row['notes'] = $notes;
+            $row['button'] = '
+            <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
+            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
+            ';
  
-            $data[] = $row;
+            if(in_array($fsl_code, $e_coverage)){
+                $data[] = $row;
+            }
         }
         
         return $this->output
         ->set_content_type('application/json')
         ->set_output(
             json_encode(array('data'=>$data))
+        );
+    }
+    /**
+     * get list detail of table delivery note
+     * @param String post fdate1
+     * @param String post fdate2
+     * @param String post fcoverage
+     * 
+     */
+    public function get_list_view_datatable2(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        // $fticket = $this->input->post('fticket', TRUE);
+        // $fpurpose = $this->input->post('fpurpose', TRUE);
+        // $fstatus = $this->input->post('fstatus', TRUE);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        
+        if (strpos($coverage, 'C000') !== false) {
+            $fcoverage = array();
+        }else{
+            if (strpos($coverage, ',') !== false) {
+                $fcoverage = str_replace(',', ';', $coverage);
+            }else{
+                $fcoverage = $coverage;
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        //Parameters for cURL
+        $arrWhere = array('fdate1'=>$fdate1, 'fdate2'=>$fdate2);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_delivery_note'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $partnum = filter_var($r->part_number,FILTER_SANITIZE_STRING);
+            $partserial = filter_var($r->serial_number,FILTER_SANITIZE_STRING);
+            $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
+
+            $airwaybill = filter_var($r->delivery_note_airwaybill,FILTER_SANITIZE_STRING);
+            $delivery_by = filter_var($r->delivery_by,FILTER_SANITIZE_STRING);
+            $eta = filter_var($r->delivery_note_eta,FILTER_SANITIZE_STRING);
+
+//            $transdate = filter_var($r->delivery_note_date, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
+            
+            $fpurpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->dt_delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            //$notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
+            //$status = filter_var($r->delivery_note_status, FILTER_SANITIZE_STRING);
+            $requestby = "";
+            $takeby = "";
+            $purpose = "";
+            $curdatetime = new DateTime();
+            $datetime2 = new DateTime($transdate);
+            $interval = $curdatetime->diff($datetime2);
+//            $elapsed = $interval->format('%a days %h hours');
+            $elapsed = $interval->format('%a days');
+            
+            
+            // if(empty($engineer2) || $engineer2 == ""){
+            //     $requestby = $engineer_name;
+            //     $takeby = "-";
+            // }else{
+            //     $requestby = $engineer_name;
+            //     $takeby = $engineer2_name;
+            // }
+            
+            switch ($fpurpose){
+                case "SPL";
+                    $purpose = "Supply";
+                break;
+                
+                default;
+                    $purpose = "-";
+                break;
+            }
+
+            $row['part_number'] = $partnum;
+            $row['serial_number'] = $partserial;
+
+            $row['transnum'] = $transnum;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            $row['fsl'] = $fslname;
+            $row['airwaybill'] = $airwaybill;
+            $row['delivery_by'] = $delivery_by;
+            $row['eta'] = $eta;
+            $row['purpose'] = $purpose;
+            $row['qty'] = $qty;
+//            $row['notes'] = "-";
+            // $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+            
+            $row['button'] = '<a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+ 
+            if(in_array($fslcode, $e_coverage)){
+                $data[] = $row;
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+
+    public function get_trans(){
+        $rs = array();
+        $arrWhere = array();
+        $res = array('status'=>FALSE);
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_delivery_note_get_trans'), 'POST', FALSE);
+        //var_dump($rs_data); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        foreach($rdata as $v){
+            foreach($v as $rk => $rv){
+                $res[$rk] = filter_var($rv,FILTER_SANITIZE_STRING);
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($res)
+        );
+    }
+    public function get_trans_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_delivery_note_get_trans_detail'), 'POST', FALSE);
+        //var_dump($rs_data ); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$rdata))
         );
     }
     
@@ -1597,6 +1802,10 @@ class CDeliveryNote extends BaseController
             );
         
     }
+
+
+    
+
     
     
 }

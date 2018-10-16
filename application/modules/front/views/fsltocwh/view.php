@@ -37,6 +37,19 @@
                         <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <select name="fpurpose[]" id="fpurpose" class="selectpicker form-control" multiple data-actions-box="true" 
+                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose Purpose" data-style="btn-light">
+                            <?php
+                                foreach($field_purpose as $k=>$v){
+                                    echo '<option value="'.$k.'">'.$v.'</option>';
+                                }
+                            ?>
+                        </select>
+                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <button type="button" id="btn_search" class="btn btn-primary waves-effect waves-light">
@@ -50,9 +63,9 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=$link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <!-- <button type="button" onclick="location.href='#'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
-            </button>
+            </button> -->
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -103,7 +116,7 @@
 
 <!-- Modal Request Confirmation -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
-    <div class="modal-dialog"  style="max-width:750px;">
+    <div class="modal-dialog" style="max-width:750px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -156,6 +169,7 @@
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
     var e_coverage = $('#fcoverage');
+    var e_purpose = $('#fpurpose');
     var transnum = "";
     var table1;
     
@@ -237,7 +251,7 @@
             columns: [
                 { "data": 'part_number' },
                 { "data": 'part_name' },
-                { "data": 'dt_delivery_note_qty' },
+                { "data": 'dt_fsltocwh_qty' },
             ],
             order: [[ 0, "desc" ]],
             columnDefs: [{ 
@@ -377,6 +391,7 @@
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
                     d.fcoverage = e_coverage.val();
+                    d.fpurpose = e_purpose.val();
                 }
             },
             columns: [

@@ -50,9 +50,9 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=$link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <!-- <button type="button" onclick="location.href='#'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
-            </button>
+            </button> -->
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -103,7 +103,7 @@
 
 <!-- Modal Request Confirmation -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
-    <div class="modal-dialog"  style="max-width:750px;">
+    <div class="modal-dialog" style="max-width:750px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

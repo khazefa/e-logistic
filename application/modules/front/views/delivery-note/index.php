@@ -30,6 +30,15 @@
             </p>
             
             <div class="card-body">
+                <div class="row m-b-30">
+                    <div class="col-md-12">
+                        <div class="button-list">
+                            <button type="button" onclick="location.href='<?php echo base_url("search-parts");?>'" class="btn btn-primary btn-rounded w-md waves-effect waves-light">
+                                <i class="fa fa-search"></i> Search Part
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="table-responsive">
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">

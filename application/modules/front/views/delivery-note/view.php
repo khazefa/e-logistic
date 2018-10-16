@@ -50,9 +50,9 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=$link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <!-- <button type="button" onclick="location.href='#'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
-            </button>
+            </button> -->
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
@@ -79,15 +79,6 @@
             </p>
             
             <div class="card-body">
-                <div class="row m-b-30">
-                    <div class="col-md-12">
-                        <div class="button-list">
-                            <button type="button" onclick="location.href='<?php echo base_url("search-parts");?>'" class="btn btn-primary btn-rounded w-md waves-effect waves-light">
-                                <i class="fa fa-search"></i> Search Part
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="table-responsive">
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
@@ -112,7 +103,7 @@
 
 <!-- Modal Request Confirmation -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
-    <div class="modal-dialog"  style="max-width:750px;">
+    <div class="modal-dialog" style="max-width:750px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -13,6 +13,24 @@ require APPPATH . '/libraries/BaseController.php';
 class CFsltocwh extends BaseController
 {
     var $apirole = 'fsltocwh';
+    private $alias_controller_name = 'fsltocwh';
+    private $field_modal = array(
+        'trans_num' => 'Trans Num',
+        'trans_date' => 'Trans Date',
+        'fsl_name' => 'From FSL',
+        'trans_notes' => 'Notes',
+        'trans_purpose' => 'Purpose',
+        'airwaybill' => 'Airway Bill',
+        'delivery_by' => 'Delivered By',
+        'delivery_type' => 'Service',
+        'eta' => 'ETA'
+    );
+    private $field_purpose = array(
+        'RBP' => 'Return Bad Part',
+        'RBS' => 'Return Bad Stock' 
+    );
+    private $field_value = array();
+        
     /**
      * This is default constructor of the class
      */
@@ -20,7 +38,17 @@ class CFsltocwh extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        
+        $this->field_value = array(
+            'trans_num' => $this->apirole.'_num',
+            'trans_date' => $this->apirole.'_date',
+            'fsl_name' => 'fsl_name',
+            'trans_notes' => $this->apirole.'_notes',
+            'trans_purpose' => $this->apirole.'_purpose',
+            'airwaybill' => $this->apirole.'_airwaybill',
+            'delivery_by' => 'delivery_by',
+            'delivery_type' => 'delivery_time_type',
+            'eta' => $this->apirole.'_eta'
+        );
     }
     
     /**
@@ -33,8 +61,32 @@ class CFsltocwh extends BaseController
         $this->global['contentTitle'] = 'Outgoing FSL to CWH';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
+        $data['link_add'] = base_url('new-'.$this->alias_controller_name.'-trans');
+        //$data['list_coverage'] = $this->get_list_warehouse("array");
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
+        $data['link_modal_detail'] = base_url('api-'.$this->alias_controller_name.'-get-trans-detail');
+        $data['link_modal'] = base_url('api-'.$this->alias_controller_name.'-get-trans');
+        $data['field_modal_popup'] = $this->field_modal;
+        $data['field_modal_js'] = $this->field_value;
+        $data['field_purpose'] = $this->field_purpose;
+        $this->loadViews('front/fsltocwh/index', $this->global, $data);
+    }
 
-        $this->loadViews('front/fsltocwh/index', $this->global, NULL);
+    public function views() {
+        $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
+        $this->global['pageMenu'] = 'Outgoing FSL to CWH';
+        $this->global['contentHeader'] = 'Outgoing FSL to CWH';
+        $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        $data['list_coverage'] = $this->get_list_warehouse("array");
+        $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-view-datatable');
+        $data['link_modal_detail'] = base_url('api-'.$this->alias_controller_name.'-get-trans-detail');
+        $data['link_modal'] = base_url('api-'.$this->alias_controller_name.'-get-trans');
+        $data['field_modal_popup'] = $this->field_modal;
+        $data['field_modal_js'] = $this->field_value;
+        $data['field_purpose'] = $this->field_purpose;
+        $this->loadViews('front/fsltocwh/view', $this->global, $data);
     }
     
     /**
@@ -66,29 +118,34 @@ class CFsltocwh extends BaseController
         $arrWhere = array();
         
         $fcode = $this->repo;
-        //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode);
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $arrWhere = array('fdate1'=>$fdate1,'fdate2'=>$fdate2);
+       
+        $fpurpose = !empty($_POST['fpurpose']) ? implode(';',$_POST['fpurpose']) : "";
+        
+        
+
+        if(empty($fpurpose)){
+            $e_purpose = array();
+        }else{
+            $e_purpose = explode(';', $fpurpose);
+        }
+        
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_fsltocwh'), 'POST', FALSE);
-        //var_dump($rs_data);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_'.$this->alias_controller_name), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->fsltocwh_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
-            $fpurpose = filter_var($r->fsltocwh_purpose, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
+            $lpurpose = filter_var($r->fsltocwh_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->fsltocwh_qty, FILTER_SANITIZE_NUMBER_INT);
-            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->fsltocwh_notes, FILTER_SANITIZE_STRING);
-            $status = filter_var($r->fsltocwh_status, FILTER_SANITIZE_STRING);
-            $requestby = "";
-            $takeby = "";
-            $purpose = "";
-            
-            
-            
-            switch ($fpurpose){
+            $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            switch ($lpurpose){
                 case "RBP";
                     $purpose = "RETURN BAD PART";
                 break;
@@ -97,24 +154,109 @@ class CFsltocwh extends BaseController
                 break;
                 
             }
-            
-            $row['fsltocwh_num'] = $transnum;
+
+            $row['transnum'] = $transnum;
             $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
-           
+            
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
-            $row['user'] = $user_fullname;
-            $row['fsltocwh_notes'] = $notes;
-            $row['fsltocwh_status']= $status;
-            
-//            $row['notes'] = "-";
-            $row['fsltocwh_status'] = strtoupper($status);
-            
-            $row['button'] = '<a href="'.base_url('print-'.$this->apirole.'-trans/').$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-            
-            
+            $row['user'] = $user;
+            $row['notes'] = $notes;
+            $row['button'] = '
+            <a href="'.base_url("print-fsltocwh-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
+            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
+            ';
  
-            $data[] = $row;
+            if(($fsl_code == $fcode) AND in_array($lpurpose,$e_purpose)){
+                $data[] = $row;
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+
+    /**
+     * get list detail of table delivery note
+     * @param String post fdate1
+     * @param String post fdate2
+     * @param String post fcoverage
+     * 
+     */
+    public function get_list_view_datatable2(){
+        $rs = array();
+        $arrWhere = array();
+        
+        //$fcode ='';
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $arrWhere = array('fdate1'=>$fdate1,'fdate2'=>$fdate2);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        $fpurpose = !empty($_POST['fpurpose']) ? implode(';',$_POST['fpurpose']) : "";
+        
+        if (strpos($coverage, 'C000') !== false) {
+            $fcoverage = array();
+        }else{
+            if (strpos($coverage, ',') !== false) {
+                $fcoverage = str_replace(',', ';', $coverage);
+            }else{
+                $fcoverage = $coverage;
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+
+        if(empty($fpurpose)){
+            $e_purpose = array();
+        }else{
+            $e_purpose = explode(';', $fpurpose);
+        }
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_'.$this->alias_controller_name), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->fsltocwh_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
+            $lpurpose = filter_var($r->fsltocwh_purpose, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->fsltocwh_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->fsltocwh_notes, FILTER_SANITIZE_STRING);
+            $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            switch ($lpurpose){
+                case "RBP";
+                    $purpose = "RETURN BAD PART";
+                break;
+                case "RBS";
+                    $purpose = "RETURN BAD STOCK";
+                break;
+                
+            }
+
+            $row['transnum'] = $transnum;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            
+            $row['purpose'] = $purpose;
+            $row['qty'] = $qty;
+            $row['user'] = $user;
+            $row['notes'] = $notes;
+            $row['button'] = '
+            <a href="'.base_url("print-fsltocwh-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
+            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
+            ';
+ 
+            if(in_array($fsl_code, $e_coverage) AND in_array($lpurpose,$e_purpose)){
+                $data[] = $row;
+            }
         }
         
         return $this->output
@@ -128,38 +270,7 @@ class CFsltocwh extends BaseController
     
 ////////////////////////// FORM CREATE /////////////////////////////////////////
 
-// LIST COMBO BOX
-//==============================================================================
-    /**
-     * This function is used to get lists engineers
-   
-    private function get_list_engineers(){
-        $rs = array();
-        $arrWhere = array();
-        
-//        $fcode = $this->repo;
-//        $arrWhere = array('fcode'=>$fcode);
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $fullname = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $partner = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            
-            $row['feid'] = $key;
-            $row['fullname'] = $fullname;
-            $row['partner'] = $partner;
- 
-            $data[] = $row;
-        }
 
-        
-        return $data;
-    }
-      */
      
     /**
      * This function is used to get lists fsl
@@ -201,54 +312,7 @@ class CFsltocwh extends BaseController
     }
    
    
-    /**
-     * This function is used to get lists for populate data
-     
-    public function get_list_part_sub(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fcode = $this->repo;
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        
-        $arrWhere = array('fpartnum'=>$fpartnum);
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_partsub_part_sub'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : null;
-        
-        if(!empty($rs)){
-            $val_partsub = $rs;
-            
-            $exp_partsub = explode(";", $val_partsub);
-            $arrData = array();
-            foreach ($exp_partsub as $partnum){
-                $row['partno'] = $partnum;
-                
-                $result = $this->get_info_part_stock($fcode, $partnum);
-
-                $arrData[] = array('detail_data'=>$result);
-            }
-            $success_response = array(
-                'status' => 1,
-                'data'=> $arrData
-            );
-            $response = $success_response;
-        }else{
-            $error_response = array(
-                'status' => 0,
-                'message'=> 'Sparepart is out of stock and do not have subtitution',
-                'data'=> array()
-            );
-            $response = $error_response;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($response)
-        );
-    }
-    */
+   
    
      /**
      * This function is used to get lists for populate data
@@ -880,6 +944,47 @@ class CFsltocwh extends BaseController
         );
     }
     
+    public function get_trans(){
+        $rs = array();
+        $arrWhere = array();
+        $res = array('status'=>FALSE);
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->apirole.'_get_trans'), 'POST', FALSE);
+        //var_dump($rs_data); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        foreach($rdata as $v){
+            foreach($v as $rk => $rv){
+                $res[$rk] = filter_var($rv,FILTER_SANITIZE_STRING);
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($res)
+        );
+    }
+    public function get_trans_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftransnum = $this->input->post('ftransnum', TRUE);
+        $arrWhere = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_'.$this->apirole.'_get_trans_detail'), 'POST', FALSE);
+        //var_dump($rs_data ); 
+        $rs = $rs_data->status ? $rs_data->result : array();
+        $rdata = (array)$rs;
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$rdata))
+        );
+    }
     
     public function get_trans_num(){
         $arrWhere = array('fparam'=>"DN-CWH");

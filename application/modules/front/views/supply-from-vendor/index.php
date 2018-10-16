@@ -90,8 +90,8 @@
 
 <!-- Modal Request Confirmation -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
-    <div class="modal-dialog">
-        <div class="modal-content"  style="width:750px;margin:auto;">
+    <div class="modal-dialog"  style="max-width:750px;">
+        <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">View Detail</h4>
@@ -185,7 +185,7 @@
                     text: '<i class="fa fa-copy"></i>',
                     titleAttr: 'Copy',
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
+                        //columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -197,7 +197,7 @@
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
+                        //columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -209,7 +209,7 @@
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
                     exportOptions: {
-                        columns: ':visible:not(:last-child)',
+                        //columns: ':visible:not(:last-child)',
                         modifier: {
                             page: 'current'
                         }
@@ -221,7 +221,7 @@
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
                     exportOptions: {
-                        columns: ':visible:not(:last-child)'
+                        //columns: ':visible:not(:last-child)'
                     },
                     footer:false
                 }

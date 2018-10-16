@@ -201,10 +201,17 @@ $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 // ===========================
 //  Delivary Note
 // ===========================
+//menu
 $route['delivery-note-trans'] = 'front/cdeliverynote';
 $route['view-delivery-note-trans'] = 'front/cdeliverynote/views';
 $route['new-delivery-note-trans'] = 'front/cdeliverynote/add';
 $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1';
+
+//api index.php
+$route['api-delivery-note-get-datatable']  = 'front/cdeliverynote/get_list_view_datatable';
+$route['api-delivery-note-get-trans']  = 'front/cdeliverynote/get_trans';
+$route['api-delivery-note-get-trans-detail']  = 'front/cdeliverynote/get_trans_detail';
+
 // ===========================
 //  End Routing Delivery Note Trans
 // ===========================
@@ -216,6 +223,13 @@ $route['fsltocwh-trans'] = 'front/cfsltocwh';
 $route['view-fsltocwh-trans'] = 'front/cfsltocwh/views';
 $route['new-fsltocwh-trans'] = 'front/cfsltocwh/add';
 $route['print-fsltocwh-trans/(:any)'] = 'front/cfsltocwh/print_trans/$1';
+
+//api index.php
+$route['api-fsltocwh-get-view-datatable']  = 'front/cfsltocwh/get_list_view_datatable2';
+$route['api-fsltocwh-get-datatable']  = 'front/cfsltocwh/get_list_view_datatable';
+$route['api-fsltocwh-get-trans']  = 'front/cfsltocwh/get_trans';
+$route['api-fsltocwh-get-trans-detail']  = 'front/cfsltocwh/get_trans_detail';
+
 // ===========================
 //  End Routing FSL To CWH Trans
 // ===========================

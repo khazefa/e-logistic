@@ -119,7 +119,7 @@ class CDeliveryNote extends BaseController
             $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
             
             $row['transnum'] = $transnum;
-            $row['transdate'] = $transdate;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
             $row['transticket'] = $transticket;
             $row['engineer'] = $engineer;
             $row['purpose'] = $purpose;
@@ -173,7 +173,7 @@ class CDeliveryNote extends BaseController
         $data = array();
         foreach ($rs as $r) {
             $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->delivery_note_date, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
             $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
@@ -190,7 +190,7 @@ class CDeliveryNote extends BaseController
             }
 
             $row['transnum'] = $transnum;
-            $row['transdate'] = $transdate;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
             
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;

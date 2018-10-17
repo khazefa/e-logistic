@@ -1378,6 +1378,8 @@ class CDeliveryNote extends BaseController
                         foreach ($rs_stock as $s){
                             $partstock = (int)$s["stock"];
                         }
+
+                        //PERUBAHAN PART STOCK
                         if($partstock < (int)$d['qty']){
 
                         }else{                        
@@ -1392,16 +1394,16 @@ class CDeliveryNote extends BaseController
                                 'POST', FALSE);
                             $total_qty += (int)$d['qty'];
 
-                            $dataUpdateStock = array(
-                                'fcode'=>$fcode, 
-                                'fpartnum'=>$d['partno'], 
-                                'fqty'=>(int)$partstock-(int)$d['qty'], 
-                                'fflag'=>'N');
-                            //update stock by fsl code and part number
-                            $update_stock_res = send_curl(
-                                $this->security->xss_clean($dataUpdateStock), 
-                                $this->config->item('api_edit_stock_part_stock'), 
-                                'POST', FALSE);
+                        //     $dataUpdateStock = array(
+                        //         'fcode'=>$fcode, 
+                        //         'fpartnum'=>$d['partno'], 
+                        //         'fqty'=>(int)$partstock-(int)$d['qty'], 
+                        //         'fflag'=>'N');
+                        //     //update stock by fsl code and part number
+                        //     $update_stock_res = send_curl(
+                        //         $this->security->xss_clean($dataUpdateStock), 
+                        //         $this->config->item('api_edit_stock_part_stock'), 
+                        //         'POST', FALSE);
                         }
                     }
 

@@ -780,7 +780,7 @@ class CFsltocwh extends BaseController
             $row['partno'] = $partnum;
             $row['partname'] = $partname;
             $row['serialno'] = $serialnum;
-            $row['stock'] = $partstock;
+            //$row['stock'] = $partstock;
             $row['qty'] = (int)$qty;
  
             $data[] = $row;

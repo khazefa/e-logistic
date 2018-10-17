@@ -145,7 +145,6 @@
                                     <th>Part Number</th>
                                     <th>Serial Number</th>
                                     <th>Part Name</th>
-                                    <th>Stock</th>
                                     <th>Qty</th>
                                 </tr>
                                 </thead>
@@ -203,7 +202,7 @@
         init_form();
         init_form_order();
         init_table();
-        init_table2();
+        //init_table2();
         get_total();
         
         $('#fpurpose, #fdest_fsl, #fservice, #fairwaybill, fdeliveryby').on('focusout', function(evt){
@@ -467,7 +466,7 @@
                 { "data": 'partno' },
                 { "data": 'serialno' },
                 { "data": 'partname' },
-                { "data": 'stock' },
+                //{ "data": 'stock' },
                 { "data": 'qty' },
             ],
             columnDefs : [
@@ -480,7 +479,7 @@
                     }
                 },
                 {
-                    targets   : 5,
+                    targets   : 4,
                     orderable : false, //set not orderable
                     data      : null,
                     render    : function ( data, type, full, meta ) {
@@ -506,16 +505,16 @@
         $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
-            fstock = data['stock'];
+            // fstock = data['stock'];
             fqty = this.value;
             if (e.keyCode == 13) {
-                if(fqty > fstock){
-                    alert('The quantity amount exceeds the sparepart stock!');
-                    this.focus;
-                }else{
+                // if(fqty > fstock){
+                //     alert('The quantity amount exceeds the sparepart stock!');
+                //     this.focus;
+                // }else{
                     //update cart by cart id
                     update_cart(fid, fqty);
-                }
+                // }
                 return false;
             }
         });
@@ -562,17 +561,17 @@
         $('#subtitute_grid tbody').on( 'click', 'button', function (e) {        
             var data = table2.row( $(this).parents('tr') ).data();
             fpartnum = data[0];
-            fstock = data[2];
+            //fstock = data[2];
             
-            if(fstock < 1){
-                alert('Out of stock!');
-            }else{
+            // if(fstock < 1){
+            //     alert('Out of stock!');
+            // }else{
                 add_part_sub(fpartnum);
                 table2.clear().draw();
                 e_serialnum.prop('readonly', false);
                 e_serialnum.val('');
                 e_serialnum.focus();
-            }
+            // }
         });
 
         table2.buttons().container()
@@ -939,7 +938,7 @@
 //                                    //if stock is 0 then hide information list
 //                                }else{
                                     table2.row.add(
-                                        [detail_data.partno, detail_data.partno, detail_data.part, detail_data.stock]
+                                        [detail_data.partno, detail_data.partno, detail_data.part]
                                     ).draw();
 //                                }
                             });

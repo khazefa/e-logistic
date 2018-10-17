@@ -1378,31 +1378,33 @@ class CDeliveryNote extends BaseController
                         foreach ($rs_stock as $s){
                             $partstock = (int)$s["stock"];
                         }
-                        if($partstock < (int)$d['qty']){
 
-                        }else{                        
-                            $dataDetail = array(
-                                'ftransno'=>$transnum, 
-                                'fpartnum'=>$d['partno'], 
-                                'fserialnum'=>$d['serialno'], 
-                                'fqty'=>$d['qty']);
-                            $sec_res = send_curl(
-                                $this->security->xss_clean($dataDetail), 
-                                $this->config->item('api_add_delivery_note_trans_detail'), 
-                                'POST', FALSE);
-                            $total_qty += (int)$d['qty'];
+                        //PERUBAHAN PART STOCK
+                        // if($partstock < (int)$d['qty']){
 
-                            $dataUpdateStock = array(
-                                'fcode'=>$fcode, 
-                                'fpartnum'=>$d['partno'], 
-                                'fqty'=>(int)$partstock-(int)$d['qty'], 
-                                'fflag'=>'N');
-                            //update stock by fsl code and part number
-                            $update_stock_res = send_curl(
-                                $this->security->xss_clean($dataUpdateStock), 
-                                $this->config->item('api_edit_stock_part_stock'), 
-                                'POST', FALSE);
-                        }
+                        // }else{                        
+                        //     $dataDetail = array(
+                        //         'ftransno'=>$transnum, 
+                        //         'fpartnum'=>$d['partno'], 
+                        //         'fserialnum'=>$d['serialno'], 
+                        //         'fqty'=>$d['qty']);
+                        //     $sec_res = send_curl(
+                        //         $this->security->xss_clean($dataDetail), 
+                        //         $this->config->item('api_add_delivery_note_trans_detail'), 
+                        //         'POST', FALSE);
+                        //     $total_qty += (int)$d['qty'];
+
+                        //     $dataUpdateStock = array(
+                        //         'fcode'=>$fcode, 
+                        //         'fpartnum'=>$d['partno'], 
+                        //         'fqty'=>(int)$partstock-(int)$d['qty'], 
+                        //         'fflag'=>'N');
+                        //     //update stock by fsl code and part number
+                        //     $update_stock_res = send_curl(
+                        //         $this->security->xss_clean($dataUpdateStock), 
+                        //         $this->config->item('api_edit_stock_part_stock'), 
+                        //         'POST', FALSE);
+                        // }
                     }
 
                     if($total_qty < 1){

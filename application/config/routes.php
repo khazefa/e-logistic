@@ -136,6 +136,7 @@ $route['data-spareparts-stock'] = 'front/cstockpart';
 $route['add-spareparts-stock'] = 'front/cstockpart/add';
 $route['import-spareparts-stock'] = 'front/cstockpart/add_import';
 $route['detail-spareparts-stock/(:any)'] = 'front/cstockpart/detail/$1';
+$route['list-detail-spareparts-stock'] = 'front/cstockpart/get_list_detail_datatable';
 $route['edit-spareparts-stock/(:num)'] = 'front/cstockpart/edit/$1';
 $route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
 // ===========================
@@ -306,12 +307,22 @@ $route['search-parts'] = 'front/csearchparts';
 $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
-$route['close-transfer-stock'] = 'front/cincoming/close_transfer_stock';
+$route['supply-from-other-fsl'] = 'front/cincoming/supply_from_other_fsl';
+$route['supply-from-other-fsl'] = 'front/cincoming/supply_from_warehouse';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 $route['return-parts'] = 'front/creturnparts/add';
 // ===========================
 //  End Routing Front Incoming Trans
+// ===========================
+
+// ===========================
+//  Routing Front Supply from FSL
+// ===========================
+$route['supply-from-fsl'] = 'front/csupplyfromfsl';
+$route['add-supply-from-fsl'] = 'front/csupplyfromfsl/add';
+// ===========================
+//  End Routing Front Supply from FSL
 // ===========================
 
 // ===========================
@@ -417,6 +428,7 @@ $route['oversee/print-replenish-plan'] = 'superintend/creports/export_replenish_
 // ===========================
 $route['oversee/data-spareparts-stock'] = 'superintend/cstockpart';
 $route['oversee/detail-spareparts-stock/(:any)'] = 'superintend/cstockpart/detail/$1';
+$route['oversee/list-detail-spareparts-stock'] = 'superintend/cstockpart/get_list_detail_datatable';
 // ===========================
 //  End Routing Superintend Stock Spareparts
 // ===========================

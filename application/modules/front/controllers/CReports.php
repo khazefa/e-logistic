@@ -499,8 +499,8 @@ class CReports extends BaseController
                 $spreadsheet->setActiveSheetIndex($x);
                 $activeSheet = $spreadsheet->getActiveSheet();
                 
-                $activeSheet->mergeCells('A1:E1');
-                $activeSheet->mergeCells('A2:E2');
+                $activeSheet->mergeCells('A1:F1');
+                $activeSheet->mergeCells('A2:F2');
                 $activeSheet
                 ->setCellValue('A1', $fslname)
                 ->setCellValue('A2', 'Report Date: '.$reportdateID.' to '.$reportdateID2);
@@ -511,10 +511,11 @@ class CReports extends BaseController
                 ->setCellValue('A4', 'Requested PN')
                 ->setCellValue('B4', 'Description')
                 ->setCellValue('C4', 'Qty')
-                ->setCellValue('D4', 'Last Stock')
-                ->setCellValue('E4', 'Delivery Notes')
+                ->setCellValue('D4', 'Minimum Stock')
+                ->setCellValue('E4', 'Last Stock')
+                ->setCellValue('F4', 'Delivery Notes')
                 ;
-                $activeSheet->getStyle('A4:E4')->applyFromArray($styleHeaderArray);
+                $activeSheet->getStyle('A4:F4')->applyFromArray($styleHeaderArray);
 
                 //Parameters for cURL
 //                $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $fdate1.' 00:00:00', 'fdate2'=> $fdate2.' 23:59:59');
@@ -529,6 +530,7 @@ class CReports extends BaseController
                     $partnum = filter_var($row->part_number, FILTER_SANITIZE_STRING);
                     $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
                     $qty = filter_var($row->qty, FILTER_SANITIZE_NUMBER_INT);
+                    $min_stock = filter_var($row->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
                     $last_stock = filter_var($row->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
     //                $notes = $row->o_delivery_notes === "" ? "-" : filter_var($row->o_delivery_notes, FILTER_SANITIZE_STRING);
                     $notes = "-";
@@ -539,6 +541,7 @@ class CReports extends BaseController
                     $activeSheet->getColumnDimension('C')->setAutoSize(true);
                     $activeSheet->getColumnDimension('D')->setAutoSize(true);
                     $activeSheet->getColumnDimension('E')->setAutoSize(true);
+                    $activeSheet->getColumnDimension('F')->setAutoSize(true);
                     $activeSheet->getStyle('C')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $activeSheet->getStyle('D')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $activeSheet->getStyle('E')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -548,8 +551,9 @@ class CReports extends BaseController
                     ->setCellValue('A'.$i, $partnum)
                     ->setCellValue('B'.$i, $partname)
                     ->setCellValue('C'.$i, $qty)
-                    ->setCellValue('D'.$i, $last_stock)
-                    ->setCellValue('E'.$i, $notes);
+                    ->setCellValue('D'.$i, $min_stock)
+                    ->setCellValue('E'.$i, $last_stock)
+                    ->setCellValue('F'.$i, $notes);
 
                     $i++;
                 }

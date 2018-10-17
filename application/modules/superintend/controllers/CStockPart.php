@@ -221,6 +221,81 @@ class CStockPart extends BaseController
     }
     
     /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_detail_datatable(){
+        $rs = array();
+        $arrWhere = array();
+
+        $fcode = $this->input->post('fcode', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        //Parse Data for cURL
+        $arrWhere = array('fcode'=>strtoupper($fcode), 'fpartnum'=>$fpartnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_history_part_e'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $ticketnum = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+            $eg_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $partner = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $eg_name_2 = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            
+            switch ($fpurpose){
+                case "SP";
+                    $purpose = "Sales/Project";
+                break;
+                case "W";
+                    $purpose = "Warranty";
+                break;
+                case "M";
+                    $purpose = "Maintenance";
+                break;
+                case "I";
+                    $purpose = "Investments";
+                break;
+                case "B";
+                    $purpose = "Borrowing";
+                break;
+                case "RWH";
+                    $purpose = "Transfer Stock";
+                break;
+                default;
+                    $purpose = "-";
+                break;
+            }
+                        
+            $row['transnum'] = $transnum;
+            $row['transdate'] = $transdate;
+            $row['ticket'] = $ticketnum;
+            $row['reqby'] = $eg_name;
+            $row['takeby'] = $eg_name_2;
+            $row['partnum'] = $partnum;
+            $row['serialnum'] = $serialnum;
+            $row['qty'] = $qty;
+            $row['purpose'] = $purpose;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
      * This function is used to get detail information
      */
     public function get_list_info_stock($fcode, $fpartnum){
@@ -240,16 +315,16 @@ class CStockPart extends BaseController
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
             $row['partname'] = $partname;
-            $row['minstock'] = $minstock;
             $row['initstock'] = $initstock;
+            $row['minstock'] = $minstock;
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
             }else{
@@ -353,7 +428,7 @@ class CStockPart extends BaseController
         if ($fcode != "") $arrWhere['fcode'] = $fcode;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_fsl_stock'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -362,16 +437,18 @@ class CStockPart extends BaseController
             $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
             $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
             $row['code'] = $code;
             $row['partno'] = $partno;
             $row['partname'] = $partname;
-            $row['minstock'] = $minstock;
             $row['initstock'] = $initstock;
+            $row['minstock'] = $minstock;
+            $row['onhand'] = $qtyonhand;
             if($initflag === "Y"){
                 $row['stock'] = $initstock;
             }else{

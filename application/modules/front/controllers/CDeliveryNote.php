@@ -1380,19 +1380,19 @@ class CDeliveryNote extends BaseController
                         }
 
                         //PERUBAHAN PART STOCK
-                        // if($partstock < (int)$d['qty']){
+                        if($partstock < (int)$d['qty']){
 
-                        // }else{                        
-                        //     $dataDetail = array(
-                        //         'ftransno'=>$transnum, 
-                        //         'fpartnum'=>$d['partno'], 
-                        //         'fserialnum'=>$d['serialno'], 
-                        //         'fqty'=>$d['qty']);
-                        //     $sec_res = send_curl(
-                        //         $this->security->xss_clean($dataDetail), 
-                        //         $this->config->item('api_add_delivery_note_trans_detail'), 
-                        //         'POST', FALSE);
-                        //     $total_qty += (int)$d['qty'];
+                        }else{                        
+                            $dataDetail = array(
+                                'ftransno'=>$transnum, 
+                                'fpartnum'=>$d['partno'], 
+                                'fserialnum'=>$d['serialno'], 
+                                'fqty'=>$d['qty']);
+                            $sec_res = send_curl(
+                                $this->security->xss_clean($dataDetail), 
+                                $this->config->item('api_add_delivery_note_trans_detail'), 
+                                'POST', FALSE);
+                            $total_qty += (int)$d['qty'];
 
                         //     $dataUpdateStock = array(
                         //         'fcode'=>$fcode, 
@@ -1404,7 +1404,7 @@ class CDeliveryNote extends BaseController
                         //         $this->security->xss_clean($dataUpdateStock), 
                         //         $this->config->item('api_edit_stock_part_stock'), 
                         //         'POST', FALSE);
-                        // }
+                        }
                     }
 
                     if($total_qty < 1){

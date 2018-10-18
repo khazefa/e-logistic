@@ -33,7 +33,7 @@
                                 <div class="form-group row">
                                     <label for="fticketnum" class="col-sm-3 col-form-label">Ticket Number</label>
                                     <div class="col-sm-5">
-                                        <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" pattern="[a-zA-Z0-9\s]+">
+                                        <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" data-parsley-minlength="8" data-parsley-maxlength="8" pattern="[a-zA-Z0-9\s]+">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -954,7 +954,8 @@
             fnotes : notes,
             fcust : e_cust.val(),
             floc : e_loc.val(),
-            fssb_id : e_ssb_id.val()
+            fssb_id : e_ssb_id.val(),
+            fdest_fsl : e_dest_fsl.val()
         };
         
         $.ajax({
@@ -1002,6 +1003,10 @@
         e_serialnum.on("keyup", function(e) {
             var sn = $(this).val();
             if(sn.toUpperCase() == "NO SN"){
+                $(this).val("NOSN");
+            }else if(sn == "nosn"){
+                $(this).val("NOSN");
+            }else if(sn == "no sn"){
                 $(this).val("NOSN");
             }
 	});
@@ -1081,15 +1086,33 @@
             }
         });
         
+        e_ticketnum.on("change", function(e){
+            var len = e_ticketnum.val().length;
+
+        });
+        
         e_ticketnum.on("keypress", function(e){
+            var len = e_ticketnum.val().length;
             if (e.keyCode == 13) {
                 if(isEmpty(e_ticketnum.val())){
                     alert('Please fill out the ticket number!');
                     e_ticketnum.focus();
                 }else{
-                    check_ticket(e_ticketnum.val());
-                    if(status_checkticket === 1){
-                        e_engineer_id.focus();
+                    if (e_ticketnum.val().match("^5")) {
+                        if(len !== 8){
+                            alert('Ticket number must be 8 digits');
+                            e_ticketnum.val('');
+                            e_ticketnum.focus();
+                        }else{
+                            check_ticket(e_ticketnum.val());
+                            if(status_checkticket === 1){
+                                e_engineer_id.focus();
+                            }
+                        }
+                    }else{
+                        alert('Ticket number not accepted! start typing by number 5!');
+                        e_ticketnum.val('');
+                        e_ticketnum.focus();
                     }
                 }
                 return false;
@@ -1103,7 +1126,7 @@
                 e_engineer_id.selectpicker('refresh');
             }else{
                 $("#global_confirm .modal-title").html("Confirmation");
-                $("#global_confirm .modal-body h4").html("Is the person who ask for sparepart are not the concerned FSE?");
+                $("#global_confirm .modal-body h4").html("Add FSE Messenger?");
                 $('#global_confirm').modal({
                     show: true
                 });
@@ -1156,6 +1179,8 @@
             e_partnum.prop('readonly', false);
             e_partnum.val(selectedText);
             e_partnum.focus();
+            e_partname.val('');
+            e_partname.selectpicker('refresh');
         });
         
         e_partnum.on('keypress', function(e){

@@ -328,9 +328,10 @@ class CSupplyFromRepair extends BaseController
         $fcode = 'WSPS';
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         $createdby = $this->session->userdata ('vendorUR');
-
+        
         //var form
         $date = date('Y-m-d');
+        $freceivedby = $this->input->post('freceivedby', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $ftransnotes = $this->input->post('fnotes', TRUE);
         //$fponum = $this->input->post('fponum', TRUE); //NOT USE FOR REPAIR
@@ -363,7 +364,8 @@ class CSupplyFromRepair extends BaseController
                     'fdate'=>$date, 
                     'fpurpose'=>$fpurpose, 
                     'ftransnotes'=>$ftransnotes, 
-                    'fvendor'=>$fvendor,
+                    'freceivedby'=>$freceivedby,
+                    // 'fvendor'=>$fvendor,
                     'fcode'=>$fcode,
                     'fqty'=>$fqty, 
                     'fuser'=>$createdby

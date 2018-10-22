@@ -317,6 +317,7 @@ class CSupplyFromVendor extends BaseController
 
         //var form
         $date = date('Y-m-d');
+        $freceivedby = $this->input->post('freceivedby', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $ftransnotes = $this->input->post('fnotes', TRUE);
         $fponum = $this->input->post('fponum', TRUE);
@@ -348,6 +349,7 @@ class CSupplyFromVendor extends BaseController
                     'fponum' => $fponum,
                     'fdate'=>$date, 
                     'fpurpose'=>$fpurpose, 
+                    'freceivedby'=>$freceivedby,
                     'ftransnotes'=>$ftransnotes, 
                     'fvendor'=>$fvendor,
                     'fcode'=>$fcode,

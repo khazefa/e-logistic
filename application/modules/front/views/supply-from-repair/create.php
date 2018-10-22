@@ -55,6 +55,14 @@
                                     </div>
                                 </div>
 
+                                <?php $input = 'freceivedby';?>
+                                <div class="form-group row">
+                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">Received By <span class="text-danger">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="<?=$input;?>" id="<?=$input;?>" class="form-control" required><span class="text-danger" id="msg_<?=$input;?>"></span>
+                                    </div>
+                                </div>
+
                                 
 
                                 <!-- <div class="row">
@@ -115,8 +123,8 @@
 var e_partname = $('#fpartname');
 var e_partnum = $('#fpartnum');
 var e_qty = $('#fqty');
+var e_received_by = $('#freceivedby');
 var e_delivery_notes = $('#fdeliverynotes');
-var e_po_num = $('#fponumber');
 var e_total_qty = $('#ttl_qty');
 var btn_submit = $('#btn_submit');
 var table;
@@ -150,7 +158,7 @@ function init_form(){
     e_partnum.val('');
     e_qty.val('1');
     e_delivery_notes.val('');
-    e_po_num.val('');
+    e_received_by.val('');
     e_total_qty.html('0');
     btn_submit.prop('disabled',true);
     get_total();
@@ -240,7 +248,7 @@ function complete_supply(){
         <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
         fqty : parseInt($('#ttl_qty').html()),
         fnotes : e_delivery_notes.val(),
-        fponum : e_po_num.val()
+        freceivedby : e_received_by.val(),
     };
     var success = function (jqXHR) {
         if(jqXHR.status == 0){
@@ -379,9 +387,9 @@ function falerts(fobj,val,msg){
 function validation(){
     var ret = false;
     // ret1 = (e_partnum.val()=='')?falert(e_partnum,false):falert(e_partnum,true);
-    // ret2 = (e_qty.val()=='0'|| e_qty.val()=='')?falert(e_qty,false):falert(e_qty,true);
+    ret2 = (e_received_by.val()=='')?falert(e_received_by,false):falert(e_received_by,true);
     ret3 = (e_delivery_notes.val()=='')?falert(e_delivery_notes,false):falert(e_delivery_notes,true);
-    if(ret3){
+    if(ret3 && ret2){
         ret = true;
         btn_submit.prop('disabled',false);
     }else{
@@ -430,6 +438,7 @@ $(document).ready(function(ex){
         if($(this).attr('id') == 'fpartnum'){
             if(e.which == 13) {
                 check_parts();
+                validation();
             }
         }
 
@@ -449,15 +458,23 @@ $(document).ready(function(ex){
                         });
                     }
                 }else{
-                    falerts($(this),false,'* Min Value is 1.')
+                    falerts($(this),false,'* Min Value is 1.');
                 }
+                validation();
                 
             }
         }   
+        
+        if($(this).attr('id') == 'freceivedby'){
+            if(e.which == 13) {
+                validation();
+            }
+        }
 
         if($(this).attr('id') == 'fdeliverynotes'){
             if(e.which == 13) {
-                e_po_num.focus();
+                e_received_by.focus();
+                validation();
             }
         }
 

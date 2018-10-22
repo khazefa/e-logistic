@@ -20,6 +20,7 @@ class CDeliveryNote extends BaseController
         'trans_notes' => 'Notes',
         'trans_purpose' => 'Purpose',
         'airwaybill' => 'Airway Bill',
+        'airwaybill2' => 'Delivery Note',
         'delivery_by' => 'Delivered By',
         'delivery_type' => 'Service',
         'eta' => 'ETA'
@@ -32,6 +33,7 @@ class CDeliveryNote extends BaseController
         'trans_notes' => 'delivery_note_notes',
         'trans_purpose' => 'delivery_note_purpose',
         'airwaybill' => 'delivery_note_airwaybill',
+        'airwaybill2' => 'delivery_note_airwaybill2',
         'delivery_by' => 'delivery_by',
         'delivery_type' => 'delivery_time_type',
         'eta' => 'delivery_note_eta'
@@ -202,7 +204,10 @@ class CDeliveryNote extends BaseController
             <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
             <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
             ';
+<<<<<<< HEAD
  
+=======
+>>>>>>> 34a620ed25911aebce043bde4f8dcd2dd0651f67
             if(count($e_coverage)!=0){
                 if(in_array($fsl_code, $e_coverage)){
                     $data[] = $row;
@@ -210,6 +215,7 @@ class CDeliveryNote extends BaseController
             }else{
                 $data[] = $row;
             }
+            
         }
         
         return $this->output
@@ -323,7 +329,9 @@ class CDeliveryNote extends BaseController
             
             $row['button'] = '<a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
  
-            if(in_array($fslcode, $e_coverage)){
+            if(is_array($e_coverage) AND in_array($fslcode, $e_coverage)){
+                $data[] = $row;
+            }else{
                 $data[] = $row;
             }
         }
@@ -1351,6 +1359,7 @@ class CDeliveryNote extends BaseController
         $date = date('Y-m-d'); 
         
         $fairwaybill = $this->input->post('fairwaybill', TRUE);
+        $fairwaybill2 = $this->input->post('fairwaybill2', TRUE);
         $ftransnotes = $this->input->post('ftransnote', TRUE);
         $fservice = $this->input->post('fservice', TRUE);
         $fdeliveryby = $this->input->post('fdeliveryby', TRUE);
@@ -1423,6 +1432,7 @@ class CDeliveryNote extends BaseController
                             'ftransnotes'=>$ftransnotes, 
                             'fdest_fsl'=>$fdest_fsl,
                             'fairwaybill'=>$fairwaybill,
+                            'fairwaybill2'=>$fairwaybill2,
                             'fservice'=>$fservice,
                             'fdeliveryby'=>$fdeliveryby,
                             'feta'=>$feta,
@@ -1539,7 +1549,7 @@ class CDeliveryNote extends BaseController
         $pdf->Cell(($width*(45/100)),7,$this->snt($rs['fsl_name'], 'string'),0,0,'L');
         $pdf->setFont('Arial','',10); //ARIAL NORMAL 10
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'D-D: '.$this->snt($rs['delivery_note_date'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,'D-Date: '.$this->snt($rs['delivery_note_date'], 'string'),1,1,'C');
             
         //row 2
         //col 1 Wrap
@@ -1555,27 +1565,26 @@ class CDeliveryNote extends BaseController
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_note_airwaybill'], 'string'),1,1,'C');
+        $pdf->Cell(($width*(22.5/100)),7,'AW: '.$this->snt($rs['delivery_note_airwaybill'], 'string'),1,1,'C');
+
+        //row 3.5
+        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'DN: '.$this->snt($rs['delivery_note_airwaybill2'], 'string'),1,1,'C');
         
         //row 4
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
+        $pdf->Cell(($width*(22.5/100)),7,'Attn : '.$this->snt($rs['fsl_pic'], 'string').' :',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,$this->snt($rs['delivery_by'], 'string').' - '.$this->snt($rs['delivery_time_type'], 'string'),1,1,'C');
         
         //row 5
-        $pdf->Cell(($width*(22.5/100)),7,'Attn : '.$this->snt($rs['fsl_pic'], 'string').' :',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['delivery_note_eta'], 'string'),1,1,'C');
-        
-        //row 6
         $pdf->Cell(($width*(22.5/100)),7,'         '.$this->snt($rs['fsl_phone'], 'string'),0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
         $pdf->Cell(($width*(22.5/100)),7,'',0,0,'L');
-        $pdf->Cell(($width*(22.5/100)),7,'',0,1,'C');
-        
-        
+        $pdf->Cell(($width*(22.5/100)),7,'ETA: '.$this->snt($rs['delivery_note_eta'], 'string'),1,1,'C');
+    
         
         //row 9
         $pdf->setFont('Arial','B',11); //ARIAL BOLD 11

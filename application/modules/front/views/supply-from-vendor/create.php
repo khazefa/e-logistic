@@ -78,6 +78,14 @@
                                         <input type="text" name="<?=$input;?>" id="<?=$input;?>" class="form-control"><span class="text-danger" id="msg_<?=$input;?>"></span>
                                     </div>
                                 </div>
+
+                                <?php $input = 'freceivedby';?>
+                                <div class="form-group row">
+                                    <label for="<?=$input;?>" class="col-sm-3 col-form-label">Received By <span class="text-danger">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="<?=$input;?>" id="<?=$input;?>" class="form-control" required><span class="text-danger" id="msg_<?=$input;?>"></span>
+                                    </div>
+                                </div>
                                 <!-- <div class="row">
                                     <div class="col-sm-12">
                                         <button type="button" id="btn_add" class="btn btn-warning waves-effect waves-light">
@@ -141,6 +149,7 @@ var e_qty = $('#fqty');
 var e_delivery_notes = $('#fdeliverynotes');
 var e_vendor = $('#fvendor');
 var e_po_num = $('#fponumber');
+var e_received_by = $('#freceivedby');
 var e_total_qty = $('#ttl_qty');
 var btn_submit = $('#btn_submit');
 var table;
@@ -176,6 +185,7 @@ function init_form(){
     e_vendor.val(0);
     e_vendor.selectpicker('refresh');
     e_partnum.val('');
+    e_received_by.val('');
     e_qty.val('1');
     e_delivery_notes.val('');
     e_po_num.val('');
@@ -269,7 +279,8 @@ function complete_supply(){
         fqty : parseInt($('#ttl_qty').html()),
         fnotes : e_delivery_notes.val(),
         fvendor : e_vendor.val(),
-        fponum : e_po_num.val()
+        fponum : e_po_num.val(),
+        freceivedby : e_received_by.val(),
     };
     var success = function (jqXHR) {
         if(jqXHR.status == 0){
@@ -408,9 +419,10 @@ function falerts(fobj,val,msg){
 function validation(){
     var ret = false;
     // ret1 = (e_partnum.val()=='')?falert(e_partnum,false):falert(e_partnum,true);
+    ret1 = (e_received_by.val()=='')?falert(e_received_by,false):falert(e_received_by,true);
     ret2 = (e_vendor.val()=='0'|| e_vendor.val()=='')?falert(e_vendor,false):falert(e_vendor,true);
     ret3 = (e_delivery_notes.val()=='')?falert(e_delivery_notes,false):falert(e_delivery_notes,true);
-    if(ret3 && ret2){
+    if(ret3 && ret2 && ret1){
         ret = true;
         btn_submit.prop('disabled',false);
     }else{
@@ -472,6 +484,7 @@ $(document).ready(function(ex){
         if($(this).attr('id') == 'fpartnum'){
             if(e.which == 13) {
                 check_parts();
+                validation();
             }
         }
 
@@ -494,13 +507,20 @@ $(document).ready(function(ex){
                 }else{
                     falerts($(this),false,'* Min Value is 1.')
                 }
-                
+                validation();
             }
         }   
 
         if($(this).attr('id') == 'fdeliverynotes'){
             if(e.which == 13) {
                 e_vendor.focus();
+                validation();
+            }
+        }
+
+        if($(this).attr('id') == 'freceivedby'){
+            if(e.which == 13) {
+                validation();
             }
         }
         

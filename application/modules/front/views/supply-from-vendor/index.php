@@ -125,6 +125,11 @@
                             <div class="col-md-6" id="trans_po_num"></div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6"><label class="col-form-label">Received By</label></div>
+                            <div class="col-md-6" id="received_by"></div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="row">
@@ -288,7 +293,7 @@
                 $('#trans_vendor_name').html(rs.vendor_name);
                 $('#trans_vendor_address').html(rs.vendor_address);
                 $('#trans_po_num').html(rs.sfvendor_po_num);
-
+                $('#received_by').html(rs.received_by);
                 
                 $('#viewdetail').modal({
                     show: true

@@ -54,7 +54,13 @@
                                         <input type="text" name="ftransnotes" id="ftransnotes" class="form-control">
                                     </div>
                                 </div>
-
+                                <div class="form-group row">
+                                    <label for="fairwaybill2" class="col-sm-3 col-form-label">No Airwaybill From Delivery <span class="text-danger">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="fairwaybill2" id="fairwaybill2" class="form-control" required>
+                                        <span class="text-information" id="msg_fairwaybill2">(Optional)</span>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label for="fdeliveryby" class="col-sm-3 col-form-label">Delivered By <span class="text-danger">*</span></label>
                                     <div class="col-sm-8">
@@ -195,6 +201,7 @@
     var e_transnote = $('#ftransnotes');
     var e_service = $('#fservice');
     var e_airwaybill = $('#fairwaybill');
+    var e_airwaybill2 = $('#fairwaybill2');
     var e_eta = $('#feta');
     var e_deliveryby = $('#fdeliveryby');
     
@@ -222,7 +229,7 @@
         init_table2();
         get_total();
         
-        $('#fpurpose, #fdest_fsl, #fservice, #fairwaybill, fdeliveryby').on('focusout', function(evt){
+        $('#fpurpose, #fdest_fsl, #fservice, #fairwaybill, #fairwaybill2, fdeliveryby').on('focusout', function(evt){
             validation();
         });
 
@@ -253,6 +260,7 @@
             }else{
                 e_transnote.val("Supply stock to "+selectedText);
                 e_airwaybill.prop("readonly", false);
+                e_airwaybill2.prop("readonly", false);
                 e_service.prop("disabled", false);
                 e_service.selectpicker('refresh');
                 e_deliveryby.prop("disabled", false);
@@ -444,6 +452,7 @@
         e_dest_fsl.prop('disabled', true);
         e_dest_fsl.selectpicker('refresh');
         e_airwaybill.prop("readonly", true);
+        e_airwaybill2.prop("readonly", true);
         e_transnote.prop("readonly", true);
         e_service.prop("disabled", true);
         e_service.selectpicker('refresh');
@@ -678,6 +687,7 @@
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
            
             fairwaybill : e_airwaybill.val(),
+            fairwaybill2 : e_airwaybill2.val(),
             ftransnote : e_transnote.val(), 
             fservice : e_service.val(),
             feta : e_eta.val(),

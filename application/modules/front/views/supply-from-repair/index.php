@@ -110,6 +110,15 @@
                             <div class="col-md-6" id="trans_date"></div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6"><label class="col-form-label">Delivery Note</label></div>
+                            <div class="col-md-6" id="delivery_note"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6"><label class="col-form-label">Received By</label></div>
+                            <div class="col-md-6" id="received_by"></div>
+                        </div>
 
                     </div>
                 </div>
@@ -270,8 +279,8 @@
                 console.log(rs);
                 $('#trans_code').html(rs.sfrepair_num);
                 $('#trans_date').html(rs.sfrepair_date);
-                
-
+                $('#delivery_note').html(rs.sfrepair_notes);
+                $('#received_by').html(rs.received_by);
                 
                 $('#viewdetail').modal({
                     show: true

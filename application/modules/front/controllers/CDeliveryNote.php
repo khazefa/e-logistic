@@ -179,6 +179,7 @@ class CDeliveryNote extends BaseController
             $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
             $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
             $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             switch ($purpose){
@@ -197,11 +198,16 @@ class CDeliveryNote extends BaseController
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
             $row['user'] = $user;
+            $row['transfer_to'] = $fslname;
             $row['notes'] = $notes;
             $row['button'] = '
             <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
             <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
             ';
+<<<<<<< HEAD
+ 
+=======
+>>>>>>> 34a620ed25911aebce043bde4f8dcd2dd0651f67
             if(count($e_coverage)!=0){
                 if(in_array($fsl_code, $e_coverage)){
                     $data[] = $row;
@@ -345,7 +351,6 @@ class CDeliveryNote extends BaseController
         $arrWhere = array('ftransnum'=>$ftransnum);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_get_delivery_note_get_trans'), 'POST', FALSE);
-        //var_dump($rs_data); 
         $rs = $rs_data->status ? $rs_data->result : array();
         $rdata = (array)$rs;
         foreach($rdata as $v){

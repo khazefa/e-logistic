@@ -209,7 +209,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
-//                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:false
                 }
             ],
@@ -240,7 +240,7 @@
                 { "data": 'status' },
                 { "data": 'button' },
             ],
-            order: [[ 0, "desc" ]],
+            order: [[ 1, "desc" ]],
             columnDefs: [{ 
                 orderable: false,
                 targets: [ -1 ]

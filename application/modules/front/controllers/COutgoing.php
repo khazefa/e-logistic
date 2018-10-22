@@ -19,7 +19,7 @@ class COutgoing extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSpv() || $this->isStaff()){
+        if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
             //
         }else{
             redirect('cl');
@@ -61,7 +61,9 @@ class COutgoing extends BaseController
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
-        $this->loadViews('front/outgoing-trans/lists', $this->global, NULL);
+        $data['list_coverage'] = $this->get_list_warehouse("array");
+        
+        $this->loadViews('front/outgoing-trans/lists', $this->global, $data);
     }
     
     /**
@@ -210,6 +212,299 @@ class COutgoing extends BaseController
             }
  
             $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_view_datatable2(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fticket = $this->input->post('fticket', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        
+        if (strpos($coverage, 'C000') !== false) {
+            $fcoverage = array();
+        }else{
+            if (strpos($coverage, ',') !== false) {
+                $fcoverage = str_replace(',', ';', $coverage);
+            }else{
+                $fcoverage = $coverage;
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        //Parameters for cURL
+        $arrWhere = array('fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
+            'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+//            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
+            $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $partnername = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+            $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+            $requestby = "";
+            $takeby = "";
+            $purpose = "";
+            $curdatetime = new DateTime();
+            $datetime2 = new DateTime($transdate);
+            $interval = $curdatetime->diff($datetime2);
+//            $elapsed = $interval->format('%a days %h hours');
+            $elapsed = $interval->format('%a days');
+            
+            if(empty($engineer2) || $engineer2 == ""){
+                $requestby = $engineer_name;
+                $takeby = "-";
+            }else{
+                $requestby = $engineer_name;
+                $takeby = $engineer2_name;
+            }
+            
+            switch ($fpurpose){
+                case "SP";
+                    $purpose = "Sales/Project";
+                break;
+                case "W";
+                    $purpose = "Warranty";
+                break;
+                case "M";
+                    $purpose = "Maintenance";
+                break;
+                case "I";
+                    $purpose = "Investments";
+                break;
+                case "B";
+                    $purpose = "Borrowing";
+                break;
+                case "RWH";
+                    $purpose = "Transfer Stock";
+                break;
+                default;
+                    $purpose = "-";
+                break;
+            }
+            
+            $row['transnum'] = $transnum;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            $row['fsl'] = $fslname;
+            $row['transticket'] = $transticket;
+            $row['reqby'] = $requestby;
+            $row['takeby'] = $takeby;
+            $row['purpose'] = $purpose;
+            $row['qty'] = $qty;
+            $row['partner'] = $partnername;
+//            $row['notes'] = "-";
+            $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+            
+            $row['button'] = '<a href="'.base_url("print-outgoing-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+ 
+            if(in_array($fslcode, $e_coverage)){
+                $data[] = $row;
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_view_outgoing(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        
+        if(!empty($ftrans_out)){
+            //Parameters for cURL
+            $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+        }else{
+            $rs = array();
+            $arrWhere = array();
+        }
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
+            $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+            $partner_code = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+            $partner_name = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+            $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fsl = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fsl_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+            $customer = filter_var($r->outgoing_cust, FILTER_SANITIZE_STRING);
+            $location = filter_var($r->outgoing_loc, FILTER_SANITIZE_STRING);
+            $ssb_id = filter_var($r->outgoing_ssbid, FILTER_SANITIZE_STRING);
+            $fe_report = filter_var($r->fe_report, FILTER_SANITIZE_STRING);
+            $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+            $requestby = "";
+            $takeby = "";
+            $purpose = "";
+            $curdatetime = new DateTime();
+            $datetime2 = new DateTime($transdate);
+            $interval = $curdatetime->diff($datetime2);
+//            $elapsed = $interval->format('%a days %h hours');
+            $elapsed = $interval->format('%a days');
+            
+            if(empty($engineer2) || $engineer2 == ""){
+                $requestby = $engineer_name;
+                $takeby = "-";
+            }else{
+                $requestby = $engineer_name;
+                $takeby = $engineer2_name;
+            }
+            
+            switch ($fpurpose){
+                case "SP";
+                    $purpose = "Sales/Project";
+                break;
+                case "W";
+                    $purpose = "Warranty";
+                break;
+                case "M";
+                    $purpose = "Maintenance";
+                break;
+                case "I";
+                    $purpose = "Investments";
+                break;
+                case "B";
+                    $purpose = "Borrowing";
+                break;
+                case "RWH";
+                    $purpose = "Transfer Stock";
+                break;
+                default;
+                    $purpose = "-";
+                break;
+            }
+            
+            $row['transnum'] = $transnum;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            $row['transticket'] = $transticket;
+            $row['reqby'] = $requestby;
+            $row['partner'] = $partner_name;
+            $row['takeby'] = $takeby;
+            $row['purpose'] = $purpose;
+            $row['qty'] = $total_qty;
+            $row['fsl'] = $fsl;
+            $row['fslname'] = $fsl_name;
+            $row['customer'] = $customer;
+            $row['location'] = $location;
+            $row['ssbid'] = $ssb_id;
+            $row['fereport'] = $fe_report;
+            $row['user'] = $user_fullname;
+//            $row['notes'] = "-";
+            $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_view_outgoing_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        
+        if(!empty($ftrans_out)){
+            //Parameters for cURL
+            $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+        }else{
+            $rs = array();
+            $arrWhere = array();
+        }
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $dtid = filter_var($r->dt_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
+            $isdeleted = $deleted < 1 ? "N" : "Y";
+            
+            if($isdeleted === "N"){
+                $row['id'] = $dtid;
+                $row['transnum'] = $transnum;
+                $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                $row['partnum'] = $partnum;
+                $row['partname'] = $partname;
+                $row['serialnum'] = $serialnum;
+                $row['qty'] = $qty;
+                $row['return'] = $return;
+                $row['deleted'] = $isdeleted;
+ 
+                $data[] = $row;
+            }
         }
         
         return $this->output
@@ -1026,10 +1321,6 @@ class COutgoing extends BaseController
             $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
             $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-//            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
-//            foreach ($rs_stock as $s){
-//                $partstock = (int)$s["stock"];
-//            }
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
@@ -1179,14 +1470,14 @@ class COutgoing extends BaseController
         $fcode = $this->repo;
         $cartid = $this->session->userdata ( 'cart_session' )."ot";
                
-        $fsl = $this->input->post('fcode', TRUE);
-        
-        $fcode = "";
-        if(empty($fsl) || $fsl == ""){
-            $fcode = $this->repo;
-        }else{
-            $fcode = $fsl;
-        }
+//        $fsl = $this->input->post('fcode', TRUE);
+//        
+//        $fcode = "";
+//        if(empty($fsl) || $fsl == ""){
+//            $fcode = $this->repo;
+//        }else{
+//            $fcode = $fsl;
+//        }
         
         $date = date('Y-m-d'); 
         $fticket = $this->input->post('fticket', TRUE);
@@ -1199,58 +1490,60 @@ class COutgoing extends BaseController
         $fcust = $this->input->post('fcust', TRUE);
         $floc = $this->input->post('floc', TRUE);
         $fssb_id = $this->input->post('fssb_id', TRUE);
+        $fdest_fsl = $this->input->post('fdest_fsl', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode, 'fdigits'=>4);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num_ext'), 'POST', FALSE);
+//        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode, 'fdigits'=>5);
+//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num_ext'), 'POST', FALSE);
+        $arrParam = array('fparam'=>"OG");
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if(($fqty < 1) || (empty($fqty))){
             $this->session->set_flashdata('error', 'Failed to submit transaction data');
             $response = $error_response;
         }else{
-            $data_tmp = array();
             if($transnum === ""){
                 $response = $error_response;
             }else{
+                $data_tmp = array();
                 //get cart list by retnum
                 $data_tmp = $this->get_list_cart();
 
-                $dataDetail = array();
-                $total_qty = 0;
                 if(!empty($data_tmp)){
-                    foreach ($data_tmp as $d){
-                        $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
-                        $partstock = 0;
-                        foreach ($rs_stock as $s){
-                            $partstock = (int)$s["stock"];
-                        }
-                        if($partstock < (int)$d['qty']){
-
-                        }else{                        
-                            $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                                'fqty'=>$d['qty']);
-                            $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
-                                    'POST', FALSE);
-                            $total_qty += (int)$d['qty'];
-
-                            $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock-(int)$d['qty'], 'fflag'=>'N');
-                            //update stock by fsl code and part number
-                            $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
-                                    'POST', FALSE);
-                        }
-                    }
-
-                    if($total_qty < 1){
-                        $this->session->set_flashdata('error', 'Skip looped submit transaction data');
+                    if($fqty < 1){
+                        $this->session->set_flashdata('error', 'Skip looped submitted data');
                         $response = $error_response;
                     }else{
                         $dataTrans = array('ftransno'=>$transnum, 'fdate'=>$date, 'fticket'=>$fticket, 'fengineer_id'=>$fengineer_id, 
-                            'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fdelivery'=>$fdelivery, 'fqty'=>$total_qty, 
-                            'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes, 'fcust'=>$fcust, 'floc'=>$floc, 'fssb_id'=>$fssb_id);
+                            'fengineer2_id'=>$fengineer2_id, 'fpurpose'=>$fpurpose, 'fdelivery'=>$fdelivery, 'fqty'=>$fqty, 
+                            'fuser'=>$createdby, 'fcode'=>$fcode, 'fdest_code'=>$fdest_fsl, 'fnotes'=>$fnotes, 'fcust'=>$fcust, 
+                            'floc'=>$floc, 'fssb_id'=>$fssb_id);
                         $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
                         if($main_res->status)
                         {
+                            foreach ($data_tmp as $d){
+                                $dataDetail = array();
+                                $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
+                                $partstock = 0;
+                                foreach ($rs_stock as $s){
+                                    $partstock = (int)$s["stock"];
+                                }
+                                if($partstock < (int)$d['qty']){
+
+                                }else{                        
+                                    $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                                        'fqty'=>$d['qty']);
+                                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
+                                            'POST', FALSE);
+
+                                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock-(int)$d['qty'], 'fflag'=>'N');
+                                    //update stock by fsl code and part number
+                                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                                            'POST', FALSE);
+                                }
+                            }
+                            
                             //clear cart list data
                             $arrWhere = array('fcartid'=>$cartid);
                             $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_outgoings_cart'), 'POST', FALSE);
@@ -1270,6 +1563,7 @@ class COutgoing extends BaseController
                             $response = $error_response;
                         }
                     }
+
                 }else{
                     $this->session->set_flashdata('error', 'Failed to submit transaction data');
                     $response = $error_response;
@@ -1521,14 +1815,17 @@ class COutgoing extends BaseController
                 $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
                 $qty = filter_var($row->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                 $serialnum = filter_var($row->serial_number, FILTER_SANITIZE_STRING);
+                $deleted = filter_var($row->is_deleted, FILTER_SANITIZE_NUMBER_INT);
 
-                $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
-                $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
-                $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
-                $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
-                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
-                $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
-                $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+                if($deleted < 1){
+                    $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
+                    $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
+                    $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
+                    $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
+                    $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
+                    $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
+                    $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+                }
             }
 
             $this->mypdf->ln(1);
@@ -1760,14 +2057,17 @@ class COutgoing extends BaseController
             $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
             $qty = filter_var($row->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
             $serialnum = filter_var($row->serial_number, FILTER_SANITIZE_STRING);
+            $deleted = filter_var($row->is_deleted, FILTER_SANITIZE_NUMBER_INT);
             
-            $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
-            $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
-            $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
-            $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
-            $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
-            $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
-            $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+            if($deleted < 1){
+                $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
+                $this->mypdf->CellFitScale(($width*(20/100)),6,$partname,1,0);
+                $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
+                $this->mypdf->CellFitScale(($width*(15/100)),6,' ',1,0);
+                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
+                $this->mypdf->CellFitScale(($width*(5/100)),6,' ',1,0);
+                $this->mypdf->CellFitScale(($width*(10/100)),6,' ',1,1);
+            }
         }
         
         $this->mypdf->ln(1);

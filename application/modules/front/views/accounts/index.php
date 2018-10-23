@@ -128,6 +128,7 @@
                 { "data": 'warehouse' },
                 { "data": 'button' },
             ],
+            order: [[ 1, "asc" ]],
         });
 
         table.buttons().container()

@@ -107,16 +107,7 @@ class CUsers extends BaseController
             $row['email'] = filter_var($r->user_email, FILTER_SANITIZE_STRING);
             $row['fullname'] = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $row['group'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            if($code == "00"){
-                $names = "WH";
-            }else{
-                $data_warehouse = $this->get_list_info_wh($code);
-                foreach ($data_warehouse as $d){
-                    $names = $d["name"];
-                }
-            }
-            $row['warehouse'] = $names;
+            $row['warehouse'] = empty($r->fsl_name) ? "HQ" : filter_var($r->fsl_name, FILTER_SANITIZE_STRING); 
  
             $data[] = $row;
         }
@@ -160,16 +151,7 @@ class CUsers extends BaseController
             $row['email'] = filter_var($r->user_email, FILTER_SANITIZE_STRING);
             $row['fullname'] = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $row['group'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            if($code == "00"){
-                $names = "WH";
-            }else{
-                $data_warehouse = $this->get_list_info_wh($code);
-                foreach ($data_warehouse as $d){
-                    $names = $d["name"];
-                }
-            }
-            $row['warehouse'] = $names;
+            $row['warehouse'] = empty($r->fsl_name) ? "HQ" : filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }

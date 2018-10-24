@@ -28,7 +28,7 @@
                     <div class="input-group col-sm-12">
                         <select name="fpurpose" id="fpurpose" class="form-control" placeholder="By Purpose">
                             <option value="">By Purpose</option>
-                            <option value="RG">Return Good</option>
+                            <option value="R">Return Parts</option>
                             <option value="S">Supply</option>
                         </select>
                     </div>
@@ -46,10 +46,23 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
+            <h4 class="header-title m-b-30"><?php echo $contentTitle;?></h4>
+            <div class="button-list">
+                <button type="button" onclick="location.href='<?php echo base_url("return-parts");?>'" class="btn btn-success btn-rounded w-md waves-effect waves-light">
+                    <i class="fa fa-plus"></i> Return Parts
+                </button>
+                <button type="button" onclick="location.href='<?php echo base_url("supply-from-other-fsl");?>'" class="btn btn-warning btn-rounded w-md waves-effect waves-light">
+                    <i class="fa fa-plus"></i> Supply from other FSL
+                </button>
+                <button type="button" onclick="location.href='<?php echo base_url("supply-from-cwh");?>'" class="btn btn-primary btn-rounded w-md waves-effect waves-light">
+                    <i class="fa fa-plus"></i> Supply from Central Warehouse
+                </button>
+            </div>
+            <!--
             <button type="button" onclick="location.href='<?php echo base_url("new-incoming-trans");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            -->
             
             <p class="text-success text-center">
                 <?php
@@ -75,6 +88,9 @@
             </p>
             
             <div class="card-body">
+                <div class="row m-b-30">
+
+                </div>
                 <div class="row">
                     <div class="table-responsive">
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
@@ -87,6 +103,7 @@
                                 <th>Purpose</th>
                                 <th>Outgoing No.</th>
                                 <th>Qty</th>
+                                <th>Transfered From</th>
                                 <!--<th>FSL Admin</th>-->
                                 <!--<th>Notes</th>-->
                                 <th>Action</th>
@@ -205,6 +222,7 @@
                 { "data": 'purpose' },
                 { "data": 'transout' },
                 { "data": 'qty' },
+                { "data": 'from_fsl' },
 //                { "data": 'user' },
 //                { "data": 'notes' },
                 { "data": 'button' },

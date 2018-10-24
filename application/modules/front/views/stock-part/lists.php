@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <div class="card-box">
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
-            <p>Please choose warehouse that you want to manage it's stock parts.</p>
+            <p>You can see the current stock in the FSL listed below.</p>
             
             <p class="text-success text-center">
                 <?php

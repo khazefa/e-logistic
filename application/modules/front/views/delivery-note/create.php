@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="fairwaybill2" class="col-sm-3 col-form-label">No Airwaybill From Delivery <span class="text-danger">*</span></label>
+                                    <label for="fairwaybill2" class="col-sm-3 col-form-label">DN From Delivery <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
                                         <input type="text" name="fairwaybill2" id="fairwaybill2" class="form-control" required>
                                         <span class="text-information" id="msg_fairwaybill2">(Optional)</span>

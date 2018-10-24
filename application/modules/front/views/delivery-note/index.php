@@ -97,6 +97,7 @@
                                 <th>Date</th>
                                 <th>Purpose</th>
                                 <th>Qty</th>
+                                <th>Transfer To</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -159,7 +160,7 @@
         </div>
     </div>
 </div>
-        <!-- End Modal Request Confirmation -->
+<!-- End Modal Request Confirmation -->
 
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
@@ -393,6 +394,7 @@
                 { "data": 'transdate' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
+                { "data": 'transfer_to' },
                 { "data": 'button' },
             ],
             order: [[ 0, "desc" ]],

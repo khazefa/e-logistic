@@ -848,6 +848,40 @@ class COutgoing extends BaseController
     }
     
     /**
+     * This function is used to get list information described by function name
+     */
+    private function get_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();
+        $val_stock = 0;
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            if($initflag === "Y"){
+                $val_stock = $initstock;
+            }else{
+                $val_stock = $stock;
+            }
+        }
+        
+        return $val_stock;
+    }
+    
+    /**
      * This function is used to get lists for populate data
      */
     public function get_list_part_sub(){
@@ -1469,15 +1503,6 @@ class COutgoing extends BaseController
         
         $fcode = $this->repo;
         $cartid = $this->session->userdata ( 'cart_session' )."ot";
-               
-//        $fsl = $this->input->post('fcode', TRUE);
-//        
-//        $fcode = "";
-//        if(empty($fsl) || $fsl == ""){
-//            $fcode = $this->repo;
-//        }else{
-//            $fcode = $fsl;
-//        }
         
         $date = date('Y-m-d'); 
         $fticket = $this->input->post('fticket', TRUE);
@@ -1493,23 +1518,21 @@ class COutgoing extends BaseController
         $fdest_fsl = $this->input->post('fdest_fsl', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-//        $arrParam = array('fparam'=>"OT", 'fcode'=>$fcode, 'fdigits'=>5);
-//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num_ext'), 'POST', FALSE);
-        $arrParam = array('fparam'=>"OG");
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
-        $transnum = $rs_transnum->status ? $rs_transnum->result : "";
-        
         if(($fqty < 1) || (empty($fqty))){
             $this->session->set_flashdata('error', 'Failed to submit transaction data');
             $response = $error_response;
         }else{
+            $arrParam = array('fparam'=>"OG");
+            $rs_transnum = send_curl($arrParam, $this->config->item('api_get_outgoing_num'), 'POST', FALSE);
+            $transnum = $rs_transnum->status ? $rs_transnum->result : "";
+//            var_dump($transnum);
             if($transnum === ""){
                 $response = $error_response;
             }else{
                 $data_tmp = array();
                 //get cart list by retnum
                 $data_tmp = $this->get_list_cart();
-
+//                var_dump($data_tmp);
                 if(!empty($data_tmp)){
                     if($fqty < 1){
                         $this->session->set_flashdata('error', 'Skip looped submitted data');
@@ -1522,28 +1545,31 @@ class COutgoing extends BaseController
                         $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_outgoings_trans'), 'POST', FALSE);
                         if($main_res->status)
                         {
+                            $partstock = 0;
+                            $listdetail = array();
+                            $listupdatestock = array();
                             foreach ($data_tmp as $d){
                                 $dataDetail = array();
-                                $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
-                                $partstock = 0;
-                                foreach ($rs_stock as $s){
-                                    $partstock = (int)$s["stock"];
-                                }
+                                $partstock = $this->get_stock($fcode, $d['partno']);
+//                                var_dump($partstock);
                                 if($partstock < (int)$d['qty']){
-
+                                    //skip this insert detail for this row
                                 }else{                        
                                     $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
                                         'fqty'=>$d['qty']);
+//                                    $listdetail[] = $dataDetail;
                                     $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
                                             'POST', FALSE);
 
                                     $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock-(int)$d['qty'], 'fflag'=>'N');
+//                                    $listupdatestock[] = $dataUpdateStock;
                                     //update stock by fsl code and part number
                                     $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
                                             'POST', FALSE);
                                 }
                             }
-                            
+//                            var_dump($listdetail);
+//                            var_dump($listupdatestock);exit();
                             //clear cart list data
                             $arrWhere = array('fcartid'=>$cartid);
                             $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_outgoings_cart'), 'POST', FALSE);

@@ -967,11 +967,7 @@
             data: data,
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
-                    $('#error_modal').modal({
-                        show: true
-                    });
+                    alert(jqXHR.message);
                 }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
                     window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";

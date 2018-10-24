@@ -4,11 +4,29 @@
         <div class="card-box">
             <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
             <div class="card-body">
+                <p class="text-muted m-b-20">
+                    Petunjuk kegunaan fitur pada masing-masing Tab:
+                </p>
+                <ul>
+                    <li>
+                        Pilh Tab <strong>Supply</strong> jika Anda ingin <strong>menyuplai atau menambah stok</strong> pada suatu Part Number(PN) 
+                    </li>
+                    <li>
+                        Pilh Tab <strong>Return</strong> jika Anda ingin <strong>mengembalikan Part</strong> dari Engineer 
+                        dengan status Return Good(RG), harap <strong>mengisi nomor FE Report</strong> jika ada part yang dikembalikan 
+                        dengan status Bad Part
+                    </li>
+                    <li>
+                        Pilh Tab <strong>Close</strong> jika part-part yang dikembalikan oleh Engineer berdasarkan request berstatus 
+                        Bad Part semua, atau tidak ada part yang dikembalikan dengan status Return Good(RG), harap <strong>mengisi nomor FE Report</strong>
+                    </li>
+                </ul>
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link " id="nav-supply-tab" data-toggle="tab" href="#nav-supply" role="tab" aria-controls="nav-supply" aria-selected="true">Supply</a>
                         <a class="nav-item nav-link active" id="nav-return-tab" data-toggle="tab" href="#nav-return" role="tab" aria-controls="nav-return" aria-selected="false">Return</a>
                         <a class="nav-item nav-link " id="nav-close-tab" data-toggle="tab" href="#nav-close" role="tab" aria-controls="nav-close" aria-selected="false">Close</a>
+                        <!--<a class="nav-item nav-link " id="nav-supply2-tab" data-toggle="tab" href="#nav-supply2" role="tab" aria-controls="nav-supply2" aria-selected="false">Supply by Transfer</a>-->
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -224,6 +242,85 @@
                         </div>
                     </div>
                     <!-- End Content Panel Close -->
+                    
+                    <!-- Begin Content Panel Supply FSL -->
+                    <div class="tab-pane fade " id="nav-supply2" role="tabpanel" aria-labelledby="nav-supply2-tab">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Transfer Stock by FSL</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="form-group form-group-sm col-sm-12">
+                                                <div class="row">
+                                                    <div class="input-group col-sm-12">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                                         </div>
+                                                        <input type="text" name="ftrans_out_s2" id="ftrans_out_s2" class="form-control" placeholder="Outgoing Trans. No.">
+                                                    </div>
+                                                    <div class="input-group col-sm-12">
+                                                        <span id="ftrans_out_s2_notes" class="help-block text-danger"><small></small></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" id="btn_submit_s2" class="btn btn-primary waves-effect waves-light">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card bg-light table-responsive">
+                                    <div class="card-header bg-primary text-white">
+                                        <strong class="card-title">Detail Transaction</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="column col-md-6">
+                                                <div class="text-left">
+                                                    <p class="font-13"><strong>from FSL :</strong> <span class="m-l-10" id="vfsl">-</span></p>
+                                                    <p class="font-13"><strong>Purpose :</strong> <span class="m-l-10" id="vpurpose">-</span></p>
+                                                    <p class="font-13"><strong>Trans. Date. :</strong> <span class="m-l-10" id="vtransdate">-</span></p>
+                                                    <p class="font-13"><strong>Ticket No. :</strong> <span class="m-l-10" id="vticket">-</span></p>
+                                                    <p class="font-13"><strong>FSE ID :</strong> <span class="m-l-10" id="vfse">-</span></p>
+                                                    <p class="font-13"><strong>Assigned FSE :</strong> <span class="m-l-10" id="vfsename">-</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="column col-md-6">
+                                                <div class="text-left">
+                                                    <p class="font-13"><strong>Partner :</strong> <span class="m-l-10" id="vpartner">-</span></p>
+                                                    <p class="font-13"><strong>FSE Messenger :</strong> <span class="m-l-10" id="vmess">-</span></p>
+                                                    <p class="font-13"><strong>Customer :</strong> <span class="m-l-10" id="vcust">-</span></p>
+                                                    <p class="font-13"><strong>Location :</strong> <span class="m-l-10" id="vloc">-</span></p>
+                                                    <p class="font-13"><strong>SSB ID :</strong> <span class="m-l-10" id="vssbid">-</span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2"></div>
+                                <table id="detail_grid_s" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Part Number</th>
+                                        <th>Part Name</th>
+                                        <th>Serial Number</th>
+                                        <th>Qty</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Content Panel Supply FSL -->
                 </div>
             </div>
         </div>
@@ -435,7 +532,33 @@
                         }
                     }
                 }
-            ]
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ? i : 0;
+                };
+                var totalQty = api
+                .column( 4 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+                $('#ttl_qty_r').html(totalQty);
+                
+                if(totalQty === 0){
+                    e_fe_report.prop('disabled', false);
+                }else{
+                    if(totalQty < total_qty_outgoing){
+                        e_fe_report.prop('disabled', false);
+                    }else{
+                        e_fe_report.prop('disabled', true);
+                    }
+                }
+            },
         });
         
         //function for datatables button
@@ -548,7 +671,8 @@
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             fpartnum : e_partnum_s.val(),
-            fqty : e_qty_s.val()
+            fqty : e_qty_s.val(),
+            fstatus : "S"
         };
 
         $.ajax({
@@ -844,7 +968,7 @@
 //                    $('#ttl_qty_r').html(total_qty);
                     total_verified++;
                     reload2();
-                    get_total_r();
+//                    get_total_r();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

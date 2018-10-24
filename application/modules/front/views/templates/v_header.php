@@ -171,6 +171,16 @@
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
                                 </ul>
                             </li>
+                            <!--
+                            <li class="has-submenu">
+                                <a href="#"><i class="icon-magnifier"></i>Search</a>
+                                <ul class="submenu">
+                                    <li>
+                                        <a href="<?php echo base_url("search-parts");?>">Part and Subtitution</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            -->
                             <?php
                             }
                             ?>
@@ -209,7 +219,6 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("manage-spareparts-stock");?>">Stock</a></li>
                                     <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
@@ -232,6 +241,8 @@
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a></li>
                                     <li><a href="<?php echo base_url("view-incoming-trans");?>">Incoming</a></li>
+                                    <li><a href="<?php echo base_url("stock-in-fsl");?>">Stock in FSL</a></li>
+                                    <li><a href="<?php echo base_url("stock-in-cwh");?>">Stock in Central Warehouse</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">
@@ -269,7 +280,13 @@
                                     <li class="breadcrumb-item active"><?php echo $pageMenu;?></li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">FSL - <span id="glob_fsl"><?php echo $repo." (".$repoName.")";?></span></h4>
+                            <?php
+                            if($repo === "00"){
+                                echo '<h4 class="page-title">WELCOME TO CENTRAL WAREHOUSE</h4>';
+                            }else{
+                                echo '<h4 class="page-title">WELCOME TO <span id="glob_fsl">'.$repoName.' ('.$repo.')'.'</span></h4>';
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>

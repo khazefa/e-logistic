@@ -164,6 +164,11 @@
                                     <li>
                                         <a href="<?php echo base_url("oversee/search-part-number-e");?>">Part Number in Engineer</a>
                                     </li>
+                                    <!--
+                                    <li>
+                                        <a href="<?php echo base_url("oversee/search-parts");?>">Part and Subtitution</a>
+                                    </li>
+                                    -->
                                 </ul>
                             </li>
                             <?php

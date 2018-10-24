@@ -131,8 +131,9 @@ $route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
 // ===========================
 //  Routing Front Stock Spareparts
 // ===========================
-$route['manage-spareparts-stock'] = 'front/cstockpart/lists';
 $route['data-spareparts-stock'] = 'front/cstockpart';
+$route['stock-in-fsl'] = 'front/cstockpart/lists';
+$route['stock-in-cwh'] = 'front/cstockpart/views';
 $route['add-spareparts-stock'] = 'front/cstockpart/add';
 $route['import-spareparts-stock'] = 'front/cstockpart/add_import';
 $route['detail-spareparts-stock/(:any)'] = 'front/cstockpart/detail/$1';
@@ -308,7 +309,6 @@ $route['incoming-trans'] = 'front/cincoming';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['supply-from-other-fsl'] = 'front/cincoming/supply_from_other_fsl';
-$route['supply-from-other-fsl'] = 'front/cincoming/supply_from_warehouse';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 $route['return-parts'] = 'front/creturnparts/add';
@@ -323,6 +323,15 @@ $route['supply-from-fsl'] = 'front/csupplyfromfsl';
 $route['add-supply-from-fsl'] = 'front/csupplyfromfsl/add';
 // ===========================
 //  End Routing Front Supply from FSL
+// ===========================
+
+// ===========================
+//  Routing Front Supply from CWH
+// ===========================
+$route['supply-from-cwh'] = 'front/csupplyfromcwh';
+$route['add-supply-from-cwh'] = 'front/csupplyfromcwh/add';
+// ===========================
+//  End Routing Front Supply from CWH
 // ===========================
 
 // ===========================
@@ -398,6 +407,14 @@ $route['oversee/outgoing-report'] = 'superintend/coutgoing';
 $route['oversee/print-outgoing-trans/(:any)'] = 'superintend/coutgoing/print_transaction/$1';
 // ===========================
 //  End Routing Superintend Outgoing Trans
+// ===========================
+
+// ===========================
+//  Search Parts
+// ===========================
+$route['oversee/search-parts'] = 'superintend/csearchparts';
+// ===========================
+//  End Routing search Parts
 // ===========================
 
 // ===========================

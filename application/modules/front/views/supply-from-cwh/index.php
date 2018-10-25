@@ -26,15 +26,11 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
-                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose FSL" data-style="btn-light">
-                            <?php
-                                foreach($list_coverage as $w){
-                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                }
-                            ?>
+                        <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
+                            <option value="">By Status</option>
+                            <option value="open">Open</option>
+                            <option value="complete">Complete</option>
                         </select>
-                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
                     </div>
                 </div>
             </div>
@@ -50,7 +46,7 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=$link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <button type="button" onclick="location.href='<?php echo base_url("add-supply-from-cwh");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
@@ -79,15 +75,6 @@
             </p>
             
             <div class="card-body">
-                <div class="row m-b-30">
-                    <div class="col-md-12">
-                        <div class="button-list">
-                            <button type="button" onclick="location.href='<?php echo base_url("search-parts");?>'" class="btn btn-primary btn-rounded w-md waves-effect waves-light">
-                                <i class="fa fa-search"></i> Search Part
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="table-responsive">
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
@@ -97,7 +84,8 @@
                                 <th>Date</th>
                                 <th>Purpose</th>
                                 <th>Qty</th>
-                                <th>Transfer To</th>
+                                <th>Notes</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -111,7 +99,7 @@
     </div>
 </div>
 
-<!-- Modal Request Confirmation -->
+<!-- Modal View Detail Information -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
     <div class="modal-dialog"  style="max-width:750px;">
         <div class="modal-content">
@@ -160,25 +148,21 @@
         </div>
     </div>
 </div>
-<!-- End Modal Request Confirmation -->
+<!-- End Modal View Detail Information -->
 
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
-    var e_coverage = $('#fcoverage');
-    var transnum = "";
+    var e_status = $('#fstatus');
     var table1;
     
-
     function init_form(){
         e_date1.val('');
         e_date2.val('');
-        e_coverage.val('');
-        e_coverage.selectpicker('refresh');
+        e_status.val('');
     }
 
     function init_table(){
-        // Table 1
         table1 = $('#cart_grid').DataTable({
             dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             destroy: true,
@@ -233,7 +217,7 @@
                 }
             ],
             ajax: {                
-                url: '<?=$link_modal_detail;?>',
+                url: '<?php echo base_url('front/cdeliverynote/get_trans_detail'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -278,10 +262,10 @@
         // Handle errors here
         console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
     }
-
+    
     function viewdetail(transnum_e){
         transnum = transnum_e;
-        var url = '<?=$link_modal ?>';
+        var url = '<?php echo base_url('front/cdeliverynote/get_trans'); ?>';
         var type = 'POST';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -296,16 +280,13 @@
                 $('#viewdetail').modal({
                     show: true
                 });
-                reload2();
+                init_table();
             
         };
         xhqr(url, type, data, success, error_xhqr);
     }
     
     $(document).ready(function() {
-
-        init_table();
-
         // Setting datatable defaults
         $.extend( $.fn.dataTable.defaults, {
             searching: true,
@@ -377,7 +358,7 @@
                 }
             ],
             ajax: {                
-                url: '<?=$link_get_data;?>',
+                url: '<?php echo base_url('front/csupplyfromcwh/get_list_view_datatable'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -386,7 +367,7 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
-                    d.fcoverage = e_coverage.val();
+                    d.fstatus = e_status.val();
                 }
             },
             columns: [
@@ -394,10 +375,11 @@
                 { "data": 'transdate' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
-                { "data": 'transfer_to' },
+                { "data": 'notes' },
+                { "data": 'status' },
                 { "data": 'button' },
             ],
-            order: [[ 0, "desc" ]],
+            order: [[ 1, "desc" ]],
             columnDefs: [{ 
                 orderable: false,
                 targets: [ -1 ]
@@ -416,7 +398,5 @@
             init_form();
             table.ajax.reload();
         });
-
-        
     });
 </script>

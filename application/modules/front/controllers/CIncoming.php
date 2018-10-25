@@ -19,7 +19,7 @@ class CIncoming extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSpv() || $this->isStaff()){
+        if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
             //
         }else{
             redirect('cl');
@@ -61,7 +61,9 @@ class CIncoming extends BaseController
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
-        $this->loadViews('front/incoming-trans/lists', $this->global, NULL);
+        $data['list_coverage'] = $this->get_list_warehouse("array");
+        
+        $this->loadViews('front/incoming-trans/lists', $this->global, $data);
     }
     
     /**
@@ -111,7 +113,7 @@ class CIncoming extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_view_datatable(){
+    public function get_list_view_datatable(){ 
         $rs = array();
         $arrWhere = array();
         
@@ -137,6 +139,8 @@ class CIncoming extends BaseController
 //            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
 //            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
             $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
+            $fslfrom = filter_var($r->fsl_from, FILTER_SANITIZE_STRING);
+            $fslfromname = filter_var($r->fsl_from_name, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
             $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
             $notes = filter_var($r->incoming_notes, FILTER_SANITIZE_STRING);
@@ -148,7 +152,11 @@ class CIncoming extends BaseController
                     $button = '<a href="'.base_url("print-incoming-supply/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                 break;
                 case "RG";
-                    $purpose = 'Return Good';
+                    $purpose = 'Return Parts';
+                    $button = '<a href="'.base_url("print-incoming-return/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                break;
+                case "R";
+                    $purpose = 'Return Parts';
                     $button = '<a href="'.base_url("print-incoming-return/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                 break;
                 default;
@@ -158,12 +166,13 @@ class CIncoming extends BaseController
             }
             
             $row['transnum'] = $transnum;
-            $row['transout'] = $transout == "" ? "-" : $transout." ".$outstatus;
+            $row['transout'] = $transout === "" ? "-" : $transout." ".$outstatus;
             $row['transdate'] = tgl_indo($transdate);
 //            $row['transticket'] = $transticket;
 //            $row['engineer'] = $engineer_name;
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
+            $row['from_fsl'] = $fslfromname === "" ? "-" : $fslfromname;
             $row['user'] = $user_fullname;
             $row['notes'] = $notes;
             
@@ -188,6 +197,145 @@ class CIncoming extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_view_datatable2(){ 
+        $rs = array();
+        $arrWhere = array();
+        
+        //Parameters for cURL
+        $fdate1 = $this->input->post('fdate1', TRUE);
+        $fdate2 = $this->input->post('fdate2', TRUE);
+        $fpurpose = $this->input->post('fpurpose', TRUE);
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        
+        if (strpos($coverage, 'C000') !== false) {
+            $fcoverage = array();
+        }else{
+            if (strpos($coverage, ',') !== false) {
+                $fcoverage = str_replace(',', ';', $coverage);
+            }else{
+                $fcoverage = $coverage;
+            }
+        }
+        
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        //Parameters for cURL
+        $arrWhere = array('fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fpurpose'=>$fpurpose);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_incomings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
+            $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $outstatus = $r->outgoing_status == "" ? "" : "(". strtoupper($r->outgoing_status).")";
+            $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
+//            $transticket = filter_var($r->incoming_ticket, FILTER_SANITIZE_STRING);
+//            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+//            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
+            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $fslfrom = filter_var($r->fsl_from, FILTER_SANITIZE_STRING);
+            $fslfromname = filter_var($r->fsl_from_name, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->incoming_notes, FILTER_SANITIZE_STRING);
+            $purpose = "";
+            
+            switch ($fpurpose){
+                case "S";
+                    $purpose = 'Supply';
+                    $button = '<a href="'.base_url("print-incoming-supply/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                break;
+                case "RG";
+                    $purpose = 'Return Parts';
+                    $button = '<a href="'.base_url("print-incoming-return/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                break;
+                case "R";
+                    $purpose = 'Return Parts';
+                    $button = '<a href="'.base_url("print-incoming-return/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                break;
+                default;
+                    $purpose = '-';
+                    $button = '-';
+                break;
+            }
+            
+            $row['transnum'] = $transnum;
+            $row['transout'] = $transout === "" ? "-" : $transout." ".$outstatus;
+            $row['transdate'] = tgl_indo($transdate);
+//            $row['transticket'] = $transticket;
+//            $row['engineer'] = $engineer_name;
+            $row['purpose'] = $purpose;
+            $row['qty'] = $qty;
+            $row['from_fsl'] = $fslfromname === "" ? "-" : $fslfromname;
+            $row['user'] = $user_fullname;
+            $row['notes'] = $notes;            
+            $row['button'] = $button;
+ 
+            if(in_array($fslcode, $e_coverage)){
+                $data[] = $row;
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get lists fsl
+     */
+    public function get_list_warehouse($output = "json"){
+        $rs = array();
+        $arrWhere = array();
+        
+//        $fcode = $this->repo;
+//        $arrWhere = array('fcode'=>$fcode);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = $this->common->nohtml($r->fsl_name);
+ 
+            $data[] = $row;
+        }
+        
+        switch ($output){
+            case "json":
+                return $this->output
+                ->set_content_type('application/json')
+                ->set_output(
+                    json_encode($data)
+                );
+            break;
+            case "array":
+                return $data;
+            break;
+            default:
+                return $this->output
+                ->set_content_type('application/json')
+                ->set_output(
+                    json_encode($data)
+                );
+            break;
+        }
     }
     
     /**
@@ -313,6 +461,7 @@ class CIncoming extends BaseController
             $purpose = "";
             $transdate = "";
             $ticket = "";
+            $notes = "";
             foreach ($results as $r){
                 $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
                 switch ($fpurpose){
@@ -320,7 +469,10 @@ class CIncoming extends BaseController
                         $purpose = "Supply";
                     break;
                     case "RG";
-                        $purpose = "Return Good";
+                        $purpose = "Return Parts";
+                    break;
+                    case "R";
+                        $purpose = "Return Parts";
                     break;
                     default;
                         $purpose = "Supply";
@@ -375,6 +527,10 @@ class CIncoming extends BaseController
                 $this->mypdf->CellFitScale(($width*(40/100)),6,$partname,1,0);
                 $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,1,'C');
             }
+            
+            $this->mypdf->ln(1);
+            $this->mypdf->SetFont('Arial','',10);
+            $this->mypdf->Cell(($width),7,'Notes: '.$notes,0,0,'L');
 
             $title = 'Supply #'.$transnum;
             $this->mypdf->SetTitle($title);
@@ -710,6 +866,48 @@ class CIncoming extends BaseController
     }
     
     /**
+     * This function is used to load the add new form
+     */
+    public function supply_from_other_fsl()
+    {        
+        if($this->isSpv()){
+            redirect('view-incoming-trans');
+        }elseif($this->isStaff()){
+            $this->global['pageTitle'] = 'Supply from Other FSL - '.APP_NAME;
+            $this->global['pageMenu'] = 'Supply from Other FSL';
+            $this->global['contentHeader'] = 'Supply from Other FSL';
+            $this->global['contentTitle'] = 'Supply from Other FSL';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->loadViews('front/incoming-trans/supply_from_other_fsl', $this->global, NULL);
+            
+        }else{
+            redirect('cl');
+        }
+    }
+    
+    /**
+     * This function is used to load the add new form
+     */
+    public function supply_from_warehouse()
+    {
+        if($this->isSpv()){
+            redirect('view-incoming-trans');
+        }elseif($this->isStaff()){
+            $this->global['pageTitle'] = 'Supply from Central Warehouse - '.APP_NAME;
+            $this->global['pageMenu'] = 'Supply from Central Warehouse';
+            $this->global['contentHeader'] = 'Supply from Central Warehouse';
+            $this->global['contentTitle'] = 'Supply from Central Warehouse';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->loadViews('front/incoming-trans/supply_from_warehouse', $this->global, NULL);
+            
+        }else{
+            redirect('cl');
+        }
+    }
+    
+    /**
      * This function is used to check part
      */
     public function check_part(){
@@ -961,9 +1159,11 @@ class CIncoming extends BaseController
         $fpartname = $this->get_info_part_name($fpartnum);
         $fserialnum = $this->input->post('fserialnum', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         
-        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$fpartname, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 'fqty'=>$fqty, 'fuser'=>$fuser, 'fname'=>$fname);
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$fpartname, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 
+            'fqty'=>$fqty, 'fstatus'=>$fstatus, 'fuser'=>$fuser, 'fname'=>$fname);
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_incomings_cart'), 'POST', FALSE);
 
         if($rs_data->status)
@@ -1241,7 +1441,7 @@ class CIncoming extends BaseController
     }
     
     public function get_trans_num(){
-        $arrWhere = array('fparam'=>"IN");
+        $arrWhere = array('fparam'=>"IC");
         $transnum = send_curl($arrWhere, $this->config->item('api_get_trans_num'), 'POST', FALSE);
         return $this->output
         ->set_content_type('application/json')
@@ -1277,8 +1477,10 @@ class CIncoming extends BaseController
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
+//        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>5);
+//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IC');
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){
@@ -1308,7 +1510,8 @@ class CIncoming extends BaseController
                 }
             }
 			
-            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
+            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
+                'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>'', 'fnotes'=>$fnotes);
             $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
             if($main_res->status)
             {
@@ -1358,9 +1561,11 @@ class CIncoming extends BaseController
         
         if(!empty($rs)){
             $total_qty = 0;
+            $purpose = "";
             $status = "";
             foreach ($rs as $r){
                 $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             }
             if($status == "complete"){
@@ -1372,6 +1577,63 @@ class CIncoming extends BaseController
             }else{
                 $global_response = array(
                     'status' => 1,
+                    'purpose' => $purpose,
+                    'total_qty' => $total_qty,
+                    'message'=> 'Transaction still open'
+                );
+            }
+            $response = $global_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'total_qty'=> 0,
+                'message'=> 'Transaction is not available'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to check outgoing transaction
+     */
+    public function check_outgoing_trf(){
+        $rs = array();
+        $arrWhere = array();
+        $global_response = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $total_qty = 0;
+            $purpose = "";
+            $status = "";
+            foreach ($rs as $r){
+                $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+            }
+            if($status == "complete"){
+                $global_response = array(
+                    'status' => 0,
+                    'total_qty' => 0,
+                    'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 1,
+                    'purpose' => $purpose,
                     'total_qty' => $total_qty,
                     'message'=> 'Transaction still open'
                 );
@@ -1466,12 +1728,13 @@ class CIncoming extends BaseController
                 $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
                 $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
                 $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
                 
                 $row['partno'] = $partnum;
                 $row['serialno'] = $serialnum;
                 $row['partname'] = $partname;
                 $row['qty'] = (int)$qty;
-                $row['status'] = "RG";
+                $row['status'] = $status;
                 
                 $arrData[] = $row;
                 $dataInfo = array('fpartnum'=>$partnum, 'fpartname'=>$partname, 'fserialnum'=>$serialnum, 'fcartid'=>$cartid, 'fqty'=>$qty, 
@@ -1562,19 +1825,20 @@ class CIncoming extends BaseController
             'message'=> 'Failed to submit transaction'
         );
         
-        $fcode = $this->repo;               
-        $date = date('Y-m-d'); 
+        $fcode = $this->repo;
+        $date = date('Y-m-d');
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
         $ffe_report = $this->input->post('ffe_report', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $fpurpose = "RG";
-        $fqty = $this->input->post('fqty', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
-        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>4);
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
+//        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>5);
+//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IC');
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
         
         if($transnum === ""){
@@ -1583,59 +1847,57 @@ class CIncoming extends BaseController
             //get cart list by retnum
             $data_tmp = $this->get_list_cart_return($cartid);
 
-            $dataDetail = array();
-            $total_qty = 0;
             if(!empty($data_tmp)){
-                foreach ($data_tmp as $d){
-                    $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
-                    foreach ($rs_stock as $s){
-                        $partstock = (int)$s["stock"];
+                $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
+                    'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>'', 'fnotes'=>$fnotes);
+                $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
+                if($main_res->status)
+                {
+                    foreach ($data_tmp as $d){
+                        $dataDetail = array();
+                        $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
+                        foreach ($rs_stock as $s){
+                            $partstock = (int)$s["stock"];
+                        }
+
+                        $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                            'fqty'=>$d['qty']);
+                        $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
+                                'POST', FALSE);
+
+                        $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
+                            'fflag'=>'N');
+                        //update stock by fsl code and part number
+                        $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                                'POST', FALSE);
+
+                        $updateDetailOutgoing = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 'fstatus'=>'RG');
+                        //update detail outgoing status by outgoing number, part number and serial number
+                        $update_status_detail_outgoing = send_curl($this->security->xss_clean($updateDetailOutgoing), $this->config->item('api_update_outgoings_trans_detail'), 
+                                'POST', FALSE);
                     }
                     
-                    $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                        'fqty'=>$d['qty']);
-                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
+                    //update outgoing status by outgoing number
+                    $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
+                    $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
                             'POST', FALSE);
-                    $total_qty += (int)$d['qty'];
-                    
-                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
-                        'fflag'=>'N');
-                    //update stock by fsl code and part number
-                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
-                            'POST', FALSE);
-                    
-                    $updateDetailOutgoing = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno']);
-                    //update detail outgoing status by outgoing number, part number and serial number
-                    $update_status_detail_outgoing = send_curl($this->security->xss_clean($updateDetailOutgoing), $this->config->item('api_update_outgoings_trans_detail'), 
-                            'POST', FALSE);
-                }
-            }
-
-            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fnotes'=>$fnotes);
-            $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
-            if($main_res->status)
-            {
-                //update outgoing status by outgoing number
-                $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
-                $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
-                        'POST', FALSE);
-                //clear cart list data
-                $arrWhere = array('fcartid'=>$cartid);
-                $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
-                if($rem_res->status){
-                    $success_response = array(
-                        'status' => 1,
-                        'message' => $transnum
-                    );
-                    $response = $success_response;
-                }else{
+                    //clear cart list data
+                    $arrWhere = array('fcartid'=>$cartid);
+                    $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
+                    if($rem_res->status){
+                        $success_response = array(
+                            'status' => 1,
+                            'message' => $transnum
+                        );
+                        $response = $success_response;
+                    }else{
+                        $response = $error_response;
+                    }
+                }else
+                {
+                    $this->session->set_flashdata('error', 'Failed to submit transaction data');
                     $response = $error_response;
                 }
-            }
-            else
-            {
-                $this->session->set_flashdata('error', 'Failed to submit transaction data');
-                $response = $error_response;
             }
         }
         return $this->output
@@ -1675,6 +1937,102 @@ class CIncoming extends BaseController
             $response = $success_response;
         }else{
             $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to complete close transfer stock transaction
+     */
+    public function submit_trans_close_transfer(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to submit transaction'
+        );
+                    
+        $date = date('Y-m-d');
+        $fcode = $this->repo;
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $fpurpose = "S";
+        $fqty = $this->input->post('fqty', TRUE);
+        $fcode_from = $this->input->post('fcode_from', TRUE);
+        $fnotes = $this->input->post('fnotes', TRUE);
+        $createdby = $this->session->userdata ( 'vendorUR' );
+        
+//        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>5);
+//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
+        $arrParam = array('fparam'=>'IC');
+        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+        $transnum = $rs_transnum->status ? $rs_transnum->result : "";
+        
+        if($transnum === ""){
+            $response = $error_response;
+        }else{
+            //Parameters for cURL
+            $arrWhere = array('ftrans_out'=>$ftrans_out);
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+
+            $dataDetail = array();
+            $total_qty = 0;
+            if(!empty($rs)){
+                foreach ($rs as $r) {
+                    $outgoingnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+                    $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
+            
+                    $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+                    $partstock = 0;
+                    foreach ($rs_stock as $s){
+                        $partstock = (int)$s["stock"];
+                    }
+                    $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$partnum, 'fserialnum'=>$serialnum, 
+                        'fqty'=>$qty);
+                    $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
+                            'POST', FALSE);
+                    $total_qty += (int)$qty;
+                    
+                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$partnum, 'fqty'=>(int)$partstock+(int)$qty, 'fflag'=>'N');
+                    //update stock by fsl code and part number
+                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                            'POST', FALSE);
+                }
+            }
+			
+            $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
+                'fqty'=>$total_qty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>$fcode_from, 'fnotes'=>$fnotes);
+            $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
+            if($main_res->status)
+            {
+                //update outgoing status by outgoing number
+                $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'fstatus'=>'complete');
+                $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                        'POST', FALSE);
+
+                if($update_status_outgoing->status){
+                    $response = $success_response;
+                }else{
+                    $response = $error_response;
+                }
+            }
+            else
+            {
+                $this->session->set_flashdata('error', 'Failed to submit transaction data');
+                $response = $error_response;
+            }
         }
         return $this->output
         ->set_content_type('application/json')

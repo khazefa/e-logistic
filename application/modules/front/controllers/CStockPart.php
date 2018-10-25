@@ -44,10 +44,10 @@ class CStockPart extends BaseController
     public function lists()
     {
         if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Manage Stock Parts - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Stock Parts';
-            $this->global['contentHeader'] = 'Manage Stock Parts';
-            $this->global['contentTitle'] = 'Manage Stock Parts';
+            $this->global['pageTitle'] = 'Part Stock in FSL - '.APP_NAME;
+            $this->global['pageMenu'] = 'Part Stock in FSL';
+            $this->global['contentHeader'] = 'Part Stock in FSL';
+            $this->global['contentTitle'] = 'Part Stock in FSL';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
@@ -55,6 +55,26 @@ class CStockPart extends BaseController
             $data['list_data_wh'] = $this->get_list_data_wh();
             
             $this->loadViews('front/stock-part/lists', $this->global, $data);
+        }else{
+            redirect('data-spareparts-stock');
+        }
+    }
+    
+    /**
+     * This function used to load the first screen of the user
+     */
+    public function views()
+    {
+        if($this->isWebAdmin()){
+            $this->global['pageTitle'] = 'Stock in Central Warehouse - '.APP_NAME;
+            $this->global['pageMenu'] = 'Stock in Central Warehouse';
+            $this->global['contentHeader'] = 'Stock in Central Warehouse';
+            $this->global['contentTitle'] = 'Stock in Central Warehouse';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $this->global ['repo'] = $this->repo;
+            
+            $this->loadViews('front/stock-part/lists-cwh', $this->global, NULL);
         }else{
             redirect('data-spareparts-stock');
         }
@@ -407,6 +427,63 @@ class CStockPart extends BaseController
     }
     
     /**
+     * This function is used to get list for datatables
+     */
+    public function get_w_list_datatable(){
+        $rs = array();
+        $arrWhere = array();
+
+        $fcode = "WSPS";
+        $arrWhere['fcode'] = $fcode;
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['partname'] = $partname;
+            $row['initstock'] = $initstock;
+            $row['minstock'] = $minstock;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
+//            $row['initflag'] = $initflag;
+            
+            /**
+            $row['button'] = '<div class="btn-group dropdown">';
+            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$partno.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$partno.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+            $row['button'] .= '</div>';
+            $row['button'] .= '</div>';
+            */
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+        exit();
+    }
+    
+    /**
      * This function used to load the first screen of the user
      */
     public function detail($fcode)
@@ -415,10 +492,10 @@ class CStockPart extends BaseController
         $lofcode = strtolower($fcode);
         $fslname = $this->get_info_warehouse_name($upfcode);
         if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Manage Stock '.$fslname.' - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Stock '.$fslname;
-            $this->global['contentHeader'] = 'Manage Stock '.$fslname;
-            $this->global['contentTitle'] = 'Manage Stock '.$fslname;
+            $this->global['pageTitle'] = 'Part Stock in '.$fslname.' - '.APP_NAME;
+            $this->global['pageMenu'] = 'Part Stock in '.$fslname;
+            $this->global['contentHeader'] = 'Part Stock in '.$fslname;
+            $this->global['contentTitle'] = 'Part Stock in '.$fslname;
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
@@ -651,6 +728,7 @@ class CStockPart extends BaseController
         $data = array();
         $data_nearby = array();
         $names = '';
+        
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
@@ -660,7 +738,9 @@ class CStockPart extends BaseController
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
             $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
  
-            $data[] = $row;
+            if($row['code'] !== 'WSPS'){
+                $data[] = $row;
+            }
         }
         
         return $data;

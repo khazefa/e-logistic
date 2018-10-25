@@ -229,6 +229,7 @@ $route['api-fsltocwh-get-view-datatable']  = 'front/cfsltocwh/get_list_view_data
 $route['api-fsltocwh-get-datatable']  = 'front/cfsltocwh/get_list_view_datatable';
 $route['api-fsltocwh-get-trans']  = 'front/cfsltocwh/get_trans';
 $route['api-fsltocwh-get-trans-detail']  = 'front/cfsltocwh/get_trans_detail';
+$route['api-fsltocwh-check-trans'] = 'front/cfsltocwh/check_trans';
 
 // ===========================
 //  End Routing FSL To CWH Trans
@@ -321,6 +322,15 @@ $route['return-parts'] = 'front/creturnparts/add';
 // ===========================
 $route['supply-from-fsl'] = 'front/csupplyfromfsl';
 $route['add-supply-from-fsl'] = 'front/csupplyfromfsl/add';
+// ===========================
+//  End Routing Front Supply from FSL
+// ===========================
+
+// ===========================
+//  Routing Front Supply from FSL
+// ===========================
+$route['supply-from-fsl-bad'] = 'front/csupplyfromfslbad';
+$route['add-supply-from-fsl-bad'] = 'front/csupplyfromfslbad/add';
 // ===========================
 //  End Routing Front Supply from FSL
 // ===========================

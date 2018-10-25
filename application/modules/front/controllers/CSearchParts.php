@@ -44,6 +44,7 @@ class CSearchParts extends BaseController{
             $row['part_number'] = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             $row['part_name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
             $row['stock_last_value'] = filter_var($r->Stock, FILTER_SANITIZE_STRING);
+            $row['location'] = filter_var($r->stock_rack_loc, FILTER_SANITIZE_STRING);
             $row['part_subtitute'] = filter_var($r->part_subtitute, FILTER_SANITIZE_STRING);
 //            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
             $data[] = $row;

@@ -204,10 +204,7 @@ class CDeliveryNote extends BaseController
             <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
             <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
             ';
-<<<<<<< HEAD
  
-=======
->>>>>>> 34a620ed25911aebce043bde4f8dcd2dd0651f67
             if(count($e_coverage)!=0){
                 if(in_array($fsl_code, $e_coverage)){
                     $data[] = $row;

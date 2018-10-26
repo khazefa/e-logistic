@@ -181,11 +181,19 @@ $route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
 // ===========================
 
 // ===========================
-//  Routing Front Tickets
+//  Routing Front ATM
 // ===========================
-$route['tickets'] = 'front/ctickets';
+$route['atm/view'] = 'front/catm';
+$route['atm/add'] = 'front/catm/add';
+$route['atm/insert'] = 'front/catm/create';
+$route['atm/edit/(:any)'] = 'front/catm/edit/$1';
+$route['atm/modify'] = 'front/catm/update';
+$route['atm/remove/(:any)'] = 'front/catm/delete/$1';
+$route['atm/list_detail/(:any)'] = 'front/catm/get_detail/$1';
+$route['atm/list/([a-zA-Z]+)'] = 'front/catm/get_list/$1';
+$route['atm/get_distinct/([a-zA-Z]+)'] = 'front/catm/get_unique/$1';
 // ===========================
-//  End Routing Front Tickets
+//  End Routing Front ATM
 // ===========================
 
 // ===========================

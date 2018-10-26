@@ -44,6 +44,19 @@ $config['api_remove_partners'] = constant('urlapi').'api/cpartners/delete/'; //P
 // ===========================
 
 // ===========================
+//  Begin ATM
+// ===========================
+$config['api_list_atm'] = constant('urlapi').'api/cpatm/list/'; //POST
+$config['api_list_u_atm'] = constant('urlapi').'api/cpatm/list_unique/'; //GET
+$config['api_info_atm'] = constant('urlapi').'api/cpatm/info/'; //POST
+$config['api_add_atm'] = constant('urlapi').'api/cpatm/insert/'; //POST
+$config['api_edit_atm'] = constant('urlapi').'api/cpatm/update/'; //POST
+$config['api_remove_atm'] = constant('urlapi').'api/cpatm/delete/'; //POST
+// ===========================
+//  End ATM
+// ===========================
+
+// ===========================
 //  Begin Engineers
 // ===========================
 $config['api_list_engineers'] = constant('urlapi').'api/cengineers/list/'; //POST

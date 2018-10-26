@@ -70,7 +70,8 @@ class CAtm extends BaseController
         $data['readonly'] = $this->readonly;
         $data['arr_data'] = base_url($this->cname.'/list/json');
 //        $data['arr_data_u'] = base_url($this->cname.'/get_distinct/json');
-        $data['arr_data_u'] = $this->get_unique('array');
+        $data['arr_data_bank'] = $this->get_unique('array', 'bank');
+        $data['arr_data_city'] = $this->get_unique('array', 'city');
         $data['url_modal'] = base_url($this->cname.'/list_detail/json');
         $data['field_modal_popup'] = $this->field_modal;
         $data['field_modal_js'] = $this->field_value;
@@ -166,50 +167,52 @@ class CAtm extends BaseController
     }
     
     /**
-     * This function is used to get list for datatables
+     * This function is used to get list distinct data
+     * parameters:
+     * serial for SSB ID or Serial Number
+     * bank for Bank Name
+     * city for ATM City
      */
-    public function get_unique($type){
+    public function get_unique($type, $fparam){
         $rs = array();
         $arrWhere = array();
         $data = array();
         $output = null;
         $isParam = FALSE;
         
-        $fname = $this->input->get('fname', TRUE);
-        $fcity = $this->input->get('fcity', TRUE);
-
-        if ($fname != "") { $arrWhere['fname'] = $fname; $isParam = TRUE; }
-        if ($fcity != "") { $arrWhere['fcity'] = $fcity; $isParam = TRUE; }
-        
-        //if you have some parameters to get data, please set fdeleted and flimit depend on your needs 
+        //if you have a parameter to get data, please set flimit depend on your needs 
         //default flimit = 0 to retrieve All data
-        if($isParam){
-            $arrWhere = "fname=".$fname."&fcity=".$fcity."&fdeleted=0&flimit=0";
-        }else{
-            $arrWhere = "fdeleted=0&flimit=100";
+        if ($fparam != "") {
+            $arrWhere = "fparam=".$fparam."&flimit=0";
         }
+        else {
+            $arrWhere = "flimit=100";
+        }
+
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_u_'.$this->cname)."?".$arrWhere, 'GET', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         switch($type) {
             case "json":
-                foreach ($rs as $r) {
-                    $row['bank'] = filter_var($r->atmp_cust, FILTER_SANITIZE_STRING);
-                    $row['city'] = filter_var($r->atmp_city, FILTER_SANITIZE_STRING);
-
-                    $data[] = $row;
+                $rdata = (array)$rs;
+                foreach ($rdata as $r) {
+                    foreach($r as $rk => $rv){
+                        $row['value'] = filter_var($rv,FILTER_SANITIZE_STRING);
+                        $data[] = $row;
+                    }
                 }
                 $output = $this->output
                         ->set_content_type('application/json')
                         ->set_output(json_encode(array('data'=>$data)));
             break;
             case "array":
-                foreach ($rs as $r) {
-                    $row['bank'] = filter_var($r->atmp_cust, FILTER_SANITIZE_STRING);
-                    $row['city'] = filter_var($r->atmp_city, FILTER_SANITIZE_STRING);
-
-                    $data[] = $row;
+                $rdata = (array)$rs;
+                foreach ($rdata as $r) {
+                    foreach($r as $rk => $rv){
+                        $row['value'] = filter_var($rv,FILTER_SANITIZE_STRING);
+                        $data[] = $row;
+                    }
                 }
                 $output = $data;
             break;

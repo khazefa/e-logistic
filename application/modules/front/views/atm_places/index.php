@@ -10,9 +10,11 @@
                     $banks_c = array();
                     $cities = array();
                     $cities_c = array();
-                    foreach($arr_data_u as $w){
-                        $banks[] = $w["bank"];
-                        $cities[] = $w["city"];
+                    foreach($arr_data_bank as $a1){
+                        $banks[] = $a1["value"];
+                    }
+                    foreach($arr_data_city as $a2){
+                        $cities[] = $a2["value"];
                     }
                 ?>
                 <div class="form-group row">

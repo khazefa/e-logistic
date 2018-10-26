@@ -191,7 +191,7 @@ $route['atm/modify'] = 'front/catm/update';
 $route['atm/remove/(:any)'] = 'front/catm/delete/$1';
 $route['atm/list_detail/(:any)'] = 'front/catm/get_detail/$1';
 $route['atm/list/([a-zA-Z]+)'] = 'front/catm/get_list/$1';
-$route['atm/get_distinct/([a-zA-Z]+)'] = 'front/catm/get_unique/$1';
+$route['atm/get_distinct/([a-zA-Z]+)/([a-zA-Z]+)'] = 'front/catm/get_unique/$1/$2';
 // ===========================
 //  End Routing Front ATM
 // ===========================

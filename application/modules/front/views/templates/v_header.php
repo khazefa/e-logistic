@@ -169,6 +169,7 @@
                                     <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
+                                    <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
                             </li>
                             <!--
@@ -222,6 +223,7 @@
                                     <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
+                                    <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

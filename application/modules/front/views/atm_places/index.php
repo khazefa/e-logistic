@@ -260,7 +260,7 @@
                 }
             ],
             ajax: {                
-                url: '<?php echo $arr_data;?>',
+                url: '<?php echo $url_list;?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',

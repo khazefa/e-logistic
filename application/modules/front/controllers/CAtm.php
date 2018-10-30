@@ -68,7 +68,7 @@ class CAtm extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['readonly'] = $this->readonly;
-        $data['arr_data'] = base_url($this->cname.'/list/json');
+        $data['url_list'] = base_url($this->cname.'/list/json');
 //        $data['arr_data_u'] = base_url($this->cname.'/get_distinct/json');
         $data['arr_data_bank'] = $this->get_unique('array', 'bank');
         $data['arr_data_city'] = $this->get_unique('array', 'city');
@@ -231,12 +231,20 @@ class CAtm extends BaseController
         $output = null;
         
         $fid = $this->input->get('fid', TRUE);
-        if($fid == null)
+        $fssbid = $this->input->get('fssbid', TRUE);
+        if($fid == null && $fssbid == null)
         {
-           $rs = array();
+            $rs = array();
+            $output = $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(array()));
         }else{
             //Parameters for cURL
-            $arrWhere = array('fid'=>$fid);
+            if(!empty($fid)){
+                $arrWhere = array('fid'=>$fid);
+            }elseif(!empty($fssbid)){
+                $arrWhere = array('fssbid'=>$fssbid);
+            }
             //Parse Data for cURL
             $rs_data = send_curl($arrWhere, $this->config->item('api_info_'.$this->cname), 'POST', FALSE);
             $rs = $rs_data->status ? $rs_data->result : array();

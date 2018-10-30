@@ -171,11 +171,15 @@ $route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
 // ===========================
 //  Routing Front Warehouses
 // ===========================
-$route['manage-warehouses'] = 'front/cwarehouse/lists';
-$route['data-warehouses'] = 'front/cwarehouse';
-$route['add-warehouses'] = 'front/cwarehouse/add';
-$route['edit-warehouses/(:any)'] = 'front/cwarehouse/edit/$1';
-$route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
+$route['warehouse/view'] = 'front/cwarehouse';
+$route['warehouse/add'] = 'front/cwarehouse/add';
+$route['warehouse/insert'] = 'front/cwarehouse/create';
+$route['warehouse/edit/(:any)'] = 'front/cwarehouse/edit/$1';
+$route['warehouse/modify'] = 'front/cwarehouse/update';
+$route['warehouse/remove/(:any)'] = 'front/cwarehouse/delete/$1';
+$route['warehouse/list/([a-zA-Z]+)'] = 'front/cwarehouse/get_list/$1';
+$route['warehouse/list_nearby/([a-zA-Z]+)'] = 'front/cwarehouse/get_list_nearby/$1';
+$route['warehouse/list_detail/(:any)'] = 'front/cwarehouse/get_detail/$1';
 // ===========================
 //  End Routing Front Warehouses
 // ===========================
@@ -189,8 +193,8 @@ $route['atm/insert'] = 'front/catm/create';
 $route['atm/edit/(:any)'] = 'front/catm/edit/$1';
 $route['atm/modify'] = 'front/catm/update';
 $route['atm/remove/(:any)'] = 'front/catm/delete/$1';
-$route['atm/list_detail/(:any)'] = 'front/catm/get_detail/$1';
 $route['atm/list/([a-zA-Z]+)'] = 'front/catm/get_list/$1';
+$route['atm/list_detail/(:any)'] = 'front/catm/get_detail/$1';
 $route['atm/get_distinct/([a-zA-Z]+)/([a-zA-Z]+)'] = 'front/catm/get_unique/$1/$2';
 // ===========================
 //  End Routing Front ATM
@@ -203,6 +207,9 @@ $route['outgoing-trans'] = 'front/coutgoing';
 $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
+
+
+$route['outgoing/request_parts'] = 'front/crequestparts';
 // ===========================
 //  End Routing Front Outgoing Trans
 // ===========================

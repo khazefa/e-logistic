@@ -28,7 +28,7 @@
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url('front/cwarehouse/create');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url('warehouse/insert');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group row">
                         <label for="fcode" class="col-2 col-form-label">FSL Code</label>

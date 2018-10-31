@@ -1,10 +1,12 @@
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6 offset-md-3">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo base_url("add-groups");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='<?php echo base_url($classname.'/add');?>'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
+                </button>
+            </div>
             
             <p class="text-success text-center">
                 <?php
@@ -50,10 +52,12 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    var table;
+    
+    function init_table(){
         // Responsive Datatable with Buttons
         var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-10'><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
+            dom: "<'row'<'col-sm-10'f><'col-sm-2'>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
             },
@@ -63,7 +67,7 @@
             processing: true,
             lengthChange: true,
             ajax: {                
-                url: "<?= base_url('front/cusersgroup/get_list_datatable'); ?>",
+                url: "<?php echo $url_list;?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -79,5 +83,9 @@
 
         table.buttons().container()
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
+    }
+    
+    $(document).ready(function() {
+        init_table();
     });
 </script>

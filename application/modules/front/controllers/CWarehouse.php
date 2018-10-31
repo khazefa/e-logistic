@@ -15,7 +15,25 @@ class CWarehouse extends BaseController
     private $cname = 'warehouse';
     private $view_dir = 'front/warehouse/';
     private $readonly = TRUE;
-        
+    
+    private $field_modal = array(
+        'fcode' => 'FSL Code',
+        'fname' => 'FSL Name',
+        'flocation' => 'Location',
+        'fpic' => 'Person In Charge (PIC)',
+        'fphone' => 'Phone',
+        'fspv' => 'Supervisor'
+    );
+    
+    private $field_value = array(
+        'fcode' => 'code',
+        'fname' => 'name',
+        'flocation' => 'location',
+        'fpic' => 'pic',
+        'fphone' => 'phone',
+        'fspv' => 'spv'
+    );
+    
     /**
      * This is default constructor of the class
      */
@@ -40,29 +58,14 @@ class CWarehouse extends BaseController
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
+        
+        $data['classname'] = $this->cname;
         $data['readonly'] = $this->readonly;
-        $data['arr_data'] = base_url($this->cname.'/list_nearby/json');
+        $data['url_list'] = base_url($this->cname.'/list_nearby/json');
+        $data['url_modal'] = base_url($this->cname.'/list_detail/json');
+        $data['field_modal_popup'] = $this->field_modal;
+        $data['field_modal_js'] = $this->field_value;
         $this->loadViews($this->view_dir.'index', $this->global, $data);
-    }
-    
-    /**
-     * This function used to load the first screen of the user
-     */
-    public function lists()
-    {
-        if($this->isSuperAdmin()){
-            $this->global['pageTitle'] = 'Manage Warehouse - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Warehouse';
-            $this->global['contentHeader'] = 'Manage Warehouse';
-            $this->global['contentTitle'] = 'Manage Warehouse';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-
-            $this->loadViews('front/warehouse/lists', $this->global, NULL);
-        }else{
-            redirect('data-warehouses');
-        }
     }
     
     /**
@@ -84,8 +87,8 @@ class CWarehouse extends BaseController
         //if you have some parameters to get data, please set fdeleted and flimit depend on your needs 
         //default flimit = 0 to retrieve All data
         if($isParam){
-            $arrWhere = array('fcode'=>$fcode, 'fname'=>$fname, 
-                'fdeleted'=>0, 'flimit'=>0);
+            $arrWhere["fdeleted"] = 0;
+            array_push($arrWhere, $arrWhere["fdeleted"]);
         }else{
             //set flimit = 0 to retrieve All data, because the data is not too large
             $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
@@ -113,7 +116,7 @@ class CWarehouse extends BaseController
                         $data_nearby = array();
                         foreach ($e_nearby as $n){
                             if(!empty($n)){
-                                array_push($data_nearby, $this->get_list_info($n));
+                                array_push($data_nearby, $this->get_detail_by($n));
                             }
                         }
 
@@ -155,8 +158,8 @@ class CWarehouse extends BaseController
                     $row['sort'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
                     
                     if($this->readonly){
-//                        $row['button'] = '<a type="btn" href="javascript:viewdetail(\''.$code.'\');" title="View Detail"><i class="mdi mdi-information-outline text-primary font-18 vertical-middle"></i></a>';
-                        $row['button'] = '-';
+                        $row['button'] = '<a type="btn" href="javascript:viewdetail(\''.$code.'\');" title="View Detail"><i class="mdi mdi-information-outline text-primary font-18 vertical-middle"></i></a>';
+//                        $row['button'] = '-';
                     }else{
                         $row['button'] = '<div class="btn-group dropdown">';
                         $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
@@ -190,7 +193,7 @@ class CWarehouse extends BaseController
                         $data_nearby = array();
                         foreach ($e_nearby as $n){
                             if(!empty($n)){
-                                array_push($data_nearby, $this->get_list_info($n));
+                                array_push($data_nearby, $this->get_detail_by($n));
                             }
                         }
 
@@ -259,8 +262,8 @@ class CWarehouse extends BaseController
         //if you have some parameters to get data, please set fdeleted and flimit depend on your needs 
         //default flimit = 0 to retrieve All data
         if($isParam){
-            $arrWhere = array('fcode'=>$fcode, 'fname'=>$fname, 
-                'fdeleted'=>0, 'flimit'=>0);
+            $arrWhere["fdeleted"] = 0;
+            array_push($arrWhere, $arrWhere["fdeleted"]);
         }else{
             //set flimit = 0 to retrieve All data, because the data is not too large
             $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
@@ -290,8 +293,8 @@ class CWarehouse extends BaseController
                     $row['sort'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
                     
                     if($this->readonly){
-//                        $row['button'] = '<a type="btn" href="javascript:viewdetail(\''.$code.'\');" title="View Detail"><i class="mdi mdi-information-outline text-primary font-18 vertical-middle"></i></a>';
-                        $row['button'] = '-';
+                        $row['button'] = '<a type="btn" href="javascript:viewdetail(\''.$code.'\');" title="View Detail"><i class="mdi mdi-information-outline text-primary font-18 vertical-middle"></i></a>';
+//                        $row['button'] = '-';
                     }else{
                         $row['button'] = '<div class="btn-group dropdown">';
                         $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
@@ -400,155 +403,9 @@ class CWarehouse extends BaseController
     }
     
     /**
-     * This function is used to get list for datatables
-     */
-    public function get_m_list_datatable(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_nearby = array();
-        $names = '';
-        $data_spv = array();
-        $spvs = '';
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = $this->common->nohtml($r->fsl_name);
-            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            if(!empty($nearby)){
-                $names = '<ul class="list-unstyled">';
-                $e_nearby = explode(';', $nearby);
-                $data_nearby = array();
-                foreach ($e_nearby as $n){
-                    if(!empty($n)){
-                        array_push($data_nearby, $this->get_list_info($n));
-                    }
-                }
-                
-                foreach ($data_nearby as $datas){
-                    foreach($datas as $d){
-//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
-                        $names .= '<li>'.$d["name"].'</li>';
-                    }
-                }
-                $names .= '</ul>';
-            }else{
-                $names = '-';
-            }
-            $row['nearby'] = $names;
-            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
-            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
-            $listspv = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
-            if(!empty($listspv)){
-                $spvs = '<ul class="list-unstyled">';
-                $e_spv = explode(';', $listspv);
-                $data_spv = array();
-                foreach ($e_spv as $s){
-                    if(!empty($s)){
-                        array_push($data_spv, $this->get_list_users($s));
-                    }
-                }
-                
-                foreach ($data_spv as $datasp){
-                    foreach($datasp as $dp){
-//                        $names .= '<li style="display:inline; padding-left:5px;">'.$dp["fullname"].'</li>';
-                        $spvs .= '<li>'.$dp["fullname"].'</li>';
-                    }
-                }
-                $spvs .= '</ul>';
-            }else{
-                $spvs = '-';
-            }
-            $row['spv'] = $spvs;
-            $row['sort'] = filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT);
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-warehouses/").$row['code'].'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-warehouses/").$row['code'].'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fcode = $this->input->post('fcode', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_nearby = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $nearby = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            if(!empty($nearby)){
-                $names = '<ul class="list-unstyled">';
-                $e_nearby = explode(';', $nearby);
-                foreach ($e_nearby as $n){
-                    if(!empty($n)){
-                        array_push($data_nearby, $this->get_list_info($n));
-                    }
-                }
-                
-                foreach ($data_nearby as $datas){
-                    foreach($datas as $d){
-//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
-                        $names .= '<li>'.$d["name"].'</li>';
-                    }
-                }
-                $names .= '</ul>';
-            }else{
-                $names = '-';
-            }
-            $row['nearby'] = $names;
-            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
-            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
-            $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
      * This function is used to get lists for populate data
      */
+    /**
     public function get_list_data(){
         $rs = array();
         $arrWhere = array();
@@ -591,54 +448,16 @@ class CWarehouse extends BaseController
         
         return $data;
     }
-    
-    /**
-     * This function is used to get lists fsl
-     */
-    public function get_list_warehouse($output = "json"){
-        $rs = array();
-        $arrWhere = array();
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = $this->common->nohtml($r->fsl_name);
-            $data[] = $row;
-        }
-        
-        switch ($output){
-            case "json":
-                return $this->output
-                ->set_content_type('application/json')
-                ->set_output(
-                    json_encode($data)
-                );
-            break;
-            case "array":
-                return $data;
-            break;
-            default:
-                return $this->output
-                ->set_content_type('application/json')
-                ->set_output(
-                    json_encode($data)
-                );
-            break;
-        }
-    }
+    */
     
     /**
      * This function is used to get detail information
      */
-    public function get_list_info($fcode){
+    public function get_detail_by($fcode){
         $rs = array();
         $arrWhere = array();
         
-        $arrWhere = array('fcode'=>$fcode);
-        
+        $arrWhere = array('fcode'=>$fcode);        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_'.$this->cname), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -693,28 +512,6 @@ class CWarehouse extends BaseController
     }
     
     /**
-     * This function is used load detail data
-     */
-    public function get_info()
-    {
-        $rs = array();
-        $arrWhere = array();
-        
-        $fcode = $this->input->post('fcode', TRUE);
-        if($fcode == null)
-        {
-           $rs = array();
-        }else{
-            //Parameters for cURL
-            $arrWhere = array('fcode'=>$fcode);
-            //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouses'), 'POST', FALSE);
-            $rs = $rs_data->status ? $rs_data->result : array();
-        }
-        return $rs;
-    }
-    
-    /**
      * This function is used to load the add new form
      */
     function add()
@@ -728,11 +525,13 @@ class CWarehouse extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['list_wr'] = $this->get_list_data();
+            $data['classname'] = $this->cname;
+//            $data['list_wr'] = $this->get_list_data();
+            $data['list_wr'] = $this->get_list("array");
             $data['list_spv'] = $this->get_list_users("");
             $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-warehouses');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -751,19 +550,19 @@ class CWarehouse extends BaseController
         $forder = $this->input->post('forder', TRUE);
 
         $dataInfo = array('fcode'=>$fcode, 'fname'=>$fname, 'flocation'=>$flocation, 
-        'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv, 'forder'=>$forder);
+            'fnearby'=>$fnearby, 'fpic'=>$fpic, 'fphone'=>$fphone, 'fspv'=>$fspv, 'forder'=>$forder);
         
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_'.$this->cname), 'POST', FALSE);
 
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-warehouses');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-warehouses');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -776,7 +575,7 @@ class CWarehouse extends BaseController
         if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
-                redirect('data-warehouses');
+                redirect($this->cname.'/view');
             }
 
             $this->global['pageTitle'] = "Edit Data Warehouse - ".APP_NAME;
@@ -787,12 +586,14 @@ class CWarehouse extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['records'] = $this->get_list_info($fkey);
-            $data['list_wr'] = $this->get_list_data();
+            $data['classname'] = $this->cname;
+            $data['records'] = $this->get_detail_by($fkey);
+//            $data['list_wr'] = $this->get_list_data();
+            $data['list_wr'] = $this->get_list("array");
             $data['list_spv'] = $this->get_list_users("");
             $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{
-            redirect('data-warehouses');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -818,12 +619,12 @@ class CWarehouse extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-warehouses');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-warehouses/'.$fcode);
+            redirect($this->cname.'/edit/'.$fcode);
         }
     }
     
@@ -846,7 +647,6 @@ class CWarehouse extends BaseController
         {
             $this->session->set_flashdata('error', $rs_data->message);
         }
-
-        redirect('manage-warehouses');
+        redirect($this->cname.'/view');
     }
 }

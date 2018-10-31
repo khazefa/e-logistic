@@ -6,7 +6,7 @@
                 if(!$readonly){
             ?>
                 <div class="btn-group">
-                    <button type="button" onclick="location.href='<?php echo base_url("warehouse/add");?>'" class="btn btn-sm btn-light waves-effect">
+                    <button type="button" onclick="location.href='<?php echo base_url($classname.'/add');?>'" class="btn btn-sm btn-light waves-effect">
                         <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
                     </button>
                 </div>
@@ -43,7 +43,7 @@
                             <tr>
                                 <th>FSL Code</th>
                                 <th>Warehouse</th>
-                                <th>Location</th>
+                                <!--<th>Location</th>-->
                                 <th>Nearby</th>
                                 <th>PIC</th>
                                 <th>Phone</th>
@@ -61,6 +61,34 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Request Confirmation -->
+<div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
+    <div class="modal-dialog"  style="max-width:750px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">View Detail</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <?php foreach($field_modal_popup as $rk => $rv){?>
+                        <div class="row">
+                            <div class="col-md-4"><label class="col-form-label"><?=$rv?></label></div>
+                            <div class="col-md-6" id="<?=$rk?>"></div>
+                        </div>
+                        <?php }?>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Request Confirmation -->
 
 <script type="text/javascript">
     var table;
@@ -87,7 +115,8 @@
                         modifier: {
                             page: 'current'
                         },
-                        columns: ':visible:not(:last-child)'
+//                        columns: ':visible:not(:last-child)'
+                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
                     },
                     footer:false
                 }, 
@@ -101,7 +130,8 @@
                         modifier: {
                             page: 'current'
                         },
-                        columns: ':visible:not(:last-child)'
+//                        columns: ':visible:not(:last-child)'
+                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
                     },
                     footer:false
                 },
@@ -115,7 +145,8 @@
                         modifier: {
                             page: 'current'
                         },
-                        columns: ':visible:not(:last-child)'
+//                        columns: ':visible:not(:last-child)'
+                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
                     },
                     footer:false
                 }, 
@@ -124,12 +155,15 @@
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
                     title: 'Export All <?php echo $contentHeader; ?>',
-                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
+                    exportOptions: { 
+//                        columns: ':visible:not(:last-child)'
+                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                    }, //last column has the action types detail/edit/delete
                     footer:false
                 }
             ],
             ajax: {                
-                url: "<?php echo $arr_data;?>",
+                url: "<?php echo $url_list;?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -140,7 +174,7 @@
             columns: [
                 { "data": 'code' },
                 { "data": 'name' },
-                { "data": 'location' },
+//                { "data": 'location' },
                 { "data": 'nearby' },
                 { "data": 'pic' },
                 { "data": 'phone' },
@@ -158,6 +192,27 @@
         table.buttons().container()
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
     }
+    
+    function viewdetail(fcode){
+        var url = '<?php echo $url_modal;?>';
+        var type = 'GET';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
+            fcode : fcode,
+        };
+        var success = function (jqXHR) {
+            var rs = jqXHR.data[0];
+            <?php foreach($field_modal_js as $fk => $fv){?>
+                $('#<?=$fk?>').html(rs.<?=$fv?>);
+            <?php }?>
+
+            $('#viewdetail').modal({
+                show: true
+            });
+        };
+        throw_ajax(url, type, data, success, throw_ajax_err);
+    }
+    
     $(document).ready(function() {
         init_table();
     });

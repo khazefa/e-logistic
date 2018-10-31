@@ -56,7 +56,7 @@
     
     function init_table(){
         // Responsive Datatable with Buttons
-        var table = $('#data_grid').DataTable({
+        table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-10'f><'col-sm-2'>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }

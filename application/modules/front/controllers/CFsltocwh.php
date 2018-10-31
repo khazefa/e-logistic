@@ -92,6 +92,26 @@ class CFsltocwh extends BaseController
     /**
      * This function is used to load the add new form
      */
+    public function closing() {        
+            $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
+            $this->global['pageMenu'] = 'Outgoing FSL to CWH';
+            $this->global['contentHeader'] = 'Outgoing FSL to CWH';
+            $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            $data['field_modal_popup'] = $this->field_modal;
+            $data['field_modal_js'] = $this->field_value;
+            $data['field_purpose'] = $this->field_purpose;
+            $data['link_check_transnum'] = base_url('api-'.$this->alias_controller_name.'-check-trans');
+            $data['link_modal_detail'] = base_url('api-'.$this->alias_controller_name.'-get-trans-detail');
+            $data['link_modal'] = base_url('api-'.$this->alias_controller_name.'-get-trans');
+            $this->loadViews('front/fsltocwh/closing', $this->global, $data);
+    }
+    
+    
+    /**
+     * This function is used to load the add new form
+     */
     public function add() {        
             $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
             $this->global['pageMenu'] = 'Outgoing FSL to CWH';
@@ -747,7 +767,7 @@ class CFsltocwh extends BaseController
      * This function is used to get list for datatables
      */
     public function get_list_cart_datatable(){
-        $rs = array();
+        $rs = array();  
         
         //Parameters for cURL
         $arrWhere = array();
@@ -1082,16 +1102,16 @@ class CFsltocwh extends BaseController
                             $total_qty += (int)$d['qty'];
                             //echo $partstock+$d['qty'].$purpose_tbl.$d['partno'];
 
-                            $dataUpdateStock = array(
-                                'fcode'=>$purpose_tbl, 
-                                'fpartnum'=>$d['partno'], 
-                                'fqty'=>$partstock+$d['qty'], 
-                                'fflag'=>'N');
-                            //update stock by fsl code and part number
-                            $update_stock_res = send_curl(
-                                $this->security->xss_clean($dataUpdateStock), 
-                                $this->config->item('api_edit_stock_part_stock'), 
-                                'POST', FALSE);
+//                            $dataUpdateStock = array(
+//                                'fcode'=>$purpose_tbl, 
+//                                'fpartnum'=>$d['partno'], 
+//                                'fqty'=>$partstock+$d['qty'], 
+//                                'fflag'=>'N');
+//                            //update stock by fsl code and part number
+//                            $update_stock_res = send_curl(
+//                                $this->security->xss_clean($dataUpdateStock), 
+//                                $this->config->item('api_edit_stock_part_stock'), 
+//                                'POST', FALSE);
                         }
                     }
 
@@ -1495,6 +1515,60 @@ class CFsltocwh extends BaseController
             );
         
     }
+    
+////////////////////////////////////////////////////////////////////////////////
+    
+    public function check_trans(){
+        $rs = array();
+        $arrWhere = array();
+        $response = array('status'=>FALSE);
+        
+        $ftransnum = $this->input->post('ftransnum');
+        
+        $arrWhere['ftransnum'] = ($ftransnum!='' || !is_null($ftransnum))?$ftransnum:'';
+        $rs = send_curl($arrWhere, $this->config->item('api_get_fsltocwh_get_trans'), 'POST', FALSE);
+        $result = $rs->status ? $rs->result : array();
+        
+        
+        if(!empty($result)){
+            foreach($result as $v){
+                $purpose = filter_var($v->fsltocwh_purpose, FILTER_SANITIZE_STRING);
+            }
+            
+            $count = count((array)$result);
+            if($count>0){
+                $response = array(
+                    'status' => TRUE,
+                    'purpose' => $purpose
+                );
+            }else{
+                $response = array(
+                    'status' => FALSE,
+                    'message' => 'Transaction Cann\'t found'
+                );
+            }
+            
+        }else{
+            $response = array(
+                'status' => FALSE,
+                'message' => 'Transaction Cann\'t found'
+            );
+        }
+        
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_output(
+                json_encode($response)
+            );
+       
+    }
+    
+    public function close_trans(){
+        $rs = array();
+        $arrWhere = array();
+    }
+    
+    
     
     
 }

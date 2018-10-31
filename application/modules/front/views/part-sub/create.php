@@ -1,8 +1,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <a href="javascript:history.back()"><i class="fa fa-reply"></i> Back</a>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             
             <p class="text-success text-center">
                 <?php

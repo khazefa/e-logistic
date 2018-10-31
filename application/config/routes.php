@@ -77,7 +77,7 @@ $route['cl'] = 'front/dashboard';
 // ===========================
 $route['users/view'] = 'front/cusers';
 $route['users/add'] = 'front/cusers/add';
-$route['users/insert'] = 'front/cwarehouse/create';
+$route['users/insert'] = 'front/cusers/create';
 $route['users/edit/(:any)'] = 'front/cusers/edit/$1';
 $route['users/modify'] = 'front/cusers/update';
 $route['users/remove/(:any)'] = 'front/cusers/delete/$1';
@@ -99,7 +99,7 @@ $route['my-account'] = 'front/cprofile';
 // ===========================
 $route['user-groups/view'] = 'front/cusersgroup';
 $route['user-groups/add'] = 'front/cusersgroup/add';
-$route['user-groups/insert'] = 'front/cwarehouse/create';
+$route['user-groups/insert'] = 'front/cusersgroup/create';
 $route['user-groups/edit/(:any)'] = 'front/cusersgroup/edit/$1';
 $route['user-groups/modify'] = 'front/cusersgroup/update';
 $route['user-groups/remove/(:any)'] = 'front/cusersgroup/delete/$1';
@@ -113,7 +113,7 @@ $route['user-groups/list/([a-zA-Z]+)'] = 'front/cusersgroup/get_list/$1';
 // ===========================
 $route['spareparts/view'] = 'front/cparts';
 $route['spareparts/add'] = 'front/cparts/add';
-$route['spareparts/insert'] = 'front/cwarehouse/create';
+$route['spareparts/insert'] = 'front/cparts/create';
 $route['spareparts/edit/(:any)'] = 'front/cparts/edit/$1';
 $route['spareparts/modify'] = 'front/cparts/update';
 $route['spareparts/remove/(:any)'] = 'front/cparts/delete/$1';
@@ -125,12 +125,13 @@ $route['spareparts/list/([a-zA-Z]+)'] = 'front/cparts/get_list/$1';
 // ===========================
 //  Routing Front Spareparts Subtitute
 // ===========================
-$route['manage-spareparts-sub'] = 'front/cpartsub/lists';
-$route['data-spareparts-sub'] = 'front/cpartsub';
-$route['add-spareparts-sub'] = 'front/cpartsub/add';
-$route['import-spareparts-sub'] = 'front/cpartsub/add_import';
-$route['edit-spareparts-sub/(:num)'] = 'front/cpartsub/edit/$1';
-$route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
+$route['spareparts-sub/view'] = 'front/cpartsub';
+$route['spareparts-sub/add'] = 'front/cpartsub/add';
+$route['spareparts-sub/insert'] = 'front/cpartsub/create';
+$route['spareparts-sub/edit/(:any)'] = 'front/cpartsub/edit/$1';
+$route['spareparts-sub/modify'] = 'front/cpartsub/update';
+$route['spareparts-sub/remove/(:any)'] = 'front/cpartsub/delete/$1';
+$route['spareparts-sub/list/([a-zA-Z]+)'] = 'front/cpartsub/get_list/$1';
 // ===========================
 //  End Routing Front Spareparts Subtitute
 // ===========================

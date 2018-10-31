@@ -136,6 +136,9 @@
                                     <li>
                                         <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
                                     </li>
+                                    <li>
+                                        <a href="<?php echo base_url("outgoing/request_parts");?>">Request Parts</a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php
@@ -192,9 +195,10 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-gears"></i>Manage</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
-                                    <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
-                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("users/view");?>">Users</a></li>
+                                    <li><a href="<?php echo base_url("user-groups/view");?>">Users Group</a></li>
+                                    <!--<li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>-->
+                                    <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">
@@ -220,7 +224,8 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
+                                    <!--<li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>-->
+                                    <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
                                     <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>

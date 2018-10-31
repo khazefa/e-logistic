@@ -1,7 +1,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='<?php echo base_url($classname.'/add');?>'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
+                </button>
+            </div>
             
             <p class="text-success text-center">
                 <?php
@@ -37,6 +42,7 @@
                                 <!--<th>Part Stock</th>-->
                                 <th>Return Code</th>
                                 <th>Machine</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -50,9 +56,11 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    var table;
+    
+    function init_table(){
         // Responsive Datatable with Buttons
-        var table = $('#data_grid').DataTable({
+        table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             language: {
                 paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -78,6 +86,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
+                    title: 'Export <?php echo $contentHeader; ?>',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
                         modifier: {
@@ -90,6 +99,7 @@
                     extend: 'pdf',
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
+                    title: 'Export <?php echo $contentHeader; ?>',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     exportOptions: {
                         modifier: {
@@ -102,12 +112,13 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
+                    title: 'Export All <?php echo $contentHeader; ?>',
 //                    exportOptions: { columns: ':visible:not(:last-child)' }, //last column has the action types detail/edit/delete
                     footer:false
                 }
             ],
             ajax: {
-                url: "<?= base_url('front/cparts/get_list_datatable'); ?>",
+                url: "<?php echo $url_list;?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -121,6 +132,7 @@
 //                { "data": 'stock' },
                 { "data": 'returncode' },
                 { "data": 'machine' },
+                { "data": 'button' },
             ],
             order: [[ 1, "asc" ]],
 //            columnDefs: [{ 
@@ -131,5 +143,9 @@
 
         table.buttons().container()
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
+    }
+    
+    $(document).ready(function() {
+        init_table();
     });
 </script>

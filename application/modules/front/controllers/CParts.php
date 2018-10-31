@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CParts extends BaseController
 {
+    private $cname = 'spareparts';
+    private $view_dir = 'front/parts/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -19,6 +23,11 @@ class CParts extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isWebAdmin()){
+            //load page
+        }else{
+            redirect('cl');
+        }
     }
     
     /**
@@ -34,7 +43,10 @@ class CParts extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/parts/index', $this->global, NULL);
+        $data['readonly'] = $this->readonly;
+        $data['classname'] = $this->cname;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
     }
     
     /**
@@ -60,138 +72,72 @@ class CParts extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list($type){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        foreach ($rs as $r) {
-            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = $r->part_number;
-            $row['partno'] = $partnum;
-            $row['name'] = $this->common->nohtml($r->part_name);
-            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['stock'] = '0';
-            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
-            
-            $data[] = $row;
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+                    $partnum = $r->part_number;
+                    $row['partno'] = $partnum;
+                    $row['name'] = $this->common->nohtml($r->part_name);
+                    $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+                    $row['stock'] = '0';
+                    $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+                    $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+                    
+                    $row['button'] = '<div class="btn-group dropdown">';
+                    $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                    $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$partnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$partnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                    $row['button'] .= '</div>';
+                    $row['button'] .= '</div>';
+
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+                    $partnum = $r->part_number;
+                    $row['partno'] = $partnum;
+                    $row['name'] = $this->common->nohtml($r->part_name);
+                    $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+                    $row['stock'] = '0';
+                    $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+                    $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+                    
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
+        return $output;
     }
     
     /**
-     * This function is used to get list for datatables
+     * This function is used to get detail information
      */
-    public function get_m_list_datatable(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = $r->part_number;
-            $row['partno'] = $partnum;
-            $row['name'] = $this->common->nohtml($r->part_name);
-            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['stock'] = '0';
-            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts/").$partnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts/").$partnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
-            
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
+    public function get_edit($fpartnum){
         $rs = array();
         $arrWhere = array();
         
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-        
+        $arrWhere = array('fpartnum'=>$fpartnum);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $row['partno'] = $partnum;
-            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_parts'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -209,125 +155,6 @@ class CParts extends BaseController
         }
         
         return $data;
-    }
-    
-    /**
-     * This function is used to get detail information
-     */
-    public function get_list_info($fpartnum){
-        $rs = array();
-        $arrWhere = array();
-        
-        $arrWhere = array('fpartnum'=>$fpartnum);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $row['pid'] = $pid;
-            $row['partno'] = $partnum;
-            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
-     * This function is used to get detail information
-     */
-    public function get_list_info_wh($fcode){
-        $rs = array();
-        $arrWhere = array();
-        
-        $arrWhere = array('fcode'=>$fcode);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
-            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
-     * This function is used to get lists for populate data warehouse
-     */
-    public function get_list_data_wh(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fcode = $this->input->post('fcode', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->fsl_location, FILTER_SANITIZE_STRING);
-            $row['nearby'] = filter_var($r->fsl_nearby, FILTER_SANITIZE_STRING);
-            $row['pic'] = stripslashes($r->fsl_pic) ? filter_var($r->fsl_pic, FILTER_SANITIZE_STRING) : "-";
-            $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
-     * This function is used load detail data
-     */
-    public function get_info()
-    {
-        $rs = array();
-        $arrWhere = array();
-        
-        $arrWhere = array('fpartnum'=>$fpartnum);
-        if($fpartnum == null)
-        {
-           $rs = array();
-        }else{
-            //Parameters for cURL
-            $arrWhere = array('fpartnum'=>$fpartnum);
-            //Parse Data for cURL
-            $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-            $rs = $rs_data->status ? $rs_data->result : array();
-        }
-        return $rs;
     }
     
     /**
@@ -344,11 +171,10 @@ class CParts extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['list_data'] = $this->get_list_data();
-
-            $this->loadViews('front/parts/create', $this->global, $data);
+            $data['classname'] = $this->cname;
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-spareparts');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -369,12 +195,12 @@ class CParts extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-spareparts');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -387,7 +213,7 @@ class CParts extends BaseController
         if($this->isWebAdmin()){
             if($fkey == NULL)
             {
-                redirect('manage-spareparts');
+                redirect($this->cname.'/view');
             }
 
             $this->global['pageTitle'] = "Edit Data Sparepart - ".APP_NAME;
@@ -398,11 +224,11 @@ class CParts extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['records'] = $this->get_list_info($fkey);
-
-            $this->loadViews('front/parts/edit', $this->global, $data);
+            $data['classname'] = $this->cname;
+            $data['records'] = $this->get_edit($fkey);
+            $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{
-            redirect('data-spareparts');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -423,12 +249,12 @@ class CParts extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-spareparts/'.$fserialnum);
+            redirect($this->cname.'/edit/'.$fpartnum);
         }
     }
     
@@ -452,7 +278,7 @@ class CParts extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('manage-spareparts');
+        redirect($this->cname.'/view');
     }
     
     /**
@@ -469,9 +295,10 @@ class CParts extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $this->loadViews('front/parts/import', $this->global, NULL);
+            $data['classname'] = $this->cname;
+            $this->loadViews($this->view_dir.'import', $this->global, NULL);
         }else{
-            redirect('data-spareparts');
+            redirect($this->cname.'/view');
         }
     }
     

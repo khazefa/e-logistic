@@ -222,7 +222,7 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-gears"></i>Manage</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
+                                    <li><a href="<?php echo base_url("spareparts/view");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
                                     <!--<li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>-->
                                     <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>

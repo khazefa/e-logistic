@@ -94,10 +94,14 @@ $route['my-account'] = 'front/cprofile';
 // ===========================
 //  Routing Front Accounts Group
 // ===========================
-$route['manage-groups'] = 'front/cusersgroup';
-$route['add-groups'] = 'front/cusersgroup/add';
-$route['edit-groups/(:num)'] = 'front/cusersgroup/edit/$1';
-$route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
+$route['user-groups/view'] = 'front/cusersgroup';
+$route['user-groups/add'] = 'front/cusersgroup/add';
+$route['user-groups/insert'] = 'front/cwarehouse/create';
+$route['user-groups/edit/(:any)'] = 'front/cusersgroup/edit/$1';
+$route['user-groups/modify'] = 'front/cusersgroup/update';
+$route['user-groups/remove/(:any)'] = 'front/cusersgroup/delete/$1';
+$route['user-groups/list/([a-zA-Z]+)'] = 'front/cusersgroup/get_list/$1';
+$route['user-groups/list_detail/(:any)'] = 'front/cusersgroup/get_detail/$1';
 // ===========================
 //  End Routing Front Accounts Group
 // ===========================
@@ -210,6 +214,7 @@ $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 
 
 $route['outgoing/request_parts'] = 'front/crequestparts';
+$route['outgoing/request_parts/add'] = 'front/coutgoing/add';
 // ===========================
 //  End Routing Front Outgoing Trans
 // ===========================

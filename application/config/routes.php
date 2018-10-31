@@ -118,13 +118,6 @@ $route['spareparts/edit/(:any)'] = 'front/cparts/edit/$1';
 $route['spareparts/modify'] = 'front/cparts/update';
 $route['spareparts/remove/(:any)'] = 'front/cparts/delete/$1';
 $route['spareparts/list/([a-zA-Z]+)'] = 'front/cparts/get_list/$1';
-
-$route['manage-spareparts'] = 'front/cparts/lists';
-$route['data-spareparts'] = 'front/cparts';
-$route['add-spareparts'] = 'front/cparts/add';
-$route['import-spareparts'] = 'front/cparts/add_import';
-$route['edit-spareparts/(:any)'] = 'front/cparts/edit/$1';
-$route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
 //  End Routing Front Spareparts
 // ===========================

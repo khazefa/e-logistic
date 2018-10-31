@@ -35,10 +35,10 @@ class CUsersGroup extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'Manage User Group - '.APP_NAME;
-        $this->global['pageMenu'] = 'Manage User Group';
-        $this->global['contentHeader'] = 'Manage User Group';
-        $this->global['contentTitle'] = 'Manage User Group';
+        $this->global['pageTitle'] = 'List User Group - '.APP_NAME;
+        $this->global['pageMenu'] = 'List User Group';
+        $this->global['contentHeader'] = 'List User Group';
+        $this->global['contentTitle'] = 'List User Group';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;

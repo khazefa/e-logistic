@@ -66,6 +66,7 @@
                                 <th>Part No</th>
                                 <th>Description</th>
                                 <th>Stock</th>
+                                <th>location</th>
                                 <th>Note</th>
                             </tr>
                             </thead>
@@ -128,6 +129,7 @@
                 { "data": 'part_number' },
                 { "data": 'part_name' },
                 { "data": 'stock_last_value' },
+                { "data": 'location' },
                 { "data": 'part_subtitute' },
             ],
             buttons: [

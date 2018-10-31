@@ -134,6 +134,7 @@ class CUsers extends BaseController
      */
     private function get_list_warehouse(){
         $rs = array();
+        $arrWhere = array();
         $isParam = FALSE;
         
         $fcode = $this->input->post('fcode', TRUE);
@@ -174,12 +175,11 @@ class CUsers extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    private function get_list_info($fkey){
+    private function get_edit($fkey){
         $rs = array();
         $arrWhere = array();
         
-        $arrWhere = array('fkey'=>$fkey);
-        
+        $arrWhere = array('fkey'=>$fkey);        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_users'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -273,7 +273,7 @@ class CUsers extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['classname'] = $this->cname;
-        $data['records'] = $this->get_list_info($fkey);
+        $data['records'] = $this->get_edit($fkey);
         $data['list_group'] = $this->get_list_group();
         $data['list_wr'] = $this->get_list_warehouse();
         

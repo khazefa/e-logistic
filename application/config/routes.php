@@ -111,6 +111,14 @@ $route['user-groups/list/([a-zA-Z]+)'] = 'front/cusersgroup/get_list/$1';
 // ===========================
 //  Routing Front Spareparts
 // ===========================
+$route['spareparts/view'] = 'front/cparts';
+$route['spareparts/add'] = 'front/cparts/add';
+$route['spareparts/insert'] = 'front/cwarehouse/create';
+$route['spareparts/edit/(:any)'] = 'front/cparts/edit/$1';
+$route['spareparts/modify'] = 'front/cparts/update';
+$route['spareparts/remove/(:any)'] = 'front/cparts/delete/$1';
+$route['spareparts/list/([a-zA-Z]+)'] = 'front/cparts/get_list/$1';
+
 $route['manage-spareparts'] = 'front/cparts/lists';
 $route['data-spareparts'] = 'front/cparts';
 $route['add-spareparts'] = 'front/cparts/add';

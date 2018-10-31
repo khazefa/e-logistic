@@ -50,7 +50,7 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_wh();
+        $data['list_wr'] = $this->get_list_warehouse();
         $this->loadViews('front/reports/consumed-part', $this->global, $data);
     }
     
@@ -63,7 +63,7 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_wh();
+        $data['list_wr'] = $this->get_list_warehouse();
         $this->loadViews('front/reports/used-part', $this->global, $data);
     }
     
@@ -76,19 +76,19 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_wh();
+        $data['list_wr'] = $this->get_list_warehouse();
         $this->loadViews('front/reports/replenish-plan', $this->global, $data);
     }
     
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_wh(){
+    public function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -117,7 +117,7 @@ class CReports extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";

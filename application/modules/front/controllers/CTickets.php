@@ -65,7 +65,7 @@ class CTickets extends BaseController
         //Parameter Data for cURL
         $arrWhere = array('ffsl_code'=>$ffsl_code);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : "";
         
         return $rs;
@@ -79,7 +79,7 @@ class CTickets extends BaseController
         //Parse Data for cURL
         $arrWhere = array('ffsl_code'=>$ffsl_code);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : "";
         
         $data = array();

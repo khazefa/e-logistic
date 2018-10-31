@@ -176,12 +176,6 @@ $route['engineers/edit/(:any)'] = 'front/cengineers/edit/$1';
 $route['engineers/modify'] = 'front/cengineers/update';
 $route['engineers/remove/(:any)'] = 'front/cengineers/delete/$1';
 $route['engineers/list/([a-zA-Z]+)'] = 'front/cengineers/get_list/$1';
-
-$route['manage-engineers'] = 'front/cengineers/lists';
-$route['data-engineers'] = 'front/cengineers';
-$route['add-engineers'] = 'front/cengineers/add';
-$route['edit-engineers/(:any)'] = 'front/cengineers/edit/$1';
-$route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
 // ===========================
 //  End Routing Front Engineers
 // ===========================

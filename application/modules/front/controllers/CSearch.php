@@ -57,7 +57,7 @@ class CSearch extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";
@@ -138,7 +138,7 @@ class CSearch extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['list_part'] = $this->get_list_part();
-        $data['list_coverage'] = $this->get_list_data_wh();        
+        $data['list_coverage'] = $this->get_list_warehouse();        
         $this->loadViews('front/search-data/v_partnum', $this->global, $data);
     }
     
@@ -156,19 +156,19 @@ class CSearch extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['list_part'] = $this->get_list_part();
-        $data['list_coverage'] = $this->get_list_data_wh();        
+        $data['list_coverage'] = $this->get_list_warehouse();        
         $this->loadViews('front/search-data/v_partnum_e', $this->global, $data);
     }
     
     /**
      * This function is used to get lists for populate data
      */
-    public function get_list_data_wh(){
+    public function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();

@@ -68,6 +68,7 @@ class CAtm extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['readonly'] = $this->readonly;
+        $data['classname'] = $this->cname;
         $data['url_list'] = base_url($this->cname.'/list/json');
 //        $data['arr_data_u'] = base_url($this->cname.'/get_distinct/json');
         $data['arr_data_bank'] = $this->get_unique('array', 'bank');
@@ -101,10 +102,9 @@ class CAtm extends BaseController
         //if you have some parameters to get data, please set fdeleted and flimit depend on your needs 
         //default flimit = 0 to retrieve All data
         if($isParam){
-//            $arrWhere = array('fssbid'=>$fssbid, 'fmachid'=>$fmachid, 'fname'=>$fname, 'fcity'=>$fcity, 
-//                'fdeleted'=>0, 'flimit'=>0);
-            $arrWhere = array('fname'=>$fname, 'fcity'=>$fcity, 
-                'fdeleted'=>0, 'flimit'=>0);
+            $arrWhere["fdeleted"] = 0;
+            array_push($arrWhere, $arrWhere["fdeleted"]);
+        
         }else{
             $arrWhere = array('fdeleted'=>0, 'flimit'=>100);
         }
@@ -183,7 +183,7 @@ class CAtm extends BaseController
         //if you have a parameter to get data, please set flimit depend on your needs 
         //default flimit = 0 to retrieve All data
         if ($fparam != "") {
-            $arrWhere = "fparam=".$fparam."&flimit=0";
+            $arrWhere = "fparam=".$fparam;
         }
         else {
             $arrWhere = "flimit=100";
@@ -350,7 +350,8 @@ class CAtm extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $this->loadViews($this->view_dir.'create', $this->global, NULL);
+            $data['classname'] = $this->cname;
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
             redirect($this->cname.'/view');
         }
@@ -407,6 +408,7 @@ class CAtm extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
+            $data['classname'] = $this->cname;
             $data['records'] = $this->get_edit($fkey);
             $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{

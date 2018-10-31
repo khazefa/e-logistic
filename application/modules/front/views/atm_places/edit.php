@@ -61,7 +61,7 @@ if(!empty($records))
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url('atm/modify');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url($classname.'/modify');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <input type="hidden" name="fid" value="<?php echo $fpid; ?>">
                     <div class="form-group row">

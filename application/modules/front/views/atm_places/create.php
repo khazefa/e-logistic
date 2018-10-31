@@ -32,7 +32,7 @@
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url('atm/insert');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url($classname.'/insert');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group row">
                         <label for="fssbid" class="col-3 col-form-label">SSB ID <span class="text-danger">*</span></label>

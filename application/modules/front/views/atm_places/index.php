@@ -64,7 +64,7 @@
                 if(!$readonly){
             ?>
                 <div class="btn-group">
-                    <button type="button" onclick="location.href='<?php echo base_url("atm/add");?>'" class="btn btn-sm btn-light waves-effect">
+                    <button type="button" onclick="location.href='<?php echo base_url($classname.'/add');?>'" class="btn btn-sm btn-light waves-effect">
                         <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
                     </button>
                 </div>

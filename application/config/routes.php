@@ -75,10 +75,13 @@ $route['cl'] = 'front/dashboard';
 // ===========================
 //  Routing Front Accounts
 // ===========================
-$route['manage-users'] = 'front/cusers';
-$route['add-users'] = 'front/cusers/add';
-$route['edit-users/(:any)'] = 'front/cusers/edit/$1';
-$route['remove-users/(:any)'] = 'front/cusers/delete/$1';
+$route['users/view'] = 'front/cusers';
+$route['users/add'] = 'front/cusers/add';
+$route['users/insert'] = 'front/cwarehouse/create';
+$route['users/edit/(:any)'] = 'front/cusers/edit/$1';
+$route['users/modify'] = 'front/cusers/update';
+$route['users/remove/(:any)'] = 'front/cusers/delete/$1';
+$route['users/list/([a-zA-Z]+)'] = 'front/cusers/get_list/$1';
 // ===========================
 //  End Routing Front Accounts
 // ===========================
@@ -101,7 +104,6 @@ $route['user-groups/edit/(:any)'] = 'front/cusersgroup/edit/$1';
 $route['user-groups/modify'] = 'front/cusersgroup/update';
 $route['user-groups/remove/(:any)'] = 'front/cusersgroup/delete/$1';
 $route['user-groups/list/([a-zA-Z]+)'] = 'front/cusersgroup/get_list/$1';
-$route['user-groups/list_detail/(:any)'] = 'front/cusersgroup/get_detail/$1';
 // ===========================
 //  End Routing Front Accounts Group
 // ===========================

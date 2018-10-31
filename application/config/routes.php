@@ -162,12 +162,6 @@ $route['partners/edit/(:any)'] = 'front/cpartners/edit/$1';
 $route['partners/modify'] = 'front/cpartners/update';
 $route['partners/remove/(:any)'] = 'front/cpartners/delete/$1';
 $route['partners/list/([a-zA-Z]+)'] = 'front/cpartners/get_list/$1';
-
-$route['manage-partners'] = 'front/cpartners/lists';
-$route['data-partners'] = 'front/cpartners';
-$route['add-partners'] = 'front/cpartners/add';
-$route['edit-partners/(:any)'] = 'front/cpartners/edit/$1';
-$route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
 // ===========================
 //  End Routing Front Partners
 // ===========================
@@ -175,6 +169,14 @@ $route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
 // ===========================
 //  Routing Front Engineers
 // ===========================
+$route['engineers/view'] = 'front/cengineers';
+$route['engineers/add'] = 'front/cengineers/add';
+$route['engineers/insert'] = 'front/cengineers/create';
+$route['engineers/edit/(:any)'] = 'front/cengineers/edit/$1';
+$route['engineers/modify'] = 'front/cengineers/update';
+$route['engineers/remove/(:any)'] = 'front/cengineers/delete/$1';
+$route['engineers/list/([a-zA-Z]+)'] = 'front/cengineers/get_list/$1';
+
 $route['manage-engineers'] = 'front/cengineers/lists';
 $route['data-engineers'] = 'front/cengineers';
 $route['add-engineers'] = 'front/cengineers/add';

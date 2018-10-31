@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CEngineers extends BaseController
 {
+    private $cname = 'engineers';
+    private $view_dir = 'front/engineers/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -19,6 +23,11 @@ class CEngineers extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isWebAdmin()){
+            $this->readonly = FALSE;
+        }else{
+            $this->readonly = TRUE;
+        }
     }
     
     /**
@@ -34,171 +43,72 @@ class CEngineers extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/engineers/index', $this->global, NULL);
-    }
-    
-    /**
-     * This function used to load the first screen of the user
-     */
-    public function lists()
-    {
-        if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Manage Engineers - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Engineers';
-            $this->global['contentHeader'] = 'Manage Engineers';
-            $this->global['contentTitle'] = 'Manage Engineers';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-
-            $this->loadViews('front/engineers/lists', $this->global, NULL);
-        }else{
-            redirect('data-engineers');
-        }
+        $data['classname'] = $this->cname;
+        $data['readonly'] = $this->readonly;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
     }
     
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list($type){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $row['feid'] = $key;
-            $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-//            if($code == "00"){
-//                $names = "WH";
-//            }else{
-//                $data_warehouse = $this->get_list_info_wh($code);
-//                foreach ($data_warehouse as $d){
-//                    $names = $d["name"];
-//                }
-//            }
-            $row['warehouse'] = $fslname;
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
-    public function get_m_list_datatable(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $row['feid'] = $key;
-            $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-//            if($fslcode == "00"){
-//                $names = "WH";
-//            }else{
-//                $data_warehouse = $this->get_list_info_wh($code);
-//                foreach ($data_warehouse as $d){
-//                    $names = $d["name"];
-//                }
-//            }
-            $row['warehouse'] = $fslname;
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-engineers/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-engineers/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fkey = $this->input->post('fkey', TRUE);
-        $fcode = $this->input->post('fcode', TRUE);
-        $fpartner = $this->input->post('fpartner', TRUE);
-        $femail = $this->input->post('femail', TRUE);
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+                    $row['feid'] = $key;
+                    $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+                    $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                    $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+                    $row['warehouse'] = $fslname;
+                    
+                    if($this->readonly){
+//                        $row['button'] = '<a type="btn" href="javascript:viewdetail(\''.$code.'\');" title="View Detail"><i class="mdi mdi-information-outline text-primary font-18 vertical-middle"></i></a>';
+                        $row['button'] = '-';
+                    }else{
+                        $row['button'] = '<div class="btn-group dropdown">';
+                        $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                        $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                        $row['button'] .= '</div>';
+                        $row['button'] .= '</div>';
+                    }
 
-        if ($fkey != "") $arrWhere['fkey'] = $fkey;
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fpartner != "") $arrWhere['fpartner'] = $fpartner;
-        if ($femail != "") $arrWhere['femail'] = $femail;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $row['feid'] = $key;
-            $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
-//            if($code == "00"){
-//                $names = "WH";
-//            }else{
-//                $data_warehouse = $this->get_list_info_wh($code);
-//                foreach ($data_warehouse as $d){
-//                    $names = $d["name"];
-//                }
-//            }
-            $row['warehouse'] = $fslname;
- 
-            $data[] = $row;
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r){
+                    $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+                    $row['feid'] = $key;
+                    $row['fullname'] = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+                    $row['partner'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                    $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+                    $row['warehouse'] = $fslname;
+
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
+        return $output;
     }
     
     /**
@@ -241,7 +151,7 @@ class CEngineers extends BaseController
             if($code == "00"){
                 $names = "WH";
             }else{
-                $data_warehouse = $this->get_list_info_wh($code);
+                $data_warehouse = $this->get_detail_warehouse($code);
                 foreach ($data_warehouse as $d){
                     $names = $d["name"];
                 }
@@ -284,12 +194,29 @@ class CEngineers extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_wh(){
+    public function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
+        $isParam = FALSE;
+        
+        $fcode = $this->input->post('fcode', TRUE);
+        $fname = $this->input->post('fname', TRUE);
+
+        if ($fcode != "") { $arrWhere['fcode'] = $fcode; $isParam = TRUE; }
+        if ($fname != "") { $arrWhere['fname'] = $fname; $isParam = TRUE; }
+        
+        //if you have some parameters to get data, please set fdeleted and flimit depend on your needs 
+        //default flimit = 0 to retrieve All data
+        if($isParam){
+            $arrWhere["fdeleted"] = 0;
+            array_push($arrWhere, $arrWhere["fdeleted"]);
+        }else{
+            //set flimit = 0 to retrieve All data, because the data is not too large
+            $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
+        }
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -310,14 +237,15 @@ class CEngineers extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_info_wh($fcode){
+    public function get_detail_warehouse($fcode){
         $rs = array();
-        $arrWhere = array();
-        
+        $arrWhere = array();        
         $arrWhere = array('fcode'=>$fcode);
+        $arrWhere["fdeleted"] = 0;
+        array_push($arrWhere, $arrWhere["fdeleted"]);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -338,10 +266,9 @@ class CEngineers extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_info($fkey){
+    public function get_edit($fkey){
         $rs = array();
-        $arrWhere = array();
-        
+        $arrWhere = array();        
         $arrWhere = array('fkey'=>$fkey);
         
         //Parse Data for cURL
@@ -393,13 +320,13 @@ class CEngineers extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
+            $data['classname'] = $this->cname;
             $data['list_partner'] = $this->get_list_partners();
-            $data['list_wr'] = $this->get_list_wh();
+            $data['list_wr'] = $this->get_list_warehouse();
             $data['default_pass'] = strtoupper(generateRandomString());
-
-            $this->loadViews('front/engineers/create', $this->global, $data);
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-engineers');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -428,12 +355,12 @@ class CEngineers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-engineers');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-engineers');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -446,7 +373,7 @@ class CEngineers extends BaseController
         if($this->isWebAdmin()){
             if($fkey == NULL)
             {
-                redirect('manage-engineers');
+                redirect($this->cname.'/view');
             }
 
             $this->global['pageTitle'] = "Edit Data Engineer - ".APP_NAME;
@@ -457,13 +384,14 @@ class CEngineers extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['records'] = $this->get_list_info($fkey);
+            $data['classname'] = $this->cname;
+            $data['records'] = $this->get_edit($fkey);
             $data['list_partner'] = $this->get_list_partners();
-            $data['list_wr'] = $this->get_list_wh();
+            $data['list_wr'] = $this->get_list_warehouse();
 
-            $this->loadViews('front/engineers/edit', $this->global, $data);
+            $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{
-            redirect('data-engineers');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -492,12 +420,12 @@ class CEngineers extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-engineers');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-engineers/'.$fkey);
+            redirect($this->cname.'/edit/'.$fkey);
         }
     }
     
@@ -521,6 +449,6 @@ class CEngineers extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('manage-engineers');
+        redirect($this->cname.'/view');
     }
 }

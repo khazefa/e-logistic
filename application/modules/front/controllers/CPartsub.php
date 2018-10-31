@@ -23,6 +23,11 @@ class CPartsub extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isSuperAdmin()){
+            $this->readonly = FALSE;
+        }else{
+            $this->readonly = TRUE;
+        }
     }
     
     /**
@@ -87,13 +92,17 @@ class CPartsub extends BaseController
                     }
                     $row['partnosub'] = $names;
                     
-                    $row['button'] = '<div class="btn-group dropdown">';
-                    $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-                    $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-                    $row['button'] .= '</div>';
-                    $row['button'] .= '</div>';
+                    if($this->readonly){
+                        $row['button'] = '-';
+                    }else{
+                        $row['button'] = '<div class="btn-group dropdown">';
+                        $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                        $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                        $row['button'] .= '</div>';
+                        $row['button'] .= '</div>';
+                    }
 
                     $data[] = $row;
                 }

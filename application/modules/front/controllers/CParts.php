@@ -24,7 +24,7 @@ class CParts extends BaseController
         parent::__construct();
         $this->isLoggedIn();
         if($this->isWebAdmin()){
-            //load page
+            $this->readonly = FALSE;
         }else{
             redirect('cl');
         }
@@ -47,26 +47,6 @@ class CParts extends BaseController
         $data['classname'] = $this->cname;
         $data['url_list'] = base_url($this->cname.'/list/json');
         $this->loadViews($this->view_dir.'index', $this->global, $data);
-    }
-    
-    /**
-     * This function used to manage data
-     */
-    public function lists()
-    {
-        if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Manage Sparepart - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Sparepart';
-            $this->global['contentHeader'] = 'Manage Sparepart';
-            $this->global['contentTitle'] = 'Manage Sparepart';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-
-            $this->loadViews('front/parts/lists', $this->global, NULL);
-        }else{
-            redirect('data-spareparts');
-        }
     }
     
     /**
@@ -95,13 +75,17 @@ class CParts extends BaseController
                     $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
                     $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
                     
-                    $row['button'] = '<div class="btn-group dropdown">';
-                    $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-                    $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$partnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$partnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-                    $row['button'] .= '</div>';
-                    $row['button'] .= '</div>';
+                    if($this->readonly){
+                        $row['button'] = '-';
+                    }else{
+                        $row['button'] = '<div class="btn-group dropdown">';
+                        $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                        $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$partnum.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$partnum.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                        $row['button'] .= '</div>';
+                        $row['button'] .= '</div>';
+                    }
 
                     $data[] = $row;
                 }

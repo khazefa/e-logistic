@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CPartners extends BaseController
 {
+    private $cname = 'partners';
+    private $view_dir = 'front/partners/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -19,6 +23,11 @@ class CPartners extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isWebAdmin()){
+            $this->readonly = FALSE;
+        }else{
+            $this->readonly = TRUE;
+        }
     }
     
     /**
@@ -34,199 +43,77 @@ class CPartners extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/partners/index', $this->global, NULL);
-    }
-    
-    /**
-     * This function used to load the first screen of the user
-     */
-    public function lists()
-    {
-        if($this->isSuperAdmin()){
-            $this->global['pageTitle'] = 'Manage Partners - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Partners';
-            $this->global['contentHeader'] = 'Manage Partners';
-            $this->global['contentTitle'] = 'Manage Partners';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-
-            $this->loadViews('front/partners/lists', $this->global, NULL);
-        }else{
-            redirect('data-partners');
-        }
+        $data['readonly'] = $this->readonly;
+        $data['classname'] = $this->cname;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
     }
     
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list($type){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_partners'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-partners/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-partners/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
-    public function get_m_list_datatable(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_partners'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-partners/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-partners/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
+                    $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+                    $row['code'] = $key;
+                    $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                    $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
+                    $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
 
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fkey != "") $arrWhere['fkey'] = $fkey;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_partners'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
+                    if($this->readonly){
+                        $row['button'] = '-';
+                    }else{
+                        $row['button'] = '<div class="btn-group dropdown">';
+                        $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                        $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$key.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$key.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                        $row['button'] .= '</div>';
+                        $row['button'] .= '</div>';
+                    }
 
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fkey != "") $arrWhere['fkey'] = $fkey;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
+                    $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+                    $row['code'] = $key;
+                    $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+                    $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
+                    $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
 
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_partners'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->partner_id, FILTER_SANITIZE_NUMBER_INT);
-            $key = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
-            $row['code'] = $key;
-            $row['name'] = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-            $row['location'] = filter_var($r->partner_location, FILTER_SANITIZE_STRING);
-            $row['contact'] = filter_var($r->partner_contact, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $data;
+        return $output;
     }
     
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_info($fkey){
+    public function get_edit($fkey){
         $rs = array();
-        $arrWhere = array();
-        
+        $arrWhere = array();        
         $arrWhere = array('fkey'=>$fkey);
         
         //Parse Data for cURL
@@ -253,7 +140,7 @@ class CPartners extends BaseController
      */
     function add()
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             $this->global['pageTitle'] = "Add New Partner - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Partner';
             $this->global['contentHeader'] = 'Add New Partner';
@@ -262,9 +149,10 @@ class CPartners extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $this->loadViews('front/partners/create', $this->global, NULL);
+            $data['classname'] = $this->cname;
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-partners');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -285,12 +173,12 @@ class CPartners extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-partners');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-partners');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -300,10 +188,10 @@ class CPartners extends BaseController
      */
     function edit($fkey = NULL)
     {
-        if($this->isSuperAdmin()){
+        if($this->isWebAdmin()){
             if($fkey == NULL)
             {
-                redirect('manage-partners');
+                redirect($this->cname.'/view');
             }
 
             $this->global['pageTitle'] = "Edit Data Partner - ".APP_NAME;
@@ -314,11 +202,11 @@ class CPartners extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['records'] = $this->get_list_info($fkey);
-
+            $data['classname'] = $this->cname;
+            $data['records'] = $this->get_edit($fkey);
             $this->loadViews('front/partners/edit', $this->global, $data);
         }else{
-            redirect('data-partners');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -339,12 +227,12 @@ class CPartners extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-partners');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-partners/'.$fkey);
+            redirect($this->cname.'/edit/'.$fkey);
         }
     }
     
@@ -368,6 +256,6 @@ class CPartners extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('manage-partners');
+        redirect($this->cname.'/view');
     }
 }

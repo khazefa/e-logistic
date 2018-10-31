@@ -155,6 +155,14 @@ $route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
 // ===========================
 //  Routing Front Partners
 // ===========================
+$route['partners/view'] = 'front/cpartners';
+$route['partners/add'] = 'front/cpartners/add';
+$route['partners/insert'] = 'front/cpartners/create';
+$route['partners/edit/(:any)'] = 'front/cpartners/edit/$1';
+$route['partners/modify'] = 'front/cpartners/update';
+$route['partners/remove/(:any)'] = 'front/cpartners/delete/$1';
+$route['partners/list/([a-zA-Z]+)'] = 'front/cpartners/get_list/$1';
+
 $route['manage-partners'] = 'front/cpartners/lists';
 $route['data-partners'] = 'front/cpartners';
 $route['add-partners'] = 'front/cpartners/add';

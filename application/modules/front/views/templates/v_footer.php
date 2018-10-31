@@ -140,6 +140,31 @@
             function isEmpty(val){
                 return (val === undefined || val == null || val.length <= 0) ? true : false;
             }
+            function removeDups(names) {
+                let unique = {};
+                names.forEach(function(i) {
+                    if(!unique[i]) {
+                        unique[i] = true;
+                    }
+                });
+                return Object.keys(unique);
+            }
+            function throw_ajax(url, type, data, successT, errorT){
+                $.ajax({
+                    type: type,
+                    url: url,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    dataType: 'JSON',
+                    contentType:"application/json",
+                    data: data,
+                    success: successT,
+                    error: errorT
+                });
+            }
+
+            function throw_ajax_err(jqXHR, textStatus, errorThrown){
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
+            }
             $(document).ready(function() {
                 $('form').parsley();
             });

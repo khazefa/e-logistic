@@ -35,78 +35,57 @@
                 <form class="form-horizontal" action="<?php echo base_url($classname.'/insert');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group row">
-                        <label for="fpartner" class="col-3 col-form-label">Service Partner</label>
+                        <label for="fssbid" class="col-3 col-form-label">SSB ID <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <select name="fpartner" id="fpartner" class="selectpicker" data-live-search="true" 
-                                    data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                <?php
-                                    foreach($list_partner as $p){
-                                        echo '<option value="'.$p["id"].'">'.$p["name"].'</option>';
-                                    }
-                                ?>
-                            </select>
+                            <input type="text" name="fssbid" id="fssbid" required placeholder="SSB ID" class="form-control" pattern="[a-zA-Z0-9 ]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fkey" class="col-3 col-form-label">FE ID</label>
+                        <label for="fmachid" class="col-3 col-form-label">Machine ID <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <input type="text" name="fkey" id="fkey" required data-parsley-minlength="1" placeholder="FE ID" class="form-control">
+                            <input type="text" name="fmachid" id="fmachid" required placeholder="Machine ID" class="form-control" pattern="[a-zA-Z0-9 ]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fpass" class="col-3 col-form-label">Password</label>
+                        <label for="fname" class="col-3 col-form-label">Bank Name <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <input type="password" name="fpass" id="fpass" required data-parsley-minlength="6" value="<?php echo $default_pass; ?>" class="form-control">
-                            <span class="help-block"><small>default password already created, please change this text if you considered.</small></span>
+                            <input type="text" name="fname" id="fname" required placeholder="Bank Name" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fname" class="col-3 col-form-label">Full Name</label>
+                        <label for="floc" class="col-3 col-form-label">Location</label>
                         <div class="col-9">
-                            <input type="text" name="fname" id="fname" required placeholder="Full Name" class="form-control">
+                            <textarea name="floc" id="floc" placeholder="Location" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="ftitle" class="col-3 col-form-label">Title</label>
+                        <label for="faddress" class="col-3 col-form-label">Address</label>
                         <div class="col-9">
-                            <input type="text" name="ftitle" id="ftitle" required placeholder="Title" class="form-control">
+                            <textarea name="faddress" id="faddress" placeholder="Address" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="femail" class="col-3 col-form-label">Email</label>
+                        <label for="fpostcode" class="col-3 col-form-label">Postal Code</label>
                         <div class="col-9">
-                            <input type="email" name="femail" id="femail" required parsley-type="email" placeholder="Email" class="form-control">
+                            <input type="text" name="fpostcode" id="fpostcode" placeholder="Postal Code" class="form-control" pattern="[0-9]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fphone" class="col-3 col-form-label">Phone</label>
+                        <label for="fcity" class="col-3 col-form-label">City</label>
                         <div class="col-9">
-                            <input type="text" name="fphone" id="fphone" placeholder="Phone" class="form-control">
+                            <input type="fcity" name="fcity" id="fcity" placeholder="City" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="farea" class="col-3 col-form-label">Service Area</label>
+                        <label for="fprovince" class="col-3 col-form-label">Province</label>
                         <div class="col-9">
-                            <input type="text" name="farea" id="farea" required placeholder="Service Area" class="form-control">
+                            <input type="text" name="fprovince" id="fprovince" placeholder="Province" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fspv" class="col-3 col-form-label">FSSPV CODE</label>
+                        <label for="fisland" class="col-3 col-form-label">Island</label>
                         <div class="col-9">
-                            <input type="text" name="fspv" id="fspv" required placeholder="FSSPV CODE" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="fcode" class="col-3 col-form-label">Warehouse</label>
-                        <div class="col-9">
-                            <select name="fcode" id="fcode" required class="selectpicker" data-live-search="true" 
-                                    data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                <?php
-                                    foreach($list_wr as $w){
-                                        echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                    }
-                                ?>
-                            </select>
+                            <input type="text" name="fisland" id="fisland" placeholder="Island" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

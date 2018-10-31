@@ -1,8 +1,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <a href="javascript:history.back()"><i class="fa fa-reply"></i> Back</a>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             
             <p class="text-success text-center">
                 <?php
@@ -28,11 +32,11 @@
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url('front/cusers/create');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url($classname.'/insert');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group row">
-                        <label for="fgroup" class="col-2 col-form-label">User Group</label>
-                        <div class="col-3">
+                        <label for="fgroup" class="col-3 col-form-label">User Group</label>
+                        <div class="col-9">
                             <select name="fgroup" id="fgroup" class="selectpicker" data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                 <?php
@@ -44,32 +48,32 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fkey" class="col-2 col-form-label">Username</label>
-                        <div class="col-3">
+                        <label for="fkey" class="col-3 col-form-label">Username</label>
+                        <div class="col-9">
                             <input type="text" name="fkey" id="fkey" required data-parsley-minlength="3" placeholder="Username" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fpass" class="col-2 col-form-label">Password</label>
-                        <div class="col-3">
+                        <label for="fpass" class="col-3 col-form-label">Password</label>
+                        <div class="col-9">
                             <input type="password" name="fpass" id="fpass" required data-parsley-minlength="3" placeholder="******" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fname" class="col-2 col-form-label">Full Name</label>
-                        <div class="col-4">
+                        <label for="fname" class="col-3 col-form-label">Full Name</label>
+                        <div class="col-9">
                             <input type="text" name="fname" id="fname" required placeholder="Full Name" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="femail" class="col-2 col-form-label">Email</label>
-                        <div class="col-3">
+                        <label for="femail" class="col-3 col-form-label">Email</label>
+                        <div class="col-9">
                             <input type="email" name="femail" id="femail" parsley-type="email" placeholder="Email" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="ffsl" class="col-2 col-form-label">Warehouse</label>
-                        <div class="col-3">
+                        <label for="ffsl" class="col-3 col-form-label">Warehouse</label>
+                        <div class="col-9">
                             <select name="ffsl" id="ffsl" required class="selectpicker" data-live-search="true" 
                                     data-selected-text-format="values" title="Please choose.." data-style="btn-light">
                                 <option value="00">WH</option>
@@ -82,8 +86,8 @@
                         </div>
                     </div>
                     <div class="form-group row d-none" id="fcoverage">
-                        <label for="fcode" class="col-2 col-form-label">Coverage Warehouse</label>
-                        <div class="col-10">
+                        <label for="fcode" class="col-3 col-form-label">Coverage Warehouse</label>
+                        <div class="col-9">
                             <div class="checkbox checkbox-info checkbox-circle">
                                 <input name="fcode_all" id="fcode_all" type="checkbox" value="*">
                                 <label for="fcode_all">
@@ -179,8 +183,8 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fisadm" class="col-2 col-form-label">Is Admin</label>
-                        <div class="col-2">
+                        <label for="fisadm" class="col-3 col-form-label">Is Admin</label>
+                        <div class="col-9">
                             <select name="fisadm" id="fisadm" class="selectpicker" title="Please choose.." data-style="btn-light">
                                 <option value="0">No</option>
                                 <option value="1">Yes</option>
@@ -188,8 +192,8 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="btn" class="col-2 col-form-label">&nbsp;</label>
-                        <div class="col-6">
+                        <label for="btn" class="col-3 col-form-label">&nbsp;</label>
+                        <div class="col-9">
                             <button id="btn_submit" type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>

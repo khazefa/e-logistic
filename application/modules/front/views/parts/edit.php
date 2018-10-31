@@ -18,10 +18,14 @@ if(!empty($records))
 }
 ?>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6 offset-md-3">
         <div class="card-box">
-            <a href="javascript:history.back()"><i class="fa fa-reply"></i> Back</a>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             
             <p class="text-success text-center">
                 <?php
@@ -47,35 +51,35 @@ if(!empty($records))
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url('front/cparts/update');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url($classname.'/modify');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
                     <div class="form-group row">
-                        <label for="fpartnum" class="col-2 col-form-label">Part Number</label>
-                        <div class="col-4">
+                        <label for="fpartnum" class="col-3 col-form-label">Part Number</label>
+                        <div class="col-9">
                             <input type="text" name="fpartnum" id="fpartnum" required value="<?php echo $fpartnum; ?>" class="form-control" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fname" class="col-2 col-form-label">Part Name</label>
-                        <div class="col-6">
+                        <label for="fname" class="col-3 col-form-label">Part Name</label>
+                        <div class="col-9">
                             <input type="text" name="fname" id="fname" required value="<?php echo $fname; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fdesc" class="col-2 col-form-label">Part Description</label>
-                        <div class="col-6">
+                        <label for="fdesc" class="col-3 col-form-label">Part Description</label>
+                        <div class="col-9">
                             <textarea name="fdesc" id="fdesc" placeholder="Part Description" class="form-control"><?php echo $fdesc; ?></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fmachine" class="col-2 col-form-label">Machine</label>
-                        <div class="col-6">
+                        <label for="fmachine" class="col-3 col-form-label">Machine</label>
+                        <div class="col-9">
                             <input type="text" name="fmachine" id="fmachine" required value="<?php echo $fmachine; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="btn" class="col-2 col-form-label">&nbsp;</label>
-                        <div class="col-6">
+                        <label for="btn" class="col-3 col-form-label">&nbsp;</label>
+                        <div class="col-9">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>

@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CStockPart extends BaseController
 {
+    private $cname = 'users';
+    private $view_dir = 'front/accounts/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -52,7 +56,7 @@ class CStockPart extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['list_data_wh'] = $this->get_list_data_wh();
+            $data['list_data_wh'] = $this->get_list_warehouse();
             
             $this->loadViews('front/stock-part/lists', $this->global, $data);
         }else{
@@ -711,7 +715,7 @@ class CStockPart extends BaseController
     /**
      * This function is used to get lists for populate data
      */
-    public function get_list_data_wh(){
+    public function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
         
@@ -722,7 +726,7 @@ class CStockPart extends BaseController
         if ($fname != "") $arrWhere['fname'] = $fname;
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -777,7 +781,7 @@ class CStockPart extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";
@@ -842,7 +846,7 @@ class CStockPart extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
             
-            $data['list_data_wh'] = $this->get_list_data_wh();
+            $data['list_data_wh'] = $this->get_list_warehouse();
 
             $this->loadViews('front/stock-part/create', $this->global, $data);
         }else{

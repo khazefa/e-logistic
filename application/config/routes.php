@@ -75,10 +75,13 @@ $route['cl'] = 'front/dashboard';
 // ===========================
 //  Routing Front Accounts
 // ===========================
-$route['manage-users'] = 'front/cusers';
-$route['add-users'] = 'front/cusers/add';
-$route['edit-users/(:any)'] = 'front/cusers/edit/$1';
-$route['remove-users/(:any)'] = 'front/cusers/delete/$1';
+$route['users/view'] = 'front/cusers';
+$route['users/add'] = 'front/cusers/add';
+$route['users/insert'] = 'front/cusers/create';
+$route['users/edit/(:any)'] = 'front/cusers/edit/$1';
+$route['users/modify'] = 'front/cusers/update';
+$route['users/remove/(:any)'] = 'front/cusers/delete/$1';
+$route['users/list/([a-zA-Z]+)'] = 'front/cusers/get_list/$1';
 // ===========================
 //  End Routing Front Accounts
 // ===========================
@@ -94,10 +97,13 @@ $route['my-account'] = 'front/cprofile';
 // ===========================
 //  Routing Front Accounts Group
 // ===========================
-$route['manage-groups'] = 'front/cusersgroup';
-$route['add-groups'] = 'front/cusersgroup/add';
-$route['edit-groups/(:num)'] = 'front/cusersgroup/edit/$1';
-$route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
+$route['user-groups/view'] = 'front/cusersgroup';
+$route['user-groups/add'] = 'front/cusersgroup/add';
+$route['user-groups/insert'] = 'front/cusersgroup/create';
+$route['user-groups/edit/(:any)'] = 'front/cusersgroup/edit/$1';
+$route['user-groups/modify'] = 'front/cusersgroup/update';
+$route['user-groups/remove/(:any)'] = 'front/cusersgroup/delete/$1';
+$route['user-groups/list/([a-zA-Z]+)'] = 'front/cusersgroup/get_list/$1';
 // ===========================
 //  End Routing Front Accounts Group
 // ===========================
@@ -105,12 +111,13 @@ $route['remove-groups/(:num)'] = 'front/cusersgroup/delete/$1';
 // ===========================
 //  Routing Front Spareparts
 // ===========================
-$route['manage-spareparts'] = 'front/cparts/lists';
-$route['data-spareparts'] = 'front/cparts';
-$route['add-spareparts'] = 'front/cparts/add';
-$route['import-spareparts'] = 'front/cparts/add_import';
-$route['edit-spareparts/(:any)'] = 'front/cparts/edit/$1';
-$route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
+$route['spareparts/view'] = 'front/cparts';
+$route['spareparts/add'] = 'front/cparts/add';
+$route['spareparts/insert'] = 'front/cparts/create';
+$route['spareparts/edit/(:any)'] = 'front/cparts/edit/$1';
+$route['spareparts/modify'] = 'front/cparts/update';
+$route['spareparts/remove/(:any)'] = 'front/cparts/delete/$1';
+$route['spareparts/list/([a-zA-Z]+)'] = 'front/cparts/get_list/$1';
 // ===========================
 //  End Routing Front Spareparts
 // ===========================
@@ -118,12 +125,13 @@ $route['remove-spareparts/(:any)'] = 'front/cparts/delete/$1';
 // ===========================
 //  Routing Front Spareparts Subtitute
 // ===========================
-$route['manage-spareparts-sub'] = 'front/cpartsub/lists';
-$route['data-spareparts-sub'] = 'front/cpartsub';
-$route['add-spareparts-sub'] = 'front/cpartsub/add';
-$route['import-spareparts-sub'] = 'front/cpartsub/add_import';
-$route['edit-spareparts-sub/(:num)'] = 'front/cpartsub/edit/$1';
-$route['remove-spareparts-sub/(:num)'] = 'front/cpartsub/delete/$1';
+$route['spareparts-sub/view'] = 'front/cpartsub';
+$route['spareparts-sub/add'] = 'front/cpartsub/add';
+$route['spareparts-sub/insert'] = 'front/cpartsub/create';
+$route['spareparts-sub/edit/(:any)'] = 'front/cpartsub/edit/$1';
+$route['spareparts-sub/modify'] = 'front/cpartsub/update';
+$route['spareparts-sub/remove/(:any)'] = 'front/cpartsub/delete/$1';
+$route['spareparts-sub/list/([a-zA-Z]+)'] = 'front/cpartsub/get_list/$1';
 // ===========================
 //  End Routing Front Spareparts Subtitute
 // ===========================
@@ -147,11 +155,13 @@ $route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
 // ===========================
 //  Routing Front Partners
 // ===========================
-$route['manage-partners'] = 'front/cpartners/lists';
-$route['data-partners'] = 'front/cpartners';
-$route['add-partners'] = 'front/cpartners/add';
-$route['edit-partners/(:any)'] = 'front/cpartners/edit/$1';
-$route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
+$route['partners/view'] = 'front/cpartners';
+$route['partners/add'] = 'front/cpartners/add';
+$route['partners/insert'] = 'front/cpartners/create';
+$route['partners/edit/(:any)'] = 'front/cpartners/edit/$1';
+$route['partners/modify'] = 'front/cpartners/update';
+$route['partners/remove/(:any)'] = 'front/cpartners/delete/$1';
+$route['partners/list/([a-zA-Z]+)'] = 'front/cpartners/get_list/$1';
 // ===========================
 //  End Routing Front Partners
 // ===========================
@@ -159,11 +169,13 @@ $route['remove-partners/(:any)'] = 'front/cpartners/delete/$1';
 // ===========================
 //  Routing Front Engineers
 // ===========================
-$route['manage-engineers'] = 'front/cengineers/lists';
-$route['data-engineers'] = 'front/cengineers';
-$route['add-engineers'] = 'front/cengineers/add';
-$route['edit-engineers/(:any)'] = 'front/cengineers/edit/$1';
-$route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
+$route['engineers/view'] = 'front/cengineers';
+$route['engineers/add'] = 'front/cengineers/add';
+$route['engineers/insert'] = 'front/cengineers/create';
+$route['engineers/edit/(:any)'] = 'front/cengineers/edit/$1';
+$route['engineers/modify'] = 'front/cengineers/update';
+$route['engineers/remove/(:any)'] = 'front/cengineers/delete/$1';
+$route['engineers/list/([a-zA-Z]+)'] = 'front/cengineers/get_list/$1';
 // ===========================
 //  End Routing Front Engineers
 // ===========================
@@ -171,21 +183,33 @@ $route['remove-engineers/(:any)'] = 'front/cengineers/delete/$1';
 // ===========================
 //  Routing Front Warehouses
 // ===========================
-$route['manage-warehouses'] = 'front/cwarehouse/lists';
-$route['data-warehouses'] = 'front/cwarehouse';
-$route['add-warehouses'] = 'front/cwarehouse/add';
-$route['edit-warehouses/(:any)'] = 'front/cwarehouse/edit/$1';
-$route['remove-warehouses/(:any)'] = 'front/cwarehouse/delete/$1';
+$route['warehouse/view'] = 'front/cwarehouse';
+$route['warehouse/add'] = 'front/cwarehouse/add';
+$route['warehouse/insert'] = 'front/cwarehouse/create';
+$route['warehouse/edit/(:any)'] = 'front/cwarehouse/edit/$1';
+$route['warehouse/modify'] = 'front/cwarehouse/update';
+$route['warehouse/remove/(:any)'] = 'front/cwarehouse/delete/$1';
+$route['warehouse/list/([a-zA-Z]+)'] = 'front/cwarehouse/get_list/$1';
+$route['warehouse/list_nearby/([a-zA-Z]+)'] = 'front/cwarehouse/get_list_nearby/$1';
+$route['warehouse/list_detail/(:any)'] = 'front/cwarehouse/get_detail/$1';
 // ===========================
 //  End Routing Front Warehouses
 // ===========================
 
 // ===========================
-//  Routing Front Tickets
+//  Routing Front ATM
 // ===========================
-$route['tickets'] = 'front/ctickets';
+$route['atm/view'] = 'front/catm';
+$route['atm/add'] = 'front/catm/add';
+$route['atm/insert'] = 'front/catm/create';
+$route['atm/edit/(:any)'] = 'front/catm/edit/$1';
+$route['atm/modify'] = 'front/catm/update';
+$route['atm/remove/(:any)'] = 'front/catm/delete/$1';
+$route['atm/list/([a-zA-Z]+)'] = 'front/catm/get_list/$1';
+$route['atm/list_detail/(:any)'] = 'front/catm/get_detail/$1';
+$route['atm/get_distinct/([a-zA-Z]+)/([a-zA-Z]+)'] = 'front/catm/get_unique/$1/$2';
 // ===========================
-//  End Routing Front Tickets
+//  End Routing Front ATM
 // ===========================
 
 // ===========================
@@ -195,6 +219,10 @@ $route['outgoing-trans'] = 'front/coutgoing';
 $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
+
+
+$route['outgoing/request_parts'] = 'front/crequestparts';
+$route['outgoing/request_parts/add'] = 'front/coutgoing/add';
 // ===========================
 //  End Routing Front Outgoing Trans
 // ===========================

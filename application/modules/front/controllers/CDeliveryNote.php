@@ -446,7 +446,7 @@ class CDeliveryNote extends BaseController
 //        $fcode = $this->repo;
 //        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -859,7 +859,7 @@ class CDeliveryNote extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -909,7 +909,7 @@ class CDeliveryNote extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";

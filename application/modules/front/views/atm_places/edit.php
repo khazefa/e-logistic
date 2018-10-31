@@ -1,3 +1,32 @@
+<?php
+$fid = "";
+$fssbid = "";
+$fmachid = "";
+$fname = "";
+$floc = "";
+$faddress = "";
+$fpostcode = "";
+$fcity = "";
+$fprovince = "";
+$fisland = "";
+
+if(!empty($records))
+{
+    foreach ($records as $row)
+    {
+        $fpid = $row['pid'];
+        $fssbid = $row['serial_no'];
+        $fmachid = $row['machine'];
+        $fname = $row['bank'];
+        $floc = $row['location'];
+        $faddress = $row['address'];
+        $fpostcode = $row['postcode'];
+        $fcity = $row['city'];
+        $fprovince = $row['province'];
+        $fisland = $row['island'];
+    }
+}
+?>
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card-box">
@@ -32,70 +61,61 @@
             </p>
         
             <div class="card-body">
-                <form class="form-horizontal" action="<?php echo base_url($classname.'/insert');?>" method="POST" role="form">
+                <form class="form-horizontal" action="<?php echo base_url($classname.'/modify');?>" method="POST" role="form">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
+                    <input type="hidden" name="fid" value="<?php echo $fpid; ?>">
                     <div class="form-group row">
-                        <label for="fcode" class="col-3 col-form-label">FSL Code</label>
+                        <label for="fssbid" class="col-3 col-form-label">SSB ID <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <input type="text" name="fcode" id="fcode" data-parsley-minlength="4" data-parsley-maxlength="4" required placeholder="CODE" class="form-control">
+                            <input type="text" name="fssbid" id="fssbid" readonly="true" value="<?php echo $fssbid; ?>" class="form-control" pattern="[a-zA-Z0-9 ]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fname" class="col-3 col-form-label">FSL Name</label>
+                        <label for="fmachid" class="col-3 col-form-label">Machine ID <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <input type="text" name="fname" id="fname" required placeholder="FSL Name" class="form-control">
+                            <input type="text" name="fmachid" id="fmachid" required value="<?php echo $fmachid; ?>" class="form-control" pattern="[a-zA-Z0-9 ]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="flocation" class="col-3 col-form-label">Location</label>
+                        <label for="fname" class="col-3 col-form-label">Bank Name <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <textarea name="flocation" required class="form-control"></textarea>
+                            <input type="text" name="fname" id="fname" required value="<?php echo $fname; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fnearby" class="col-3 col-form-label">FSL Nearby</label>
+                        <label for="floc" class="col-3 col-form-label">Location</label>
                         <div class="col-9">
-                            <select name="fnearby[]" id="fnearby" class="selectpicker" multiple data-live-search="true" 
-                                    data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                <?php
-                                    foreach($list_wr as $w){
-                                        echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
-                                    }
-                                ?>
-                            </select>
-                            <span class="help-block"><small>Nearby Warehouse Location</small></span>
+                            <textarea name="floc" id="floc" placeholder="Location" class="form-control"><?php echo $floc; ?></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fpic" class="col-3 col-form-label">Person In Charge (PIC)</label>
+                        <label for="faddress" class="col-3 col-form-label">Address</label>
                         <div class="col-9">
-                            <input type="text" name="fpic" id="fpic" required placeholder="Person In Charge (PIC)" class="form-control">
+                            <textarea name="faddress" id="faddress" placeholder="Address" class="form-control"><?php echo $faddress; ?></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fphone" class="col-3 col-form-label">Phone</label>
+                        <label for="fpostcode" class="col-3 col-form-label">Postal Code</label>
                         <div class="col-9">
-                            <input type="text" name="fphone" id="fphone" data-parsley-type="number" required placeholder="Phone" class="form-control">
+                            <input type="text" name="fpostcode" id="fpostcode" value="<?php echo $fpostcode; ?>" class="form-control" pattern="[0-9]+">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="fspv" class="col-3 col-form-label">Supervisor</label>
+                        <label for="fcity" class="col-3 col-form-label">City</label>
                         <div class="col-9">
-                            <select name="fspv[]" id="fspv" class="selectpicker" multiple data-live-search="true" 
-                                    data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
-                                <?php
-                                    foreach($list_spv as $s){
-                                        echo '<option value="'.$s["uname"].'">'.$s["fullname"].'</option>';
-                                    }
-                                ?>
-                            </select>
-                            <span class="help-block"><small>Warehouse Supervisors</small></span>
+                            <input type="fcity" name="fcity" id="fcity" value="<?php echo $fcity; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="forder" class="col-3 col-form-label">Sort Order</label>
+                        <label for="fprovince" class="col-3 col-form-label">Province</label>
                         <div class="col-9">
-                            <input type="number" name="forder" id="forder" min="0" data-parsley-type="number" required class="form-control">
+                            <input type="text" name="fprovince" id="fprovince" value="<?php echo $fprovince; ?>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="fisland" class="col-3 col-form-label">Island</label>
+                        <div class="col-9">
+                            <input type="text" name="fisland" id="fisland" value="<?php echo $fisland; ?>" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

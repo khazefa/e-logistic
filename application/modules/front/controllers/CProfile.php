@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CProfile extends BaseController
 {
+    private $cname = 'my-account';
+    private $view_dir = 'front/profiles/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -35,7 +39,7 @@ class CProfile extends BaseController
         $this->global ['repo'] = $this->repo;
         
         $data['records'] = $this->get_data_info();
-        $this->loadViews('front/profiles/edit', $this->global, $data);
+        $this->loadViews($this->view_dir.'edit', $this->global, $data);
     }
     
     private function get_data_info(){
@@ -91,7 +95,7 @@ class CProfile extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -125,6 +129,7 @@ class CProfile extends BaseController
 
         if($rs_data->status)
         {
+            $this->session->set_userdata('vendorName', $fname);
             $this->session->set_flashdata('success', $rs_data->message);
             redirect('my-account');
         }

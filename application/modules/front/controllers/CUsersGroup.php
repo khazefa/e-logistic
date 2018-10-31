@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CUsersGroup extends BaseController
 {
+    private $cname = 'user-groups';
+    private $view_dir = 'front/accounts-group/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -31,132 +35,64 @@ class CUsersGroup extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'Manage User Group - '.APP_NAME;
-        $this->global['pageMenu'] = 'Manage User Group';
-        $this->global['contentHeader'] = 'Manage User Group';
-        $this->global['contentTitle'] = 'Manage User Group';
+        $this->global['pageTitle'] = 'List User Group - '.APP_NAME;
+        $this->global['pageMenu'] = 'List User Group';
+        $this->global['contentHeader'] = 'List User Group';
+        $this->global['contentTitle'] = 'List User Group';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/accounts-group/index', $this->global, NULL);
+        $data['classname'] = $this->cname;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
     }
     
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list($type){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_user_group'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->group_id, FILTER_SANITIZE_NUMBER_INT);
-            $row['name'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-groups/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-groups/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $fenc = $this->input->post('fenc', TRUE);
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->group_id, FILTER_SANITIZE_NUMBER_INT);
+                    $row['name'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
 
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-        if ($fenc != "") $arrWhere['fenc'] = $fenc;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_user_group'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $row['id'] = filter_var($r->group_id, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->group_name, FILTER_SANITIZE_STRING);
-            $row['display'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            $row['enc'] = filter_var($r->group_enc, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $fenc = $this->input->post('fenc', TRUE);
+                    $row['button'] = '<div class="btn-group dropdown">';
+                    $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                    $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                    $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                    $row['button'] .= '</div>';
+                    $row['button'] .= '</div>';
 
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fname != "") $arrWhere['fname'] = $fname;
-        if ($fenc != "") $arrWhere['fenc'] = $fenc;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_user_group'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $row['id'] = filter_var($r->group_id, FILTER_SANITIZE_STRING);
-            $row['name'] = filter_var($r->group_name, FILTER_SANITIZE_STRING);
-            $row['display'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
-            $row['enc'] = filter_var($r->group_enc, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->group_id, FILTER_SANITIZE_NUMBER_INT);
+                    $row['name'] = filter_var($r->group_display, FILTER_SANITIZE_STRING);
+                    
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $data;
+        return $output;
     }
     
     /**
@@ -167,7 +103,7 @@ class CUsersGroup extends BaseController
         $arrWhere = array();
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -195,7 +131,7 @@ class CUsersGroup extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -252,7 +188,8 @@ class CUsersGroup extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/accounts-group/create', $this->global, NULL);
+        $data['classname'] = $this->cname;
+        $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
     
     /**
@@ -270,12 +207,12 @@ class CUsersGroup extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-groups');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-groups');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -287,7 +224,7 @@ class CUsersGroup extends BaseController
     {
         if($fkey == NULL)
         {
-            redirect('manage-groups');
+            redirect($this->cname.'/view');
         }
         
         $this->global['pageTitle'] = "Edit Data Group - ".APP_NAME;
@@ -298,9 +235,9 @@ class CUsersGroup extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
+        $data['classname'] = $this->cname;
         $data['records'] = $this->get_list_info($fkey);
-        
-        $this->loadViews('front/accounts-group/edit', $this->global, $data);
+        $this->loadViews($this->view_dir.'edit', $this->global, $data);
     }
     
     /**
@@ -319,12 +256,12 @@ class CUsersGroup extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-groups');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-groups/'.$fkey);
+            redirect($this->cname.'/edit/'.$fkey);
         }
     }
     
@@ -348,6 +285,6 @@ class CUsersGroup extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('manage-groups');
+        redirect($this->cname.'/view');
     }
 }

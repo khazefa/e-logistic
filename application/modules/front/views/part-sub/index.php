@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             
             <p class="text-success text-center">
                 <?php
@@ -48,9 +48,11 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    var table;
+    
+    function init_table(){
         // Responsive Datatable with Buttons
-        var table = $('#data_grid').DataTable({
+        table = $('#data_grid').DataTable({
             dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
             destroy: true,
             stateSave: false,
@@ -71,7 +73,7 @@
                 }
             ],
             ajax: {                
-                url: "<?= base_url('front/cpartsub/get_list_datatable'); ?>",
+                url: "<?php echo $url_list;?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -88,5 +90,9 @@
 
         table.buttons().container()
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
+    }
+    
+    $(document).ready(function() {
+        init_table();
     });
 </script>

@@ -136,6 +136,9 @@
                                     <li>
                                         <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
                                     </li>
+                                    <li>
+                                        <a href="<?php echo base_url("outgoing/request_parts");?>">Request Parts</a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php
@@ -148,12 +151,12 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-database"></i>Master</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("data-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-sub");?>">Sparepart Subtitute</a></li>
+                                    <li><a href="<?php echo base_url("spareparts/view");?>">Sparepart</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-sub/view");?>">Sparepart Subtitute</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
-                                    <li><a href="<?php echo base_url("data-warehouses");?>">Warehouse</a></li>
-                                    <li><a href="<?php echo base_url("data-partners");?>">Service Partner</a></li>
-                                    <li><a href="<?php echo base_url("data-engineers");?>">Engineers</a></li>
+                                    <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("partners/view");?>">Service Partner</a></li>
+                                    <li><a href="<?php echo base_url("engineers/view");?>">Engineers</a></li>
                                 </ul>
                             </li>
                             <?php
@@ -169,6 +172,7 @@
                                     <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
+                                    <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
                             </li>
                             <!--
@@ -191,9 +195,10 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-gears"></i>Manage</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-users");?>">Users</a></li>
-                                    <li><a href="<?php echo base_url("manage-groups");?>">Users Group</a></li>
-                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("users/view");?>">Users</a></li>
+                                    <li><a href="<?php echo base_url("user-groups/view");?>">Users Group</a></li>
+                                    <!--<li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>-->
+                                    <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">
@@ -217,11 +222,13 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-gears"></i>Manage</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("manage-spareparts");?>">Sparepart</a></li>
-                                    <li><a href="<?php echo base_url("manage-spareparts-sub");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>
-                                    <li><a href="<?php echo base_url("manage-partners");?>">Service Partner</a></li>
-                                    <li><a href="<?php echo base_url("manage-engineers");?>">Engineers</a></li>
+                                    <li><a href="<?php echo base_url("spareparts/view");?>">Sparepart</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-sub/view");?>">Sparepart Subtitute</a></li>
+                                    <!--<li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>-->
+                                    <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("partners/view");?>">Service Partner</a></li>
+                                    <li><a href="<?php echo base_url("engineers/view");?>">Engineers</a></li>
+                                    <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

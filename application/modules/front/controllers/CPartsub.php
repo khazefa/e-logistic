@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CPartsub extends BaseController
 {
+    private $cname = 'spareparts-sub';
+    private $view_dir = 'front/part-sub/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -19,6 +23,11 @@ class CPartsub extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isSuperAdmin()){
+            $this->readonly = FALSE;
+        }else{
+            $this->readonly = TRUE;
+        }
     }
     
     /**
@@ -34,232 +43,96 @@ class CPartsub extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $this->loadViews('front/part-sub/index', $this->global, NULL);
-    }
-    
-    /**
-     * This function used to load the first screen of the user
-     */
-    public function lists()
-    {
-        if($this->isSuperAdmin()){
-            $this->global['pageTitle'] = 'Manage Part Subtitute - '.APP_NAME;
-            $this->global['pageMenu'] = 'Manage Part Subtitute';
-            $this->global['contentHeader'] = 'Manage Part Subtitute';
-            $this->global['contentTitle'] = 'Manage Part Subtitute';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-
-            $this->loadViews('front/part-sub/lists', $this->global, NULL);
-        }else{
-            redirect('data-spareparts-sub');
-        }
+        $data['readonly'] = $this->readonly;
+        $data['classname'] = $this->cname;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
     }
     
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_datatable(){
+    public function get_list($type){
         $rs = array();
-        
-        //Parameters for cURL
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_sub'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        $data_parts = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->partsub_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $row['partno'] = $partnum;
-            $part_sub = filter_var($r->part_number_sub, FILTER_SANITIZE_STRING);
-            if(!empty($part_sub)){
-                $names = '<ul class="list-unstyled">';
-                $e_partsub = explode(';', $part_sub);
-                $data_parts = array();
-                foreach ($e_partsub as $n){
-                    if(!empty($n)){
-                        array_push($data_parts, $this->get_list_info_part($n));
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->partsub_id, FILTER_SANITIZE_NUMBER_INT);
+                    $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                    $row['partno'] = $partnum;
+                    $part_sub = filter_var($r->part_number_sub, FILTER_SANITIZE_STRING);
+                    if(!empty($part_sub)){
+                        $names = '<ul class="list-unstyled">';
+                        $e_partsub = explode(';', $part_sub);
+                        $data_parts = array();
+                        foreach ($e_partsub as $n){
+                            if(!empty($n)){
+                                array_push($data_parts, $this->get_detail_part($n));
+                            }
+                        }
+                        foreach ($data_parts as $datas){
+                            foreach($datas as $d){
+        //                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
+                                $names .= '<li>'.$d["partno"].' -> '.$d["name"].'</li>';
+        //                        $names .= $d["name"].', ';
+                            }
+                        }
+                        $names .= '</ul>';
+                    }else{
+                        $names = '-';
                     }
-                }
-                foreach ($data_parts as $datas){
-                    foreach($datas as $d){
-//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
-                        $names .= '<li>'.$d["partno"].' -> '.$d["name"].'</li>';
-//                        $names .= $d["name"].', ';
+                    $row['partnosub'] = $names;
+                    
+                    if($this->readonly){
+                        $row['button'] = '-';
+                    }else{
+                        $row['button'] = '<div class="btn-group dropdown">';
+                        $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
+                        $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/edit/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
+                        $row['button'] .= '<a class="dropdown-item" href="'.base_url($this->cname."/remove/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
+                        $row['button'] .= '</div>';
+                        $row['button'] .= '</div>';
                     }
-                }
-                $names .= '</ul>';
-            }else{
-                $names = '-';
-            }
-            $row['partnosub'] = $names;
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-sub/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-sub/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
-    public function get_m_list_datatable(){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_sub'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_parts = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->partsub_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $row['partno'] = $partnum;
-            $part_sub = filter_var($r->part_number_sub, FILTER_SANITIZE_STRING);
-            if(!empty($part_sub)){
-                $names = '<ul class="list-unstyled">';
-                $e_partsub = explode(';', $part_sub);
-                foreach ($e_partsub as $n){
-                    if(!empty($n)){
-                        array_push($data_parts, $this->get_list_info_part($n));
-                    }
-                }
-                
-                foreach ($data_parts as $datas){
-                    foreach($datas as $d){
-//                        $names .= '<li style="display:inline; padding-left:5px;">'.$d["name"].'</li>';
-                        $names .= '<li>'.$d["partno"].' -> '.$d["name"].'</li>';
-//                        $names .= $d["name"].', ';
-                    }
-                }
-                $names .= '</ul>';
-            }else{
-                $names = '-';
-            }
-            $row['partnosub'] = $names;
-            
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-sub/").$id.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-sub/").$id.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fpid = $this->input->post('fpid', TRUE);
-        $fpartnum = $this->input->post('fpartnum', TRUE);
 
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_sub'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->partsub_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $part_sub = filter_var($r->part_number_sub, FILTER_SANITIZE_STRING);
-            
-            $row['id'] = $id;
-            $row['partno'] = $partnum;
-            $row['partnosub'] = $part_sub;
- 
-            $data[] = $row;
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r){
+                    $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+                    $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+                    $row['pid'] = $pid;
+                    $row['partno'] = $partnum;
+                    $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+                    $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+                    $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
+                    
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fpid = $this->input->post('fpid', TRUE);
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_sub'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->partsub_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $part_sub = filter_var($r->part_number_sub, FILTER_SANITIZE_STRING);
-            
-            $row['id'] = $id;
-            $row['partno'] = $partnum;
-            $row['partnosub'] = $part_sub;
- 
-            $data[] = $row;
-        }
-        
-        return $data;
+        return $output;
     }
     
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_info($fkey){
+    public function get_detail($fkey){
         $rs = array();
         $arrWhere = array();
         
@@ -297,13 +170,6 @@ class CPartsub extends BaseController
 
         if ($fpartnum != "") $arrWhere['fpartnum'] = $fpartnum;
         if ($fname != "") $arrWhere['fname'] = $fname;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
@@ -329,7 +195,7 @@ class CPartsub extends BaseController
     /**
      * This function is used to get detail information
      */
-    public function get_list_info_part($fpartnum){
+    public function get_detail_part($fpartnum){
         $rs = array();
         $arrWhere = array();
         
@@ -370,11 +236,11 @@ class CPartsub extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['list_data_part'] = $this->get_list_data_part();
-            
-            $this->loadViews('front/part-sub/create', $this->global, $data);
+            $data['classname'] = $this->cname;
+            $data['list_data_part'] = $this->get_list_data_part();            
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-spareparts-sub');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -393,12 +259,12 @@ class CPartsub extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts-sub');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-spareparts-sub');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -411,7 +277,7 @@ class CPartsub extends BaseController
         if($this->isSuperAdmin()){
             if($fkey == NULL)
             {
-                redirect('manage-spareparts-sub');
+                redirect($this->cname.'/view');
             }
 
             $this->global['pageTitle'] = "Edit Data Part Subtitute - ".APP_NAME;
@@ -422,12 +288,12 @@ class CPartsub extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
 
-            $data['records'] = $this->get_list_info($fkey);
+            $data['classname'] = $this->cname;
+            $data['records'] = $this->get_detail($fkey);
             $data['list_data_part'] = $this->get_list_data_part();
-
-            $this->loadViews('front/part-sub/edit', $this->global, $data);
+            $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{
-            redirect('data-spareparts-sub');
+            redirect($this->cname.'/view');
         }
     }
     
@@ -447,12 +313,12 @@ class CPartsub extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts-sub');
+            redirect($this->cname.'/view');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-spareparts-sub/'.$fkey);
+            redirect($this->cname.'/edit/'.$fkey);
         }
     }
     
@@ -476,6 +342,6 @@ class CPartsub extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
 
-        redirect('manage-spareparts-sub');
+        redirect($this->cname.'/view');
     }
 }

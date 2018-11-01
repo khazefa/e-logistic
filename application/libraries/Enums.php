@@ -66,32 +66,5 @@ class Enums
             return $arrMonth[$intId];		
         }
     }
-    
-    public function enumsPurpose($purpose_code){
-        switch ($purpose_code){
-            case "SP";
-                $purpose = "Sales/Project";
-            break;
-            case "W";
-                $purpose = "Warranty";
-            break;
-            case "M";
-                $purpose = "Maintenance";
-            break;
-            case "I";
-                $purpose = "Investments";
-            break;
-            case "B";
-                $purpose = "Borrowing";
-            break;
-            case "RWH";
-                $purpose = "Transfer Stock";
-            break;
-            default;
-                $purpose = "-";
-            break;
-        }
-        return $purpose;
-    }
 }
 

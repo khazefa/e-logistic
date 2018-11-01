@@ -205,7 +205,6 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("users/view");?>">Users</a></li>
                                     <li><a href="<?php echo base_url("user-groups/view");?>">Users Group</a></li>
-                                    <!--<li><a href="<?php echo base_url("manage-warehouses");?>">Warehouse</a></li>-->
                                     <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
                                 </ul>
                             </li>
@@ -297,7 +296,11 @@
                             </div>
                             <?php
                             if($repo === "00"){
-                                echo '<h4 class="page-title">WELCOME TO CENTRAL WAREHOUSE</h4>';
+                                if($role == ROLE_SPV){
+                                    echo '<h4 class="page-title">WELCOME TO E-LOGISTIC</h4>';
+                                }else{
+                                    echo '<h4 class="page-title">WELCOME TO CENTRAL WAREHOUSE</h4>';
+                                }
                             }else{
                                 echo '<h4 class="page-title">WELCOME TO <span id="glob_fsl">'.$repoName.' ('.$repo.')'.'</span></h4>';
                             }

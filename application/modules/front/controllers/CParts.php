@@ -26,7 +26,7 @@ class CParts extends BaseController
         if($this->isWebAdmin()){
             $this->readonly = FALSE;
         }else{
-            redirect('cl');
+            $this->readonly = TRUE;
         }
     }
     

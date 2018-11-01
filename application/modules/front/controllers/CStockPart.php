@@ -12,9 +12,11 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CStockPart extends BaseController
 {
-    private $cname = 'users';
-    private $view_dir = 'front/accounts/';
+    private $cname = 'spareparts-stock';
+    private $view_dir = 'front/stock-part/';
     private $readonly = TRUE;
+    private $hasCoverage = FALSE;
+    private $hasHub = FALSE;
     
     /**
      * This is default constructor of the class
@@ -23,65 +25,225 @@ class CStockPart extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
+        if($this->isWebAdmin()){
+            $this->hasHub = TRUE;
+        }elseif($this->isSpv()){
+            $this->hasHub = TRUE;
+            $this->hasCoverage = TRUE;
+        }else{
+            $this->readonly = TRUE;
+        }
     }
     
     /**
      * This function used to load the first screen of the user
      */
     public function index()
-    {
+    {        
+        $this->global['pageTitle'] = 'List Stock - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Stock';
+        $this->global['contentHeader'] = 'List Stock';
+        $this->global['contentTitle'] = 'List Stock';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
-        
-        $this->global['pageTitle'] = 'List Stock Parts - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Stock Parts';
-        $this->global['contentHeader'] = 'List Stock Parts';
-        $this->global['contentTitle'] = 'List Stock Parts';
-            
-        $this->loadViews('front/stock-part/index', $this->global, NULL);
-    }
-    
-    /**
-     * This function used to load the first screen of the user
-     */
-    public function lists()
-    {
-        if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Part Stock in FSL - '.APP_NAME;
-            $this->global['pageMenu'] = 'Part Stock in FSL';
-            $this->global['contentHeader'] = 'Part Stock in FSL';
-            $this->global['contentTitle'] = 'Part Stock in FSL';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
 
-            $data['list_data_wh'] = $this->get_list_warehouse();
-            
-            $this->loadViews('front/stock-part/lists', $this->global, $data);
-        }else{
-            redirect('data-spareparts-stock');
+        $data['classname'] = $this->cname;
+        $data['hashub'] = $this->hasHub;
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
         }
+        $data['url_list'] = base_url($this->cname.'/onhand-list/json');
+        $data['url_list_detail'] = base_url($this->cname.'/detail-list');
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_onhand_list($type){
+        $rs = array();
+        $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
+        
+        if($this->hasHub){
+            $fcode = $this->input->get('fcode', TRUE);
+            if(!empty($fcode)){
+                $code = $fcode;
+                $arrWhere['fcode'] = $code;
+            }
+        }else{
+            $code = $this->repo;
+            $arrWhere['fcode'] = $code;
+        }
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['minstock'] = $minstock;
+                    $row['initstock'] = $initstock;
+                    $row['onhand'] = $qtyonhand;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+                    $row['initflag'] = $initflag;
+
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['minstock'] = $minstock;
+                    $row['initstock'] = $initstock;
+                    $row['onhand'] = $qtyonhand;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+                    $row['initflag'] = $initflag;
+
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
+        }
+        return $output;
     }
     
     /**
      * This function used to load the first screen of the user
      */
-    public function views()
-    {
-        if($this->isWebAdmin()){
-            $this->global['pageTitle'] = 'Stock in Central Warehouse - '.APP_NAME;
-            $this->global['pageMenu'] = 'Stock in Central Warehouse';
-            $this->global['contentHeader'] = 'Stock in Central Warehouse';
-            $this->global['contentTitle'] = 'Stock in Central Warehouse';
-            $this->global ['role'] = $this->role;
-            $this->global ['name'] = $this->name;
-            $this->global ['repo'] = $this->repo;
-            
-            $this->loadViews('front/stock-part/lists-cwh', $this->global, NULL);
-        }else{
-            redirect('data-spareparts-stock');
+    public function central()
+    {        
+        $this->global['pageTitle'] = 'List Stock - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Stock';
+        $this->global['contentHeader'] = 'List Stock';
+        $this->global['contentTitle'] = 'List Stock';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        $this->global ['repo'] = $this->repo;
+
+        $data['classname'] = $this->cname;
+        $data['hashub'] = $this->hasHub;
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
         }
+        $data['url_list'] = base_url($this->cname.'/central-list/json');
+        $data['url_list_detail'] = base_url($this->cname.'/detail-list');
+        $this->loadViews($this->view_dir.'index-central', $this->global, $data);
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_central_list($type){
+        $rs = array();
+        $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
+        
+        $fcode = "WSPS";
+        $arrWhere['fcode'] = $fcode;
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['initstock'] = $initstock;
+                    $row['minstock'] = $minstock;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['initstock'] = $initstock;
+                    $row['minstock'] = $minstock;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
+        }
+        return $output;
     }
     
     /**
@@ -165,7 +327,7 @@ class CStockPart extends BaseController
                 foreach ($e_partsub as $n){
                     $n = trim($n);
                     if(!empty($n)){
-                        array_push($data_parts, $this->get_list_info_stock($code, $n));
+                        array_push($data_parts, $this->get_stock_by($code, $n));
                     }
                 }
                 foreach ($data_parts as $datas){
@@ -196,60 +358,9 @@ class CStockPart extends BaseController
     }
     
     /**
-     * This function is used to get list for datatables
-     */
-    public function get_list_fsl_datatable($fcode){
-        $rs = array();
-        $arrWhere = array();
-
-        if(empty($fcode) || $fcode == ""){
-            $fcode = $this->repo;
-        }
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
-            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
-            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
-            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            
-            $row['code'] = $code;
-            $row['partno'] = $partno;
-            $row['partname'] = $partname;
-            $row['minstock'] = $minstock;
-            $row['initstock'] = $initstock;
-            $row['onhand'] = $qtyonhand;
-            if($initflag === "Y"){
-                $row['stock'] = $initstock;
-            }else{
-                $row['stock'] = $stock;
-            }
-            $row['initflag'] = $initflag;
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-    }
-    
-    /**
      * This function is used to get detail information
      */
-    public function get_list_info_stock($fcode, $fpartnum){
+    public function get_stock_by($fcode, $fpartnum){
         $rs = array();
         $arrWhere = array();
         
@@ -344,7 +455,7 @@ class CStockPart extends BaseController
         }
 //        var_dump($data_parts);exit();
         foreach ($data_parts AS $dp){
-            array_push($data_stocks, $this->get_list_info_stock($code, $dp));
+            array_push($data_stocks, $this->get_stock_by($code, $dp));
         }
 //        var_dump($data_stocks);exit();
         foreach ($data_stocks as $datas){
@@ -431,70 +542,13 @@ class CStockPart extends BaseController
     }
     
     /**
-     * This function is used to get list for datatables
-     */
-    public function get_w_list_datatable(){
-        $rs = array();
-        $arrWhere = array();
-
-        $fcode = "WSPS";
-        $arrWhere['fcode'] = $fcode;
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
-            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
-            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            
-            $row['code'] = $code;
-            $row['partno'] = $partno;
-            $row['partname'] = $partname;
-            $row['initstock'] = $initstock;
-            $row['minstock'] = $minstock;
-            if($initflag === "Y"){
-                $row['stock'] = $initstock;
-            }else{
-                $row['stock'] = $stock;
-            }
-//            $row['initflag'] = $initflag;
-            
-            /**
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$partno.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$partno.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
-            */
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-        exit();
-    }
-    
-    /**
      * This function used to load the first screen of the user
      */
     public function detail($fcode)
     {
         $upfcode = strtoupper($fcode);
         $lofcode = strtolower($fcode);
-        $fslname = $this->get_info_warehouse_name($upfcode);
+        $fslname = $this->get_warehouse_name($upfcode);
         if($this->isWebAdmin()){
             $this->global['pageTitle'] = 'Part Stock in '.$fslname.' - '.APP_NAME;
             $this->global['pageMenu'] = 'Part Stock in '.$fslname;
@@ -527,120 +581,9 @@ class CStockPart extends BaseController
     }
     
     /**
-     * This function is used to get lists for json or populate data
-     */
-    public function get_list_json(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fcode = $this->input->post('fcode', TRUE);
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fflag = $this->input->post('fflag', TRUE);
-
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fname;
-        if ($fflag != "") $arrWhere['fflag'] = $fflag;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
-            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
-            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            
-            $row['code'] = $code;
-            $row['partno'] = $partno;
-            $row['minstock'] = $minstock;
-            $row['initstock'] = $initstock;
-            if($initflag === "Y"){
-                $row['stock'] = $initstock;
-            }else{
-                $row['stock'] = $stock;
-            }
-            $row['initflag'] = $initflag;
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($data)
-        );
-    }
-    
-    /**
-     * This function is used to get lists for populate data
-     */
-    public function get_list_data(){
-        $rs = array();
-        $arrWhere = array();
-        
-        $fid = $this->input->post('fid', TRUE);
-        $fcode = $this->input->post('fcode', TRUE);
-        $fpartnum = $this->input->post('fpartnum', TRUE);
-        $fflag = $this->input->post('fflag', TRUE);
-
-        if ($fid != "") $arrWhere['fid'] = $fid;
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fpartnum != "") $arrWhere['fpartnum'] = $fname;
-        if ($fflag != "") $arrWhere['fflag'] = $fflag;
-//        if ($f_date != ""){
-//            $arrWhere['submission_date_1'] = $f_date;
-//            $arrWhere['submission_date_2'] = $f_date;
-//        }
-
-//        $arrWhere['is_deleted'] = 0;
-//        array_push($arrWhere, $arrWhere['is_deleted']);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_part_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_warehouse = array();
-        $names = '';
-        foreach ($rs as $r) {
-            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
-            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
-            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            
-            $row['code'] = $code;
-            $row['partno'] = $partno;
-            $row['minstock'] = $minstock;
-            $row['initstock'] = $initstock;
-            if($initflag === "Y"){
-                $row['stock'] = $initstock;
-            }else{
-                $row['stock'] = $stock;
-            }
-            $row['initflag'] = $initflag;
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
      * This function is used to get list for datatables
      */
-    public function get_list_detail_datatable(){
+    public function get_list_detail(){
         $rs = array();
         $arrWhere = array();
 
@@ -715,23 +658,23 @@ class CStockPart extends BaseController
     /**
      * This function is used to get lists for populate data
      */
-    public function get_list_warehouse(){
+    private function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
+        $data = array();
+        $isParam = FALSE;
         
-        $fcode = $this->input->post('fcode', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        if ($fname != "") $arrWhere['fname'] = $fname;
+        $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
         
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $data_nearby = array();
-        $names = '';
         
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
@@ -742,7 +685,11 @@ class CStockPart extends BaseController
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
             $row['spv'] = filter_var($r->fsl_spv, FILTER_SANITIZE_STRING);
  
-            if($row['code'] !== 'WSPS'){
+            if($this->hasCoverage){
+                if(in_array($row['code'], $e_coverage)){
+                    $data[] = $row;
+                }
+            }else{
                 $data[] = $row;
             }
         }
@@ -753,31 +700,9 @@ class CStockPart extends BaseController
     /**
      * This function is used to get detail information
      */
-    private function get_info_part_name($fpartnum){
+    private function get_warehouse_name($fcode){
         $rs = array();
-        $arrWhere = array();
-        
-        $arrWhere = array('fpartnum'=>$fpartnum);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $partname = "";
-        foreach ($rs as $r) {
-            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-        }
-        
-        return $partname;
-    }
-    
-    /**
-     * This function is used to get detail information
-     */
-    private function get_info_warehouse_name($fcode){
-        $rs = array();
-        $arrWhere = array();
-        
+        $arrWhere = array();        
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
@@ -847,10 +772,9 @@ class CStockPart extends BaseController
             $this->global ['repo'] = $this->repo;
             
             $data['list_data_wh'] = $this->get_list_warehouse();
-
-            $this->loadViews('front/stock-part/create', $this->global, $data);
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
-            redirect('data-spareparts-stock');
+            redirect($this->cname.'/view-central');
         }
     }
     
@@ -871,12 +795,12 @@ class CStockPart extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts-stock');
+            redirect($this->cname.'/view-central');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('add-spareparts-stock');
+            redirect($this->cname.'/add');
         }
     }
     
@@ -889,7 +813,7 @@ class CStockPart extends BaseController
         if($this->isWebAdmin()){
             if($fkey == NULL)
             {
-                redirect('manage-spareparts-stock');
+                redirect($this->cname.'/view-central');
             }
 
             $this->global['pageTitle'] = "Edit Data Stock Parts - ".APP_NAME;
@@ -901,10 +825,9 @@ class CStockPart extends BaseController
             $this->global ['repo'] = $this->repo;
 
             $data['records'] = $this->get_list_info($fkey);
-
-            $this->loadViews('front/stock-part/edit', $this->global, $data);
+            $this->loadViews($this->view_dir.'edit', $this->global, $data);
         }else{
-            redirect('data-spareparts-stock');
+            redirect($this->cname.'/view-central');
         }
     }
     
@@ -925,12 +848,12 @@ class CStockPart extends BaseController
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
-            redirect('manage-spareparts-stock');
+            redirect($this->cname.'/view-central');
         }
         else
         {
             $this->session->set_flashdata('error', $rs_data->message);
-            redirect('edit-spareparts-stock/'.$fkey);
+            redirect($this->cname.'/edit/'.$fkey);
         }
     }
     
@@ -944,7 +867,6 @@ class CStockPart extends BaseController
         $arrWhere = array('fkey'=>$fkey);
 
         $rs_data = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_remove_part_stock'), 'POST', FALSE);
-
         if($rs_data->status)
         {
             $this->session->set_flashdata('success', $rs_data->message);
@@ -953,7 +875,6 @@ class CStockPart extends BaseController
         {
             $this->session->set_flashdata('error', $rs_data->message);
         }
-
-        redirect('manage-spareparts-stock');
+        redirect($this->cname.'/view-central');
     }
 }

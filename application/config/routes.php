@@ -139,15 +139,16 @@ $route['spareparts-sub/list/([a-zA-Z]+)'] = 'front/cpartsub/get_list/$1';
 // ===========================
 //  Routing Front Stock Spareparts
 // ===========================
-$route['data-spareparts-stock'] = 'front/cstockpart';
-$route['stock-in-fsl'] = 'front/cstockpart/lists';
-$route['stock-in-cwh'] = 'front/cstockpart/views';
-$route['add-spareparts-stock'] = 'front/cstockpart/add';
-$route['import-spareparts-stock'] = 'front/cstockpart/add_import';
-$route['detail-spareparts-stock/(:any)'] = 'front/cstockpart/detail/$1';
-$route['list-detail-spareparts-stock'] = 'front/cstockpart/get_list_detail_datatable';
-$route['edit-spareparts-stock/(:num)'] = 'front/cstockpart/edit/$1';
-$route['remove-spareparts-stock/(:num)'] = 'front/cstockpart/delete/$1';
+$route['spareparts-stock/view'] = 'front/cstockpart';
+$route['spareparts-stock/view-central'] = 'front/cstockpart/central';
+$route['spareparts-stock/add'] = 'front/cstockpart/add';
+$route['spareparts-stock/insert'] = 'front/cstockpart/create';
+$route['spareparts-stock/edit/(:any)'] = 'front/cstockpart/edit/$1';
+$route['spareparts-stock/modify'] = 'front/cstockpart/update';
+$route['spareparts-stock/remove/(:any)'] = 'front/cstockpart/delete/$1';
+$route['spareparts-stock/onhand-list/([a-zA-Z]+)'] = 'front/cstockpart/get_onhand_list/$1';
+$route['spareparts-stock/central-list/([a-zA-Z]+)'] = 'front/cstockpart/get_central_list/$1';
+$route['spareparts-stock/detail-list'] = 'front/cstockpart/get_list_detail';
 // ===========================
 //  End Routing Front Stock Spareparts
 // ===========================

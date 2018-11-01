@@ -153,7 +153,7 @@
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("spareparts/view");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("spareparts-sub/view");?>">Sparepart Subtitute</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-stock/view");?>">Stock</a></li>
                                     <li><a href="<?php echo base_url("warehouse/view");?>">Warehouse</a></li>
                                     <li><a href="<?php echo base_url("partners/view");?>">Service Partner</a></li>
                                     <li><a href="<?php echo base_url("engineers/view");?>">Engineers</a></li>
@@ -171,7 +171,7 @@
                                     <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
                                     <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
-                                    <li><a href="<?php echo base_url("data-spareparts-stock");?>">Stock</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-stock/view");?>">Stock</a></li>
                                     <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
                             </li>
@@ -248,8 +248,8 @@
                                     <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a></li>
                                     <li><a href="<?php echo base_url("view-incoming-trans");?>">Incoming</a></li>
-                                    <li><a href="<?php echo base_url("stock-in-fsl");?>">Stock in FSL</a></li>
-                                    <li><a href="<?php echo base_url("stock-in-cwh");?>">Stock in Central Warehouse</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-stock/view");?>">Stock in FSL</a></li>
+                                    <li><a href="<?php echo base_url("spareparts-stock/view-central");?>">Stock in Central Warehouse</a></li>
                                 </ul>
                             </li>
                             <li class="has-submenu">

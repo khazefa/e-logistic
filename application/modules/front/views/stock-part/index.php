@@ -1,7 +1,25 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <?php 
+                if($hashub){
+            ?>
+                <div class="col-md-6">
+                    <label for="fcode" class="col-3 col-form-label">Warehouse</label>
+                    <div class="col-9">
+                        <select name="fcode" id="fcode" required class="selectpicker" data-live-search="true" 
+                                data-selected-text-format="values" title="Select FSL.." data-style="btn-light">
+                            <option value="">-</option>
+                            <?php
+                                foreach($list_warehouse as $w){
+                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            <?php } ?>
             
             <p class="text-success text-center">
                 <?php
@@ -30,13 +48,6 @@
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-all-tab" data-toggle="tab" href="#nav-all" role="tab" aria-controls="nav-all" aria-selected="true">All Stock</a>
-                        <?php
-                        if($role !== ROLE_AM){
-                        ?>
-                        <a class="nav-item nav-link " id="nav-subtitute-tab" data-toggle="tab" href="#nav-subtitute" role="tab" aria-controls="nav-subtitute" aria-selected="false">Subtitution Stock</a>
-                        <?php
-                        }
-                        ?>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -54,9 +65,6 @@
                                                 <th>Part Name</th>
                                                 <th>Min Stock</th>
                                                 <th>On hand FSE</th>
-                                                <!--
-                                                <th>Init Stock</th>
-                                                -->
                                                 <th>Last Stock</th>
                                             </tr>
                                             </thead>
@@ -69,38 +77,6 @@
                         </div>
                     </div>
                     <!-- End Content Panel All Stock -->
-                    
-                    <!-- Begin Content Panel Subtitute Stock -->
-                    <?php
-                    if($role !== ROLE_AM){
-                    ?>
-                    <div class="tab-pane fade " id="nav-subtitute" role="tabpanel" aria-labelledby="nav-subtitute-tab">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card-box">
-                                    <div class="table-responsive">
-                                        <table id="datasub_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                                            <thead>
-                                            <tr>
-                                                <th>FSL</th>
-                                                <th>Part Number</th>
-                                                <th>Part Name</th>
-                                                <th>Last Stock</th>
-                                                <th>Part Subtitute</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php
-                    }
-                    ?>
-                    <!-- End Content Panel Subtitute Stock -->
                 </div>
             </div>
         </div>
@@ -154,7 +130,88 @@
 <!-- End Modal Data Detail -->
 
 <script type="text/javascript">
+    var e_code = $("#fcode");
+    var tabel;
     var tabel_d;
+    
+    function init_table(){        
+        // Responsive Datatable with Buttons
+        table = $('#data_grid').DataTable({
+            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
+            destroy: true,
+            stateSave: false,
+            deferRender: true,
+            processing: true,
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy',
+                    exportOptions: {
+//                        columns: ':visible:not(:last-child)',
+                        modifier: {
+                            page: 'current'
+                        }
+                    },
+                    footer:false
+                },
+                {
+                    extend: 'copy',
+                    text: '<i class="fa fa-copy"></i>',
+                    titleAttr: 'Copy All',
+                    footer:false
+                }
+            ],
+            ajax: {                
+                url: "<?php echo $url_list;?>",
+                type: "GET",
+                dataType: "JSON",
+                contentType: "application/json",
+                data: function(d){
+                    d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
+                    d.fcode = e_code.val();
+                }
+            },
+            columns: [
+                { "data": 'code' },
+                { "data": 'partno' },
+                { "data": 'partname' },
+                { "data": 'minstock' },
+                { "data": 'onhand' },
+//                { "data": 'initstock' },
+                { "data": 'stock' },
+            ],
+            columnDefs : [
+                {
+                    targets   : 4,
+                    orderable : true, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        if(data === "0"){
+                            return data;
+                        }else{
+                            return '<a href="#" id="show_detail"><i class="fa fa-info-circle"></i> '+data+'</a>';
+                        }
+                    }
+                }
+            ],
+            initComplete: function() {
+                e_code.prop('disabled', false);
+                e_code.selectpicker('refresh');
+            }
+        });
+
+        table.buttons().container()
+                .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
+                
+        //function for datatables button
+        $('#data_grid tbody').on('click', '#show_detail', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            fcode = data['code'];
+            fpartnum = data['partno'];
+            viewdetail(fcode, fpartnum);
+        });
+    }
     
     function init_detail(fcode, fpartnum){
         tabel_d = $('#detail_grid').DataTable({
@@ -191,13 +248,13 @@
                 {
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
-                    title: 'Parts '+fpartnum+' On Engineer Hand',
+                    title: 'All Parts '+fpartnum+' On Engineer Hand',
                     titleAttr: 'Excel All Page',
                     footer:false
                 }
             ],
             ajax: {                
-                url: '<?=base_url('list-detail-spareparts-stock');?>',
+                url: '<?php echo $url_list_detail;?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -268,131 +325,13 @@
             }
         });
         
-        // Responsive Datatable with Buttons
-        var table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
-            destroy: true,
-            stateSave: false,
-            deferRender: true,
-            processing: true,
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy',
-                    exportOptions: {
-//                        columns: ':visible:not(:last-child)',
-                        modifier: {
-                            page: 'current'
-                        }
-                    },
-                    footer:false
-                },
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy All',
-                    footer:false
-                }
-            ],
-            ajax: {                
-                url: "<?= base_url('front/cstockpart/get_list_fsl_datatable/').$repo; ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-                data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
-                } ),
-            },
-            columns: [
-                { "data": 'code' },
-                { "data": 'partno' },
-                { "data": 'partname' },
-                { "data": 'minstock' },
-                { "data": 'onhand' },
-//                { "data": 'initstock' },
-                { "data": 'stock' },
-            ],
-            columnDefs : [
-                {
-                    targets   : 4,
-                    orderable : true, //set not orderable
-                    data      : null,
-                    render    : function ( data, type, full, meta ) {
-                        if(data === "0"){
-                            return data;
-                        }else{
-                            return '<a href="#" id="show_detail"><i class="fa fa-info-circle"></i> '+data+'</a>';
-                        }
-                    }
-                }
-            ],
-        });
-
-        table.buttons().container()
-                .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
-                
-        //function for datatables button
-        $('#data_grid tbody').on('click', '#show_detail', function (e) {        
-            var data = table.row( $(this).parents('tr') ).data();
-            fcode = data['code'];
-            fpartnum = data['partno'];
-            viewdetail(fcode, fpartnum);
-        });
-                
-        // Responsive Datatable with Buttons
-        var tablesub = $('#datasub_grid').DataTable({
-            dom: "<'row'<'col-sm-12'B><'col-sm-10'l><'col-sm-2'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'p><'col-sm-3'i>>",
-            destroy: true,
-            stateSave: false,
-            deferRender: true,
-            processing: true,
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy',
-                    exportOptions: {
-//                        columns: ':visible:not(:last-child)',
-                        modifier: {
-                            page: 'current'
-                        }
-                    },
-                    footer:false
-                },
-                {
-                    extend: 'copy',
-                    text: '<i class="fa fa-copy"></i>',
-                    titleAttr: 'Copy All',
-                    footer:false
-                }
-            ],
-            ajax: {                
-                url: "<?= base_url('front/cstockpart/get_list_partsub_datatable/').$repo; ?>",
-                type: "POST",
-                dataType: "JSON",
-                contentType: "application/json",
-                data: JSON.stringify( {
-                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
-                } ),
-            },
-            columns: [
-                { "data": 'code' },
-                { "data": 'partno' },
-                { "data": 'partname' },
-                { "data": 'stock' },
-                { "data": 'partnosub' },
-            ],
-            order: [[ 5, "desc" ]],
-            columnDefs: [{ 
-                orderable: false,
-                targets: [ 0 ]
-            }],
-        });
-
-        tablesub.buttons().container()
-                .appendTo('#datasub_grid_wrapper .col-md-12:eq(0)');
+        init_table();
         
-//        tablesub.column(1).data().unique();
+        e_code.on('change', function() {
+            var selectedText = $(this).find("option:selected").val();
+            e_code.prop('disabled', true);
+            e_code.selectpicker('refresh');
+            init_table();
+        });
     });
 </script>

@@ -379,15 +379,6 @@ $route['report/used-parts'] = 'front/creports/report_used_part';
 $route['report/used-parts/print'] = 'front/creports/export_used_part';
 $route['report/replenish-plan'] = 'front/creports/report_replenish_plan';
 $route['report/replenish-plan/print'] = 'front/creports/export_replenish_plan';
-
-$route['report-consumed-parts'] = 'front/creports/report_consumed_part';
-$route['report-used-parts'] = 'front/creports/report_used_part';
-$route['report-replenish-plan'] = 'front/creports/report_replenish_plan';
-//$route['print-consumed-parts'] = 'front/creports/print_daily_report';
-$route['print-consumed-parts'] = 'front/creports/export_consumed_part';
-$route['print-used-parts'] = 'front/creports/export_used_part';
-//$route['print-replenish-plan'] = 'front/creports/print_replenish_plan';
-$route['print-replenish-plan'] = 'front/creports/export_replenish_plan';
 // ===========================
 //  End Routing Front Reports
 // ===========================

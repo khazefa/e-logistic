@@ -443,8 +443,7 @@ class CDeliveryNote extends BaseController
         $rs = array();
         $arrWhere = array();
         
-//        $fcode = $this->repo;
-//        $arrWhere = array('fcode'=>$fcode);
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();

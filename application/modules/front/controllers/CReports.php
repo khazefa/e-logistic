@@ -107,7 +107,7 @@ class CReports extends BaseController
     /**
      * This function is used to get list information described by function name
      */
-    public function get_list_warehouse(){
+    private function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
         

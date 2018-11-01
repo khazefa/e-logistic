@@ -373,6 +373,13 @@ $route['add-supply-from-cwh'] = 'front/csupplyfromcwh/add';
 // ===========================
 //  Routing Front Reports
 // ===========================
+$route['report/consumed-parts'] = 'front/creports/report_consumed_part';
+$route['report/consumed-parts/print'] = 'front/creports/export_consumed_part';
+$route['report/used-parts'] = 'front/creports/report_used_part';
+$route['report/used-parts/print'] = 'front/creports/export_used_part';
+$route['report/replenish-plan'] = 'front/creports/report_replenish_plan';
+$route['report/replenish-plan/print'] = 'front/creports/export_replenish_plan';
+
 $route['report-consumed-parts'] = 'front/creports/report_consumed_part';
 $route['report-used-parts'] = 'front/creports/report_used_part';
 $route['report-replenish-plan'] = 'front/creports/report_replenish_plan';

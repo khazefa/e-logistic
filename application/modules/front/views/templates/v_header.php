@@ -159,6 +159,14 @@
                                     <li><a href="<?php echo base_url("engineers/view");?>">Engineers</a></li>
                                 </ul>
                             </li>
+                            <li class="has-submenu">
+                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
+                                <ul class="submenu">
+                                    <li><a href="<?php echo base_url("report/consumed-parts");?>">Transacted Part</a></li>
+                                    <li><a href="<?php echo base_url("report/used-parts");?>">Used Part</a></li>
+                                    <li><a href="<?php echo base_url("report/replenish-plan");?>">Replenishment Plan</a></li>
+                                </ul>
+                            </li>
                             <?php
                             }
                             ?>
@@ -168,9 +176,9 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
-                                    <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
-                                    <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("report/consumed-parts");?>">Transacted Part</a></li>
+                                    <li><a href="<?php echo base_url("report/used-parts");?>">Used Part</a></li>
+                                    <li><a href="<?php echo base_url("report/replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("spareparts-stock/view");?>">Stock</a></li>
                                     <li><a href="<?php echo base_url("atm/view");?>">ATM Locations</a></li>
                                 </ul>
@@ -243,9 +251,9 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="fa fa-file-text"></i>Report</a>
                                 <ul class="submenu">
-                                    <li><a href="<?php echo base_url("report-consumed-parts");?>">Transacted Part</a></li>
-                                    <li><a href="<?php echo base_url("report-used-parts");?>">Used Part</a></li>
-                                    <li><a href="<?php echo base_url("report-replenish-plan");?>">Replenishment Plan</a></li>
+                                    <li><a href="<?php echo base_url("report/consumed-parts");?>">Transacted Part</a></li>
+                                    <li><a href="<?php echo base_url("report/used-parts");?>">Used Part</a></li>
+                                    <li><a href="<?php echo base_url("report/replenish-plan");?>">Replenishment Plan</a></li>
                                     <li><a href="<?php echo base_url("view-outgoing-trans");?>">Outgoing</a></li>
                                     <li><a href="<?php echo base_url("view-incoming-trans");?>">Incoming</a></li>
                                     <li><a href="<?php echo base_url("spareparts-stock/view");?>">Stock in FSL</a></li>

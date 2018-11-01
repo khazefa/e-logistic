@@ -1,4 +1,4 @@
-<form action="<?php echo base_url('print-replenish-plan');?>" method="POST" class="form-horizontal" role="form">
+<form action="<?php echo base_url('report/replenish-plan/print');?>" method="POST" class="form-horizontal" role="form">
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
@@ -13,7 +13,7 @@
                             <div class="card-body">
                                 <?php
                                 $show_fsl = 0;
-                                if(($role == ROLE_WA)){
+                                if($hashub){
                                     $show_fsl = 1;
                                 ?>
                                 <div class="form-row">
@@ -71,13 +71,13 @@
                                                 $arr_col2 = array();
                                                 $arr_col3 = array();
                                                 $arr_col4 = array();
-                                                $t_list = count($list_wr);
+                                                $t_list = count($list_warehouse);
                                                 $t_divide = (int) ceil($t_list/4);
                                                 
-                                                $arr_col1 = array_slice($list_wr, 0, (int) ceil($t_list/4));
-                                                $arr_col2 = array_slice($list_wr, count($arr_col1), (int) ceil($t_list/4));
-                                                $arr_col3 = array_slice($list_wr, (count($arr_col1) + count($arr_col2)), (int) ceil($t_list/4));
-                                                $arr_col4 = array_slice($list_wr, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) ceil($t_list/4));
+                                                $arr_col1 = array_slice($list_warehouse, 0, (int) ceil($t_list/4));
+                                                $arr_col2 = array_slice($list_warehouse, count($arr_col1), (int) ceil($t_list/4));
+                                                $arr_col3 = array_slice($list_warehouse, (count($arr_col1) + count($arr_col2)), (int) ceil($t_list/4));
+                                                $arr_col4 = array_slice($list_warehouse, (count($arr_col1) + count($arr_col2) + count($arr_col3)), (int) ceil($t_list/4));
                                                 
                                             ?>
                                             <div class="col-sm-3">

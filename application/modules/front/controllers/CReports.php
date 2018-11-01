@@ -21,6 +21,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
         
 class CReports extends BaseController
 {
+    private $cname = 'report';
+    private $view_dir = 'front/reports/';
+    private $hasCoverage = FALSE;
+    private $hasHub = FALSE;
+    
     /**
      * This is default constructor of the class
      */
@@ -30,6 +35,13 @@ class CReports extends BaseController
         $this->isLoggedIn();
         if($this->isSuperAdmin()){
             redirect('cl');
+        }elseif($this->isWebAdmin()){
+            $this->hasHub = TRUE;
+        }elseif($this->isSpv()){
+            $this->hasHub = TRUE;
+            $this->hasCoverage = TRUE;
+        }else{
+            $this->readonly = TRUE;
         }
     }
     
@@ -50,8 +62,12 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_warehouse();
-        $this->loadViews('front/reports/consumed-part', $this->global, $data);
+        $data['classname'] = $this->cname;
+        $data['hashub'] = $this->hasHub;
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
+        }
+        $this->loadViews($this->view_dir.'consumed-part', $this->global, $data);
     }
     
     public function report_used_part(){
@@ -63,8 +79,12 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_warehouse();
-        $this->loadViews('front/reports/used-part', $this->global, $data);
+        $data['classname'] = $this->cname;
+        $data['hashub'] = $this->hasHub;
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
+        }
+        $this->loadViews($this->view_dir.'used-part', $this->global, $data);
     }
     
     public function report_replenish_plan(){
@@ -76,8 +96,12 @@ class CReports extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
         
-        $data['list_wr'] = $this->get_list_warehouse();
-        $this->loadViews('front/reports/replenish-plan', $this->global, $data);
+        $data['classname'] = $this->cname;
+        $data['hashub'] = $this->hasHub;
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
+        }
+        $this->loadViews($this->view_dir.'replenish-plan', $this->global, $data);
     }
     
     /**
@@ -87,6 +111,14 @@ class CReports extends BaseController
         $rs = array();
         $arrWhere = array();
         
+        $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -101,7 +133,13 @@ class CReports extends BaseController
             $row['phone'] = stripslashes($r->fsl_phone) ? filter_var($r->fsl_phone, FILTER_SANITIZE_STRING) : "-";
             $row['sort'] = stripslashes($r->field_order) ? filter_var($r->field_order, FILTER_SANITIZE_NUMBER_INT) : 0;
  
-            $data[] = $row;
+            if($this->hasCoverage){
+                if(in_array($row['code'], $e_coverage)){
+                    $data[] = $row;
+                }
+            }else{
+                $data[] = $row;
+            }
         }
         
         return $data;
@@ -110,10 +148,9 @@ class CReports extends BaseController
     /**
      * This function is used to get detail information
      */
-    private function get_info_warehouse_name($fcode){
+    private function get_warehouse_name($fcode){
         $rs = array();
-        $arrWhere = array();
-        
+        $arrWhere = array();        
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
@@ -151,7 +188,7 @@ class CReports extends BaseController
             //Parameters for cURL
             $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $fdate1.' 00:00:00', 'fdate2'=> $fdate2.' 23:59:59');
             $fslname = "";
-            $fslname = $this->get_info_warehouse_name($fcode);
+            $fslname = $this->get_warehouse_name($fcode);
             $curdateID = tgl_indo(date('Y-m-d'));
             $curdate = date('dmY');
             $reportdate = date('dmY', strtotime($fdate1));
@@ -299,7 +336,7 @@ class CReports extends BaseController
             //Parameters for cURL
             $arrWhere = array('fcode'=> strtoupper($fcode), 'fdate1'=> $fdate1.' 00:00:00', 'fdate2'=> $fdate2.' 23:59:59');
             $fslname = "";
-            $fslname = $this->get_info_warehouse_name($fcode);
+            $fslname = $this->get_warehouse_name($fcode);
             $curdateID = tgl_indo(date('Y-m-d'));
             $curdate = date('dmY');
             $reportdate = date('dmY', strtotime($fdate1));
@@ -493,7 +530,7 @@ class CReports extends BaseController
             //Start adding next sheets
             $x=0;
             foreach($code as $fcode) {
-                $fslname = $this->get_info_warehouse_name($fcode);
+                $fslname = $this->get_warehouse_name($fcode);
             
                 $spreadsheet->createSheet($x);
                 $spreadsheet->setActiveSheetIndex($x);
@@ -671,7 +708,7 @@ class CReports extends BaseController
             //Start adding next sheets
             $x=0;
             foreach($code as $fcode) {
-                $fslname = $this->get_info_warehouse_name($fcode);
+                $fslname = $this->get_warehouse_name($fcode);
             
                 $spreadsheet->createSheet($x);
                 $spreadsheet->setActiveSheetIndex($x);
@@ -853,7 +890,7 @@ class CReports extends BaseController
             //Start adding next sheets
             $x=0;
             foreach($code as $fcode) {
-                $fslname = $this->get_info_warehouse_name($fcode);
+                $fslname = $this->get_warehouse_name($fcode);
             
                 $spreadsheet->createSheet($x);
                 $spreadsheet->setActiveSheetIndex($x);

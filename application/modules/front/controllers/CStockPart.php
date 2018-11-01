@@ -480,68 +480,6 @@ class CStockPart extends BaseController
     }
     
     /**
-     * This function is used to get list for datatables
-     */
-    public function get_m_list_datatable($fcode){
-        $rs = array();
-        $arrWhere = array();
-
-        if(empty($fcode) || $fcode == ""){
-            $fcode = $this->repo;
-        }
-        if ($fcode != "") $arrWhere['fcode'] = $fcode;
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_detail_fsl_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
-            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
-            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
-            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-            $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-            $qtyonhand = filter_var($r->qty_onhand, FILTER_SANITIZE_NUMBER_INT);
-            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            
-            $row['code'] = $code;
-            $row['partno'] = $partno;
-            $row['partname'] = $partname;
-            $row['initstock'] = $initstock;
-            $row['minstock'] = $minstock;
-            $row['onhand'] = $qtyonhand;
-            if($initflag === "Y"){
-                $row['stock'] = $initstock;
-            }else{
-                $row['stock'] = $stock;
-            }
-//            $row['initflag'] = $initflag;
-            
-            /**
-            $row['button'] = '<div class="btn-group dropdown">';
-            $row['button'] .= '<a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>';
-            $row['button'] .= '<div class="dropdown-menu dropdown-menu-right">';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("edit-spareparts-stock/").$partno.'"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle"></i>Edit</a>';
-            $row['button'] .= '<a class="dropdown-item" href="'.base_url("remove-spareparts-stock/").$partno.'"><i class="mdi mdi-delete mr-2 text-muted font-18 vertical-middle"></i>Remove</a>';
-            $row['button'] .= '</div>';
-            $row['button'] .= '</div>';
-            */
- 
-            $data[] = $row;
-        }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
-        exit();
-    }
-    
-    /**
      * This function used to load the first screen of the user
      */
     public function detail($fcode)

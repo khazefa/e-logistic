@@ -815,4 +815,174 @@ class CStockPart extends BaseController
         }
         redirect($this->cname.'/view-central');
     }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_part_nearby(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $partnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouse'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if($rs){
+            $wh_nearby = "";
+            foreach ($rs as $r){
+                $wh_nearby = $r->fsl_nearby;
+            }
+            $exp_wh_nearby = explode(";", $wh_nearby);
+            $arrData = array();
+            foreach ($exp_wh_nearby as $code){
+                $result = $this->get_detail_stock($code, $partnum);
+
+                $arrData[] = array('detail_data'=>$result);
+            }
+            $success_response = array(
+                'status' => 1,
+                'data'=> $arrData
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'no nearby warehouse'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to check part
+     */
+    public function check_part(){
+        $rs = array();
+        $arrWhere = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $stock = 0;
+            $minstock = 0;
+            $initstock = 0;
+            $laststock = 0;
+            $initflag = "";
+            foreach ($rs as $r) {
+                $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                $laststock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            }
+            if($initflag === "Y"){
+                $stock = $initstock;
+            }else{
+                $stock = $laststock;
+            }
+
+            if($stock > 0){
+                $success_response = array(
+                    'status' => 1,
+                    'stock'=> $stock,
+                    'message'=> 'Stock available'
+                );
+                $response = $success_response;
+            }else{
+                $error_response = array(
+                    'status' => 0,
+                    'message'=> 'Out of stock, please choose part number subtitution!'
+                );
+                $response = $error_response;
+            }
+        }else{
+            $error_response = array(
+                'status' => 2,
+                'message'=> 'Stock not available'
+            );
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    private function get_detail_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['warehouse'] = $this->get_warehouse_name($code);
+            $row['part'] = $this->get_part_name($partno);
+            
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_part_name($fpartnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partname = "";
+        foreach ($rs as $r) {
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $partname;
+    }
 }

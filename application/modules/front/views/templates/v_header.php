@@ -137,7 +137,7 @@
                                         <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo base_url("outgoing/request_parts");?>">Request Parts</a>
+                                        <a href="<?php echo base_url("request-parts/view");?>">Request Parts</a>
                                     </li>
                                 </ul>
                             </li>

@@ -132,6 +132,131 @@ class CPartsub extends BaseController
     /**
      * This function is used to get list information described by function name
      */
+    private function get_detail_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['warehouse'] = $this->get_warehouse_name($code);
+            $row['part'] = $this->get_part_name($partno);
+            
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_warehouse_name($fcode){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode);        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $wh_name = "";
+        foreach ($rs as $r) {
+            $wh_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $wh_name;
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_part_name($fpartnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partname = "";
+        foreach ($rs as $r) {
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $partname;
+    }
+    
+    /**
+     * This function is used to get lists for populate data
+     */
+    public function get_list_part_sub(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_partsub_part_sub'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : null;
+        
+        if(!empty($rs)){
+            $val_partsub = $rs;
+            
+            $exp_partsub = explode(";", $val_partsub);
+            $arrData = array();
+            foreach ($exp_partsub as $partnum){
+                $row['partno'] = $partnum;
+                $result = $this->get_detail_stock($fcode, $partnum);
+                $arrData[] = array('detail_data'=>$result);
+            }
+            $success_response = array(
+                'status' => 1,
+                'data'=> $arrData
+            );
+            $response = $success_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Sparepart is out of stock and do not have subtitution',
+                'data'=> array()
+            );
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
     public function get_detail($fkey){
         $rs = array();
         $arrWhere = array();

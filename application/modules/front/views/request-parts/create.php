@@ -2,13 +2,13 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-20"><?php echo $contentTitle; ?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group row">
-                          <label for="fpurpose" class="col-sm-2 col-form-label">Purpose</label>
-                          <div class="col-sm-6">
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="fpurpose" class="col-form-label">Purpose</label>
                                 <select name="fpurpose" id="fpurpose" class="form-control" placeholder="Select Purpose">
                                     <option value="0">Select Purpose</option>
                                     <option value="SP">Sales/Project</option>
@@ -16,121 +16,67 @@
                                     <option value="M">Maintenance</option>
                                     <option value="I">Investment</option>
                                     <option value="B">Borrowing</option>
-                                    <option value="RWH">Transfer Stock</option>
                                 </select>
-                          </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-md-12"><hr></div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                Transfer Sparepart to Engineer
-                            </div>
-                            <div class="card-body">
-                                <p>Please use this form section <strong>for purpose other than Transfer Stock</strong></p>
-                                <div class="form-group row">
-                                    <label for="fticketnum" class="col-sm-3 col-form-label">Ticket Number <span class="text-danger">*</span></label>
-                                    <div class="col-sm-5">
-                                        <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" data-parsley-minlength="8" 
+                    <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="fticketnum" class="col-form-label">Ticket Number <span class="text-danger">*</span></label>
+                                <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" data-parsley-minlength="8" 
                                                data-parsley-maxlength="8" pattern="[a-zA-Z0-9\s]+" placeholder="(Required)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fengineer_id" class="col-sm-3 col-form-label">Assigned FSE <span class="text-danger">*</span></label>
-                                    <div class="col-sm-8">
-                                        <select name="fengineer_id" id="fengineer_id" class="selectpicker" required data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                            <option value="0">Select FSE</option>
-                                            <?php
-                                                foreach($list_eg as $e){
-                                                    echo '<option value="'.$e["feid"].'">'.$e['feid'].' - '.$e["fullname"].' - '.$e["partner"].'</option>';
-                                                }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fengineer2_id" class="col-sm-3 col-form-label">FSE Messenger</label>
-                                    <div class="col-sm-8">
-                                        <select name="fengineer2_id" id="fengineer2_id" class="selectpicker" data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                            <option value="0">Select FSE</option>
-                                            <?php
-                                                foreach($list_eg as $e2){
-                                                    echo '<option value="'.$e2["feid"].'">'.$e2['feid'].' - '.$e2["fullname"].' - '.$e2["partner"].'</option>';
-                                                }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fdelivery" class="col-sm-3 col-form-label">Delivery Notes</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fdelivery" id="fdelivery" class="form-control" placeholder="(Optional)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fnotes1" class="col-sm-3 col-form-label">Transaction Notes</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fnotes1" id="fnotes1" class="form-control" placeholder="(Optional)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fssb_id" class="col-sm-3 col-form-label">SSB/ID <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fssb_id" id="fssb_id" class="form-control" required="true" placeholder="(Required)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fcust" class="col-sm-3 col-form-label">Customer <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fcust" id="fcust" class="form-control" required="true" placeholder="(Required)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="floc" class="col-sm-3 col-form-label">Location <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="floc" id="floc" class="form-control" required="true" placeholder="(Required)">
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                Transfer Sparepart to another FSL
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fengineer_id" class="col-form-label">Assigned FSE <span class="text-danger">*</span></label>
+                                <select name="fengineer_id" id="fengineer_id" class="selectpicker" required data-live-search="true" 
+                                        data-selected-text-format="values" title="Select FSE.." data-style="btn-light">
+                                    <?php
+                                        foreach($list_engineer as $e){
+                                            echo '<option value="'.$e["feid"].'">'.$e['feid'].' - '.$e["fullname"].' - '.$e["partner"].'</option>';
+                                        }
+                                    ?>
+                                </select>
                             </div>
-                            <div class="card-body">
-                                <p>Please use this form section <strong>for purpose Transfer Stock</strong></p>
-                                <div class="form-group row">
-                                    <label for="fdest_fsl" class="col-sm-3 col-form-label">FSL Destination</label>
-                                    <div class="col-sm-8">
-                                        <select name="fdest_fsl" id="fdest_fsl" class="selectpicker" data-live-search="true" 
-                                                data-selected-text-format="values" title="Please choose.." data-style="btn-light">
-                                            <option value="0">Select FSL Destination</option>
-                                            <?php
-                                                foreach($list_fsl as $f){
-                                                    echo '<option value="'.$f["code"].'">'.$f["name"].'</option>';
-                                                }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fdelivery2" class="col-sm-3 col-form-label">Delivery Notes <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fdelivery2" id="fdelivery2" class="form-control" required="true" placeholder="(Required)">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="fnotes2" class="col-sm-3 col-form-label">Transaction Notes <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="fnotes2" id="fnotes2" class="form-control" required="true" placeholder="(Required)">
-                                    </div>
-                                </div>
+                            <div class="form-group col-md-6">
+                                <label for="fengineer2_id" class="col-form-label">FSE Messenger</label>
+                                <select name="fengineer2_id" id="fengineer2_id" class="selectpicker" data-live-search="true" 
+                                        data-selected-text-format="values" title="Select Messenger.." data-style="btn-light">
+                                    <?php
+                                        foreach($list_engineer as $e2){
+                                            echo '<option value="'.$e2["feid"].'">'.$e2['feid'].' - '.$e2["fullname"].' - '.$e2["partner"].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="fssb_id" class="col-form-label">SSB/ID <span class="text-danger">*</span></label>
+                                <input type="text" name="fssb_id" id="fssb_id" class="form-control" required="true" placeholder="(Required)">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fcust" class="col-form-label">Customer <span class="text-danger">*</span></label>
+                                <input type="text" name="fcust" id="fcust" class="form-control" required="true" placeholder="(Required)">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="floc" class="col-form-label">Location <span class="text-danger">*</span></label>
+                                <input type="text" name="floc" id="floc" class="form-control" required="true" placeholder="(Required)">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fdelivery" class="col-form-label">Delivery Notes</label>
+                                <input type="text" name="fdelivery" id="fdelivery" class="form-control" placeholder="(Optional)">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fnotes1" class="col-form-label">Transaction Notes</label>
+                                <input type="text" name="fnotes1" id="fnotes1" class="form-control" placeholder="(Optional)">
                             </div>
                         </div>
                     </div>
@@ -148,12 +94,11 @@
 
             <div class="card-body">
                 <div class="row">
-                    <div class="form-group form-group-sm col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
+                    <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
                                 <select id="fpartname" name="fpartname" class="selectpicker" data-live-search="true" 
                                     data-selected-text-format="values" title="Search Part Name.." data-style="btn-light">
-                                    <option value="0">Select Part Name</option>
                                     <?php
                                         foreach($list_part as $p){
                                             echo '<option value="'.$p["partno"].'">'.$p['partno'].' - '.$p["name"].'</option>';
@@ -165,60 +110,54 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group form-group-sm col-sm-6">
-                        <div class="row">
-                            <div class="input-group col-sm-12">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
-                                 </div>
-                                <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
+                    <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                     </div>
+                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
+                                     </div>
+                                    <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div id="fpartnum_notes"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group form-group-sm col-sm-6">
-                        <div class="row">
-                            <div class="input-group col-sm-12">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
-                                 </div>
-                                <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm col-sm-12">
-                        <div id="fpartnum_notes"></div>
-                    </div>
-                    <div class="m-b-10">&nbsp;</div>
                 </div>
                 <div class="row">
-                    <div class="col col-md-12">
-
+                    <div class="col-md-12">
+                        <div class="table-responsive">
                             <table id="cart_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
-                                <tr>
-                                    <th>&nbsp;</th>
-                                    <th>Part Number</th>
-                                    <th>Serial Number</th>
-                                    <th>Part Name</th>
-                                    <th>Stock</th>
-                                    <th>Qty</th>
-                                </tr>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Part Number</th>
+                                        <th>Serial Number</th>
+                                        <th>Part Name</th>
+                                        <th>Stock</th>
+                                        <th>Qty</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
-
-                        <div class="mt-2"></div>
-
-                        <div class="row">
-                            <div class="col-md-3 offset-md-9">
-                                Total Quantity: <span id="ttl_qty">0</span>
-                            </div>
+                        </div>
+                        <div class="col-md-3 offset-md-9">
+                            Total Quantity: <span id="ttl_qty">0</span>
                         </div>
                     </div>
                 </div>
                 <div class="button-list">
-                    <div class="mt-2"></div>
                     <button type="button" id="btn_complete" class="btn btn-success waves-effect waves-light">Submit</button>
                 </div>
             </div>
@@ -226,42 +165,46 @@
     </div>
 
     <div class="col-md-4">
-        <div class="card-box table-responsive">
+        <div class="card-box">
             <h4 class="m-b-30 header-title">Part Subtitusi</h4>
-            <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
-                <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <th>Part Number</th>
-                    <th>Part Name</th>
-                    <th>Stock</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="subtitute_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Part Number</th>
+                        <th>Part Name</th>
+                        <th>Stock</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
-        <div class="card-box table-responsive">
+        <div class="card-box">
             <h4 class="m-b-30 header-title">Part In Nearby Warehouse</h4>
-            <table id="fsl_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
-                <thead>
-                <tr>
-                    <th>FSL</th>
-                    <th>Part Number</th>
-                    <th>Part Name</th>
-                    <th>Stock</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="fsl_grid" class="table table-light dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>FSL</th>
+                        <th>Part Number</th>
+                        <th>Part Name</th>
+                        <th>Stock</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     
 </div>
 </form>
-<script type="text/javascript" src="<?php echo base_url();?>assets/public/plugins/autocomplete/countries.js"></script>
+
 <script type="text/javascript">
     var e_purpose = $('#fpurpose');
     var e_ticketnum = $('#fticketnum');
@@ -269,11 +212,11 @@
     var e_engineer2_id = $('#fengineer2_id');
     var e_engineer_notes = $('#feg_notes');
     var e_engineer2_notes = $('#feg2_notes');
-    var e_delivery1 = $('#fdelivery');
-    var e_notes1 = $('#fnotes1');
+    var e_ssb_id = $('#fssb_id');
     var e_cust = $('#fcust');
     var e_loc = $('#floc');
-    var e_ssb_id = $('#fssb_id');
+    var e_delivery1 = $('#fdelivery');
+    var e_notes1 = $('#fnotes1');
     
     var e_dest_fsl = $('#fdest_fsl');
     var e_delivery2 = $('#fdelivery2');
@@ -288,8 +231,9 @@
     var dataSet = [];
     var status_checkpart = 0;
     var status_checkticket = 0;
-    
-    var countriesArray = $.map(countries, function (value, key) { return { value: value, data: key }; });
+    var table;
+    var table2;
+    var table3;
         
     //initial form state
     function init_form(){
@@ -299,16 +243,16 @@
         e_ticketnum.prop("readonly", true);
         e_engineer_id.attr('disabled', true);
         e_engineer2_id.attr('disabled', true);
-        e_delivery1.val("");
-        e_delivery1.prop("readonly", true);
-        e_notes1.val("");
-        e_notes1.prop("readonly", true);
         e_ssb_id.val("");
         e_ssb_id.prop("readonly", true);
         e_cust.val("");
         e_cust.prop("readonly", true);
         e_loc.val("");
         e_loc.prop("readonly", true);
+        e_delivery1.val("");
+        e_delivery1.prop("readonly", true);
+        e_notes1.val("");
+        e_notes1.prop("readonly", true);
         
         e_dest_fsl.attr('disabled', true);
         e_delivery2.val("");
@@ -317,7 +261,6 @@
         e_notes2.prop("readonly", true);
     }
     
-    //initial form order state
     function init_form_order(){
 //        e_switch.prop('checked', false);
         e_partname.attr('disabled', true);
@@ -348,7 +291,7 @@
             processing: true,
             lengthChange: false,
             ajax: {
-                url: "<?= base_url('front/coutgoing/get_list_cart_datatable'); ?>",
+                url: "<?php echo $url_list_cart;?>",
                 type: "POST",
                 dataType: "JSON",
                 contentType: "application/json",
@@ -386,7 +329,23 @@
                         }
                     }
                 }
-            ]
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ? i : 0;
+                };
+                var totalQty = api
+                .column( 5 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+                $('#ttl_qty').html(totalQty);
+            },
         });
         
         //function for datatables button
@@ -400,11 +359,11 @@
         $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
-            fstock = data['stock'];
-            fqty = this.value;
+            fstock = parseInt(data['stock']);
+            fqty = parseInt(this.value);
             if (e.keyCode == 13) {
                 if(fqty > fstock){
-                    alert('The quantity amount exceeds the sparepart stock!');
+                    alert('The quantity amount exceeds the sparepart stock !');
                     this.focus;
                 }else{
                     //update cart by cart id
@@ -463,9 +422,6 @@
                 add_part_sub(fpartnum);
                 table2.clear().draw();
                 e_partnum.focus();
-//                e_serialnum.prop('readonly', false);
-//                e_serialnum.val('');
-//                e_serialnum.focus();
             }
         });
 
@@ -508,29 +464,11 @@
         table3.ajax.reload();
     }
     
-    //load fsl destination
-    function load_fsl_dest(){
-        let e_dest_fsl = $('#fdest_fsl');
-        e_dest_fsl.empty();
-
-        e_dest_fsl.append('<option selected="true" disabled>Please choose..</option>');
-        e_dest_fsl.prop('selectedIndex', 0);
-
-        const url = '<?php echo base_url('front/coutgoing/get_list_warehouse'); ?>';
-
-        // Populate dropdown with list of provinces
-        $.getJSON(url, function (data) {
-          $.each(data, function (key, entry) {
-            e_dest_fsl.append($('<option></option>').attr('value', entry.code).text(entry.name));
-          })
-        });
-    }
-    
     //get part replacement
     function get_part_sub(partno){
         var status = 0;
         var total_stock_sub = 0;
-        var url = '<?php echo base_url('front/coutgoing/get_list_part_sub'); ?>';
+        var url = '<?php echo $url_part_sub;?>';
         var type = 'POST';
         
         var data = {
@@ -587,7 +525,7 @@
     
     //get part replacement
     function get_nearby_wh(partno){
-        var url = '<?php echo base_url('front/coutgoing/get_part_nearby'); ?>';
+        var url = '<?php echo $url_part_nearby;?>';
         var type = 'POST';
         
         var data = {
@@ -634,7 +572,7 @@
     
     //check part stock
     function check_part(partno){        
-        var url = '<?php echo base_url('front/coutgoing/check_part'); ?>';
+        var url = '<?php echo $url_check_part;?>';
         var type = 'POST';
         
         var data = {
@@ -680,7 +618,7 @@
     
     //check ticket
     function check_ticket(ticketno){        
-        var url = '<?php echo base_url('front/coutgoing/check_ticket'); ?>';
+        var url = '<?php echo base_url('request-parts/check-ticket'); ?>';
         var type = 'POST';
         
         var data = {
@@ -698,7 +636,7 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
                     alert(jqXHR.message);
-                    window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
+                    window.location.href = "<?php echo base_url('request-parts/view'); ?>";
                     status_checkticket = 0;
                 }else if(jqXHR.status === 1){
                     alert(jqXHR.message);
@@ -711,37 +649,6 @@
             }
         });
 //        return status;
-    }
-    
-    function check_part_name(partname){
-        var url = '<?php echo base_url('front/coutgoing/get_list_part_like'); ?>';
-        var type = 'POST';
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fname : partname
-        };
-
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data:data,
-            success:function(jqXHR)
-            {
-                e_partname.empty();
-                $.each(data, function(key, value) {
-                    e_partname.append('<option value="'+ jqXHR.partno +'">'+ jqXHR.name +'</option>');
-                });
-                e_partname.selectpicker('refresh');
-            },
-            cache: false,
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
     }
     
     function get_atm_loc(ssbid){
@@ -775,21 +682,21 @@
         e_partnum.prop("readonly", false);
         e_partnum.val('');
         e_partnum.val(partno);
-//        e_partnum.prop("readonly", true);
         alert('Please press [ENTER] to your subtitution part number');
-        
-//        check_part(partno);
     }
     
     //add to cart
     function add_cart(partno, serialno){
         var total_qty = table.rows().count();
         
-        if(e_purpose.val() === "RWH"){
-            if(total_qty >= 15){
-                
-            }
-            var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
+        if(total_qty >= 3){
+            $("#error_modal .modal-title").html("Message");
+            $("#error_modal .modal-body h4").html("Cannot add request more than 3 items!");
+            $('#error_modal').modal({
+                show: true
+            });
+        }else{
+            var url = '<?php echo base_url('cart/outgoing/add'); ?>';
             var type = 'POST';
 
             var data = {
@@ -810,7 +717,6 @@
                         alert(jqXHR.message);
                     }else if(jqXHR.status == 1){
                         reload();
-                        get_total();
                     }else if(jqXHR.status == 2){
                         alert(jqXHR.message);
                         init_form_order();
@@ -821,79 +727,12 @@
                     console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
                 }
             });
-        }else{
-            if(total_qty >= 3){
-                $("#error_modal .modal-title").html("Message");
-                $("#error_modal .modal-body h4").html("Cannot add request more than 3 items!");
-                $('#error_modal').modal({
-                    show: true
-                });
-            }else{
-                var url = '<?php echo base_url('front/coutgoing/add_cart'); ?>';
-                var type = 'POST';
-
-                var data = {
-                    <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-                    fpartnum : partno,
-                    fserialnum : serialno
-                };
-
-                $.ajax({
-                    type: type,
-                    url: url,
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    dataType: 'JSON',
-                    contentType:"application/json",
-                    data: data,
-                    success: function (jqXHR) {
-                        if(jqXHR.status == 0){
-                            alert(jqXHR.message);
-                        }else if(jqXHR.status == 1){
-                            reload();
-                            get_total();
-                        }else if(jqXHR.status == 2){
-                            alert(jqXHR.message);
-                            init_form_order();
-                        }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        // Handle errors here
-                        console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-                    }
-                });
-            }
         }
-    }
-    
-    function get_total() {
-        var url = '<?php echo base_url('front/coutgoing/get_total_cart'); ?>';
-        var type = 'POST';
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            success:function(jqXHR)
-            {
-                if(jqXHR.status == 1){
-                    $('#ttl_qty').html(jqXHR.ttl_cart);
-                }else{
-                    $('#ttl_qty').html(jqXHR.ttl_cart);
-                }
-            },
-            cache: false,
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
     }
     
     //update cart
     function update_cart(id, qty){        
-        var url = '<?php echo base_url('front/coutgoing/update_cart'); ?>';
+        var url = '<?php echo base_url('cart/outgoing/update'); ?>';
         var type = 'POST';
         
         var data = {
@@ -912,7 +751,6 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 1){
                     reload();
-                    get_total();
                 }else if(jqXHR.status === 0){
                     alert(jqXHR.message);
                 }
@@ -926,7 +764,7 @@
     
     //add to cart
     function delete_cart(id){        
-        var url = '<?php echo base_url('front/coutgoing/delete_cart'); ?>';
+        var url = '<?php echo base_url('cart/outgoing/delete'); ?>';
         var type = 'POST';
         
         var data = {
@@ -944,7 +782,6 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 1){
                     reload();
-                    get_total();
                 }else if(jqXHR.status === 0){
                     alert(jqXHR.message);
                 }
@@ -958,7 +795,7 @@
     
     //submit transaction
     function complete_request(){
-        var url = '<?php echo base_url('front/coutgoing/submit_trans'); ?>';
+        var url = '<?php echo base_url('request-parts/insert'); ?>';
         var type = 'POST';
         
         var delivery = "";
@@ -1000,7 +837,7 @@
                     alert(jqXHR.message);
                 }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
-                    window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
+                    window.location.href = "<?php echo base_url('request-parts/add'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -1013,7 +850,7 @@
     function print_transaction(ftransno)
     {
         var param = ftransno;
-        var url = '<?php echo base_url('print-outgoing-trans/'); ?>'+param;
+        var url = '<?php echo base_url('request-parts/print/'); ?>'+param;
         var newWindow=window.open(url);
 //        window.location.assign(url);
     }
@@ -1036,17 +873,10 @@
                 $(this).val("NOSN");
             }
 	});
-        
-        /*
-        e_notes.on("keyup", function(e) {
-            $(this).val($(this).val().toUpperCase());
-	});
-        */
        
         init_table();
         init_table2();
         init_table3();
-        get_total();
             
         e_purpose.on("change", function(e) {
             var valpurpose = $(this).val();
@@ -1054,34 +884,6 @@
             if(valpurpose === "0"){
                 alert( "Please choose purpose!" );
                 init_form();
-            }else if(valpurpose === "RWH"){
-                e_ticketnum.val("");
-                e_ticketnum.prop("readonly", true);
-                e_delivery1.val("");
-                e_delivery1.prop("readonly", true);
-                e_notes1.val("");
-                e_notes1.prop("readonly", true);
-                e_cust.val("");
-                e_cust.prop("readonly", true);
-                e_loc.val("");
-                e_loc.prop("readonly", true);
-                e_ssb_id.val("");
-                e_ssb_id.prop("readonly", true);
-                
-                e_engineer_id.prop('disabled', true);
-                e_engineer_id.val('default');
-                e_engineer_id.selectpicker('refresh');
-                
-                e_engineer2_id.prop('disabled', true);
-                e_engineer2_id.val('default');
-                e_engineer2_id.selectpicker('refresh');
-                
-                e_dest_fsl.prop('disabled', false);
-                e_dest_fsl.selectpicker('refresh');
-//                load_fsl_dest();
-                e_dest_fsl.focus();
-                e_notes2.prop("readonly", false);
-                e_delivery2.prop("readonly", false);
             }else{
                 e_ticketnum.prop("readonly", false);
                 e_ticketnum.focus();
@@ -1177,27 +979,6 @@
             e_delivery1.prop("readonly", false);
             e_delivery1.focus();
         });
-        
-        // Initialize ajax autocomplete:
-        /**
-        $('#fssb_id').autocomplete({
-            // serviceUrl: '/autosuggest/service/url',
-            lookup: countriesArray,
-            lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
-                var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
-                return re.test(suggestion.value);
-            },
-            onSelect: function(suggestion) {
-                $('#selction-ajax').html('You selected: ' + suggestion.value + ', ' + suggestion.data);
-            },
-            onHint: function (hint) {
-                $('#autocomplete-ajax-x').val(hint);
-            },
-            onInvalidateSelection: function() {
-                $('#selction-ajax').html('You selected: none');
-            }
-        });
-        */
         
         e_ssb_id.on('keypress', function(e){
             if (e.keyCode == 13) {
@@ -1298,95 +1079,24 @@
                     show: true
                 });
             }else{
-                if(e_purpose.val() === "RWH"){
-                    if(isEmpty(e_dest_fsl.val()) || e_dest_fsl.val() === "0"){
-                        alert('Please select your FSL Destination!');
-                        e_dest_fsl.focus();
-                    }
-                    /*
-                    else if(isEmpty(e_delivery2.val())){
-                        $("#global_confirm .modal-title").html("Message");
-                        $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
-                        $('#global_confirm').modal({
+                if(isEmpty(e_ticketnum.val())){
+                    alert('Please fill out the ticket number!');
+                    e_ticketnum.focus();
+                }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === "0"){
+                    alert('Please select the FSE data!');
+                    e_engineer_id.focus();
+                }
+                else{
+                    if(total_qty > 0){
+                        complete_request();
+                    }else{
+                        $("#error_modal .modal-title").html("Message");
+                        $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
+                        $('#error_modal').modal({
                             show: true
                         });
-                        $('#ans_yess').click(function () {
-                            e_delivery2.prop('readonly', false);
-                            e_delivery2.focus();
-                        });
-                        $('#ans_no').click(function () {
-                            e_notes2.prop('readonly', false);
-                            e_notes2.focus();
-                        });
-                    }
-                    */
-                    else{
-                        if(total_qty > 0){
-                            complete_request();
-//                            $('#confirmation').modal({
-//                                show: true
-//                            });
-//                            $('#opt_yess').click(function () {
-//                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-//                            });
-//                            $('#opt_no').click(function () {
-//                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-//                            });
-                        }else{
-                            $("#error_modal .modal-title").html("Message");
-                            $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
-                            $('#error_modal').modal({
-                                show: true
-                            });
-                            e_dest_fsl.focus();
-                        }
-                    }
-                }else{
-                    if(isEmpty(e_ticketnum.val())){
-                        alert('Please fill out the ticket number!');
-                        e_ticketnum.focus();
-                    }else if(isEmpty(e_engineer_id.val()) || e_engineer_id.val() === "0"){
-                        alert('Please select the FSE data!');
-                        e_engineer_id.focus();
-                    }
-                    /*
-                    else if(isEmpty(e_delivery1.val())){
-                        $("#global_confirm .modal-title").html("Message");
-                        $("#global_confirm .modal-body h4").html("Do you have RW Bill or another Delivery Notes?");
-                        $('#global_confirm').modal({
-                            show: true
-                        });
-                        $('#ans_yess').click(function () {
-                            e_delivery1.prop('readonly', false);
-                            e_delivery1.focus();
-                        });
-                        $('#ans_no').click(function () {
-                            e_notes1.prop('readonly', false);
-                            e_notes1.focus();
-                        });
-                    }
-                    */
-                    else{
-                        if(total_qty > 0){
-                            complete_request();
-//                            $('#confirmation').modal({
-//                                show: true
-//                            });
-//                            $('#opt_yess').click(function () {
-//                                window.location.href = "<?php echo base_url('new-outgoing-trans'); ?>";
-//                            });
-//                            $('#opt_no').click(function () {
-//                                window.location.href = "<?php echo base_url('outgoing-trans'); ?>";
-//                            });
-                        }else{
-                            $("#error_modal .modal-title").html("Message");
-                            $("#error_modal .modal-body h4").html("You dont have any detail of transaction");
-                            $('#error_modal').modal({
-                                show: true
-                            });
-                            e_partnum.prop('readonly', false);
-                            e_partnum.focus();
-                        }
+                        e_partnum.prop('readonly', false);
+                        e_partnum.focus();
                     }
                 }
             }

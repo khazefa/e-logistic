@@ -5,13 +5,18 @@ require APPPATH . '/libraries/BaseController.php';
 
 /**
  * Class : COutgoing (TicketsController)
- * COutgoing Class to control Tickets.
+ * COutgoing Class to control Outgoing Transactions.
  * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
 class COutgoing extends BaseController
 {
+    private $cname = 'outgoing';
+    private $cname_atm = 'atm';
+    private $view_dir = 'front/outgoing-trans/';
+    private $readonly = TRUE;
+    
     /**
      * This is default constructor of the class
      */
@@ -30,11 +35,10 @@ class COutgoing extends BaseController
      * This function used to load the first screen of the user
      */
     public function index()
-    {        
+    {
         if($this->isSpv()){
             redirect('view-outgoing-trans');
         }elseif($this->isStaff()){
-            
             $this->global['pageTitle'] = 'Outgoing Transaction - '.APP_NAME;
             $this->global['pageMenu'] = 'Outgoing Transaction';
             $this->global['contentHeader'] = 'Outgoing Transaction';
@@ -42,8 +46,7 @@ class COutgoing extends BaseController
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
-            $this->loadViews('front/outgoing-trans/index', $this->global, NULL);
-            
+            $this->loadViews($this->view_dir.'index', $this->global, NULL);
         }else{
             redirect('cl');
         }
@@ -62,8 +65,7 @@ class COutgoing extends BaseController
         $this->global ['name'] = $this->name;
         
         $data['list_coverage'] = $this->get_list_warehouse("array");
-        
-        $this->loadViews('front/outgoing-trans/lists', $this->global, $data);
+        $this->loadViews($this->view_dir.'lists', $this->global, $data);
     }
     
     /**
@@ -518,7 +520,7 @@ class COutgoing extends BaseController
      * This function is used to load the add new form
      */
     public function add()
-    {        
+    {
         if($this->isSpv()){
             redirect('view-outgoing-trans');
         }elseif($this->isStaff()){
@@ -533,8 +535,8 @@ class COutgoing extends BaseController
             $data['list_eg'] = $this->get_list_engineers();
             $data['list_fsl'] = $this->get_list_warehouse('array');
             $data['list_part'] = $this->get_list_part();
-            
-            $this->loadViews('front/outgoing-trans/create', $this->global, $data);
+            $data['url_detail_atm'] = base_url($this->cname_atm.'/list_detail/json');
+            $this->loadViews($this->view_dir.'create', $this->global, $data);
             
         }else{
             redirect('cl');
@@ -577,10 +579,8 @@ class COutgoing extends BaseController
         $rs = array();
         $arrWhere = array();
         
-//        $fcode = $this->repo;
-//        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -939,7 +939,7 @@ class COutgoing extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -989,7 +989,7 @@ class COutgoing extends BaseController
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";
@@ -1014,7 +1014,7 @@ class COutgoing extends BaseController
         $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         if($rs){
@@ -1155,14 +1155,6 @@ class COutgoing extends BaseController
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);  
             
             array_push($data, $partname);
-            
-//            $row['partno'] = $partnum;
-//            $row['name'] = $partname;
-//            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-//            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-//            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
- 
-//            $data[] = $row;
         }
         
         return $this->output
@@ -1170,16 +1162,6 @@ class COutgoing extends BaseController
         ->set_output(
             json_encode($data)
         );
-        
-//        if($output == "json"){
-//            return $this->output
-//            ->set_content_type('application/json')
-//            ->set_output(
-//                json_encode($data)
-//            );
-//        }elseif($output == "array"){
-//            
-//        }
     }
     
     /**
@@ -1204,10 +1186,7 @@ class COutgoing extends BaseController
         
         $partname = "";
         $partstock = 0;
-        $rs_stock = $this->get_info_part_stock($fcode, $fpartnum);
-        foreach ($rs_stock as $s){
-            $partstock = (int)$s["stock"];
-        }
+        $partstock = $this->get_stock($fcode, $fpartnum);
         $partname = $this->get_info_part_name($fpartnum);
         if($partstock === $fqty){
             $cstock = 0;
@@ -1225,7 +1204,7 @@ class COutgoing extends BaseController
                     $cname = $c['fullname'];
                 }
                 if($cuser === $fuser){
-                    if($cstock === $fqty || $cstock < $fqty){
+                    if($cstock < $fqty){
                         $error_response = array(
                             'status' => 2,
                             'message'=> 'Part stock has run out!'
@@ -1476,16 +1455,6 @@ class COutgoing extends BaseController
         ->set_content_type('application/json')
         ->set_output(
             json_encode($response)
-        );
-    }
-    
-    public function get_trans_num(){
-        $arrWhere = array('fparam'=>"OT");
-        $transnum = send_curl($arrWhere, $this->config->item('api_get_trans_num'), 'POST', FALSE);
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($transnum)
         );
     }
     

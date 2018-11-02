@@ -132,6 +132,7 @@ $route['spareparts-sub/edit/(:any)'] = 'front/cpartsub/edit/$1';
 $route['spareparts-sub/modify'] = 'front/cpartsub/update';
 $route['spareparts-sub/remove/(:any)'] = 'front/cpartsub/delete/$1';
 $route['spareparts-sub/list/([a-zA-Z]+)'] = 'front/cpartsub/get_list/$1';
+$route['spareparts-sub/list-sub'] = 'front/cpartsub/get_list_part_sub';
 // ===========================
 //  End Routing Front Spareparts Subtitute
 // ===========================
@@ -149,6 +150,8 @@ $route['spareparts-stock/remove/(:any)'] = 'front/cstockpart/delete/$1';
 $route['spareparts-stock/onhand-list/([a-zA-Z]+)'] = 'front/cstockpart/get_onhand_list/$1';
 $route['spareparts-stock/central-list/([a-zA-Z]+)'] = 'front/cstockpart/get_central_list/$1';
 $route['spareparts-stock/detail-list'] = 'front/cstockpart/get_list_detail';
+$route['spareparts-stock/list-nearby'] = 'front/cstockpart/get_part_nearby';
+$route['spareparts-stock/check-part'] = 'front/cstockpart/check_part';
 // ===========================
 //  End Routing Front Stock Spareparts
 // ===========================
@@ -221,11 +224,25 @@ $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 
-
-$route['outgoing/request_parts'] = 'front/crequestparts';
-$route['outgoing/request_parts/add'] = 'front/coutgoing/add';
+$route['request-parts/view'] = 'front/crequestparts';
+$route['request-parts/add'] = 'front/crequestparts/add';
+$route['request-parts/list/([a-zA-Z]+)'] = 'front/crequestparts/get_list/$1';
+$route['request-parts/check-ticket'] = 'front/crequestparts/check_ticket';
+$route['request-parts/insert'] = 'front/crequestparts/submit_trans';
+$route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1';
 // ===========================
 //  End Routing Front Outgoing Trans
+// ===========================
+
+// ===========================
+//  Routing Cart
+// ===========================
+$route['cart/outgoing/list'] = 'front/cart/outgoing';
+$route['cart/outgoing/add'] = 'front/cart/create_outgoing';
+$route['cart/outgoing/update'] = 'front/cart/update_outgoing';
+$route['cart/outgoing/delete'] = 'front/cart/delete_outgoing';
+// ===========================
+//  End Routing Cart
 // ===========================
 
 // ===========================

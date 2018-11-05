@@ -128,7 +128,7 @@
                             if(($role == ROLE_SPV || $role == ROLE_AM)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="icon-basket"></i>Transaction</a>
+                                <a href="#"><i class="icon-handbag"></i>Transaction</a>
                                 <ul class="submenu">
                                     <li>
                                         <a href="<?php echo base_url("incoming-trans");?>">Incoming Parts</a>
@@ -139,8 +139,25 @@
                                     <li>
                                         <a href="<?php echo base_url("request-parts/view");?>">Request Parts</a>
                                     </li>
+                                    <li>
+                                        <a href="<?php echo base_url("transfer-to-fsl/view");?>">Transfer Stock to FSL</a>
+                                    </li>
                                 </ul>
                             </li>
+                            <!--
+                            <li class="has-submenu">
+                                <a href="#"><i class="icon-handbag"></i>Transaction</a>
+                                <ul class="submenu">
+                                    <li class="has-submenu">
+                                        <a href="#">Outgoing Parts</a>
+                                        <ul class="submenu">
+                                            <li><a href="<?php echo base_url("request-parts/view");?>">Request Parts</a></li>
+                                            <li><a href="<?php echo base_url("transfer-stock-to-fsl/view");?>">Transfer Stock to FSL</a></li>      
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            -->
                             <?php
                             }
                             ?>

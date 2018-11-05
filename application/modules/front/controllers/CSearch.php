@@ -161,26 +161,23 @@ class CSearch extends BaseController
     }
     
     /**
-     * This function is used to get lists for populate data
+     * This function is used to get list information described by function name
      */
-    public function get_list_warehouse(){
+    private function get_list_warehouse(){
         $rs = array();
         $arrWhere = array();
         
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
-        $data_nearby = array();
-        $names = '';
         foreach ($rs as $r) {
             $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
             $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
  
-            if($row['code'] !== "CID4" AND $row['code'] !== "WSPS"){
-                $data[] = $row;
-            }
+            $data[] = $row;
         }
         
         return $data;

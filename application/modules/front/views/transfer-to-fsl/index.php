@@ -52,18 +52,6 @@
                 </div>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
-                        <select name="fpurpose" id="fpurpose" class="form-control" placeholder="By Purpose">
-                            <option value="">By Purpose</option>
-                            <option value="SP">Sales/Project</option>
-                            <option value="W">Warranty</option>
-                            <option value="M">Maintenance</option>
-                            <option value="I">Investment</option>
-                            <option value="B">Borrowing</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="input-group col-sm-12">
                         <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
                             <option value="">By Status</option>
                             <option value="open">Open</option>
@@ -127,12 +115,8 @@
                                 <tr>
                                     <th>Trans No</th>
                                     <th>Date</th>
-                                    <th>Ticket No</th>
-                                    <th>Requested by</th>
-                                    <th>Take by</th>
-                                    <th>Purpose</th>
+                                    <th>Transfer To</th>
                                     <th>Qty</th>
-                                    <!--<th>FSL Admin</th>-->
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -154,7 +138,6 @@
     var e_date2 = $('#fdate2');
     var e_ticket = $('#fticket');
     var e_coverage = $('#fcoverage');
-    var e_purpose = $('#fpurpose');
     var e_status = $('#fstatus');
     
     function init_form(){
@@ -163,7 +146,6 @@
         e_ticket.val('');
         e_coverage.val('');
         e_coverage.selectpicker('refresh');
-        e_purpose.val('');
         e_status.val('');
     }
     
@@ -238,19 +220,14 @@
                     d.fdate2 = e_date2.val();
                     d.fticket = e_ticket.val();
                     d.fcoverage = e_coverage.val();
-                    d.fpurpose = e_purpose.val();
                     d.fstatus = e_status.val();
                 }
             },
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
-                { "data": 'transticket' },
-                { "data": 'reqby' },
-                { "data": 'takeby' },
-                { "data": 'purpose' },
+                { "data": 'transfer_to' },
                 { "data": 'qty' },
-//                { "data": 'user' },
                 { "data": 'status' },
                 { "data": 'button' },
             ],

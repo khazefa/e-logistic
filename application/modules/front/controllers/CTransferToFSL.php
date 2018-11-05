@@ -4,23 +4,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/BaseController.php';
 
 /**
- * Class : CRequestParts (CRequestPartsController)
- * CRequestParts Class to control Request Parts
+ * Class : CTransferToFSL (CTransferToFSLController)
+ * CTransferToFSL Class to control Transfer to FSL
  * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
-class CRequestParts extends BaseController
+class CTransferToFSL extends BaseController
 {
-    private $cname = 'request-parts';
+    private $cname = 'transfer-to-fsl';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
-    private $view_dir = 'front/request-parts/';
+    private $view_dir = 'front/transfer-to-fsl/';
     private $readonly = TRUE;
     private $hasCoverage = FALSE;
     private $hasHub = FALSE;
-    private $cart_postfix = 'otr';
+    private $cart_postfix = 'ott';
     private $cart_sess = '';
     
     /**
@@ -52,10 +52,10 @@ class CRequestParts extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Request Parts - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Request Parts';
-        $this->global['contentHeader'] = 'List Request Parts';
-        $this->global['contentTitle'] = 'List Request Parts';
+        $this->global['pageTitle'] = 'List Transfer to FSL - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Transfer to FSL';
+        $this->global['contentHeader'] = 'List Transfer to FSL';
+        $this->global['contentTitle'] = 'List Transfer to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -75,20 +75,18 @@ class CRequestParts extends BaseController
     public function add()
     {
         if(!$this->readonly){
-            $this->global['pageTitle'] = 'Request Parts - '.APP_NAME;
-            $this->global['pageMenu'] = 'Request Parts';
-            $this->global['contentHeader'] = 'Request Parts';
-            $this->global['contentTitle'] = 'Request Parts';
+            $this->global['pageTitle'] = 'Transfer to FSL - '.APP_NAME;
+            $this->global['pageMenu'] = 'Transfer to FSL';
+            $this->global['contentHeader'] = 'Transfer to FSL';
+            $this->global['contentTitle'] = 'Transfer to FSL';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
             $data['classname'] = $this->cname;
             $data['cart_postfix'] = $this->cart_postfix;
-            $data['list_engineer'] = $this->get_list_engineers();
-            $data['list_warehouse'] = $this->get_list_warehouse();
             $data['list_part'] = $this->get_list_part();
+            $data['list_warehouse'] = $this->get_list_warehouse();
             $data['url_list_cart'] = base_url($this->cname_cart.'/outgoing/list/'.$this->cart_postfix);
-            $data['url_detail_atm'] = base_url($this->cname_atm.'/list_detail/json');
             $data['url_part_sub'] = base_url('spareparts-sub/list-sub');
             $data['url_part_nearby'] = base_url('spareparts-stock/list-nearby');
             $data['url_check_part'] = base_url('spareparts-stock/check-part');
@@ -99,24 +97,115 @@ class CRequestParts extends BaseController
     }
     
     /**
-     * This function is used to get lists engineers
+     * This function is used to get list for datatables
      */
-    private function get_list_engineers(){
+    public function get_list($type){
+        $rs = array();
+        $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
+        
+        $fdate1 = $this->input->get('fdate1', TRUE);
+        $fdate2 = $this->input->get('fdate2', TRUE);
+        $fticket = $this->input->get('fticket', TRUE);
+        $fcode = empty($this->input->get('fticket', TRUE)) ? $this->repo : $this->input->get('fticket', TRUE);
+        $fpurpose = "RWH";
+        $fstatus = $this->input->get('fstatus', TRUE);
+        //Parameters for cURL
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
+            'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
+
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                    $fsldest = filter_var($r->fsl_dest, FILTER_SANITIZE_STRING);
+                    $transfer_to = filter_var($r->fsl_dest_name, FILTER_SANITIZE_STRING);
+                    $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+                    $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+                    $curdatetime = new DateTime();
+                    $datetime2 = new DateTime($transdate);
+                    $interval = $curdatetime->diff($datetime2);
+        //            $elapsed = $interval->format('%a days %h hours');
+                    $elapsed = $interval->format('%a days');
+
+                    $row['transnum'] = $transnum;
+                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['transfer_to'] = $transfer_to;
+                    $row['qty'] = $qty;
+                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+
+                    if($fpurpose === "RWH"){
+                        $data[] = $row;
+                    }
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                    $fsldest = filter_var($r->fsl_dest, FILTER_SANITIZE_STRING);
+                    $transfer_to = filter_var($r->fsl_dest_name, FILTER_SANITIZE_STRING);
+                    $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+                    $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+                    $curdatetime = new DateTime();
+                    $datetime2 = new DateTime($transdate);
+                    $interval = $curdatetime->diff($datetime2);
+        //            $elapsed = $interval->format('%a days %h hours');
+                    $elapsed = $interval->format('%a days');
+
+                    $row['transnum'] = $transnum;
+                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['transfer_to'] = $transfer_to;
+                    $row['qty'] = $qty;
+                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+
+                    if($fpurpose === "RWH"){
+                        $data[] = $row;
+                    }
+                }
+                $output = $data;
+            break;
+        }
+        return $output;
+    }
+    
+    /**
+     * This function is used to get lists for populate data
+     */
+    private function get_list_part(){
         $rs = array();
         $arrWhere = array();
         
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_engineers'), 'POST', FALSE);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
-            $key = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-            $fullname = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-            $partner = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             
-            $row['feid'] = $key;
-            $row['fullname'] = $fullname;
-            $row['partner'] = $partner;
+            $row['pid'] = $pid;
+            $row['partno'] = $partnum;
+            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
+            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
+            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
  
             $data[] = $row;
         }
@@ -161,39 +250,10 @@ class CRequestParts extends BaseController
     }
     
     /**
-     * This function is used to get lists for populate data
-     */
-    private function get_list_part(){
-        $rs = array();
-        $arrWhere = array();
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        foreach ($rs as $r) {
-            $pid = filter_var($r->part_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            
-            $row['pid'] = $pid;
-            $row['partno'] = $partnum;
-            $row['name'] = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $row['desc'] = filter_var($r->part_desc, FILTER_SANITIZE_STRING);
-            $row['returncode'] = filter_var($r->part_return_code, FILTER_SANITIZE_STRING);
-            $row['machine'] = filter_var($r->part_machine, FILTER_SANITIZE_STRING);
- 
-            $data[] = $row;
-        }
-        
-        return $data;
-    }
-    
-    /**
      * This function is used to get list for datatables
      */
     private function get_list_cart(){
-        $rs = array();        
+        $rs = array();
         //Parameters for cURL
         $arrWhere = array();
         
@@ -226,195 +286,6 @@ class CRequestParts extends BaseController
         }
         
         return $data;
-    }
-    
-    /**
-     * This function is used to check ticket
-     */
-    public function check_ticket(){
-        $rs = array();
-        $arrWhere = array();
-        $global_response = array();
-        $success_response = array();
-        $error_response = array();
-        
-        $fcode = $this->repo;
-        $fticket = $this->input->post('fticket', TRUE);
-        $arrWhere = array('fticket'=>$fticket);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        if(!empty($rs)){
-            $ticket = "";
-            $code = "";
-            foreach ($rs as $r){
-                $ticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                $code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            }
-
-            if($code === $fcode){
-                $global_response = array(
-                    'status' => 1,
-                    'message'=> 'FSE Confirmed'
-                );
-            }else{
-                $global_response = array(
-                    'status' => 0,
-                    'message'=> 'You cannot continue the transaction, please just ask for parts in your own FSL!'
-                );
-            }
-            $response = $global_response;
-        }else{
-            $success_response = array(
-                'status' => 1,
-                'message'=> 'FSE Confirmed'
-            );
-            $response = $success_response;
-        }
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode($response)
-        );
-    }
-    
-    /**
-     * This function is used to get list for datatables
-     */
-    public function get_list($type){
-        $rs = array();
-        $arrWhere = array();
-        $data = array();
-        $output = null;
-        $isParam = FALSE;
-        
-        $fdate1 = $this->input->get('fdate1', TRUE);
-        $fdate2 = $this->input->get('fdate2', TRUE);
-        $fticket = $this->input->get('fticket', TRUE);
-        $fcode = empty($this->input->get('fticket', TRUE)) ? $this->repo : $this->input->get('fticket', TRUE);
-        $fpurpose = $this->input->get('fpurpose', TRUE);
-        $fstatus = $this->input->get('fstatus', TRUE);
-        //Parameters for cURL
-        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
-            'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        switch($type) {
-            case "json":
-                foreach ($rs as $r) {
-                    $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-        //            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
-                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
-                    $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                    $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-                    $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-                    $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
-                    $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
-                    $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
-                    $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
-                    $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
-                    $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
-                    $requestby = "";
-                    $takeby = "";
-                    $purpose = "";
-                    $curdatetime = new DateTime();
-                    $datetime2 = new DateTime($transdate);
-                    $interval = $curdatetime->diff($datetime2);
-        //            $elapsed = $interval->format('%a days %h hours');
-                    $elapsed = $interval->format('%a days');
-
-                    if(empty($engineer2) || $engineer2 == ""){
-                        $requestby = $engineer_name;
-                        $takeby = "-";
-                    }else{
-                        $requestby = $engineer_name;
-                        $takeby = $engineer2_name;
-                    }
-                    
-                    $get_purpose = $this->config->config['purpose']['out'];
-                    $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
-
-                    $row['transnum'] = $transnum;
-                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
-                    $row['transticket'] = $transticket;
-                    $row['reqby'] = $requestby;
-                    $row['takeby'] = $takeby;
-                    $row['purpose'] = $purpose;
-                    $row['qty'] = $qty;
-                    $row['user'] = $user_fullname;
-        //            $row['notes'] = "-";
-                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-
-                    if($fpurpose !== "RWH"){
-                        $data[] = $row;
-                    }
-                }
-                $output = $this->output
-                        ->set_content_type('application/json')
-                        ->set_output(json_encode(array('data'=>$data)));
-            break;
-            case "array":
-                foreach ($rs as $r) {
-                    $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-        //            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
-                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
-                    $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                    $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-                    $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-                    $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
-                    $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
-                    $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
-                    $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
-                    $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
-                    $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
-                    $requestby = "";
-                    $takeby = "";
-                    $purpose = "";
-                    $curdatetime = new DateTime();
-                    $datetime2 = new DateTime($transdate);
-                    $interval = $curdatetime->diff($datetime2);
-        //            $elapsed = $interval->format('%a days %h hours');
-                    $elapsed = $interval->format('%a days');
-
-                    if(empty($engineer2) || $engineer2 == ""){
-                        $requestby = $engineer_name;
-                        $takeby = "-";
-                    }else{
-                        $requestby = $engineer_name;
-                        $takeby = $engineer2_name;
-                    }
-                    
-                    $get_purpose = $this->config->config['purpose']['out'];
-                    $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
-
-                    $row['transnum'] = $transnum;
-                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
-                    $row['transticket'] = $transticket;
-                    $row['reqby'] = $requestby;
-                    $row['takeby'] = $takeby;
-                    $row['purpose'] = $purpose;
-                    $row['qty'] = $qty;
-                    $row['user'] = $user_fullname;
-        //            $row['notes'] = "-";
-                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url("request-parts/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-
-                    if($fpurpose !== "RWH"){
-                        $data[] = $row;
-                    }
-                }
-                $output = $data;
-            break;
-        }
-        return $output;
     }
     
     /**
@@ -463,17 +334,17 @@ class CRequestParts extends BaseController
         $cartid = $this->cart_sess;
         
         $date = date('Y-m-d'); 
-        $fticket = $this->input->post('fticket', TRUE);
-        $fengineer_id = $this->input->post('fengineer_id', TRUE);
-        $fengineer2_id = $this->input->post('fengineer2_id', TRUE);
-        $fpurpose = $this->input->post('fpurpose', TRUE);
-        $fqty = $this->input->post('fqty', TRUE);
+        $fticket = "";
+        $fengineer_id = "";
+        $fengineer2_id = "";
+        $fpurpose = "RWH";
+        $fdest_fsl = $this->input->post('fdest_fsl', TRUE);
         $fdelivery = $this->input->post('fdelivery', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
-        $fcust = $this->input->post('fcust', TRUE);
-        $floc = $this->input->post('floc', TRUE);
-        $fssb_id = $this->input->post('fssb_id', TRUE);
-        $fdest_fsl = $this->input->post('fdest_fsl', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $fcust = "";
+        $floc = "";
+        $fssb_id = "";
         $createdby = $this->session->userdata ( 'vendorUR' );
         
         if(($fqty < 1) || (empty($fqty))){
@@ -593,41 +464,19 @@ class CRequestParts extends BaseController
             $transnum = "";
             $purpose = "";
             $transdate = "";
-            $ticket = "";
-            $partner = "";
-            $engineer_id = "";
-            $engineer2_id = "";
-            $engineer_name = "";
-            $engineer_mess = "";
-            $engineer_sign = "";
             $fpurpose = "";
-            $customer = "";
-            $location = "";
-            $ssb_id = "";
             $fslname = "";
+            $fsldest = "";
             foreach ($results as $r){
                 $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 $get_purpose = $this->config->config['purpose']['out'];
                 $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
                 $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-                $ticket = $r->outgoing_ticket == "" ? "-" : filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
-                $transdate = date("d/m/Y H:i:s", strtotime(filter_var($r->created_at, FILTER_SANITIZE_STRING)));
-                $partner = $r->partner_name == "" ? "-" : filter_var($r->partner_name, FILTER_SANITIZE_STRING);
-                $engineer_id = $r->engineer_key == "" ? "-" : filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
-                $engineer2_id = $r->engineer_2_key == "" ? "-" : filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
-                $engineer_name = $r->engineer_name == "" ? "-" : filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
-                if(!empty($engineer2_id)){
-                    $engineer_mess = $r->engineer_2_name == "" ? "-" : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                    $engineer_sign = $r->engineer_2_name == "" ? $engineer_name : filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
-                }else{
-                    $engineer_sign = $engineer_name;
-                }
                 $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                 $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+                $fsldestcode = filter_var($r->fsl_dest, FILTER_SANITIZE_STRING);
+                $fsldestname = filter_var($r->fsl_dest_name, FILTER_SANITIZE_STRING);
                 $notes = $r->outgoing_notes == "" ? "-" : filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
-                $customer = $r->outgoing_cust == "" ? "-" : filter_var($r->outgoing_cust, FILTER_SANITIZE_STRING);
-                $location = $r->outgoing_loc == "" ? "-" : filter_var($r->outgoing_loc, FILTER_SANITIZE_STRING);
-                $ssb_id = $r->outgoing_ssbid == "" ? "-" : filter_var($r->outgoing_ssbid, FILTER_SANITIZE_STRING);
             }
 
 //            $this->mypdf->SetProtection(array('print'));// restrict to copy text, only print
@@ -640,68 +489,17 @@ class CRequestParts extends BaseController
             $this->mypdf->setFont('Arial','',10);
             $this->mypdf->Cell(($width*(25/100)),7,$purpose,1,1, 'L');
 
-            if($fpurpose != "RWH"){
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Stock Location',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$fslname,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Ticket Number',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$ticket,1,1, 'L');
+            $this->mypdf->setFont('Arial','B',10);
+            $this->mypdf->Cell(($width*(15/100)),7,'Delivery Notes',0,0,'L');
+            $this->mypdf->setFont('Arial','',10);
+            $this->mypdf->CellFitScale(($width*(35/100)),7,$notes,1,1, 'L');
 
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Service Partner',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$partner,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Customer',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$customer,1,1, 'L');
-
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Assigned FSE',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$engineer_name,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        Location',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$location,1,1, 'L');
-
-                $this->mypdf->ln(0);
-
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'FSE ID Number',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(25/100)),7,$engineer_id,1,0, 'L');
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(20/100)),7,'        SSB/ID',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->Cell(($width*(30/100)),7,$ssb_id,1,1, 'L');
-
-                $this->mypdf->ln(5);
-                $this->mypdf->setFont('Arial','B',13);
-                $this->mypdf->Cell(($width*(60/100)),7,'STOCK REQUEST FORM',0,0,'R');
-                $this->mypdf->ln(5);
-                // Garis atas untuk header
-//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
-            }else{
-                $this->mypdf->setFont('Arial','B',10);
-                $this->mypdf->Cell(($width*(15/100)),7,'Delivery Notes',0,0,'L');
-                $this->mypdf->setFont('Arial','',10);
-                $this->mypdf->CellFitScale(($width*(35/100)),7,$notes,1,1, 'L');
-                
-                $this->mypdf->ln(5);
-                $this->mypdf->setFont('Arial','B',13);
-                $this->mypdf->Cell(($width*(60/100)),7,'STOCK TRANSFER FORM',0,0,'R');
-                $this->mypdf->ln(5);
-                // Garis atas untuk header
-//                $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
-            }
+            $this->mypdf->ln(5);
+            $this->mypdf->setFont('Arial','B',13);
+            $this->mypdf->Cell(($width*(60/100)),7,'STOCK TRANSFER FORM',0,0,'R');
+            $this->mypdf->ln(5);
+            // Garis atas untuk header
+//            $this->mypdf->Line(10, $height/3.9, $width-10, $height/3.9);
 
             $this->mypdf->ln(5);
 
@@ -743,12 +541,12 @@ class CRequestParts extends BaseController
             $this->mypdf->SetFont('Arial','',8.5);
             $this->mypdf->drawTextBox('Notes:', $width-20, 12, 'L', 'T');
             $this->mypdf->ln(10);
-            $this->mypdf->Cell(($width*(25/100)),6,'Requested by:',0,0,'L');
+            $this->mypdf->Cell(($width*(25/100)),6,'Transfered by:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Approved by:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Processed by:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Received by:',0,1,'L');
             $this->mypdf->ln(12);
-            $this->mypdf->Cell(($width*(25/100)),6,'Name:'.$engineer_sign,0,0,'L');
+            $this->mypdf->Cell(($width*(25/100)),6,'Name:'.$fslname,0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Name:',0,1,'L');
@@ -758,7 +556,7 @@ class CRequestParts extends BaseController
             $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,0,'L');
             $this->mypdf->Cell(($width*(25/100)),6,'Date:',0,1,'L');
 
-            $title = 'Request Parts #'.$transnum;
+            $title = 'Transfered Stock #'.$transnum;
             $this->mypdf->SetTitle($title);
     //        $this->mypdf->Output('D', $title.'.pdf');
             return $this->mypdf->Output('D', $title.'.pdf');

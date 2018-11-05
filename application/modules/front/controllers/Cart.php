@@ -32,12 +32,12 @@ class Cart extends BaseController
     /**
      * This function is used to get list for datatables
      */
-    public function outgoing(){
+    public function outgoing($postfix){
         $rs = array();
         $arrWhere = array();
         
         $fcode = $this->repo;
-        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix;
         $arrWhere = array('funiqid'=>$cartid);
         
         //Parse Data for cURL
@@ -200,7 +200,7 @@ class Cart extends BaseController
     /**
      * This function is used to add cart
      */
-    public function create_outgoing(){
+    public function create_outgoing($postfix){
         $success_response = array(
             'status' => 1
         );
@@ -214,7 +214,7 @@ class Cart extends BaseController
         $fname = $this->name;
         $fpartnum = $this->input->post('fpartnum', TRUE);
         $fserialnum = $this->input->post('fserialnum', TRUE);
-        $cartid = $this->session->userdata ( 'cart_session' )."ot";
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix;
         $fqty = 1;
         
         $partname = "";

@@ -7,5 +7,5 @@ $config['purpose']['out'] = array(
                                 'M'=>'Maintenance',
                                 'I'=>'Investments',
                                 'B'=>'Borrowing',
-                                'RHW'=>'Transfer Stock',
+                                'RWH'=>'Transfer Stock',
                             );

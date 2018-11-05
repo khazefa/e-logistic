@@ -235,10 +235,23 @@ $route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1
 // ===========================
 
 // ===========================
+//  Routing Front Transfer to FSL
+// ===========================
+$route['transfer-to-fsl/view'] = 'front/ctransfertofsl';
+$route['transfer-to-fsl/add'] = 'front/ctransfertofsl/add';
+$route['transfer-to-fsl/list/([a-zA-Z]+)'] = 'front/ctransfertofsl/get_list/$1';
+$route['transfer-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
+$route['transfer-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
+$route['transfer-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
+// ===========================
+//  End Routing Front Transfer to FSL
+// ===========================
+
+// ===========================
 //  Routing Cart
 // ===========================
-$route['cart/outgoing/list'] = 'front/cart/outgoing';
-$route['cart/outgoing/add'] = 'front/cart/create_outgoing';
+$route['cart/outgoing/list/([a-zA-Z]+)'] = 'front/cart/outgoing/$1';
+$route['cart/outgoing/add/([a-zA-Z]+)'] = 'front/cart/create_outgoing/$1';
 $route['cart/outgoing/update'] = 'front/cart/update_outgoing';
 $route['cart/outgoing/delete'] = 'front/cart/delete_outgoing';
 // ===========================

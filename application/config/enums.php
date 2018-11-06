@@ -9,3 +9,7 @@ $config['purpose']['out'] = array(
                                 'B'=>'Borrowing',
                                 'RWH'=>'Transfer Stock',
                             );
+$config['purpose']['in'] = array(
+                                'S'=>'Supply',
+                                'RG'=>'Return Good',
+                            );

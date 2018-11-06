@@ -11,5 +11,11 @@ $config['purpose']['out'] = array(
                             );
 $config['purpose']['in'] = array(
                                 'S'=>'Supply',
+                                'R'=>'Return Good',
                                 'RG'=>'Return Good',
+                            );
+$config['status']['in_detail'] = array(
+                                'R'=>'Return Good',
+                                'RBP'=>'Return Bad Part',
+                                'RBS'=>'Return Bad Stock',
                             );

@@ -30,7 +30,7 @@
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
                         <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
+                                data-live-search="true" data-selected-text-format="count > 3" title="FSL Location.." data-style="btn-light">
                             <?php
                                 foreach($list_warehouse as $w){
                                     echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
@@ -132,7 +132,11 @@
                                     <th>Take by</th>
                                     <th>Purpose</th>
                                     <th>Qty</th>
-                                    <!--<th>FSL Admin</th>-->
+                                    <?php
+                                    if($hashub){
+                                        echo "<th>FSL Location</th>";
+                                    }
+                                    ?>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -250,7 +254,13 @@
                 { "data": 'takeby' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
-//                { "data": 'user' },
+                <?php
+                if($hashub){
+                ?>
+                { "data": 'fsl_location' },
+                <?php
+                }
+                ?>
                 { "data": 'status' },
                 { "data": 'button' },
             ],

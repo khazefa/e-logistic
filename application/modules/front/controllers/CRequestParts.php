@@ -351,6 +351,7 @@ class CRequestParts extends BaseController
                     $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                     $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                     $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
                     $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
@@ -382,7 +383,7 @@ class CRequestParts extends BaseController
                     $row['takeby'] = $takeby;
                     $row['purpose'] = $purpose;
                     $row['qty'] = $qty;
-                    $row['user'] = $user_fullname;
+                    $row['fsl_location'] = $fslname;
         //            $row['notes'] = "-";
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
                     $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
@@ -413,6 +414,7 @@ class CRequestParts extends BaseController
                     $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                     $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                     $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
                     $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
@@ -444,7 +446,7 @@ class CRequestParts extends BaseController
                     $row['takeby'] = $takeby;
                     $row['purpose'] = $purpose;
                     $row['qty'] = $qty;
-                    $row['user'] = $user_fullname;
+                    $row['fsl_location'] = $fslname;
         //            $row['notes'] = "-";
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
                     $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';

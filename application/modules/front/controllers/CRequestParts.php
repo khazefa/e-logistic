@@ -231,6 +231,152 @@ class CRequestParts extends BaseController
     }
     
     /**
+     * This function is used to check transaction
+     */
+    public function check_transaction(){
+        $rs = array();
+        $arrWhere = array();
+        $global_response = array();
+        $success_response = array();
+        $error_response = array();
+        
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        if(!empty($rs)){
+            $total_qty = 0;
+            $purpose = "";
+            $status = "";
+            foreach ($rs as $r){
+                $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+            }
+            if($status == "complete"){
+                $global_response = array(
+                    'status' => 0,
+                    'total_qty' => 0,
+                    'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 1,
+                    'purpose' => $purpose,
+                    'total_qty' => $total_qty,
+                    'message'=> 'Transaction still open'
+                );
+            }
+            $response = $global_response;
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'total_qty'=> 0,
+                'message'=> 'Transaction is not available'
+            );
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get detail request
+     */
+    public function get_request(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);        
+        if(!empty($ftrans_out)){
+            //Parameters for cURL
+            $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_view_outgoings'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+        }else{
+            $rs = array();
+            $arrWhere = array();
+        }
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
+            $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
+            $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
+            $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
+            $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
+            $partner_code = filter_var($r->partner_uniqid, FILTER_SANITIZE_STRING);
+            $partner_name = filter_var($r->partner_name, FILTER_SANITIZE_STRING);
+            $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+            $total_qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+            $fsl = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $fsl_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
+            $customer = filter_var($r->outgoing_cust, FILTER_SANITIZE_STRING);
+            $location = filter_var($r->outgoing_loc, FILTER_SANITIZE_STRING);
+            $ssb_id = filter_var($r->outgoing_ssbid, FILTER_SANITIZE_STRING);
+            $fe_report = filter_var($r->fe_report, FILTER_SANITIZE_STRING);
+            $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+            $requestby = "";
+            $takeby = "";
+            $purpose = "";
+            $curdatetime = new DateTime();
+            $datetime2 = new DateTime($transdate);
+            $interval = $curdatetime->diff($datetime2);
+//            $elapsed = $interval->format('%a days %h hours');
+            $elapsed = $interval->format('%a days');
+            
+            if(empty($engineer2) || $engineer2 == ""){
+                $requestby = $engineer_name;
+                $takeby = "-";
+            }else{
+                $requestby = $engineer_name;
+                $takeby = $engineer2_name;
+            }
+            
+            $get_purpose = $this->config->config['purpose']['out'];
+            $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
+            
+            $row['transnum'] = $transnum;
+            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+            $row['transticket'] = $transticket;
+            $row['reqby'] = $requestby;
+            $row['partner'] = $partner_name;
+            $row['takeby'] = $takeby;
+            $row['purpose'] = $purpose;
+            $row['qty'] = $total_qty;
+            $row['fsl'] = $fsl;
+            $row['fslname'] = $fsl_name;
+            $row['customer'] = $customer;
+            $row['location'] = $location;
+            $row['ssbid'] = $ssb_id;
+            $row['fereport'] = $fe_report;
+            $row['user'] = $user_fullname;
+//            $row['notes'] = "-";
+            $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
      * This function is used to check ticket
      */
     public function check_ticket(){
@@ -498,6 +644,61 @@ class CRequestParts extends BaseController
     }
     
     /**
+     * This function is used to get list for datatables
+     */
+    public function get_request_detail(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        if(!empty($ftrans_out)){
+            //Parameters for cURL
+            $arrWhere = array('ftrans_out'=>$ftrans_out);
+        
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+        }else{
+            $rs = array();
+            $arrWhere = array();
+        }
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $dtid = filter_var($r->dt_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+            $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+            $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
+            $isdeleted = $deleted < 1 ? "N" : "Y";
+            
+            if($isdeleted === "N"){
+                $row['id'] = $dtid;
+                $row['transnum'] = $transnum;
+                $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                $row['partnum'] = $partnum;
+                $row['partname'] = $partname;
+                $row['serialnum'] = $serialnum;
+                $row['qty'] = $qty;
+                $row['return'] = $return;
+                $row['deleted'] = $isdeleted;
+ 
+                $data[] = $row;
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
      * This function is used to complete transaction
      */
     public function submit_trans(){
@@ -541,6 +742,7 @@ class CRequestParts extends BaseController
                 //get cart list by retnum
                 $data_tmp = $this->get_list_cart();
 //                var_dump($data_tmp);
+                $dataDetail = array();
                 if(!empty($data_tmp)){
                     if($fqty < 1){
                         $this->session->set_flashdata('error', 'Skip looped submitted data');
@@ -557,7 +759,6 @@ class CRequestParts extends BaseController
                             $listdetail = array();
                             $listupdatestock = array();
                             foreach ($data_tmp as $d){
-                                $dataDetail = array();
                                 $partstock = $this->get_stock($fcode, $d['partno']);
 //                                var_dump($partstock);
                                 if($partstock < (int)$d['qty']){
@@ -605,6 +806,71 @@ class CRequestParts extends BaseController
             }
         }
         
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to update detail outgoing status
+     */
+    public function update_detail_status(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fstatus'=>$fstatus);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to update detail outgoing status
+     */
+    public function update_detail_status_all(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fstatus'=>'');
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail_all'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

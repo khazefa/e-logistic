@@ -10,10 +10,9 @@ require APPPATH . '/libraries/BaseController.php';
  * @version : 1.0
  * @since : Mei 2017
  */
-class CReturnParts extends BaseController
+class CReturnParts_1 extends BaseController
 {
     private $cname = 'return-parts';
-    private $cname_request = 'request-parts';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
@@ -83,9 +82,8 @@ class CReturnParts extends BaseController
         $this->global ['name'] = $this->name;
         
         $data['classname'] = $this->cname;
-        $data['classname_request'] = $this->cname_request;
         $data['cart_postfix'] = $this->cart_postfix;
-        $this->loadViews($this->view_dir.'create', $this->global, $data);
+        $this->loadViews($this->view_dir.'/return_parts', $this->global, NULL);
     }
     
     /**
@@ -257,71 +255,223 @@ class CReturnParts extends BaseController
     }
     
     /**
-     * This function is used to get list information described by function name
+     * This function is used to update detail outgoing status
      */
-    private function get_stock($fcode, $partnum){
+    public function update_detail_status(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fstatus'=>$fstatus);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to update detail outgoing status
+     */
+    public function update_detail_status_all(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fstatus'=>'');
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail_all'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete cart
+     */
+    public function delete_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to delete cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+
+        $arrWhere = array('fid'=>$fid);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_delete_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete cart
+     */
+    public function delete_all_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to delete all cart'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
+        $arrWhere = array('fcartid'=>$cartid);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to update cart
+     */
+    public function update_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+
+        $arrWhere = array('fid'=>$fid, 'fqty'=>$fqty);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_warehouse_name($fcode){
         $rs = array();
         $arrWhere = array();
-        $val_stock = 0;
         
-        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);        
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $wh_name = "";
+        foreach ($rs as $r) {
+            $wh_name = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $wh_name;
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    private function get_info_part_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);
+        
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
         foreach ($rs as $r) {
+            $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+            $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+            $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
             $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
             $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
             $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
             $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
             
-            if($initflag === "Y"){
-                $val_stock = $initstock;
-            }else{
-                $val_stock = $stock;
-            }
-        }
-        
-        return $val_stock;
-    }
-    
-    /**
-     * This function is used to get list cart
-     */
-    private function get_list_cart($cartid){
-        $rs = array();
-        
-        //Parameters for cURL
-        $arrWhere = array();
-        
-        $fcode = $this->repo;
-        $arrWhere = array('funiqid'=>$cartid);
-        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        $data = array();
-        $partname = "";
-        $partstock = "";
-        foreach ($rs as $r) {
-            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
-            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
-            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
-            $notes = filter_var($r->tmp_notes, FILTER_SANITIZE_STRING);
+            $row['code'] = $code;
+            $row['partno'] = $partno;
+            $row['warehouse'] = $this->get_info_warehouse_name($code);
+            $row['part'] = $this->get_info_part_name($partno);
             
-            $row['id'] = $id;
-            $row['partno'] = $partnum;
-            $row['partname'] = $partname;
-            $row['serialno'] = $serialnum;
-            $row['qty'] = (int)$qty;
-            $row['status'] = $status;
-            $row['notes'] = $notes;
+            if($initflag === "Y"){
+                $row['stock'] = $initstock;
+            }else{
+                $row['stock'] = $stock;
+            }
  
             $data[] = $row;
         }
@@ -332,7 +482,7 @@ class CReturnParts extends BaseController
     /**
      * This function is used to complete return transaction
      */
-    public function submit_trans(){
+    public function submit_trans_return(){
         $success_response = array(
             'status' => 1
         );
@@ -350,7 +500,9 @@ class CReturnParts extends BaseController
         $fnotes = $this->input->post('fnotes', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $cartid = $this->cart_sess.$ftrans_out;
+        $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
+//        $arrParam = array('fparam'=>'IN', 'fcode'=>$fcode, 'fdigits'=>5);
+//        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num_ext'), 'POST', FALSE);
         $arrParam = array('fparam'=>'IC');
         $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
         $transnum = $rs_transnum->status ? $rs_transnum->result : "";
@@ -358,9 +510,9 @@ class CReturnParts extends BaseController
         if($transnum === ""){
             $response = $error_response;
         }else{
-            $data_tmp = array();
             //get cart list by retnum
-            $data_tmp = $this->get_list_cart($cartid);
+            $data_tmp = $this->get_list_cart_return($cartid);
+
             $dataDetail = array();
             if(!empty($data_tmp)){
                 $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
@@ -374,13 +526,17 @@ class CReturnParts extends BaseController
                             'POST', FALSE);
                     
                     foreach ($data_tmp as $d){
-                        $partstock = $this->get_stock($fcode, $d['partno']);
+                        $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
+                        foreach ($rs_stock as $s){
+                            $partstock = (int)$s["stock"];
+                        }
+
                         $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                            'fqty'=>$d['qty'], 'fstatus'=>$d['status'], 'fnotes'=>$d['notes']);
+                            'fqty'=>$d['qty']);
                         $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
                                 'POST', FALSE);
 
-                        if($d['status'] === 'R' || $d['status'] === 'RG'){
+                        if($d['status'] === 'RG'){
                             $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
                                 'fflag'=>'N');
                             //update stock by fsl code and part number
@@ -419,6 +575,161 @@ class CReturnParts extends BaseController
         ->set_output(
             json_encode($response)
         );
+    }
+    
+    /**
+     * This function is used to get detail information
+     */
+    private function get_info_part_name($fpartnum){
+        $rs = array();
+        $arrWhere = array();
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partname = "";
+        foreach ($rs as $r) {
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+        }
+        
+        return $partname;
+    }
+    
+    /**
+     * This function is used to add cart
+     */
+    public function add_cart(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to add data'
+        );
+        
+        $fcode = $this->repo;
+        $fuser = $this->vendorUR;
+        $fname = $this->name;
+        $ftransout = $this->input->post('ftransout', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fpartname = $this->get_info_part_name($fpartnum);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fserialnum_old = $this->input->post('fserialnum_old', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftransout;
+        
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$fpartname, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 
+            'fqty'=>$fqty, 'fstatus'=>$fstatus, 'fuser'=>$fuser, 'fname'=>$fname);
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_cart_return_datatable(){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' )."inr".$ftrans_out;
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['qty'] = (int)$qty;
+            $row['status'] = $status;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
+     * This function is used to get list cart
+     */
+    private function get_list_cart_return($cartid){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->tmp_notes, FILTER_SANITIZE_STRING);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['qty'] = (int)$qty;
+            $row['status'] = $status;
+            $row['notes'] = $notes;
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
     }
     
     public function print_transaction($ftrans_in){
@@ -564,10 +875,10 @@ class CReturnParts extends BaseController
 
             $this->mypdf->SetFont('Arial','B',10);
             $this->mypdf->Cell(($width*(15/100)),6,'Requested PN',1,0);
-            $this->mypdf->Cell(($width*(30/100)),6,'Description',1,0);
+            $this->mypdf->Cell(($width*(35/100)),6,'Description',1,0);
             $this->mypdf->Cell(($width*(7.5/100)),6,'Qty',1,0);
             $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,0);
-            $this->mypdf->Cell(($width*(15/100)),6,'Status',1,1);
+            $this->mypdf->Cell(($width*(10/100)),6,'Status',1,1);
 
             $this->mypdf->SetFont('Arial','',9);
             
@@ -581,15 +892,13 @@ class CReturnParts extends BaseController
                 $partname = $row->part_name == "" ? "-" : filter_var($row->part_name, FILTER_SANITIZE_STRING);
                 $qty = filter_var($row->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                 $serialnum = $row->serial_number == "" ? "-" : filter_var($row->serial_number, FILTER_SANITIZE_STRING);
-                $fstatus = $row->return_status == "" ? "" : filter_var($row->return_status, FILTER_SANITIZE_STRING);
-                $get_status = $this->config->config['status']['in_detail'];
-                $status = isset($get_status[$fstatus]) ? $get_status[$fstatus] : "-";
+                $status = $row->return_status == "" ? "X" : filter_var($row->return_status, FILTER_SANITIZE_STRING);
 
                 $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
-                $this->mypdf->CellFitScale(($width*(30/100)),6,$partname,1,0);
+                $this->mypdf->CellFitScale(($width*(35/100)),6,$partname,1,0);
                 $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
                 $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
-                $this->mypdf->CellFitScale(($width*(15/100)),6,$status,1,1);
+                $this->mypdf->CellFitScale(($width*(10/100)),6,$status,1,1);
             }
             
             $this->mypdf->ln(5);
@@ -603,10 +912,9 @@ class CReturnParts extends BaseController
 
             $this->mypdf->SetFont('Arial','B',10);
             $this->mypdf->Cell(($width*(15/100)),6,'Returned PN',1,0);
-            $this->mypdf->Cell(($width*(30/100)),6,'Description',1,0);
+            $this->mypdf->Cell(($width*(35/100)),6,'Description',1,0);
             $this->mypdf->Cell(($width*(7.5/100)),6,'Qty',1,0);
-            $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,0);
-            $this->mypdf->Cell(($width*(15/100)),6,'Notes',1,1);
+            $this->mypdf->Cell(($width*(18/100)),6,'Serial No.',1,1);
 
             $this->mypdf->SetFont('Arial','',9);
             
@@ -620,13 +928,11 @@ class CReturnParts extends BaseController
                 $partname = filter_var($row->part_name, FILTER_SANITIZE_STRING);
                 $qty = filter_var($row->dt_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
                 $serialnum = filter_var($row->serial_number, FILTER_SANITIZE_STRING);
-                $notes = empty($row->dt_notes) ? "-" : filter_var($row->dt_notes, FILTER_SANITIZE_STRING);
 
                 $this->mypdf->Cell(($width*(15/100)),6,$partnum,1,0);
-                $this->mypdf->CellFitScale(($width*(30/100)),6,$partname,1,0);
+                $this->mypdf->CellFitScale(($width*(35/100)),6,$partname,1,0);
                 $this->mypdf->CellFitScale(($width*(7.5/100)),6,$qty,1,0,'C');
-                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,0);
-                $this->mypdf->CellFitScale(($width*(15/100)),6,$notes,1,1);
+                $this->mypdf->CellFitScale(($width*(18/100)),6,$serialnum,1,1);
             }
             
             $title = 'Return Parts #'.$ftransin;

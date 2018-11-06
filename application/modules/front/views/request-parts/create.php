@@ -608,7 +608,7 @@
     
     //check ticket
     function check_ticket(ticketno){        
-        var url = '<?php echo base_url('request-parts/check-ticket'); ?>';
+        var url = '<?php echo base_url($classname.'/check-ticket'); ?>';
         var type = 'POST';
         
         var data = {
@@ -626,7 +626,7 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 0){
                     alert(jqXHR.message);
-                    window.location.href = "<?php echo base_url('request-parts/view'); ?>";
+                    window.location.href = "<?php echo base_url($classname.'/view'); ?>";
                     status_checkticket = 0;
                 }else if(jqXHR.status === 1){
                     alert(jqXHR.message);
@@ -814,7 +814,7 @@
                     alert(jqXHR.message);
                 }else if(jqXHR.status === 1){
                     print_transaction(jqXHR.message);
-                    window.location.href = "<?php echo base_url('request-parts/add'); ?>";
+                    window.location.href = "<?php echo base_url($classname.'/add'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -827,7 +827,7 @@
     function print_transaction(ftransno)
     {
         var param = ftransno;
-        var url = '<?php echo base_url('request-parts/print/'); ?>'+param;
+        var url = '<?php echo base_url($classname.'/print/'); ?>'+param;
         var newWindow=window.open(url);
 //        window.location.assign(url);
     }

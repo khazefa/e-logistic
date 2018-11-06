@@ -150,7 +150,9 @@ class CRequestParts extends BaseController
  
             if($this->hasCoverage){
                 if(in_array($row['code'], $e_coverage)){
-                    $data[] = $row;
+                    if($row['code'] !== "WSPS"){
+                        $data[] = $row;
+                    }
                 }
             }else{
                 $data[] = $row;
@@ -293,9 +295,41 @@ class CRequestParts extends BaseController
         $fdate1 = $this->input->get('fdate1', TRUE);
         $fdate2 = $this->input->get('fdate2', TRUE);
         $fticket = $this->input->get('fticket', TRUE);
-        $fcode = empty($this->input->get('fticket', TRUE)) ? $this->repo : $this->input->get('fticket', TRUE);
+        $fticket = empty($this->input->get('fticket', TRUE)) ? "" : $this->input->get('fticket', TRUE);
         $fpurpose = $this->input->get('fpurpose', TRUE);
         $fstatus = $this->input->get('fstatus', TRUE);
+        $coverage = !empty($_GET['fcoverage']) ? implode(';',$_GET['fcoverage']) : "";
+        
+        if($this->hasHub){
+            if($this->hasCoverage){
+                if(empty($coverage)){
+                    $fcoverage = $this->session->userdata ( 'ovCoverage' );
+                }else{
+                    if (strpos($coverage, ',') !== false) {
+                        $fcoverage = str_replace(',', ';', $coverage);
+                    }else{
+                        $fcoverage = $coverage;
+                    }
+                }
+            }else{
+                if (strpos($coverage, ',') !== false) {
+                    $fcoverage = str_replace(',', ';', $coverage);
+                }else{
+                    $fcoverage = $coverage;
+                }
+            }
+
+            if(empty($fcoverage)){
+                $e_coverage = array();
+            }else{
+                $e_coverage = explode(';', $fcoverage);
+            }
+            
+            $fcode = "";
+        }else{
+            $fcode = $this->repo;
+        }
+        
         //Parameters for cURL
         $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 
             'fticket'=>$fticket, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
@@ -316,6 +350,7 @@ class CRequestParts extends BaseController
                     $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
                     $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                     $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                    $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                     $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
                     $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
@@ -353,7 +388,13 @@ class CRequestParts extends BaseController
                     $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
 
                     if($fpurpose !== "RWH"){
-                        $data[] = $row;
+                        if($this->hasHub){
+                            if(in_array($fslcode, $e_coverage)){
+                                $data[] = $row;
+                            }
+                        }else{
+                            $data[] = $row;
+                        }
                     }
                 }
                 $output = $this->output
@@ -371,6 +412,7 @@ class CRequestParts extends BaseController
                     $engineer2 = filter_var($r->engineer_2_key, FILTER_SANITIZE_STRING);
                     $engineer2_name = filter_var($r->engineer_2_name, FILTER_SANITIZE_STRING);
                     $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
+                    $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                     $user_fullname = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
                     $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
@@ -405,10 +447,16 @@ class CRequestParts extends BaseController
                     $row['user'] = $user_fullname;
         //            $row['notes'] = "-";
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url("request-parts/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
 
                     if($fpurpose !== "RWH"){
-                        $data[] = $row;
+                        if($this->hasHub){
+                            if(in_array($fslcode, $e_coverage)){
+                                $data[] = $row;
+                            }
+                        }else{
+                            $data[] = $row;
+                        }
                     }
                 }
                 $output = $data;

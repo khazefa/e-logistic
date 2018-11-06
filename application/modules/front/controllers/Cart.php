@@ -73,6 +73,193 @@ class Cart extends BaseController
     }
     
     /**
+     * This function is used to add cart
+     */
+    public function create_incoming($postfix){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to add data'
+        );
+        
+        $fcode = $this->repo;
+        $fuser = $this->vendorUR;
+        $fname = $this->name;
+        $ftransout = $this->input->post('ftransout', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fpartname = $this->get_part_name($fpartnum);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fserialnum_old = $this->input->post('fserialnum_old', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $fnotes = $this->input->post('fnotes', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix.$ftransout;
+        
+        $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$fpartname, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 
+            'fqty'=>$fqty, 'fstatus'=>$fstatus, 'fnotes'=>$fnotes, 'fuser'=>$fuser, 'fname'=>$fname);
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete cart
+     */
+    public function delete_incoming(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to delete cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+
+        $arrWhere = array('fid'=>$fid);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_delete_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to delete all cart
+     */
+    public function delete_all_incoming($postfix){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to delete all cart'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix.$ftrans_out;
+        $arrWhere = array('fcartid'=>$cartid);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+/**
+     * This function is used to update cart
+     */
+    public function update_incoming(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update cart'
+        );
+        
+        $fid = $this->input->post('fid', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+
+        $arrWhere = array('fid'=>$fid, 'fqty'=>$fqty);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_incomings_cart'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to get list for datatables
+     */
+    public function incoming($postfix){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $ftrans_out = $this->input->get('ftrans_out', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix.$ftrans_out;
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['qty'] = (int)$qty;
+            $row['status'] = $status;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+    
+    /**
      * This function is used to get list information described by function name
      */
     private function get_stock($fcode, $partnum){

@@ -227,8 +227,13 @@ $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
 $route['request-parts/view'] = 'front/crequestparts';
 $route['request-parts/add'] = 'front/crequestparts/add';
 $route['request-parts/list/([a-zA-Z]+)'] = 'front/crequestparts/get_list/$1';
+$route['request-parts/detail'] = 'front/crequestparts/get_request';
+$route['request-parts/list_detail'] = 'front/crequestparts/get_request_detail';
 $route['request-parts/check-ticket'] = 'front/crequestparts/check_ticket';
+$route['request-parts/check-transaction'] = 'front/crequestparts/check_transaction';
 $route['request-parts/insert'] = 'front/crequestparts/submit_trans';
+$route['request-parts/modify-detail'] = 'front/crequestparts/update_detail_status';
+$route['request-parts/bulk-modify-detail'] = 'front/crequestparts/update_detail_status_all';
 $route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1';
 // ===========================
 //  End Routing Front Outgoing Trans
@@ -254,6 +259,12 @@ $route['cart/outgoing/list/([a-zA-Z]+)'] = 'front/cart/outgoing/$1';
 $route['cart/outgoing/add/([a-zA-Z]+)'] = 'front/cart/create_outgoing/$1';
 $route['cart/outgoing/update'] = 'front/cart/update_outgoing';
 $route['cart/outgoing/delete'] = 'front/cart/delete_outgoing';
+
+$route['cart/incoming/list/([a-zA-Z]+)'] = 'front/cart/incoming/$1';
+$route['cart/incoming/add/([a-zA-Z]+)'] = 'front/cart/create_incoming/$1';
+$route['cart/incoming/update'] = 'front/cart/update_incoming';
+$route['cart/incoming/delete'] = 'front/cart/delete_incoming';
+$route['cart/incoming/bulk-delete/([a-zA-Z]+)'] = 'front/cart/delete_all_incoming/$1';
 // ===========================
 //  End Routing Cart
 // ===========================

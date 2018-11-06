@@ -12,6 +12,16 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CIncoming extends BaseController
 {
+    private $cname = 'incoming-trans';
+    private $cname_warehouse = 'warehouse';
+    private $cname_cart = 'cart';
+    private $view_dir = 'front/incoming-trans/';
+    private $readonly = TRUE;
+    private $hasCoverage = FALSE;
+    private $hasHub = FALSE;
+    private $cart_postfix = 'in';
+    private $cart_sess = '';
+    
     /**
      * This is default constructor of the class
      */
@@ -64,6 +74,22 @@ class CIncoming extends BaseController
         $data['list_coverage'] = $this->get_list_warehouse("array");
         
         $this->loadViews('front/incoming-trans/lists', $this->global, $data);
+    }
+    
+    /**
+     * This function used to load the first screen incoming trans menu
+     */
+    public function dashboard()
+    {
+        $this->global['pageTitle'] = 'Incoming Transactions - '.APP_NAME;
+        $this->global['pageMenu'] = 'Incoming Transactions';
+        $this->global['contentHeader'] = 'Incoming Transactions';
+        $this->global['contentTitle'] = 'Incoming Transactions';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        
+        $data['classname'] = $this->cname;
+        $this->loadViews($this->view_dir.'/dashboard', $this->global, $data);
     }
     
     /**
@@ -303,9 +329,7 @@ class CIncoming extends BaseController
         $rs = array();
         $arrWhere = array();
         
-//        $fcode = $this->repo;
-//        $arrWhere = array('fcode'=>$fcode);
-        //Parse Data for cURL
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         

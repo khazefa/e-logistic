@@ -30,7 +30,7 @@
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
                         <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
+                                data-live-search="true" data-selected-text-format="count > 3" title="Transfer From.." data-style="btn-light">
                             <?php
                                 foreach($list_warehouse as $w){
                                     echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
@@ -115,6 +115,7 @@
                                 <tr>
                                     <th>Trans No</th>
                                     <th>Date</th>
+                                    <th>Transfer From</th>
                                     <th>Transfer To</th>
                                     <th>Qty</th>
                                     <th>Status</th>
@@ -226,6 +227,7 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
+                { "data": 'transfer_from' },
                 { "data": 'transfer_to' },
                 { "data": 'qty' },
                 { "data": 'status' },

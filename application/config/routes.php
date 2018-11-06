@@ -371,9 +371,22 @@ $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['supply-from-other-fsl'] = 'front/cincoming/supply_from_other_fsl';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
-$route['return-parts'] = 'front/creturnparts/add';
+$route['incoming-trans/dashboard'] = 'front/cincoming/dashboard';
 // ===========================
 //  End Routing Front Incoming Trans
+// ===========================
+
+// ===========================
+//  Routing Front Return Parts
+// ===========================
+$route['return-parts/view'] = 'front/creturnparts';
+$route['return-parts/add'] = 'front/creturnparts/add';
+$route['return-parts/list/([a-zA-Z]+)'] = 'front/creturnparts/get_list/$1';
+$route['return-parts/check-ticket'] = 'front/creturnparts/check_ticket';
+$route['return-parts/insert'] = 'front/creturnparts/submit_trans';
+$route['return-parts/print/(:any)'] = 'front/creturnparts/print_transaction/$1';
+// ===========================
+//  End Routing Front Return Parts
 // ===========================
 
 // ===========================

@@ -138,9 +138,7 @@ class CReturnParts extends BaseController
         
         $fdate1 = $this->input->get('fdate1', TRUE);
         $fdate2 = $this->input->get('fdate2', TRUE);
-        $fticket = $this->input->get('fticket', TRUE);
         $fpurpose = $this->input->get('fpurpose', TRUE);
-        $fstatus = $this->input->get('fstatus', TRUE);
         $coverage = !empty($_GET['fcoverage']) ? implode(';',$_GET['fcoverage']) : "";
         
         if($this->hasHub){
@@ -185,7 +183,7 @@ class CReturnParts extends BaseController
                     $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
                     $outstatus = $r->outgoing_status == "" ? "" : "(". strtoupper($r->outgoing_status).")";
                     $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
-                    $fpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
+                    $rpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                     $fslfrom = filter_var($r->fsl_from, FILTER_SANITIZE_STRING);
                     $fslfromname = filter_var($r->fsl_from_name, FILTER_SANITIZE_STRING);
@@ -194,7 +192,7 @@ class CReturnParts extends BaseController
                     $notes = filter_var($r->incoming_notes, FILTER_SANITIZE_STRING);
                     
                     $get_purpose = $this->config->config['purpose']['in'];
-                    $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
+                    $purpose = isset($get_purpose[$rpurpose]) ? $get_purpose[$rpurpose] : "-";
                     $button = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                         
                     $row['transnum'] = $transnum;
@@ -203,7 +201,7 @@ class CReturnParts extends BaseController
                     $row['qty'] = $qty;
                     $row['button'] = $button;
 
-                    if($fpurpose === "R" || $fpurpose === "RG"){
+                    if($rpurpose === "R" || $rpurpose === "RG"){
                         if($this->hasHub){
                             if(in_array($fslcode, $e_coverage)){
                                 $data[] = $row;

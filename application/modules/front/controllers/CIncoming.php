@@ -976,7 +976,7 @@ class CIncoming extends BaseController
                 {
                     $success_response = array(
                         'status' => 1,
-                        'message'=> 'Sparepart <strong>'.$partname.'</strong> is available'
+                        'message'=> 'Sparepart <strong>'.$partname.'</strong> has been added'
                     );
                     $response = $success_response;
                 }
@@ -1184,10 +1184,11 @@ class CIncoming extends BaseController
         $fserialnum = $this->input->post('fserialnum', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $fstatus = $this->input->post('fstatus', TRUE);
+        $fnotes = '';
         $cartid = $this->session->userdata ( 'cart_session' )."in";
         
         $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$fpartname, 'fserialnum'=>$fserialnum, 'fcartid'=>$cartid, 
-            'fqty'=>$fqty, 'fstatus'=>$fstatus, 'fuser'=>$fuser, 'fname'=>$fname);
+            'fqty'=>$fqty, 'fstatus'=>$fstatus, 'fnotes'=>$fnotes, 'fuser'=>$fuser, 'fname'=>$fname);
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_incomings_cart'), 'POST', FALSE);
 
         if($rs_data->status)

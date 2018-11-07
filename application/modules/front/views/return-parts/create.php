@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4 m-b-30">

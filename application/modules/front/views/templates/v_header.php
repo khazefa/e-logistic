@@ -19,6 +19,8 @@
         <link href="<?php echo base_url();?>assets/public/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/typehead/css/typeahead.css" rel="stylesheet" />
         <link href="<?php echo base_url();?>assets/public/plugins/jquery-datetimepicker/css/jquery.datetimepicker.min.css" rel="stylesheet" />
+        <!-- Tooltipster css -->
+        <link rel="stylesheet" href="<?php echo base_url();?>assets/public/plugins/tooltipster/tooltipster.bundle.min.css">
         
         <!-- App css -->
         <link href="<?php echo base_url();?>assets/public/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

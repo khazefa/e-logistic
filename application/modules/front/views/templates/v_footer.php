@@ -131,6 +131,8 @@
         <script src="<?php echo base_url();?>assets/public/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/plugins/typehead/js/typeahead.bundle.min.js"></script>
         <script src="<?php echo base_url();?>assets/public/plugins/jquery-datetimepicker/js/jquery.datetimepicker.full.min.js"></script>
+        <!-- Tooltipster js -->
+        <script src="<?php echo base_url();?>assets/public/plugins/tooltipster/tooltipster.bundle.min.js"></script>
         
         <!-- App js -->
         <script src="<?php echo base_url();?>assets/public/js/jquery.core.js"></script>
@@ -167,6 +169,7 @@
             }
             $(document).ready(function() {
                 $('form').parsley();
+                $('#tooltip-hover').tooltipster();
             });
         </script>
         

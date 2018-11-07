@@ -15,7 +15,8 @@ $config['purpose']['in'] = array(
                                 'RG'=>'Return Good',
                             );
 $config['status']['in_detail'] = array(
-                                'R'=>'Return Good',
-                                'RBP'=>'Return Bad Part',
-                                'RBS'=>'Return Bad Stock',
+                                'RGP'=>'Return Good',
+                                'RBP'=>'Bad Part',
+                                'RBS'=>'Bad Stock',
+                                'RGC'=>'Consumed',
                             );

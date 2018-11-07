@@ -524,6 +524,7 @@ class CTransferToFSL extends BaseController
                 $get_purpose = $this->config->config['purpose']['out'];
                 $purpose = isset($get_purpose[$fpurpose]) ? $get_purpose[$fpurpose] : "-";
                 $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
+                $transdate = date("d/m/Y H:i:s", strtotime(filter_var($r->created_at, FILTER_SANITIZE_STRING)));
                 $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                 $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
                 $fsldestcode = filter_var($r->fsl_dest, FILTER_SANITIZE_STRING);

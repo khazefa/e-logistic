@@ -17,7 +17,7 @@
             <h3 class="m-b-10">6952</h3>
             <p class="text-uppercase m-b-5 font-13 font-600">Total Supply from Another FSL</p>
             <div class="btn-group">
-                <button type="button" onclick="location.href='<?php echo base_url($classname.'/add');?>'" class="btn btn-warning waves-light waves-effect">
+                <button type="button" onclick="location.href='<?php echo base_url('supply-fsl-to-fsl/view');?>'" class="btn btn-warning waves-light waves-effect">
                     View Detail
                 </button>
             </div>

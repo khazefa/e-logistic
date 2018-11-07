@@ -120,11 +120,6 @@
     //init table
     function init_table(){
         var table = $('#data_grid').DataTable({
-//            select: {
-//                style: 'multi'
-//            },
-//            scrollY: '50vh',
-//            scrollCollapse: true,
             searching: false,
             ordering: false,
             info: false,

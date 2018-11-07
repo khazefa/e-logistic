@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
@@ -18,7 +18,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                                  </div>
-                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER] after input Outgoing No.">
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER] after input Reff No, e.g:OG18100001">
                                             </div>
                                             <div class="input-group col-sm-12">
                                                 <span id="ftrans_out_notes" class="help-block text-danger"><small></small></span>
@@ -120,11 +120,6 @@
     //init table
     function init_table(){
         var table = $('#data_grid').DataTable({
-//            select: {
-//                style: 'multi'
-//            },
-//            scrollY: '50vh',
-//            scrollCollapse: true,
             searching: false,
             ordering: false,
             info: false,
@@ -135,7 +130,7 @@
             processing: true,
             lengthChange: false,
             ajax: {
-                url: "<?= base_url('front/coutgoing/get_view_outgoing_detail'); ?>",
+                url: "<?= base_url($classname_request.'/list_detail'); ?>",
                 type: 'GET',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -175,8 +170,8 @@
     
     //check outgoing transaction
     function check_trans_out(transnum){
-        var url = '<?php echo base_url('front/csupplyfromfsl/check_outgoing_trf'); ?>';
-        var type = 'POST';
+        var url = '<?php echo base_url($classname_request.'/check-transaction'); ?>';
+        var type = 'GET';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : transnum
@@ -225,7 +220,7 @@
     
     //get outgoing information
     function get_outgoing_info(transnum){
-        var url = '<?php echo base_url('front/coutgoing/get_view_outgoing'); ?>';
+        var url = '<?php echo base_url($classname_request.'/detail'); ?>';
         var type = 'GET';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
@@ -258,19 +253,20 @@
     
     //submit transaction
     function complete_trans(){
-        var url = '<?php echo base_url('front/csupplyfromfsl/submit_trans_close_transfer'); ?>';
+        var url = '<?php echo base_url($classname.'/insert_close'); ?>';
         var type = 'POST';
         
         if(isEmpty(e_trans_out.val())){
-            alert('Please input Outgoing Number!');
+            alert('Please input Reff No!');
             e_trans_out.focus();
         }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : e_trans_out.val(),
-            fqty : $("ttl_qty").html(),
-            fcode_from : e_fslcode.html(),
-            fnotes : e_notes.val()
+//            fqty : $("ttl_qty").html(),
+//            fcode_from : e_fslcode.html(),
+//            fnotes : e_notes.val()
+            ffe_report : ''
         };
         
         $.ajax({
@@ -288,9 +284,7 @@
                         show: true
                     });
                 }else if(jqXHR.status === 1){
-//                    print_transaction(jqXHR.message);
-//                    alert('Close Transfer Stock Success!');
-                    window.location.href = "<?php echo base_url('supply-from-fsl'); ?>";
+                    window.location.href = "<?php echo base_url('supply-fsl-to-fsl/view'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -310,7 +304,7 @@
         e_trans_out.on("keypress", function(e){
             if (e.keyCode == 13) {
                 if(isEmpty(e_trans_out.val())){
-                    alert('Please input Outgoing Number!');
+                    alert('Please input Reff No!');
                     e_trans_out.focus();
                 }else{
                     check_trans_out(e_trans_out.val());
@@ -326,7 +320,7 @@
         
         e_trigger.on("click", function(e) {
             if(isEmpty(e_trans_out.val())){
-                alert('Please input Outgoing Number!');
+                alert('Please input Reff No!');
                 e_trigger.prop('checked', false);
             }else{
                 if(e_trigger.is(':checked')){

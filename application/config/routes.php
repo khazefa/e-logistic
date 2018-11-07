@@ -401,12 +401,17 @@ $route['return-parts/print/(:any)'] = 'front/creturnparts/print_transaction/$1';
 // ===========================
 
 // ===========================
-//  Routing Front Supply from FSL
+//  Routing Front Supply from FSL to FSL
 // ===========================
-$route['supply-from-fsl'] = 'front/csupplyfromfsl';
-$route['add-supply-from-fsl'] = 'front/csupplyfromfsl/add';
+$route['supply-fsl-to-fsl/view'] = 'front/csupplyfromfsl';
+$route['supply-fsl-to-fsl/add'] = 'front/csupplyfromfsl/add';
+$route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
+$route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
+$route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
+$route['supply-fsl-to-fsl/insert_close'] = 'front/csupplyfromfsl/submit_trans_close';
+$route['supply-fsl-to-fsl/print/(:any)'] = 'front/csupplyfromfsl/print_transaction/$1';
 // ===========================
-//  End Routing Front Supply from FSL
+//  End Routing Front Supply from FSL to FSL
 // ===========================
 
 // ===========================

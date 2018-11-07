@@ -132,11 +132,16 @@
                             <li class="has-submenu">
                                 <a href="#"><i class="icon-handbag"></i>Transaction</a>
                                 <ul class="submenu">
+                                    <!--
                                     <li>
                                         <a href="<?php echo base_url("incoming-trans");?>">Incoming Parts</a>
                                     </li>
                                     <li>
                                         <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
+                                    </li>
+                                    -->
+                                    <li>
+                                        <a href="<?php echo base_url("incoming-trans/dashboard");?>">Incoming Parts</a>
                                     </li>
                                     <li>
                                         <a href="<?php echo base_url("request-parts/view");?>">Request Parts</a>

@@ -13,7 +13,7 @@ require APPPATH . '/libraries/BaseController.php';
 class CSupplyFromFSL extends BaseController
 {
     private $cname = 'supply-fsl-to-fsl';
-    private $cname_request = 'request-parts';
+    private $cname_transfer = 'transfer-to-fsl';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
@@ -246,7 +246,7 @@ class CSupplyFromFSL extends BaseController
         $this->global ['name'] = $this->name;
         
         $data['classname'] = $this->cname;
-        $data['classname_request'] = $this->cname_request;
+        $data['classname_transfer'] = $this->cname_transfer;
         $data['cart_postfix'] = $this->cart_postfix;
         $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
@@ -363,9 +363,10 @@ class CSupplyFromFSL extends BaseController
         $date = date('Y-m-d'); 
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
         $ffe_report = $this->input->post('ffe_report', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
         
         //update outgoing status by outgoing number
-        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
+        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>$fstatus);
         $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
                 'POST', FALSE);
 

@@ -24,15 +24,24 @@
                         <input type="date" name="fdate2" id="fdate2" class="form-control" placeholder="MM/DD/YYYY" required="required">
                     </div>
                 </div>
+                <?php 
+                    if($hashub){
+                ?>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
-                        <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
-                            <option value="">By Status</option>
-                            <option value="open">Open</option>
-                            <option value="complete">Complete</option>
+                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
+                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose.." data-style="btn-light">
+                            <?php
+                                foreach($list_warehouse as $w){
+                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
+                                }
+                            ?>
                         </select>
                     </div>
                 </div>
+                <?php
+                    }
+                ?>
             </div>
             <div class="card-footer">
                 <button type="button" id="btn_search" class="btn btn-primary waves-effect waves-light">
@@ -46,10 +55,16 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo base_url("add-supply-from-cwh");?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <?php 
+                if(!$readonly){
+            ?>
+                <div class="btn-group">
+                    <button type="button" onclick="location.href='<?php echo base_url($classname."/add");?>'" class="btn btn-sm btn-light waves-effect">
+                        <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
+                    </button>
+                </div>
+            <?php } ?>
             
             <p class="text-success text-center">
                 <?php
@@ -186,6 +201,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
+                    title: 'Export <?php echo $contentHeader; ?>',
                     exportOptions: {
                         //columns: ':visible:not(:last-child)',
                         modifier: {
@@ -198,6 +214,7 @@
                     extend: 'pdf',
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
+                    title: 'Export <?php echo $contentHeader; ?>',
                     exportOptions: {
                         //columns: ':visible:not(:last-child)',
                         modifier: {
@@ -210,6 +227,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
+                    title: 'Export All <?php echo $contentHeader; ?>',
                     exportOptions: {
                         //columns: ':visible:not(:last-child)'
                     },
@@ -217,7 +235,7 @@
                 }
             ],
             ajax: {                
-                url: '<?php echo base_url('front/cdeliverynote/get_trans_detail'); ?>',
+                url: '<?php echo base_url('api-delivery-note-get-trans-detail'); ?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -265,7 +283,7 @@
     
     function viewdetail(transnum_e){
         transnum = transnum_e;
-        var url = '<?php echo base_url('front/cdeliverynote/get_trans'); ?>';
+        var url = '<?php echo base_url('api-delivery-note-get-trans'); ?>';
         var type = 'POST';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
@@ -358,7 +376,7 @@
                 }
             ],
             ajax: {                
-                url: '<?php echo base_url('front/csupplyfromcwh/get_list_view_datatable'); ?>',
+                url: '<?php echo $url_list;?>',
                 type: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',

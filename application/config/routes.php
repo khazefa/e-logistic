@@ -245,8 +245,12 @@ $route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1
 $route['transfer-to-fsl/view'] = 'front/ctransfertofsl';
 $route['transfer-to-fsl/add'] = 'front/ctransfertofsl/add';
 $route['transfer-to-fsl/list/([a-zA-Z]+)'] = 'front/ctransfertofsl/get_list/$1';
+$route['transfer-to-fsl/detail'] = 'front/ctransfertofsl/get_transfer';
+$route['transfer-to-fsl/list_detail'] = 'front/ctransfertofsl/get_transfer_detail';
 $route['transfer-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
+$route['transfer-to-fsl/check-transaction'] = 'front/ctransfertofsl/check_transaction';
 $route['transfer-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
+$route['transfer-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
 $route['transfer-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
 // ===========================
 //  End Routing Front Transfer to FSL
@@ -415,19 +419,29 @@ $route['supply-fsl-to-fsl/print/(:any)'] = 'front/csupplyfromfsl/print_transacti
 // ===========================
 
 // ===========================
+//  Routing Front Supply from CWH
+// ===========================
+$route['supply-from-cwh'] = 'front/csupplyfromcwh';
+$route['add-supply-from-cwh'] = 'front/csupplyfromcwh/add';
+
+$route['supply-from-cwh/view'] = 'front/csupplyfromcwh';
+$route['supply-from-cwh/add'] = 'front/csupplyfromcwh/add';
+$route['supply-from-cwh/list/([a-zA-Z]+)'] = 'front/csupplyfromcwh/get_list/$1';
+$route['supply-from-cwh/check-ticket'] = 'front/csupplyfromcwh/check_ticket';
+$route['supply-from-cwh/insert'] = 'front/csupplyfromcwh/submit_trans';
+$route['supply-from-cwh/insert_close'] = 'front/csupplyfromcwh/submit_trans_close';
+$route['supply-from-cwh/print/(:any)'] = 'front/csupplyfromcwh/print_transaction/$1';
+// ===========================
+//  End Routing Front Supply from CWH
+// ===========================
+
+// ===========================
 //  Routing Front Supply from FSL
 // ===========================
 $route['supply-from-fsl-bad'] = 'front/csupplyfromfslbad';
 $route['add-supply-from-fsl-bad'] = 'front/csupplyfromfslbad/add';
 // ===========================
 //  End Routing Front Supply from FSL
-//  Routing Front Supply from CWH
-// ===========================
-$route['supply-from-cwh'] = 'front/csupplyfromcwh';
-$route['add-supply-from-cwh'] = 'front/csupplyfromcwh/add';
-// ===========================
-//  End Routing Front Supply from CWH
-// ===========================
 
 // ===========================
 //  Routing Front Reports

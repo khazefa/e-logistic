@@ -240,8 +240,9 @@ class CRequestParts extends BaseController
         $success_response = array();
         $error_response = array();
         
+        $fcode = $this->repo;
         $ftrans_out = $this->input->get('ftrans_out', TRUE);
-        $arrWhere = array('ftrans_out'=>$ftrans_out);
+        $arrWhere = array('fcode'=>$fcode, 'ftrans_out'=>$ftrans_out);
         
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings'), 'POST', FALSE);

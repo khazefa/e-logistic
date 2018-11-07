@@ -12,6 +12,18 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CSupplyFromCWH extends BaseController
 {
+    private $cname = 'supply-from-cwh';
+    private $cname_request = 'request-parts';
+    private $cname_atm = 'atm';
+    private $cname_warehouse = 'warehouse';
+    private $cname_cart = 'cart';
+    private $view_dir = 'front/supply-from-cwh/';
+    private $readonly = TRUE;
+    private $hasCoverage = FALSE;
+    private $hasHub = FALSE;
+    private $cart_postfix = 'inc';
+    private $cart_sess = '';
+    
     private $field_modal = array(
         'trans_num' => 'Trans Num',
         'trans_date' => 'Trans Date',
@@ -43,7 +55,16 @@ class CSupplyFromCWH extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if(!$this->isStaff()){
+        if($this->isSpv() || $this->isStaff()){
+            if($this->isStaff()){
+                $this->readonly = FALSE;
+                $this->cart_sess = $this->session->userdata ( 'cart_session' ).$this->cart_postfix;
+            }elseif($this->isSpv()){
+                $this->readonly = TRUE;
+                $this->hasHub = TRUE;
+                $this->hasCoverage = TRUE;
+            }
+        }else{
             redirect('cl');
         }
     }
@@ -59,75 +80,190 @@ class CSupplyFromCWH extends BaseController
         $this->global['contentTitle'] = 'Supply from Central Warehouse';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
+        
         $data['field_modal_popup'] = $this->field_modal;
         $data['field_modal_js'] = $this->field_value;
-        $this->loadViews('front/supply-from-cwh/index', $this->global, $data);
+        $data['readonly'] = $this->readonly;
+        $data['hashub'] = $this->hasHub;
+        $data['classname'] = $this->cname;
+        $data['url_list'] = base_url($this->cname.'/list/json');
+        if($this->hasHub){
+            $data['list_warehouse'] = $this->get_list_warehouse();
+        }
+        
+        $this->loadViews($this->view_dir.'index', $this->global, $data);
+    }
+    
+    /**
+     * This function is used to get list information described by function name
+     */
+    private function get_list_warehouse(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcoverage = $this->session->userdata ( 'ovCoverage' );
+        if(empty($fcoverage)){
+            $e_coverage = array();
+        }else{
+            $e_coverage = explode(';', $fcoverage);
+        }
+        
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $row['code'] = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+            $row['name'] = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
+ 
+            if($this->hasCoverage){
+                if(in_array($row['code'], $e_coverage)){
+                    if($row['code'] !== "WSPS"){
+                        $data[] = $row;
+                    }
+                }
+            }else{
+                $data[] = $row;
+            }
+        }
+        
+        return $data;
     }
     
     /**
      * This function is used to get list for datatables
      */
-    public function get_list_view_datatable(){ 
+    public function get_list($type){
         $rs = array();
         $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
         
         //Parameters for cURL
         $fcode = $this->repo;
         $fdate1 = $this->input->post('fdate1', TRUE);
         $fdate2 = $this->input->post('fdate2', TRUE);
-        $fstatus = $this->input->post('fstatus', TRUE);
+        $fstatus = "open";
+        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        
+        if($this->hasHub){
+            if($this->hasCoverage){
+                if(empty($coverage)){
+                    $fcoverage = $this->session->userdata ( 'ovCoverage' );
+                }else{
+                    if (strpos($coverage, ',') !== false) {
+                        $fcoverage = str_replace(',', ';', $coverage);
+                    }else{
+                        $fcoverage = $coverage;
+                    }
+                }
+            }else{
+                if (strpos($coverage, ',') !== false) {
+                    $fcoverage = str_replace(',', ';', $coverage);
+                }else{
+                    $fcoverage = $coverage;
+                }
+            }
+
+            if(empty($fcoverage)){
+                $e_coverage = array();
+            }else{
+                $e_coverage = explode(';', $fcoverage);
+            }
+            
+            $fcode = "";
+        }else{
+            $fcode = $this->repo;
+        }
         
         //Parameters for cURL
         $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fstatus'=>$fstatus);
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_delivery_note'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_delivery_note'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
-        $data = array();
-        foreach ($rs as $r) {
-            $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
-            $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
-            $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
-            $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
-            $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
-            $notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
-            $status = filter_var($r->delivery_note_status, FILTER_SANITIZE_STRING);
-            $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
-            $curdatetime = new DateTime();
-            $datetime2 = new DateTime($transdate);
-            $interval = $curdatetime->diff($datetime2);
-//            $elapsed = $interval->format('%a days %h hours');
-            $elapsed = $interval->format('%a days');
-            switch ($purpose){
-                case "SPL";
-                    $purpose = "Supply";
-                break;
-                
-                default;
-                    $purpose = "-";
-                break;
-            }
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
+                    $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+                    $notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
+                    $status = filter_var($r->delivery_note_status, FILTER_SANITIZE_STRING);
+                    $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $curdatetime = new DateTime();
+                    $datetime2 = new DateTime($transdate);
+                    $interval = $curdatetime->diff($datetime2);
+        //            $elapsed = $interval->format('%a days %h hours');
+                    $elapsed = $interval->format('%a days');
+                    switch ($purpose){
+                        case "SPL";
+                            $purpose = "Supply";
+                        break;
+                        default;
+                            $purpose = "-";
+                        break;
+                    }
 
-            $row['transnum'] = $transnum;
-            $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
-            
-            $row['purpose'] = $purpose;
-            $row['qty'] = $qty;
-            $row['user'] = $user;
-            $row['notes'] = $notes;
-            $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-            $row['button'] = '
-            <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
-            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
-            ';
-            $data[] = $row;
+                    $row['transnum'] = $transnum;
+                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['purpose'] = $purpose;
+                    $row['qty'] = $qty;
+                    $row['user'] = $user;
+                    $row['notes'] = $notes;
+                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+                    $row['button'] = '
+                    <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
+                    <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
+                    ';
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $transnum = filter_var($r->delivery_note_num, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->date, FILTER_SANITIZE_STRING);
+                    $purpose = filter_var($r->delivery_note_purpose, FILTER_SANITIZE_STRING);
+                    $qty = filter_var($r->delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
+                    $user = filter_var($r->user_fullname, FILTER_SANITIZE_STRING);
+                    $notes = filter_var($r->delivery_note_notes, FILTER_SANITIZE_STRING);
+                    $status = filter_var($r->delivery_note_status, FILTER_SANITIZE_STRING);
+                    $fsl_code = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $curdatetime = new DateTime();
+                    $datetime2 = new DateTime($transdate);
+                    $interval = $curdatetime->diff($datetime2);
+        //            $elapsed = $interval->format('%a days %h hours');
+                    $elapsed = $interval->format('%a days');
+                    switch ($purpose){
+                        case "SPL";
+                            $purpose = "Supply";
+                        break;
+                        default;
+                            $purpose = "-";
+                        break;
+                    }
+
+                    $row['transnum'] = $transnum;
+                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['purpose'] = $purpose;
+                    $row['qty'] = $qty;
+                    $row['user'] = $user;
+                    $row['notes'] = $notes;
+                    $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
         }
-        
-        return $this->output
-        ->set_content_type('application/json')
-        ->set_output(
-            json_encode(array('data'=>$data))
-        );
+        return $output;
     }
     
     /**

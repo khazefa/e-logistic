@@ -25,7 +25,7 @@
                                 <input type="text" name="fdelivery" id="fdelivery" class="form-control" placeholder="(Optional)">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="fnotes" class="col-form-label">Transaction Notes</label>
+                                <label for="fnotes" class="col-form-label">Transfer Notes</label>
                                 <input type="text" name="fnotes" id="fnotes" class="form-control" placeholder="(Optional)">
                             </div>
                         </div>

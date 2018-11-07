@@ -18,7 +18,8 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                                  </div>
-                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER] after input Outgoing No." title="Press [ENTER] after input Outgoing No.">
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER]" 
+                                                       data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Reff No and then Press [ENTER]">
                                             </div>
                                             <div class="input-group col-sm-12">
                                                 <span id="ftrans_out_notes" class="help-block text-danger"><small></small></span>
@@ -28,7 +29,8 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="button" id="btn_reset" class="btn btn-danger waves-effect waves-light">
+                                <button type="button" id="btn_reset" class="btn btn-danger waves-effect waves-light" 
+                                        data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Refind Reff No..">
                                     Reset
                                 </button>
                             </div>
@@ -93,7 +95,8 @@
                                             <tbody>
                                             </tbody>
                                         </table>
-                                        <button type="button" id="btn_clear" class="btn btn-cancel waves-effect waves-light">
+                                        <button type="button" id="btn_clear" class="btn btn-cancel waves-effect waves-light" 
+                                                data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Repeat the transaction..">
                                             <i class="fa fa-trash-o"></i> Clear Return
                                         </button>
                                         <div class="mb-4"></div>
@@ -107,7 +110,8 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-3 offset-md-9 text-right">
-                                        <button type="button" id="btn_verify" class="btn btn-warning waves-effect waves-light">
+                                        <button type="button" id="btn_verify" class="btn btn-warning waves-effect waves-light" 
+                                                data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Verify Return Quantity..">
                                             Verify
                                         </button>
                                     </div>
@@ -152,9 +156,11 @@
                             <div class="col-6">
                                 <select id="dstatus" name="dstatus" class="form-control" data-style="btn-light">
                                     <option value="0">Select Status</option>
-                                    <option value="R">Return Good</option>
-                                    <option value="RBP">Return Bad/Used</option>
-                                    <option value="RBS">Bad Stock</option>
+                                    <?php
+                                        foreach ($status_option as $so => $o){
+                                            echo '<option value="'.$so.'">'.$o.'</option>';
+                                        }
+                                    ?>
                                 </select>
                             </div>
                         </div>
@@ -301,14 +307,14 @@
                         if(isEmpty(data)){
                             html = '<a href="javascript:void(0)" title="Edit Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Return</a>';
                         }else{
-                            if(data === "R"){
-                                html = 'Return Good';
-                            }else if(data === "RG"){
+                            if(data === "RGP"){
                                 html = 'Return Good';
                             }else if(data === "RBP"){
-                                html = 'Return Bad';
+                                html = 'Bad Part';
                             }else if(data === "RBS"){
                                 html = 'Bad Stock';
+                            }else if(data === "RGC"){
+                                html = 'Consumed';
                             }
                         }
                         return html;
@@ -427,16 +433,16 @@
                     data      : null,
                     render    : function ( data, type, full, meta ) {
                         var html = '';
-                        if(data === "RG"){
-                            html = 'Return Good';
-                        }else if(data === "R"){
+                        if(data === "RGP"){
                             html = 'Return Good';
                         }else if(data === "RBP"){
-                            html = 'Return Bad';
+                            html = 'Bad Part';
                             e_fe_report.prop('readonly', false);
                         }else if(data === "RBS"){
                             html = 'Bad Stock';
-                        }    
+                        }else if(data === "RGC"){
+                            html = 'Consumed';
+                        }  
                         return html;
                     }
                 }
@@ -483,7 +489,7 @@
         });
         
         //function for datatables button
-        $('#cart_grid tbody').on( 'keypress', '#fdqty', function (e) {        
+        $('#cart_grid tbody').on( 'keydown', '#fdqty', function (e) {        
             var data = table2.row( $(this).parents('tr') ).data();
             fid = data['id'];
             fqty = this.value;
@@ -900,7 +906,7 @@
             $(this).val($(this).val().toUpperCase());
 	});
         
-        e_trans_out.on("keypress", function(e){
+        e_trans_out.on("keydown", function(e){
             if (e.keyCode == 13) {
                 if(isEmpty(e_trans_out.val())){
                     alert('Please input Outgoing Number!');
@@ -925,9 +931,10 @@
         $('[name="dstatus"]').on("change", function(e) {
             var val = this.value;
             var sn = $('[name="dserialno"]').val();
+            var oldqty = parseInt($('[name="dqty_old"]').val());
             
             if(val === "RBP"){
-                if(sn === "NOSN"){
+                if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
                     $('[name="dqty"]').prop('readonly', true);
                 }else{
 //                    $('[name="dnotes"]').prop('disabled', false);
@@ -938,8 +945,8 @@
                     $('[name="dserialno"]').focus();
                     $('[name="dqty"]').prop('readonly', true);
                 }
-            }else if(val === "R" || val === "RG"){
-                if(sn === "NOSN"){
+            }else if(val === "RGP"){
+                if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
                     alert("Please change Quantity if needed.");
                     $('[name="dqty"]').prop('readonly', false);
                     $('[name="dqty"]').focus();
@@ -953,13 +960,17 @@
             }
 	});
         
-        $('[name="dqty"]').on("keypress", function(e) {
+        $('[name="dqty"]').on("keydown", function(e) {
             var val = parseInt(this.value);
             var oldqty = parseInt($('[name="dqty_old"]').val());
+            var status = $('[name="dstatus"]').val();
+            
             if (e.keyCode == 13) {
                 if(val < oldqty){
                     var calc = oldqty - val;
-                    $('[name="dnotes"]').val('CONSUMED = '+calc);
+                    if(status === "RGP"){
+                        $('[name="dnotes"]').val('CONSUMED = '+calc);
+                    }
                 }else if(val > oldqty){
                     alert('the amount you enter exceeds the amount you have');
                     $('[name="dqty"]').val('1');

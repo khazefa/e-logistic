@@ -77,7 +77,7 @@ class CReturnParts extends BaseController
     {
         $this->global['pageTitle'] = 'Return Parts - '.APP_NAME;
         $this->global['pageMenu'] = 'Return Parts';
-        $this->global['contentHeader'] = 'Input Transaction Number';
+        $this->global['contentHeader'] = 'Input Reff No';
         $this->global['contentTitle'] = 'Return Parts';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
@@ -85,6 +85,7 @@ class CReturnParts extends BaseController
         $data['classname'] = $this->cname;
         $data['classname_request'] = $this->cname_request;
         $data['cart_postfix'] = $this->cart_postfix;
+        $data['status_option'] = $this->config->config['status']['in_detail'];
         $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
     
@@ -378,18 +379,13 @@ class CReturnParts extends BaseController
                         $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
                                 'POST', FALSE);
 
-                        if($d['status'] === 'R' || $d['status'] === 'RG'){
+                        if($d['status'] === 'RGP'){
                             $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
                                 'fflag'=>'N');
                             //update stock by fsl code and part number
                             $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
                                     'POST', FALSE);
                         }
-
-//                        $updateDetailOutgoing = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 'fstatus'=>'RG');
-//                        //update detail outgoing status by outgoing number, part number and serial number
-//                        $update_status_detail_outgoing = send_curl($this->security->xss_clean($updateDetailOutgoing), $this->config->item('api_update_outgoings_trans_detail'), 
-//                                'POST', FALSE);
                     }
                     
                     //clear cart list data

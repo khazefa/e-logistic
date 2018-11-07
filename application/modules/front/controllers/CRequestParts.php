@@ -256,18 +256,18 @@ class CRequestParts extends BaseController
                 $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             }
-            if($status == "complete"){
-                $global_response = array(
-                    'status' => 0,
-                    'total_qty' => 0,
-                    'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
-                );
-            }else{
+            if($status === "open"){
                 $global_response = array(
                     'status' => 1,
                     'purpose' => $purpose,
                     'total_qty' => $total_qty,
                     'message'=> 'Transaction still open'
+                );
+            }else{
+                $global_response = array(
+                    'status' => 0,
+                    'total_qty' => 0,
+                    'message'=> 'Transaction is already complete, you cannot close this transaction twice.'
                 );
             }
             $response = $global_response;

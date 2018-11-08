@@ -461,7 +461,7 @@
     
     //submit transaction
     function complete_trans(fstatus){
-        var url = '<?php echo base_url($classname.'/insert_close'); ?>';
+        var url = '<?php echo base_url($classname.'/insert'); ?>';
         var type = 'POST';
         
         if(isEmpty(e_trans_out.val())){

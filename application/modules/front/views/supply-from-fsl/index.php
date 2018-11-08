@@ -57,6 +57,7 @@
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             <?php 
+                /**
                 if(!$readonly){
             ?>
                 <div class="btn-group">
@@ -64,7 +65,7 @@
                         <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
                     </button>
                 </div>
-            <?php } ?>
+            <?php } */?>
             
             <p class="text-success text-center">
                 <?php
@@ -97,10 +98,9 @@
                             <tr>
                                 <th>Trans No</th>
                                 <th>Date</th>
-                                <th>Reff No</th>
+                                <th>Transfer From</th>
                                 <th>Qty</th>
-                                <th>Transfered From</th>
-                                <th>Transfered To</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -203,7 +203,7 @@
             ],
             ajax: {                
                 url: '<?php echo $url_list;?>',
-                type: 'POST',
+                type: 'GET',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
                 contentType:"application/json",
@@ -217,10 +217,9 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
-                { "data": 'transout' },
+                { "data": 'transfer_from' },
                 { "data": 'qty' },
-                { "data": 'from_fsl' },
-                { "data": 'to_fsl' },
+                { "data": 'status' },
                 { "data": 'button' },
             ],
             order: [[ 1, "desc" ]],

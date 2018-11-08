@@ -81,7 +81,8 @@ class CSupplyFromFSLBad extends BaseController{
         $rs = array();
         $arrWhere = array();
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
@@ -411,7 +412,7 @@ class CSupplyFromFSLBad extends BaseController{
         $arrWhere = array('fcode'=>$fcode);
         
         //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouses'), 'POST', FALSE);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $wh_name = "";
@@ -467,8 +468,7 @@ class CSupplyFromFSLBad extends BaseController{
                 '' => 'OK',
                 'diff_partnumber' => 'Diff PN',
                 'diff_serialnumber' => 'Diff SN',
-                'diff_pn_and_sn' => 'Diff PN & SN',
-                'doesnt_exist' => 'Not Exists',
+                'no_physic' => 'No Physic',
             );  
             $select = form_dropdown('act_notes['.$transid.']', $select_option, $dtnotes, 'id="act_notes_'.$transid.'" class="selectpicker"');
 

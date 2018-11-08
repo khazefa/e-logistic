@@ -250,7 +250,7 @@
                     e_search_part.prop('disabled', false);
                     e_search_part.selectpicker('refresh');
                     e_new_pn.prop('disabled', false);
-                    e_new_sn.prop('disabled', true);
+                    e_new_sn.prop('disabled', false);
                     $("#old_pn").html(data_cart[ix].partnum);
                     $("#old_sn").html(data_cart[ix].serialnum);
                     break;
@@ -263,17 +263,8 @@
                     $("#old_pn").html(data_cart[ix].partnum);
                     $("#old_sn").html(data_cart[ix].serialnum);
                     break;
-                case 'diff_pn_and_sn' :
-                    $("#modal_diff").modal('show');
-                    e_search_part.prop('disabled', false);
-                    e_search_part.selectpicker('refresh');
-                    e_new_pn.prop('disabled', false);
-                    e_new_sn.prop('disabled', false);
-                    $("#old_pn").html(data_cart[ix].partnum);
-                    $("#old_sn").html(data_cart[ix].serialnum);
-                    break;
-                case 'doesnt_exist' :
-                    set_confirm("Are you sure, the parts is not exist?");
+                case 'no_physic' :
+                    set_confirm("Are you sure, does it exist physically?");
                     modalConfirm(function(conf){
                         //console.log(conf);
                         if(conf){
@@ -310,16 +301,12 @@
                 { "data": 'qty' },
                 { "data": 'select_dt_notes' },
             ],
-            
             initComplete: function( settings, json ) {
-                $('#ttl_qty').html(table.rows().count());//menjumlahkan jumlah halaman
+                //$('#ttl_qty').html(table.rows().count());//menjumlahkan jumlah halaman
+                init_notes();
                 
-                var jd = {};
-                for(var i = 0;i<json.data.length;i++){
-                    jd[json.data[i].transid] = json.data[i];
-                }
-                data_cart = jd;
             }
+            
         });
         
         $('#data_grid').on('draw.dt',function(){
@@ -331,9 +318,29 @@
                 
     }
     
+    //notes for close
+    function init_notes(){
+        var json = table.ajax.json();
+        var jd = {};
+        e_notes.val("");
+        for(var i = 0;i<json.data.length;i++){
+            jd[json.data[i].transid] = json.data[i];
+            if(json.data[i].dtnotes !== '' && json.data[i].dtnotes !== undefined){
+                e_notes.val(e_notes.val() 
+                + "PN:" + json.data[i].partnum +" "
+                + "SN:" + json.data[i].serialnum +" "
+                + "NOTES:" + json.data[i].dtnotes + "; \n" 
+                
+            );
+            }
+        }
+        data_cart = jd;
+    }
+
     //reload table
     function reload(){
         table.ajax.reload();
+        init_notes();
     }
     
     //check outgoing transaction
@@ -446,27 +453,6 @@
         
 
         if(selected === 'diff_partnumber'){
-            if(pn!=='' && typeof pn === 'string'){
-                check_part_number(pn,function(e){
-                    if(!e){
-                        alert('Part number not found / failed to check part.');
-                        return false;
-                    }else{submit_diff();}
-                });
-            }else{
-                alert('Part Number should be more than 1 character.');
-                return false;
-            }
-        }
-        else if(selected === 'diff_serialnumber'){
-            if(sn!=='' && typeof sn === 'string'){
-                submit_diff();
-            }else{
-                alert('Serial Number should be more than 1 character.');
-                return false;
-            }
-        }
-        else if(selected === 'diff_pn_and_sn'){
             if((sn!=='' && typeof sn === 'string') && (pn!=='' && typeof pn === 'string')){
                 return check_part_number(pn,function(e){
                     if(!e){
@@ -476,6 +462,14 @@
                 });
             }else{
                 alert('Serial Number / Part Number should be more than 1 character.');
+                return false;
+            }
+        }
+        else if(selected === 'diff_serialnumber'){
+            if(sn!=='' && typeof sn === 'string'){
+                submit_diff();
+            }else{
+                alert('Serial Number should be more than 1 character.');
                 return false;
             }
         }

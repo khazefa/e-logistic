@@ -799,7 +799,7 @@
             }
         });
         
-        $("#btn_complete").on("click", function(e){        
+        $("#btn_complete").on("click", function(e){
             var total_qty = parseInt($('#ttl_qty').html());
             
             if(e_dest_fsl.val() === "0"){

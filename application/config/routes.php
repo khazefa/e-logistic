@@ -220,6 +220,7 @@ $route['atm/get_distinct/([a-zA-Z]+)/([a-zA-Z]+)'] = 'front/catm/get_unique/$1/$
 //  Routing Front Outgoing Trans
 // ===========================
 $route['outgoing-trans'] = 'front/coutgoing';
+$route['outgoing-trans/dashboard'] = 'front/coutgoing/dashboard';
 $route['view-outgoing-trans'] = 'front/coutgoing/views';
 $route['new-outgoing-trans'] = 'front/coutgoing/add';
 $route['print-outgoing-trans/(:any)'] = 'front/coutgoing/print_transaction/$1';
@@ -381,12 +382,12 @@ $route['search-parts'] = 'front/csearchparts';
 //  Routing Front Incoming Trans
 // ===========================
 $route['incoming-trans'] = 'front/cincoming';
+$route['incoming-trans/dashboard'] = 'front/cincoming/dashboard';
 $route['view-incoming-trans'] = 'front/cincoming/views';
 $route['new-incoming-trans'] = 'front/cincoming/add';
 $route['supply-from-other-fsl'] = 'front/cincoming/supply_from_other_fsl';
 $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1';
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
-$route['incoming-trans/dashboard'] = 'front/cincoming/dashboard';
 // ===========================
 //  End Routing Front Incoming Trans
 // ===========================

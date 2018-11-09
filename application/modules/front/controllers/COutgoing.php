@@ -67,6 +67,22 @@ class COutgoing extends BaseController
         $data['list_coverage'] = $this->get_list_warehouse("array");
         $this->loadViews($this->view_dir.'lists', $this->global, $data);
     }
+
+    /**
+     * This function used to load the first screen incoming trans menu
+     */
+    public function dashboard()
+    {
+        $this->global['pageTitle'] = 'Outgoing Parts - '.APP_NAME;
+        $this->global['pageMenu'] = 'Outgoing Parts';
+        $this->global['contentHeader'] = 'Outgoing Parts';
+        $this->global['contentTitle'] = 'Outgoing Parts';
+        $this->global ['role'] = $this->role;
+        $this->global ['name'] = $this->name;
+        
+        $data['classname'] = $this->cname;
+        $this->loadViews($this->view_dir.'/dashboard', $this->global, $data);
+    }
     
     /**
      * This function is used to get list for datatables

@@ -139,15 +139,18 @@
                                     <li>
                                         <a href="<?php echo base_url("outgoing-trans");?>">Outgoing Parts</a>
                                     </li>
-                                    -->
-                                    <li>
-                                        <a href="<?php echo base_url("incoming-trans/dashboard");?>">Incoming Parts</a>
-                                    </li>
                                     <li>
                                         <a href="<?php echo base_url("request-parts/view");?>">Request Parts</a>
                                     </li>
                                     <li>
                                         <a href="<?php echo base_url("transfer-to-fsl/view");?>">Transfer Stock to FSL</a>
+                                    </li>
+                                    -->
+                                    <li>
+                                        <a href="<?php echo base_url("outgoing-trans/dashboard");?>">Outgoing Parts</a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo base_url("incoming-trans/dashboard");?>">Incoming Parts</a>
                                     </li>
                                 </ul>
                             </li>

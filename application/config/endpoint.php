@@ -169,6 +169,7 @@ $config['api_update_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/updat
 $config['api_delete_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_cart/'; //POST
 $config['api_clear_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/delete_multi_cart/'; //POST
 $config['api_total_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/total_cart/'; //POST
+$config['api_total_outgoings_by'] = constant('urlapi').'api/cpoutgoings/get_total_by/'; //POST
 $config['api_get_outgoing_num'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num/'; //POST
 $config['api_get_outgoing_num_ext'] = constant('urlapi').'api/cpoutgoings/grab_ticket_num_ext/'; //POST
 $config['api_get_cart_info'] = constant('urlapi').'api/cpoutgoings/get_cart_info/'; //POST

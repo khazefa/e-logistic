@@ -539,7 +539,7 @@ class CRequestParts extends BaseController
                         $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                     }else{
                         if($status === "open"){
-                            $button = '<a href="'.base_url($this->cname."/add/").$transnum.'" title="Return Parts"><i class="mdi mdi-keyboard-return mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button = '<a href="'.base_url($this->cname_return."/add/").$transnum.'" title="Return Parts"><i class="mdi mdi-keyboard-return mr-2 text-muted font-18 vertical-middle"></i></a>';
                             $button .= ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                         }else{
                             $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';

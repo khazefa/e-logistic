@@ -55,7 +55,7 @@ class CSupplyFromCWH extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isSpv() || $this->isStaff()){
+        if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
             if($this->isStaff()){
                 $this->readonly = FALSE;
                 $this->cart_sess = $this->session->userdata ( 'cart_session' ).$this->cart_postfix;
@@ -63,6 +63,9 @@ class CSupplyFromCWH extends BaseController
                 $this->readonly = TRUE;
                 $this->hasHub = TRUE;
                 $this->hasCoverage = TRUE;
+            }else{
+                $this->readonly = TRUE;
+                $this->hasHub = TRUE;
             }
         }else{
             redirect('cl');
@@ -74,10 +77,10 @@ class CSupplyFromCWH extends BaseController
      */
     public function index()
     {        
-        $this->global['pageTitle'] = 'Supply from Central Warehouse - '.APP_NAME;
-        $this->global['pageMenu'] = 'Supply from Central Warehouse';
-        $this->global['contentHeader'] = 'Supply from Central Warehouse';
-        $this->global['contentTitle'] = 'Supply from Central Warehouse';
+        $this->global['pageTitle'] = 'List Received Parts from Warehouse - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Received Parts from Warehouse';
+        $this->global['contentHeader'] = 'List Received Parts from Warehouse';
+        $this->global['contentTitle'] = 'List Received Parts from Warehouse';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -143,11 +146,11 @@ class CSupplyFromCWH extends BaseController
         $isParam = FALSE;
         
         //Parameters for cURL
-        $fcode = $this->repo;
-        $fdate1 = $this->input->post('fdate1', TRUE);
-        $fdate2 = $this->input->post('fdate2', TRUE);
+        // $fcode = $this->repo;
+        $fdate1 = $this->input->get('fdate1', TRUE);
+        $fdate2 = $this->input->get('fdate2', TRUE);
         $fstatus = "open";
-        $coverage = !empty($_POST['fcoverage']) ? implode(';',$_POST['fcoverage']) : "";
+        $coverage = !empty($_GET['fcoverage']) ? implode(';',$_GET['fcoverage']) : "";
         
         if($this->hasHub){
             if($this->hasCoverage){
@@ -174,7 +177,7 @@ class CSupplyFromCWH extends BaseController
                 $e_coverage = explode(';', $fcoverage);
             }
             
-            $fcode = "";
+            $fcode = $e_coverage;
         }else{
             $fcode = $this->repo;
         }
@@ -217,10 +220,21 @@ class CSupplyFromCWH extends BaseController
                     $row['user'] = $user;
                     $row['notes'] = $notes;
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '
-                    <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
-                    <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
-                    ';
+
+                    if($this->readonly){
+                        $button = ' <a href="'.base_url("print-delivery-note-trans/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        $button .= ' <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
+                    }else{
+                        if($status === "open"){
+                            $button = '<a href="'.base_url($this->cname."/add/").$transnum.'" title="Receive Parts"><i class="mdi mdi mdi-archive mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button .= ' <a href="'.base_url("print-delivery-note-trans/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button .= ' <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }else{
+                            $button = ' <a href="'.base_url("print-delivery-note-trans/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button .= ' <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }
+                    }
+                    $row['button'] = $button;
                     $data[] = $row;
                 }
                 $output = $this->output
@@ -269,15 +283,20 @@ class CSupplyFromCWH extends BaseController
     /**
      * This function is used to load the add new form
      */
-    public function add() {
-        $this->global['pageTitle'] = 'Add Supply from Central Warehouse - '.APP_NAME;
-        $this->global['pageMenu'] = 'Add Supply from Central Warehouse';
-        $this->global['contentHeader'] = 'Add Supply from Central Warehouse';
-        $this->global['contentTitle'] = 'Add Supply from Central Warehouse';
+    public function add($transnum = "") {
+        $this->global['pageTitle'] = 'Add Parts from Warehouse - '.APP_NAME;
+        $this->global['pageMenu'] = 'Add Parts from Warehouse';
+        $this->global['contentHeader'] = 'Input Reff No';
+        $this->global['contentTitle'] = 'Add Parts from Warehouse';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
 
-        $this->loadViews('front/supply-from-cwh/create', $this->global, NULL);
+        if(empty($transnum)){
+            $data['transnum'] = "";
+        }else{
+            $data['transnum'] = $transnum;
+        }
+        $this->loadViews('front/supply-from-cwh/create', $this->global, $data);
     }
     
     /**
@@ -447,6 +466,79 @@ class CSupplyFromCWH extends BaseController
             );
             $response = $error_response;
         }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+
+    /**
+     * This function is used to check part availability in FSL
+     */
+    private function check_part(){
+        $rs = array();
+        $rs2 = array();
+        $arrWhere = array();
+        $arrWhere2 = array();
+        $success_response = array();
+        $error_response = array();
+        $response = array();
+        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        
+        $arrWhere = array('fpartnum'=>$fpartnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partname = null;
+        if(!empty($rs)){
+            foreach($rs AS $r1){
+                $partname = filter_var($r1->part_name, FILTER_SANITIZE_STRING);
+            }
+            $arrWhere2 = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
+            //Parse Data for cURL
+            $rs_data2 = send_curl($arrWhere2, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+            $rs2 = $rs_data2->status ? $rs_data2->result : array();
+
+            if(!empty($rs2)){
+                $success_response = array(
+                    'status' => 1,
+                    'message'=> 'Sparepart <strong>'.$partname.'</strong> is available'
+                );
+                $response = $success_response;
+            }else{
+                $dataInfo = array('fcode'=> $fcode, 'fpartnum'=> $fpartnum, 'fminval'=> 3, 'finitval'=> 0, 
+                    'flastval'=> 0, 'fflag'=> 'Y');
+                $rs_data2 = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_part_stock'), 'POST', FALSE);
+
+                if($rs_data2->status)
+                {
+                    $success_response = array(
+                        'status' => 1,
+                        'message'=> 'Sparepart <strong>'.$partname.'</strong> has been added'
+                    );
+                    $response = $success_response;
+                }
+                else
+                {
+                    $error_response = array(
+                        'status' => 0,
+                        'message'=> 'There is an error while searching the data'
+                    );
+                    $response = $error_response;
+                }
+            }
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Sparepart data is not available'
+            );
+            $response = $error_response;
+        }
+
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

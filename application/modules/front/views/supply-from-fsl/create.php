@@ -3,6 +3,11 @@
     <div class="col-md-12">
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">

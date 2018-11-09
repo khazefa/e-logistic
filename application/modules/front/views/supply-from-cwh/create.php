@@ -2,7 +2,12 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-box">
-            <h4 class="header-title m-b-20"><?php echo $contentTitle;?></h4><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
@@ -18,7 +23,8 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                                  </div>
-                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER] after input Supply No.">
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" value="<?php echo $transnum; ?>" placeholder="Press [ENTER]" 
+                                                    data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Reff No and then Press [ENTER]">
                                             </div>
                                             <div class="input-group col-sm-12">
                                                 <span id="ftrans_out_notes" class="help-block text-danger"><small></small></span>
@@ -28,7 +34,8 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="button" id="btn_reset" class="btn btn-danger waves-effect waves-light">
+                                <button type="button" id="btn_reset" class="btn btn-danger waves-effect waves-light" 
+                                    data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Refind Reff No..">
                                     Reset
                                 </button>
                             </div>
@@ -100,8 +107,15 @@
     var total_qty_outgoing = 0;
     
     function init_form(){
-        e_trans_out.val('');
-        e_trans_out.prop("readonly", false);
+        var has_transnum = "<?php echo $transnum; ?>";
+        if(isEmpty(has_transnum)){
+            e_trans_out.val('');
+            e_trans_out.prop('readonly', false);
+        }else{
+            e_trans_out.val(has_transnum);
+            e_trans_out.prop('readonly', true);
+            check_trans_out(has_transnum);
+        }
         e_trans_out_notes.html('');
         e_transdate.html('-');
         e_status.html('-');

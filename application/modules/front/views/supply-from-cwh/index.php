@@ -97,7 +97,7 @@
                             <tr>
                                 <th>Trans No</th>
                                 <th>Date</th>
-                                <th>Purpose</th>
+                                <!-- <th>Purpose</th> -->
                                 <th>Qty</th>
                                 <th>Notes</th>
                                 <th>Status</th>
@@ -345,6 +345,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i>',
                     titleAttr: 'Excel',
+                    title: 'Export <?php echo $contentHeader; ?>',
                     exportOptions: {
                         columns: ':visible:not(:last-child)',
                         modifier: {
@@ -357,6 +358,7 @@
                     extend: 'pdf',
                     text: '<i class="fa fa-file-pdf-o"></i>',
                     titleAttr: 'PDF',
+                    title: 'Export <?php echo $contentHeader; ?>',
                     exportOptions: {
                         columns: ':visible:not(:last-child)',
                         modifier: {
@@ -369,6 +371,7 @@
                     extend: 'excel',
                     text: '<i class="fa fa-file-excel-o"></i> All Page',
                     titleAttr: 'Excel All Page',
+                    title: 'Export All <?php echo $contentHeader; ?>',
                     exportOptions: {
                         columns: ':visible:not(:last-child)'
                     },
@@ -377,7 +380,7 @@
             ],
             ajax: {                
                 url: '<?php echo $url_list;?>',
-                type: 'POST',
+                type: 'GET',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
                 contentType:"application/json",
@@ -391,7 +394,7 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
-                { "data": 'purpose' },
+                // { "data": 'purpose' },
                 { "data": 'qty' },
                 { "data": 'notes' },
                 { "data": 'status' },

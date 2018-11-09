@@ -7,7 +7,7 @@
                 <?php
                     if(!$readonly){
                 ?>
-                <button type="button" onclick="location.href='<?php echo base_url('request-parts/add');?>'" class="btn btn-default waves-light waves-effect">
+                <button type="button" onclick="location.href='<?php echo base_url('return-parts/add');?>'" class="btn btn-default waves-light waves-effect">
                     Add New
                 </button>
                 <?php
@@ -27,7 +27,7 @@
                 <?php
                     if(!$readonly){
                 ?>
-                <button type="button" onclick="location.href='<?php echo base_url('request-parts/add');?>'" class="btn btn-default waves-light waves-effect">
+                <button type="button" onclick="location.href='<?php echo base_url('supply-fsl-to-fsl/add');?>'" class="btn btn-default waves-light waves-effect">
                     Add New
                 </button>
                 <?php
@@ -47,7 +47,7 @@
                 <?php
                     if(!$readonly){
                 ?>
-                <button type="button" onclick="location.href='<?php echo base_url('request-parts/add');?>'" class="btn btn-default waves-light waves-effect">
+                <button type="button" onclick="location.href='<?php echo base_url('supply-from-cwh/add');?>'" class="btn btn-default waves-light waves-effect">
                     Add New
                 </button>
                 <?php

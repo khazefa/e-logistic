@@ -429,6 +429,7 @@ $route['add-supply-from-cwh'] = 'front/csupplyfromcwh/add';
 
 $route['supply-from-cwh/view'] = 'front/csupplyfromcwh';
 $route['supply-from-cwh/add'] = 'front/csupplyfromcwh/add';
+$route['supply-from-cwh/add/(:any)'] = 'front/csupplyfromcwh/add/$1';
 $route['supply-from-cwh/list/([a-zA-Z]+)'] = 'front/csupplyfromcwh/get_list/$1';
 $route['supply-from-cwh/check-ticket'] = 'front/csupplyfromcwh/check_ticket';
 $route['supply-from-cwh/insert'] = 'front/csupplyfromcwh/submit_trans';

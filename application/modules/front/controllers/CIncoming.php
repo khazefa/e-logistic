@@ -81,10 +81,10 @@ class CIncoming extends BaseController
      */
     public function dashboard()
     {
-        $this->global['pageTitle'] = 'Incoming Transactions - '.APP_NAME;
-        $this->global['pageMenu'] = 'Incoming Transactions';
-        $this->global['contentHeader'] = 'Incoming Transactions';
-        $this->global['contentTitle'] = 'Incoming Transactions';
+        $this->global['pageTitle'] = 'Incoming Parts - '.APP_NAME;
+        $this->global['pageMenu'] = 'Incoming Parts';
+        $this->global['contentHeader'] = 'Incoming Parts';
+        $this->global['contentTitle'] = 'Incoming Parts';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         

@@ -3,6 +3,11 @@
     <div class="col-md-12">
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
@@ -28,7 +33,8 @@
                             <div class="form-group col-md-3">
                                 <label for="fticketnum" class="col-form-label">Ticket Number <span class="text-danger">*</span></label>
                                 <input type="text" name="fticketnum" id="fticketnum" class="form-control" required="required" data-parsley-minlength="8" 
-                                               data-parsley-maxlength="8" pattern="[a-zA-Z0-9\s]+" placeholder="(Required)">
+                                    data-parsley-maxlength="8" pattern="[a-zA-Z0-9\s]+" placeholder="(Required)" 
+                                    data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Ticket No and then Press [ENTER]">
                             </div>
                         </div>
                         <div class="form-row">
@@ -58,7 +64,8 @@
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label for="fssb_id" class="col-form-label">SSB/ID <span class="text-danger">*</span></label>
-                                <input type="text" name="fssb_id" id="fssb_id" class="form-control" required="true" placeholder="(Required)">
+                                <input type="text" name="fssb_id" id="fssb_id" class="form-control" required="true" placeholder="(Required)" 
+                                    data-toggle="tooltip" data-placement="top" title="" data-original-title="Input SSB/ID and then Press [ENTER]">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="fcust" class="col-form-label">Customer <span class="text-danger">*</span></label>
@@ -117,7 +124,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                      </div>
-                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
+                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number" 
+                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Part No and then Press [ENTER]">
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
@@ -125,7 +133,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                      </div>
-                                    <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
+                                    <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number" 
+                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Serial No and then Press [ENTER]">
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
@@ -158,7 +167,10 @@
                     </div>
                 </div>
                 <div class="button-list">
-                    <button type="button" id="btn_complete" class="btn btn-success waves-effect waves-light">Submit</button>
+                    <button type="button" id="btn_complete" class="btn btn-success waves-effect waves-light" 
+                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Please re-confirm the data you have input is appropriate">
+                        Submit
+                    </button>
                 </div>
             </div>
         </div>
@@ -346,7 +358,7 @@
         });
         
         //function for datatables button
-        $('#cart_grid tbody').on( 'keypress', 'input', function (e) {        
+        $('#cart_grid tbody').on( 'keydown', 'input', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
             fstock = parseInt(data['stock']);
@@ -887,9 +899,9 @@
 
         });
         
-        e_ticketnum.on("keypress", function(e){
+        e_ticketnum.on("keydown", function(e){
             var len = e_ticketnum.val().length;
-            if (e.keyCode == 13) {
+            if (e.keyCode == 9 || e.keyCode == 13) {
                 if(isEmpty(e_ticketnum.val())){
                     alert('Please fill out the ticket number!');
                     e_ticketnum.focus();
@@ -948,9 +960,13 @@
             e_delivery.focus();
         });
         
-        e_ssb_id.on('keypress', function(e){
-            if (e.keyCode == 13) {
-                get_atm_loc(this.value);
+        e_ssb_id.on('keydown', function(e){
+            if (e.keyCode == 9 || e.keyCode == 13) {
+                if(isEmpty(this.value)){
+                    alert('Please fill in the text box!');
+                }else{
+                    get_atm_loc(this.value);
+                }
                 return false;
             }
         });
@@ -977,8 +993,8 @@
             e_partname.selectpicker('refresh');
         });
         
-        e_partnum.on('keypress', function(e){
-            if (e.keyCode == 13) {
+        e_partnum.on('keydown', function(e){
+            if (e.keyCode == 9 || e.keyCode == 13) {
                 if(isEmpty(e_partnum.val())){
                     alert('Please fill in this field!');
                     e_partnum.focus();
@@ -1001,8 +1017,8 @@
             }
         });
         
-        e_serialnum.on("keypress", function(e){
-            if (e.keyCode == 13) {
+        e_serialnum.on("keydown", function(e){
+            if (e.keyCode == 9 || e.keyCode == 13) {
                 if(isEmpty(e_partnum.val())){
                     alert('Please fill out spare part number!');
                     e_partnum.focus();

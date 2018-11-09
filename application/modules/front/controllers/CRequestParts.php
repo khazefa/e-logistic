@@ -613,6 +613,64 @@ class CRequestParts extends BaseController
         }
         return $output;
     }
+
+    /**
+     * This function is used to get list information described by function name
+     */
+    public function get_total_request(){
+        $rs = array();
+        $arrWhere = array();
+        $total = 0;
+        
+        if($this->hasHub){
+            if($this->hasCoverage){
+                if(empty($coverage)){
+                    $fcoverage = $this->session->userdata ( 'ovCoverage' );
+                }else{
+                    if (strpos($coverage, ',') !== false) {
+                        $fcoverage = str_replace(',', ';', $coverage);
+                    }else{
+                        $fcoverage = $coverage;
+                    }
+                }
+            }else{
+                if (strpos($coverage, ',') !== false) {
+                    $fcoverage = str_replace(',', ';', $coverage);
+                }else{
+                    $fcoverage = $coverage;
+                }
+            }
+
+            if(empty($fcoverage)){
+                $e_coverage = array();
+            }else{
+                $e_coverage = explode(';', $fcoverage);
+            }
+            
+            $fcode = $e_coverage;
+        }else{
+            $fcode = $this->repo;
+        }
+        // $fcode = array("CIDJ", "CIES");
+        $fcode_dest = "";
+        $fticket = "";
+        $fdate1 = "2018-10-01";
+        $fdate2 = "2018-10-31";
+        $fpurpose = "RWH";
+
+        $arrWhere = array('fcode'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fticket'=>$fticket, 
+            'fcode_dest'=>$fcode_dest, 'fpurpose <>'=>$fpurpose);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_total_outgoings_by'), 'POST', FALSE);
+        $total = $rs_data->status ? $rs_data->result : 0;
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('total', $total))
+        );
+    }
     
     /**
      * This function is used to get list information described by function name

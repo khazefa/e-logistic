@@ -25,7 +25,13 @@ class COutgoing extends BaseController
         parent::__construct();
         $this->isLoggedIn();
         if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
-            //
+            if($this->isStaff()){
+                $this->readonly = FALSE;
+            }elseif($this->isSpv()){
+                $this->readonly = TRUE;
+            }else{
+                $this->readonly = TRUE;
+            }
         }else{
             redirect('cl');
         }
@@ -81,6 +87,7 @@ class COutgoing extends BaseController
         $this->global ['name'] = $this->name;
         
         $data['classname'] = $this->cname;
+        $data['readonly'] = $this->readonly;
         $this->loadViews($this->view_dir.'/dashboard', $this->global, $data);
     }
     

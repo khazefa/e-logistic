@@ -243,16 +243,16 @@ $route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1
 // ===========================
 //  Routing Front Transfer to FSL
 // ===========================
-$route['transfer-to-fsl/view'] = 'front/ctransfertofsl';
-$route['transfer-to-fsl/add'] = 'front/ctransfertofsl/add';
-$route['transfer-to-fsl/list/([a-zA-Z]+)'] = 'front/ctransfertofsl/get_list/$1';
-$route['transfer-to-fsl/detail'] = 'front/ctransfertofsl/get_transfer';
-$route['transfer-to-fsl/list_detail'] = 'front/ctransfertofsl/get_transfer_detail';
-$route['transfer-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
-$route['transfer-to-fsl/check-transaction'] = 'front/ctransfertofsl/check_transaction';
-$route['transfer-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
-$route['transfer-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
-$route['transfer-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
+$route['transfer-stock-to-fsl/view'] = 'front/ctransfertofsl';
+$route['transfer-stock-to-fsl/add'] = 'front/ctransfertofsl/add';
+$route['transfer-stock-to-fsl/list/([a-zA-Z]+)'] = 'front/ctransfertofsl/get_list/$1';
+$route['transfer-stock-to-fsl/detail'] = 'front/ctransfertofsl/get_transfer';
+$route['transfer-stock-to-fsl/list_detail'] = 'front/ctransfertofsl/get_transfer_detail';
+$route['transfer-stock-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
+$route['transfer-stock-to-fsl/check-transaction'] = 'front/ctransfertofsl/check_transaction';
+$route['transfer-stock-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
+$route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
+$route['transfer-stock-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
 // ===========================
 //  End Routing Front Transfer to FSL
 // ===========================
@@ -397,6 +397,7 @@ $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1'
 // ===========================
 $route['return-parts/view'] = 'front/creturnparts';
 $route['return-parts/add'] = 'front/creturnparts/add';
+$route['return-parts/add/(:any)'] = 'front/creturnparts/add/$1';
 $route['return-parts/list/([a-zA-Z]+)'] = 'front/creturnparts/get_list/$1';
 $route['return-parts/check-ticket'] = 'front/creturnparts/check_ticket';
 $route['return-parts/insert'] = 'front/creturnparts/submit_trans';
@@ -410,6 +411,7 @@ $route['return-parts/print/(:any)'] = 'front/creturnparts/print_transaction/$1';
 // ===========================
 $route['supply-fsl-to-fsl/view'] = 'front/csupplyfromfsl';
 $route['supply-fsl-to-fsl/add'] = 'front/csupplyfromfsl/add';
+$route['supply-fsl-to-fsl/add/(:any)'] = 'front/csupplyfromfsl/add/$1';
 $route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
 $route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
 $route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';

@@ -13,7 +13,7 @@ require APPPATH . '/libraries/BaseController.php';
 class CSupplyFromFSL extends BaseController
 {
     private $cname = 'supply-fsl-to-fsl';
-    private $cname_transfer = 'transfer-to-fsl';
+    private $cname_transfer = 'transfer-stock-to-fsl';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
@@ -50,10 +50,10 @@ class CSupplyFromFSL extends BaseController
      */
     public function index()
     {        
-        $this->global['pageTitle'] = 'List Received Stock - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Received Stock';
-        $this->global['contentHeader'] = 'List Received Stock';
-        $this->global['contentTitle'] = 'List Received Stock';
+        $this->global['pageTitle'] = 'List Received Parts - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Received Parts';
+        $this->global['contentHeader'] = 'List Received Parts';
+        $this->global['contentTitle'] = 'List Received Parts';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -116,11 +116,12 @@ class CSupplyFromFSL extends BaseController
         $isParam = FALSE;
 
         //Parameters for cURL
-        $fdest_code = $this->repo;
+        // $fcode = $this->repo;
         $fdate1 = $this->input->get('fdate1', TRUE);
         $fdate2 = $this->input->get('fdate2', TRUE);
         $fpurpose = "RWH";
-        $fstatus = "open";
+        // $fstatus = "open";
+        $fstatus = $this->input->get('fstatus', TRUE);
         $coverage = !empty($_GET['fcoverage']) ? implode(';',$_GET['fcoverage']) : "";
         
         if($this->hasHub){
@@ -148,13 +149,13 @@ class CSupplyFromFSL extends BaseController
                 $e_coverage = explode(';', $fcoverage);
             }
             
-            $fcode = "";
+            $fcode = $e_coverage;
         }else{
             $fcode = $this->repo;
         }
         
         //Parameters for cURL
-        $arrWhere = array('fdest_code'=>$fdest_code, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
+        $arrWhere = array('fdest_code'=>$fcode, 'fdate1'=>$fdate1, 'fdate2'=>$fdate2, 'fpurpose'=>$fpurpose, 'fstatus'=>$fstatus);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
@@ -172,6 +173,7 @@ class CSupplyFromFSL extends BaseController
                     $transfer_to = filter_var($r->fsl_dest_name, FILTER_SANITIZE_STRING);
                     $notes = filter_var($r->outgoing_notes, FILTER_SANITIZE_STRING);
                     $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
+                    $button = "";
                     $curdatetime = new DateTime();
                     $datetime2 = new DateTime($transdate);
                     $interval = $curdatetime->diff($datetime2);
@@ -184,7 +186,18 @@ class CSupplyFromFSL extends BaseController
                     $row['transfer_to'] = $transfer_to;
                     $row['qty'] = $qty;
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+
+                    if($this->readonly){
+                        $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                    }else{
+                        if($status === "open"){
+                            $button = '<a href="'.base_url($this->cname."/add/").$transnum.'" title="Receive Parts"><i class="mdi mdi mdi-archive mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button .= ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }else{
+                            $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }
+                    }
+                    $row['button'] = $button;
 
                     if($fpurpose === "RWH"){
                         if($this->hasHub){
@@ -244,7 +257,7 @@ class CSupplyFromFSL extends BaseController
     /**
      * This function is used to load the add new form
      */
-    public function add()
+    public function add($transnum = "")
     {
         $this->global['pageTitle'] = 'Add Supply FSL to FSL - '.APP_NAME;
         $this->global['pageMenu'] = 'Add Supply FSL to FSL';
@@ -256,6 +269,11 @@ class CSupplyFromFSL extends BaseController
         $data['classname'] = $this->cname;
         $data['classname_transfer'] = $this->cname_transfer;
         $data['cart_postfix'] = $this->cart_postfix;
+        if(empty($transnum)){
+            $data['transnum'] = "";
+        }else{
+            $data['transnum'] = $transnum;
+        }
         $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
     

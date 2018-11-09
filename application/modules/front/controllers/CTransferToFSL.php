@@ -5,18 +5,18 @@ require APPPATH . '/libraries/BaseController.php';
 
 /**
  * Class : CTransferToFSL (CTransferToFSLController)
- * CTransferToFSL Class to control Transfer to FSL
+ * CTransferToFSL Class to control Transfer Stock to FSL
  * @author : Sigit Prayitno
  * @version : 1.0
  * @since : Mei 2017
  */
 class CTransferToFSL extends BaseController
 {
-    private $cname = 'transfer-to-fsl';
+    private $cname = 'transfer-stock-to-fsl';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
-    private $view_dir = 'front/transfer-to-fsl/';
+    private $view_dir = 'front/transfer-stock-to-fsl/';
     private $readonly = TRUE;
     private $hasCoverage = FALSE;
     private $hasHub = FALSE;
@@ -52,10 +52,10 @@ class CTransferToFSL extends BaseController
      */
     public function index()
     {
-        $this->global['pageTitle'] = 'List Transfer to FSL - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Transfer to FSL';
-        $this->global['contentHeader'] = 'List Transfer to FSL';
-        $this->global['contentTitle'] = 'List Transfer to FSL';
+        $this->global['pageTitle'] = 'List Transfer Stock to FSL - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Transfer Stock to FSL';
+        $this->global['contentHeader'] = 'List Transfer Stock to FSL';
+        $this->global['contentTitle'] = 'List Transfer Stock to FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -75,10 +75,10 @@ class CTransferToFSL extends BaseController
     public function add()
     {
         if(!$this->readonly){
-            $this->global['pageTitle'] = 'Transfer to FSL - '.APP_NAME;
-            $this->global['pageMenu'] = 'Transfer to FSL';
-            $this->global['contentHeader'] = 'Transfer to FSL';
-            $this->global['contentTitle'] = 'Transfer to FSL';
+            $this->global['pageTitle'] = 'Transfer Stock to FSL - '.APP_NAME;
+            $this->global['pageMenu'] = 'Transfer Stock to FSL';
+            $this->global['contentHeader'] = 'Transfer Stock to FSL';
+            $this->global['contentTitle'] = 'Transfer Stock to FSL';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             

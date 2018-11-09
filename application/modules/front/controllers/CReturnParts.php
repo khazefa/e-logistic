@@ -73,7 +73,7 @@ class CReturnParts extends BaseController
     /**
      * This function is used to load the add new form
      */
-    public function add()
+    public function add($transnum = "")
     {
         $this->global['pageTitle'] = 'Return Parts - '.APP_NAME;
         $this->global['pageMenu'] = 'Return Parts';
@@ -86,6 +86,11 @@ class CReturnParts extends BaseController
         $data['classname_request'] = $this->cname_request;
         $data['cart_postfix'] = $this->cart_postfix;
         $data['status_option'] = $this->config->config['status']['in_detail'];
+        if(empty($transnum)){
+            $data['transnum'] = "";
+        }else{
+            $data['transnum'] = $transnum;
+        }
         $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
     
@@ -186,6 +191,7 @@ class CReturnParts extends BaseController
                     $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
                     $rpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
+                    $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
                     $fslfrom = filter_var($r->fsl_from, FILTER_SANITIZE_STRING);
                     $fslfromname = filter_var($r->fsl_from_name, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->incoming_qty, FILTER_SANITIZE_NUMBER_INT);
@@ -199,6 +205,7 @@ class CReturnParts extends BaseController
                     $row['transnum'] = $transnum;
                     $row['transout'] = $transout === "" ? "-" : $transout." ".$outstatus;
                     $row['transdate'] = tgl_indo($transdate);
+                    $row['fsl_location'] = $fslname;
                     $row['qty'] = $qty;
                     $row['button'] = $button;
 

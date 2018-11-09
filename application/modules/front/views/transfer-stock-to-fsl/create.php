@@ -3,6 +3,11 @@
     <div class="col-md-12">
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -67,7 +72,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                      </div>
-                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number">
+                                    <input type="text" name="fpartnum" id="fpartnum" class="form-control" placeholder="Part Number" 
+                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Part No and then Press [ENTER]">
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
@@ -75,7 +81,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                      </div>
-                                    <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number">
+                                    <input type="text" name="fserialnum" id="fserialnum" class="form-control" placeholder="Serial Number" 
+                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Serial No and then Press [ENTER]">
                                 </div>
                             </div>
                             <div class="form-group col-md-6">

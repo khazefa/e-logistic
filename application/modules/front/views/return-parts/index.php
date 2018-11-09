@@ -60,7 +60,7 @@
                 if(!$readonly){
             ?>
                 <div class="btn-group">
-                    <button type="button" onclick="location.href='<?php echo base_url($classname."/add");?>'" class="btn btn-sm btn-light waves-effect">
+                    <button type="button" onclick="location.href='<?php echo base_url($classname."/add/");?>'" class="btn btn-sm btn-light waves-effect">
                         <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
                     </button>
                 </div>
@@ -100,6 +100,7 @@
                                     <th>Date</th>
                                     <th>Reff No</th>
                                     <th>Qty</th>
+                                    <th>FSL Location</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -204,6 +205,7 @@
                 { "data": 'transdate' },
                 { "data": 'transout' },
                 { "data": 'qty' },
+                { "data": 'fsl_location' },
                 { "data": 'button' },
             ],
             order: [[ 1, "desc" ]],

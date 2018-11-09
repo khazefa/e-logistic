@@ -123,14 +123,14 @@
                         <ul class="navigation-menu">
 
                             <li class="has-submenu">
-                                <a href="<?php echo base_url();?>"><i class="icon-speedometer"></i>Dashboard</a>
+                                <a href="<?php echo base_url();?>"><i class="mdi mdi-view-dashboard"></i>Dashboard</a>
                             </li>
                             
                             <?php
                             if(($role == ROLE_SPV || $role == ROLE_AM)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="icon-handbag"></i>Transaction</a>
+                                <a href="#"><i class="mdi mdi-book-open"></i>Transaction</a>
                                 <ul class="submenu">
                                     <!--
                                     <li>
@@ -143,7 +143,7 @@
                                         <a href="<?php echo base_url("request-parts/view");?>">Request Parts</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo base_url("transfer-to-fsl/view");?>">Transfer Stock to FSL</a>
+                                        <a href="<?php echo base_url("transfer-stock-to-fsl/view");?>">Transfer Stock to FSL</a>
                                     </li>
                                     -->
                                     <li>
@@ -176,7 +176,7 @@
                             if(($role == ROLE_SPV)){
                             ?>
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-database"></i>Master</a>
+                                <a href="#"><i class="mdi mdi-database"></i>Master</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("spareparts/view");?>">Sparepart</a></li>
                                     <li><a href="<?php echo base_url("spareparts-sub/view");?>">Sparepart Subtitute</a></li>
@@ -187,7 +187,7 @@
                                 </ul>
                             </li>
                             <li class="has-submenu">
-                                <a href="#"><i class="fa fa-file-text"></i>Report</a>
+                                <a href="#"><i class="mdi mdi-book-multiple"></i>Report</a>
                                 <ul class="submenu">
                                     <li><a href="<?php echo base_url("report/consumed-parts");?>">Transacted Part</a></li>
                                     <li><a href="<?php echo base_url("report/used-parts");?>">Used Part</a></li>

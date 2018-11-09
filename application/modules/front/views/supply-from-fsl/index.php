@@ -42,6 +42,15 @@
                 <?php
                     }
                 ?>
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
+                            <option value="">By Status</option>
+                            <option value="open">Open</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <button type="button" id="btn_search" class="btn btn-primary waves-effect waves-light">
@@ -99,6 +108,7 @@
                                 <th>Trans No</th>
                                 <th>Date</th>
                                 <th>Transfer From</th>
+                                <th>Transfer To</th>
                                 <th>Qty</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -118,6 +128,7 @@
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
     var e_coverage = $('#fcoverage');
+    var e_status = $('#fstatus');
     var table;
     
     function init_form(){
@@ -125,6 +136,7 @@
         e_date2.val('');
         e_coverage.val('');
         e_coverage.selectpicker('refresh');
+        e_status.val('');
     }
     
     $(document).ready(function() {
@@ -212,12 +224,14 @@
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
                     d.fcoverage = e_coverage.val();
+                    d.fstatus = e_status.val();
                 }
             },
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
                 { "data": 'transfer_from' },
+                { "data": 'transfer_to' },
                 { "data": 'qty' },
                 { "data": 'status' },
                 { "data": 'button' },

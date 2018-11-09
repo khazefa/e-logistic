@@ -3,6 +3,11 @@
     <div class="col-md-12">
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <div class="btn-group">
+                <button type="button" onclick="location.href='javascript:history.back()'" class="btn btn-sm btn-light waves-effect">
+                    <i class="mdi mdi-keyboard-backspace font-18 vertical-middle"></i> Back
+                </button>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4 m-b-30">
@@ -18,7 +23,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                                  </div>
-                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER]" 
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" value="<?php echo $transnum; ?>" placeholder="Press [ENTER]" 
                                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Reff No and then Press [ENTER]">
                                             </div>
                                             <div class="input-group col-sm-12">
@@ -105,7 +110,8 @@
                                 <div class="row">
                                     <div class="col-md-3 offset-md-9">
                                         Total Quantity: <span id="ttl_qty">0</span>
-                                        <input type="text" id="ffe_report" name="ffe_report" class="form-control" placeholder="FE Report">
+                                        <input type="text" id="ffe_report" name="ffe_report" class="form-control" placeholder="FE Report" 
+                                            data-toggle="tooltip" data-placement="top" title="" data-original-title="Please input FE Report if you have Bad Part in Returns">
                                     </div>
                                 </div>
                                 <div class="row mt-2">
@@ -126,7 +132,8 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="button" id="btn_close" class="btn btn-success waves-effect waves-light">
+                                <button type="button" id="btn_close" class="btn btn-success waves-effect waves-light" 
+                                    data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Please do Verify before Submit!">
                                     Submit
                                 </button>
                             </div>
@@ -239,8 +246,15 @@
     var table2;
     
     function init_form(){
-        e_trans_out.val('');
-        e_trans_out.prop('readonly', false);
+        var has_transnum = "<?php echo $transnum; ?>";
+        if(isEmpty(has_transnum)){
+            e_trans_out.val('');
+            e_trans_out.prop('readonly', false);
+        }else{
+            e_trans_out.val(has_transnum);
+            e_trans_out.prop('readonly', true);
+            check_trans_out(has_transnum);
+        }
         e_trans_out_notes.html('');
         e_fslcode.html('-');
         e_fslname.html('-');
@@ -305,7 +319,7 @@
                     render    : function ( data, type, full, meta ) {
                         var html = '';
                         if(isEmpty(data)){
-                            html = '<a href="javascript:void(0)" title="Edit Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Return</a>';
+                            html = '<a href="javascript:void(0)" title="Proceed Return" id="btn_edit"><i class="fa fa-angle-double-right"></i> Return</a>';
                         }else{
                             if(data === "RGP"){
                                 html = 'Return Good';
@@ -931,9 +945,11 @@
         $('[name="dstatus"]').on("change", function(e) {
             var val = this.value;
             var sn = $('[name="dserialno"]').val();
+            var oldsn = $('[name="dserialno_old"]').val();
             var oldqty = parseInt($('[name="dqty_old"]').val());
             
             if(val === "RBP"){
+                $('[name="dserialno"]').val(oldsn);
                 if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
                     $('[name="dqty"]').prop('readonly', true);
                 }else{
@@ -946,6 +962,7 @@
                     $('[name="dqty"]').prop('readonly', true);
                 }
             }else if(val === "RGP"){
+                $('[name="dserialno"]').val(oldsn);
                 if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
                     alert("Please change Quantity if needed.");
                     $('[name="dqty"]').prop('readonly', false);
@@ -955,6 +972,7 @@
                     $('[name="dserialno"]').prop('readonly', true);
                 }
             }else{
+                $('[name="dserialno"]').val(oldsn);
                 $('[name="dserialno"]').prop('readonly', true);
                 $('[name="dqty"]').prop('readonly', true);
             }

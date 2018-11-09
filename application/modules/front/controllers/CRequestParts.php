@@ -13,6 +13,7 @@ require APPPATH . '/libraries/BaseController.php';
 class CRequestParts extends BaseController
 {
     private $cname = 'request-parts';
+    private $cname_return = 'return-parts';
     private $cname_atm = 'atm';
     private $cname_warehouse = 'warehouse';
     private $cname_cart = 'cart';
@@ -506,6 +507,7 @@ class CRequestParts extends BaseController
                     $requestby = "";
                     $takeby = "";
                     $purpose = "";
+                    $button = "";
                     $curdatetime = new DateTime();
                     $datetime2 = new DateTime($transdate);
                     $interval = $curdatetime->diff($datetime2);
@@ -533,8 +535,17 @@ class CRequestParts extends BaseController
                     $row['fsl_location'] = $fslname;
         //            $row['notes'] = "-";
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
-
+                    if($this->readonly){
+                        $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                    }else{
+                        if($status === "open"){
+                            $button = '<a href="'.base_url($this->cname."/add/").$transnum.'" title="Return Parts"><i class="mdi mdi-keyboard-return mr-2 text-muted font-18 vertical-middle"></i></a>';
+                            $button .= ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }else{
+                            $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
+                        }
+                    }
+                    $row['button'] = $button;
                     if($fpurpose !== "RWH"){
                         if($this->hasHub){
                             if(in_array($fslcode, $e_coverage)){
@@ -596,7 +607,6 @@ class CRequestParts extends BaseController
                     $row['fsl_location'] = $fslname;
         //            $row['notes'] = "-";
                     $row['status'] = $status === "open" ? strtoupper($status)."<br> (".$elapsed.")" : strtoupper($status);
-                    $row['button'] = '<a href="'.base_url($this->cname."/print/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
 
                     if($fpurpose !== "RWH"){
                         if($this->hasHub){

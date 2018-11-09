@@ -18,7 +18,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"> <i class="fa fa-barcode"></i> </span>
                                                  </div>
-                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" placeholder="Press [ENTER]" 
+                                                <input type="text" name="ftrans_out" id="ftrans_out" class="form-control" value="<?php echo $transnum; ?>" placeholder="Press [ENTER]" 
                                                        data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Reff No and then Press [ENTER]">
                                             </div>
                                             <div class="input-group col-sm-12">
@@ -176,8 +176,15 @@
     var total_qty_outgoing = 0;
     
     function init_form(){
-        e_trans_out.val('');
-        e_trans_out.prop("readonly", false);
+        var has_transnum = "<?php echo $transnum; ?>";
+        if(isEmpty(has_transnum)){
+            e_trans_out.val('');
+            e_trans_out.prop('readonly', false);
+        }else{
+            e_trans_out.val(has_transnum);
+            e_trans_out.prop('readonly', true);
+            check_transfer_reff(has_transnum);
+        }
         e_trans_out_notes.html('');
         e_fslcode.html('-');
         e_fslname.html('-');

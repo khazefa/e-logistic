@@ -158,6 +158,7 @@ $config['api_list_view_outgoings_history'] = constant('urlapi').'api/cpoutgoings
 $config['api_info_view_outgoings'] = constant('urlapi').'api/cpoutgoings/info_view/'; //POST
 $config['api_list_view_detail_outgoings'] = constant('urlapi').'api/cpoutgoings/list_view_detail/'; //POST
 $config['api_list_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp/'; //POST
+$config['api_list_stucked_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/list_tmp_abandoned/'; //POST
 $config['api_add_outgoings_cart'] = constant('urlapi').'api/cpoutgoings/create_trans_tmp/'; //POST
 $config['api_add_outgoings_trans'] = constant('urlapi').'api/cpoutgoings/create_trans/'; //POST
 $config['api_add_outgoings_trans_detail'] = constant('urlapi').'api/cpoutgoings/create_trans_detail/'; //POST

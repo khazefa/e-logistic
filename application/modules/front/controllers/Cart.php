@@ -45,12 +45,11 @@ class Cart extends BaseController
         $rs = $rs_data->status ? $rs_data->result : array();
         
         $data = array();
-        $partstock = "";
         foreach ($rs as $r) {
             $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
             $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
             $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-            $partstock = $this->get_stock($fcode, $partnum);
+            $stock = filter_var($r->tmp_stock, FILTER_SANITIZE_NUMBER_INT);
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
@@ -59,8 +58,8 @@ class Cart extends BaseController
             $row['partno'] = $partnum;
             $row['partname'] = $partname;
             $row['serialno'] = $serialnum;
-            $row['stock'] = $partstock;
-            $row['qty'] = (int)$qty;
+            $row['stock'] = $stock;
+            $row['qty'] = $qty;
  
             $data[] = $row;
         }
@@ -70,6 +69,66 @@ class Cart extends BaseController
         ->set_output(
             json_encode(array('data'=>$data))
         );
+    }
+
+    /**
+     * This function is used to get list stucked cart
+     */
+    public function stucked_outgoing(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_stucked_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_outgoing_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+            $cart_date = date("d/m/Y H:i:s", strtotime(filter_var($r->createdAt, FILTER_SANITIZE_STRING)));
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['qty'] = $qty;
+            $row['cart_date'] = $cart_date;
+ 
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
+
+    public function get_total_stucked_cart(){
+        $rs = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $arrWhere = array('fcode'=>$fcode);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_stucked_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('total'=>count($rs)))
+        );
+        // return count($rs);
     }
     
     /**
@@ -383,11 +442,35 @@ class Cart extends BaseController
         }
         return $data;
     }
+
+    /**
+     * This function is used to get cart stock
+     */
+    private function get_cart_qty($partnum, $serialnum, $fcode){
+        
+        $fcode = $this->repo;
+        $arrWhere = array('fpartnum'=>$partnum, 'fserialnum'=>$serialnum, 'fcode'=>$fcode);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_outgoings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $tmp_qty = "";
+        
+        if(!empty($rs)){
+            foreach ($rs as $r) {
+                $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $tmp_qty = $qty;
+            }
+
+        }
+        return $tmp_qty;
+    }
     
     /**
      * This function is used to add cart
      */
-    public function create_outgoing($postfix){
+    public function create_outgoing_old($postfix){
         $success_response = array(
             'status' => 1
         );
@@ -482,6 +565,63 @@ class Cart extends BaseController
             json_encode($response)
         );
     }
+
+    /**
+     * This function is used to add cart
+     */
+    public function create_outgoing($postfix){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed add data to cart'
+        );
+        
+        $fcode = $this->repo;
+        $fuser = $this->vendorUR;
+        $fname = $this->name;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix;
+        $fqty = $this->input->post('fqty', TRUE);
+        
+        $partname = "";
+        $partstock = 0;
+        $curstock = 0;
+        $partstock = (int)$this->get_stock($fcode, $fpartnum);
+        $partname = $this->get_part_name($fpartnum);
+        if($partstock >= $fqty){
+            $curstock = $partstock - $fqty;
+            $dataInfo = array('fpartnum'=>$fpartnum, 'fpartname'=>$partname, 'fserialnum'=>$fserialnum, 
+                'fcartid'=>$cartid, 'fqty'=>$fqty, 'fstock'=>$curstock, 'fuser'=>$fuser, 'fname'=>$fname, 'fcode'=>$fcode);
+            $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_outgoings_cart'), 'POST', FALSE);
+            if($rs_data->status)
+            {
+                $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum, 'fqty'=>$curstock, 'fflag'=>'N');
+                //update stock by fsl code and part number
+                $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                        'POST', FALSE);
+                $response = $success_response;
+            }
+            else
+            {
+                $response = $error_response;
+            }
+        }else{
+            $error_response = array(
+                'status' => 0,
+                'message'=> 'Stock of spare parts has run out'
+            );
+            $response = $error_response;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
     
     /**
      * This function is used to update cart
@@ -495,14 +635,27 @@ class Cart extends BaseController
             'message'=> 'Failed to update cart'
         );
         
+        $fcode = $this->repo;
         $fid = $this->input->post('fid', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
+        $partstock = 0;
+        $curstock = 0;
+        $curcart_qty = 0;
+        $partstock = (int)$this->get_stock($fcode, $fpartnum);
+        $curcart_qty = (int)$this->get_cart_qty($fpartnum, $fserialnum, $fcode);
+        $curstock = ($partstock + $curcart_qty) - $fqty;
 
-        $arrWhere = array('fid'=>$fid, 'fqty'=>$fqty);
+        $arrWhere = array('fid'=>$fid, 'fserialnum'=>$fserialnum, 'fqty'=>$fqty, 'fstock'=>$curstock);
         $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_cart'), 'POST', FALSE);
 
         if($rs_data->status)
         {
+            $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum, 'fqty'=>$curstock, 'fflag'=>'N');
+            //update stock by fsl code and part number
+            $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                    'POST', FALSE);
             $response = $success_response;
         }
         else
@@ -528,13 +681,24 @@ class Cart extends BaseController
             'message'=> 'Failed to delete cart'
         );
         
+        $fcode = $this->repo;
         $fid = $this->input->post('fid', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $partstock = 0;
+        $curstock = 0;
+        $partstock = (int)$this->get_stock($fcode, $fpartnum);
+        $curstock = $partstock + $fqty;
 
         $arrWhere = array('fid'=>$fid);
         $rs_data = send_curl($arrWhere, $this->config->item('api_delete_outgoings_cart'), 'POST', FALSE);
 
         if($rs_data->status)
         {
+            $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum, 'fqty'=>$curstock, 'fflag'=>'N');
+            //update stock by fsl code and part number
+            $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                    'POST', FALSE);
             $response = $success_response;
         }
         else

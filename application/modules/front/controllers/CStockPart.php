@@ -902,7 +902,7 @@ class CStockPart extends BaseController
                 $success_response = array(
                     'status' => 1,
                     'stock'=> $stock,
-                    'message'=> 'Stock available'
+                    'message'=> 'Stock available = '.$stock
                 );
                 $response = $success_response;
             }else{

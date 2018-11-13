@@ -27,7 +27,7 @@
                 <?php
                     if(!$readonly){
                 ?>
-                <button type="button" onclick="location.href='<?php echo base_url('request-parts/add');?>'" class="btn btn-default waves-light waves-effect">
+                <button type="button" onclick="location.href='<?php echo base_url('transfer-stock-to-fsl/add');?>'" class="btn btn-default waves-light waves-effect">
                     Add New
                 </button>
                 <?php

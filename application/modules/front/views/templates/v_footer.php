@@ -163,7 +163,6 @@
                     error: errorT
                 });
             }
-
             function throw_ajax_err(jqXHR, textStatus, errorThrown){
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
             }

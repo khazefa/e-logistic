@@ -96,12 +96,22 @@
         <div class="card-box">
             <div class="card-header bg-primary text-white">
                 <input type="checkbox" name="fswitch" id="fswitch" data-plugin="switchery" data-color="#f1b53d"/>
-                <strong class="card-title pull-right">Detail Orders</strong>
+                <strong class="card-title">Input your detail orders</strong>
             </div>
 
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-3 offset-md-9">
+                                <a class="btn btn-default waves-effect" href="#" role="button" id="btn_stucked_cart"
+                                   aria-haspopup="true" aria-expanded="false" 
+                                   data-toggle="tooltip" data-placement="bottom" title="" data-original-title="View Data Stucked Cart">
+                                    <i class="mdi mdi-basket-fill noti-icon"></i> Stucked Cart
+                                    <span class="badge badge-danger badge-pill noti-icon-badge" id="ttl_stucked_cart">0</span>
+                                </a>
+                            </div>
+                        </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <select id="fpartname" name="fpartname" class="selectpicker" data-live-search="true" 
@@ -217,6 +227,51 @@
 </div>
 </form>
 
+<!-- Modal View Detail Information -->
+<div class="modal fade" id="viewstucked" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
+    <div class="modal-dialog"  style="max-width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">View Stucked Cart</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-box table-responsive">
+                            <p>Harap hapus data cart yang tersangkut di sistem ini, 
+                            agar jumlah dari Part yang ada dapat dikembalikan ke data 
+                            stok masing-masing oleh sistem.</p>
+                            <table id="stucked_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Part Number</th>
+                                    <th>Serial Number</th>
+                                    <th>Part Name</th>
+                                    <th>Qty</th>
+                                    <th>Cart Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-md-3 offset-md-9">
+                                    Total Quantity: <span id="ttl_qty_s">0</span>
+                                </div>
+                            </div> 
+                        </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal View Detail Information -->
+
 <script type="text/javascript">
     var e_purpose = $('#fpurpose');
     var e_ticketnum = $('#fticketnum');
@@ -242,6 +297,7 @@
     var table;
     var table2;
     var table3;
+    var table_s;
         
     //initial form state
     function init_form(){
@@ -319,16 +375,46 @@
                     }
                 },
                 {
+                    targets   : 2,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        var html = '';
+                        if(data === "NOSN"){
+                            html = data;
+                        }else{
+                            html = '<input type="text" id="dserialnum" value="'+data+'" class="form-control" title="Change Serial No and then Press [ENTER]">';
+                        }
+                        return html;
+                    }
+                },
+                {
+                    targets   : 4,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        var html = '';
+                        if(data === "0"){
+                            html = '<span class="text-danger font-weight-bold">0</span>';
+                        }else{
+                            html = data;
+                        }
+                        return html;
+                    }
+                },
+                {
                     targets   : 5,
                     orderable : false, //set not orderable
                     data      : null,
                     render    : function ( data, type, full, meta ) {
 //                        console.log('data: '+full.serial_number);
+                        var html = '';
                         if(full.serialno === "NOSN"){
-                            return '<input type="number" id="fqty" min="0" value="'+full.qty+'" style="width: 100%;">';
+                            html = '<input type="number" id="dqty" min="0" value="'+full.qty+'" style="width: 100%;">';
                         }else{
-                            return data;
+                            html = data;
                         }
+                        return html;
                     }
                 }
             ],
@@ -354,22 +440,37 @@
         $('#cart_grid tbody').on( 'click', 'button', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
-            delete_cart(fid);
+            fpartnum = data['partno'];
+            fqty = parseInt(data['qty']);
+            delete_cart(fid, fpartnum, fqty);
+        });
+
+        //function for datatables button
+        $('#cart_grid tbody').on( 'keydown', '#dserialnum', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            fid = data['id'];
+            fserialnum = this.value;
+            if (e.keyCode == 9 || e.keyCode == 13) {
+                //update cart by cart id
+                update_cart_info(fid, fserialnum);
+                return false;
+            }
         });
         
         //function for datatables button
-        $('#cart_grid tbody').on( 'keydown', 'input', function (e) {        
+        $('#cart_grid tbody').on( 'keydown', '#dqty', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
             fid = data['id'];
+            fpartnum = data['partno'];
             fstock = parseInt(data['stock']);
             fqty = parseInt(this.value);
-            if (e.keyCode == 13) {
+            if (e.keyCode == 9 || e.keyCode == 13) {
                 if(fqty > fstock){
                     alert('The quantity amount exceeds the sparepart stock !');
                     this.focus;
                 }else{
                     //update cart by cart id
-                    update_cart(fid, fqty);
+                    update_cart_qty(fid, fpartnum, fqty);
                 }
                 return false;
             }
@@ -382,6 +483,105 @@
     //reload table
     function reload(){
         table.ajax.reload();
+    }
+
+    function total_stucked(){
+        var url = '<?php echo base_url('cart/outgoing/total-stucked'); ?>';
+        var type = 'GET';
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                $('#ttl_stucked_cart').html(jqXHR.total);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+
+    //init table
+    function init_table_stucked(){
+        table_s = $('#stucked_grid').DataTable({
+            searching: false,
+            ordering: false,
+            info: false,
+            paging: false,
+            destroy: true,
+            stateSave: false,
+            deferRender: true,
+            processing: true,
+            lengthChange: false,
+            ajax: {
+                url: '<?php echo base_url('cart/outgoing/list-stucked'); ?>',
+                type: "GET",
+                dataType: "JSON",
+                contentType: "application/json",
+                data: JSON.stringify( {
+                    "<?php echo $this->security->get_csrf_token_name(); ?>": "<?php echo $this->security->get_csrf_hash(); ?>"
+                } ),
+            },
+            columns: [
+                { "data": 'id' },
+                { "data": 'partno' },
+                { "data": 'serialno' },
+                { "data": 'partname' },
+                { "data": 'qty' },
+                { "data": 'cart_date' },
+            ],
+            columnDefs : [
+                {
+                    targets   : 0,
+                    orderable : false, //set not orderable
+                    data      : null,
+                    render    : function ( data, type, full, meta ) {
+                        return '<button type="button" class="btn btn-danger" id="btn_delete_s"><i class="fa fa-trash"></i></button>';
+                    }
+                }
+            ],
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ? i : 0;
+                };
+                var totalQty = api
+                .column( 4 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+                $('#ttl_qty_s').html(totalQty);
+            },
+        });
+        
+        //function for datatables button
+        $('#stucked_grid tbody').on( 'click', '#btn_delete_s', function (e) {        
+            var data = table.row( $(this).parents('tr') ).data();
+            fid = data['id'];
+            fpartnum = data['partno'];
+            fqty = parseInt(data['qty']);
+            delete_cart(fid, fpartnum, fqty);
+        });
+
+        table_s.buttons().container()
+                .appendTo('#stucked_grid_wrapper .col-md-6:eq(0)');
+    }
+    
+    //reload table
+    function reload_stucked(){
+        table_s.ajax.reload();
     }
     
     //init table
@@ -573,7 +773,7 @@
     }
     
     //check part stock
-    function check_part(partno){        
+    function check_part(partno){
         var url = '<?php echo $url_check_part;?>';
         var type = 'POST';
         
@@ -674,6 +874,7 @@
                 e_cust.prop("readonly", true);
                 e_loc.val(rs.location);
                 e_loc.prop("readonly", true);
+                e_delivery.focus();
             }
         };
         throw_ajax(url, type, data, success, throw_ajax_err);
@@ -688,7 +889,7 @@
     }
     
     //add to cart
-    function add_cart(partno, serialno){
+    function add_cart(partno, serialno, qty){
         var total_qty = table.rows().count();
         
         if(total_qty >= 3){
@@ -704,7 +905,8 @@
             var data = {
                 <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
                 fpartnum : partno,
-                fserialnum : serialno
+                fserialnum : serialno,
+                fqty : qty
             };
 
             $.ajax({
@@ -733,13 +935,49 @@
     }
     
     //update cart
-    function update_cart(id, qty){        
+    function update_cart_info(id, serialnum){
         var url = '<?php echo base_url('cart/outgoing/update'); ?>';
         var type = 'POST';
         
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             fid : id,
+            fpartnum : "",
+            fserialnum : serialnum,
+            fqty : 0
+        };
+        
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 1){
+                    reload();
+                }else if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
+
+    //update cart
+    function update_cart_qty(id, partnum, qty){
+        var url = '<?php echo base_url('cart/outgoing/update'); ?>';
+        var type = 'POST';
+        
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            fid : id,
+            fpartnum : partnum,
+            fserialnum : "",
             fqty : qty
         };
         
@@ -765,13 +1003,15 @@
     }
     
     //add to cart
-    function delete_cart(id){        
+    function delete_cart(id, partnum, qty){        
         var url = '<?php echo base_url('cart/outgoing/delete'); ?>';
         var type = 'POST';
         
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fid : id
+            fid : id,
+            fpartnum : partnum,
+            fqty : qty
         };
         
         $.ajax({
@@ -847,13 +1087,14 @@
     $(document).ready(function() {
         init_form();
         init_form_order();
+        total_stucked();
         
         e_ticketnum.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
-	});
+	    });
         
         e_serialnum.on("keyup", function(e) {
-            var sn = $(this).val();
+            var sn = $(this).val().trim();
             if(sn.toUpperCase() == "NO SN"){
                 $(this).val("NOSN");
             }else if(sn == "nosn"){
@@ -861,7 +1102,7 @@
             }else if(sn == "no sn"){
                 $(this).val("NOSN");
             }
-	});
+	    });
        
         init_table();
         init_table2();
@@ -956,8 +1197,7 @@
         });
         
         e_engineer2_id.on('change', function() {
-            e_delivery.prop("readonly", false);
-            e_delivery.focus();
+            e_ssb_id.focus();
         });
         
         e_ssb_id.on('keydown', function(e){
@@ -1027,11 +1267,15 @@
                     e_serialnum.focus();
                 }else{
                     check_part(e_partnum.val());
-//                    alert(status_checkpart);
                     if(status_checkpart === 1){
-                        add_cart(e_partnum.val(), e_serialnum.val());
+                        if(e_serialnum.val() === "NOSN"){
+                            var qty = parseInt(prompt("Enter quantity for NOSN Serial Number"));
+                            add_cart(e_partnum.val(), e_serialnum.val(), qty);
+                        }else{
+                            var qty = 1;
+                            add_cart(e_partnum.val(), e_serialnum.val(), qty);
+                        }
                         reload();
-//                        init_form_order();
                         e_partnum.prop('readonly', false);
                         e_partnum.val('');
                         e_partnum.focus();
@@ -1046,6 +1290,13 @@
                 }
                 return false;
             }
+        });
+
+        $("#btn_stucked_cart").on("click", function(e){
+            $('#viewstucked').modal({
+                show: true
+            });
+            init_table_stucked();
         });
         
         $("#btn_complete").on("click", function(e){        

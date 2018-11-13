@@ -261,6 +261,8 @@ $route['transfer-stock-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_trans
 //  Routing Cart
 // ===========================
 $route['cart/outgoing/list/([a-zA-Z]+)'] = 'front/cart/outgoing/$1';
+$route['cart/outgoing/list-stucked'] = 'front/cart/stucked_outgoing';
+$route['cart/outgoing/total-stucked'] = 'front/cart/get_total_stucked_cart';
 $route['cart/outgoing/add/([a-zA-Z]+)'] = 'front/cart/create_outgoing/$1';
 $route['cart/outgoing/update'] = 'front/cart/update_outgoing';
 $route['cart/outgoing/delete'] = 'front/cart/delete_outgoing';

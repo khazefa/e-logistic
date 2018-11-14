@@ -50,10 +50,10 @@ class CSupplyFromFSL extends BaseController
      */
     public function index()
     {        
-        $this->global['pageTitle'] = 'List Received Parts - '.APP_NAME;
-        $this->global['pageMenu'] = 'List Received Parts';
-        $this->global['contentHeader'] = 'List Received Parts';
-        $this->global['contentTitle'] = 'List Received Parts';
+        $this->global['pageTitle'] = 'List Received Transfer - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Received Transfer';
+        $this->global['contentHeader'] = 'List Received Transfer';
+        $this->global['contentTitle'] = 'List Received Transfer';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         
@@ -259,10 +259,10 @@ class CSupplyFromFSL extends BaseController
      */
     public function add($transnum = "")
     {
-        $this->global['pageTitle'] = 'Add Supply FSL to FSL - '.APP_NAME;
-        $this->global['pageMenu'] = 'Add Supply FSL to FSL';
+        $this->global['pageTitle'] = 'Add Transfered Parts from FSL - '.APP_NAME;
+        $this->global['pageMenu'] = 'Add Transfered Parts from FSL';
         $this->global['contentHeader'] = 'Input Reff No';
-        $this->global['contentTitle'] = 'Add Supply FSL to FSL';
+        $this->global['contentTitle'] = 'Add Transfered Parts from FSL';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         

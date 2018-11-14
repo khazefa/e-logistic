@@ -22,7 +22,7 @@
     <div class="col-sm-6 col-lg-6 col-xl-6">
         <div class="card-box bg-primary widget-flat border-primary text-white">
             <i class="fi-archive"></i>
-            <p class="text-uppercase m-b-5 font-18 font-600">Transfer to FSL</p>
+            <p class="text-uppercase m-b-5 font-18 font-600">Transfer Stock to FSL</p>
             <div class="button-list">
                 <?php
                     if(!$readonly){

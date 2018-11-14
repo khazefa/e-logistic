@@ -22,7 +22,7 @@
     <div class="col-sm-6 col-lg-6 col-xl-4">
         <div class="card-box bg-primary widget-flat border-primary text-white">
             <i class="fi-archive"></i>
-            <p class="text-uppercase m-b-5 font-18 font-600">Received Parts from FSL</p>
+            <p class="text-uppercase m-b-5 font-18 font-600">Received Transfer from FSL</p>
             <div class="btn-list">
                 <?php
                     if(!$readonly){

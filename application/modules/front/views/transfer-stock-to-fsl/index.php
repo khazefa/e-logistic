@@ -44,14 +44,6 @@
                 ?>
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-ticket"></i> </span>
-                         </div>
-                        <input type="text" name="fticket" id="fticket" class="form-control" placeholder="By Ticket No.">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="input-group col-sm-12">
                         <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
                             <option value="">By Status</option>
                             <option value="open">Open</option>
@@ -116,6 +108,7 @@
                                 <tr>
                                     <th>Trans No</th>
                                     <th>Date</th>
+                                    <th>Closing Date</th>
                                     <th>Transfer From</th>
                                     <th>Transfer To</th>
                                     <th>Qty</th>
@@ -138,14 +131,12 @@
     var table;
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
-    var e_ticket = $('#fticket');
     var e_coverage = $('#fcoverage');
     var e_status = $('#fstatus');
     
     function init_form(){
         e_date1.val('');
         e_date2.val('');
-        e_ticket.val('');
         e_coverage.val('');
         e_coverage.selectpicker('refresh');
         e_status.val('');
@@ -220,7 +211,6 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
-                    d.fticket = e_ticket.val();
                     d.fcoverage = e_coverage.val();
                     d.fstatus = e_status.val();
                 }
@@ -228,6 +218,7 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
+                { "data": 'closingdate' },
                 { "data": 'transfer_from' },
                 { "data": 'transfer_to' },
                 { "data": 'qty' },

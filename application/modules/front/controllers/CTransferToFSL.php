@@ -108,7 +108,6 @@ class CTransferToFSL extends BaseController
         
         $fdate1 = $this->input->get('fdate1', TRUE);
         $fdate2 = $this->input->get('fdate2', TRUE);
-        $fticket = $this->input->get('fticket', TRUE);
         $fticket = empty($this->input->get('fticket', TRUE)) ? "" : $this->input->get('fticket', TRUE);
         $fpurpose = "RWH";
         $fstatus = $this->input->get('fstatus', TRUE);
@@ -151,12 +150,13 @@ class CTransferToFSL extends BaseController
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_outgoings'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
-        
+        // var_dump($rs);exit();
         switch($type) {
             case "json":
                 foreach ($rs as $r) {
                     $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
                     $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $closingdate = filter_var($r->closing_date, FILTER_SANITIZE_STRING);
                     $qty = filter_var($r->outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
                     $fpurpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
@@ -173,6 +173,7 @@ class CTransferToFSL extends BaseController
 
                     $row['transnum'] = $transnum;
                     $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['closingdate'] = empty($closingdate) ? "-" : date('d/m/Y H:i', strtotime($closingdate));
                     $row['transfer_from'] = $transfer_from;
                     $row['transfer_to'] = $transfer_to;
                     $row['qty'] = $qty;

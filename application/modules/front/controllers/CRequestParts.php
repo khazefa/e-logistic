@@ -492,6 +492,7 @@ class CRequestParts extends BaseController
                     $transnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
         //            $transdate = filter_var($r->outgoing_date, FILTER_SANITIZE_STRING);
                     $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
+                    $closingdate = filter_var($r->closing_date, FILTER_SANITIZE_STRING);
                     $transticket = filter_var($r->outgoing_ticket, FILTER_SANITIZE_STRING);
                     $engineer = filter_var($r->engineer_key, FILTER_SANITIZE_STRING);
                     $engineer_name = filter_var($r->engineer_name, FILTER_SANITIZE_STRING);
@@ -527,6 +528,7 @@ class CRequestParts extends BaseController
 
                     $row['transnum'] = $transnum;
                     $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
+                    $row['closingdate'] = empty($closingdate) ? "-" : date('d/m/Y H:i', strtotime($closingdate));
                     $row['transticket'] = $transticket;
                     $row['reqby'] = $requestby;
                     $row['takeby'] = $takeby;

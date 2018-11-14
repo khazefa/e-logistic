@@ -127,9 +127,10 @@
                                 <tr>
                                     <th>Trans No</th>
                                     <th>Date</th>
+                                    <th>Closing Date</th>
                                     <th>Ticket No</th>
                                     <th>Requested by</th>
-                                    <th>Take by</th>
+                                    <th>Taken by</th>
                                     <th>Purpose</th>
                                     <th>Qty</th>
                                     <?php
@@ -249,6 +250,7 @@
             columns: [
                 { "data": 'transnum' },
                 { "data": 'transdate' },
+                { "data": 'closingdate' },
                 { "data": 'transticket' },
                 { "data": 'reqby' },
                 { "data": 'takeby' },

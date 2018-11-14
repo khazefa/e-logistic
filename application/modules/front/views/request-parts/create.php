@@ -383,7 +383,7 @@
                         if(data === "NOSN"){
                             html = data;
                         }else{
-                            html = '<input type="text" id="dserialnum" value="'+data+'" class="form-control" title="Change Serial No and then Press [ENTER]">';
+                            html = '<input type="text" id="dserialnum" value="'+data+'" class="form-control" title="Change Serial Number and then Press [ENTER]">';
                         }
                         return html;
                     }
@@ -568,11 +568,14 @@
         
         //function for datatables button
         $('#stucked_grid tbody').on( 'click', '#btn_delete_s', function (e) {        
-            var data = table.row( $(this).parents('tr') ).data();
+            var data = table_s.row( $(this).parents('tr') ).data();
             fid = data['id'];
             fpartnum = data['partno'];
             fqty = parseInt(data['qty']);
+            
             delete_cart(fid, fpartnum, fqty);
+            reload_stucked();
+            total_stucked();
         });
 
         table_s.buttons().container()

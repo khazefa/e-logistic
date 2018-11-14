@@ -188,7 +188,8 @@ class CReturnParts extends BaseController
                     $transnum = filter_var($r->incoming_num, FILTER_SANITIZE_STRING);
                     $transout = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
                     $outstatus = $r->outgoing_status == "" ? "" : "(". strtoupper($r->outgoing_status).")";
-                    $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
+                    // $transdate = filter_var($r->incoming_date, FILTER_SANITIZE_STRING);
+                    $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
                     $rpurpose = filter_var($r->incoming_purpose, FILTER_SANITIZE_STRING);
                     $fslcode = filter_var($r->fsl_code, FILTER_SANITIZE_STRING);
                     $fslname = filter_var($r->fsl_name, FILTER_SANITIZE_STRING);
@@ -204,7 +205,8 @@ class CReturnParts extends BaseController
                         
                     $row['transnum'] = $transnum;
                     $row['transout'] = $transout === "" ? "-" : $transout." ".$outstatus;
-                    $row['transdate'] = tgl_indo($transdate);
+                    // $row['transdate'] = tgl_indo($transdate);
+                    $row['transdate'] = date('d/m/Y H:i', strtotime($transdate));
                     $row['fsl_location'] = $fslname;
                     $row['qty'] = $qty;
                     $row['button'] = $button;

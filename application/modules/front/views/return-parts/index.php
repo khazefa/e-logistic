@@ -97,7 +97,7 @@
                                 <thead>
                                 <tr>
                                     <th>Trans No</th>
-                                    <th>Date</th>
+                                    <th>Return Date</th>
                                     <th>Reff No</th>
                                     <th>Qty</th>
                                     <th>FSL Location</th>

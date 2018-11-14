@@ -516,7 +516,7 @@
         
         e_trans_out.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
-	});
+        });
         
         e_trans_out.on("keypress", function(e){
             if (e.keyCode == 13) {
@@ -551,7 +551,7 @@
                     $('#btn_close').prop('disabled', true);
                 }
             }
-	});
+	    });
         
         $('[name="dcaused"]').on("change", function(e) {
             var val = this.value;
@@ -577,7 +577,7 @@
             }else{
                 $('[name="dnotes"]').val('');
             }
-	});
+	    });
         
         $('[name="dserialno"]').on("keydown", function(e) {
             var val = this.value;
@@ -594,7 +594,7 @@
         
         e_notes.on("focusout", function(e) {
             $('#btn_close').prop('disabled', false);
-	});
+	    });
         
         $("#btn_close").on("click", function(e){
             var total_qty = parseInt($('#ttl_qty').html());

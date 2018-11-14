@@ -201,7 +201,8 @@
                         <div class="form-group row">
                             <label class="col-4 col-form-label">Qty</label>
                             <div class="col-4">
-                                <input name="dqty" class="form-control" type="number" min="1" readonly="true">
+                                <input name="dqty" class="form-control" type="number" min="1" readonly="true" 
+                                data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Qty and then Press [ENTER]">
                                 <input name="dqty_old" type="hidden" readonly="true">
                                 <span class="help-block"></span>
                             </div>
@@ -983,7 +984,7 @@
             var oldqty = parseInt($('[name="dqty_old"]').val());
             var status = $('[name="dstatus"]').val();
             
-            if (e.keyCode == 13) {
+            if (e.keyCode == 9 || e.keyCode == 13) {
                 if(val < oldqty){
                     var calc = oldqty - val;
                     if(status === "RGP"){

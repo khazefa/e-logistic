@@ -84,6 +84,11 @@
                                             <tbody>
                                             </tbody>
                                         </table>
+                                        <p class="text-danger">
+                                            Jika ada problem pada part yang harus dikembalikan, 
+                                            maka tidak diperkenankan melakukan Return pada part tersebut. 
+                                            Kemudian buat transaksi ini menjadi <strong>Pending</strong>.
+                                        </p>
                                     </div>
                                     <div class="column col-md-6">
                                         <strong class="text-info">Detail Return</strong>
@@ -133,8 +138,8 @@
                             </div>
                             <div class="card-footer">
                                 <button type="button" id="btn_close" class="btn btn-success waves-effect waves-light" 
-                                    data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Please do Verify before Submit!">
-                                    Submit
+                                    data-toggle="tooltip" data-placement="bottom" title="Please do Verify before Submit !" data-original-title="Please do Verify before Submit !">
+                                    Complete
                                 </button>
                             </div>
                         </div>
@@ -242,9 +247,8 @@
     var e_trigger = $('#ftrigger');
     var e_notes = $('#fnotes');
     var trans_purpose = "";
-    var total_qty_outgoing = 0;
-    var table;
-    var table2;
+    var total_qty_outgoing = 0, detail_ret_qty = 0, detail_ret_cart = 0;
+    var table, table2;
     
     function init_form(){
         var has_transnum = "<?php echo $transnum; ?>";
@@ -562,6 +566,7 @@
                     e_location.html('-');
                     e_ssb.html('-');
                     e_notes.val('');
+                    e_fe_report.val('');
                     init_table();
                     init_table2();
                 }else if(jqXHR.status === 1){
@@ -616,6 +621,7 @@
                         e_customer.html(data.customer);
                         e_location.html(data.location);
                         e_ssb.html(data.ssbid);
+                        e_fe_report.val(data.fereport);
                     });
                 });
             },
@@ -870,9 +876,23 @@
             }
         });
     }
+
+    function check_pending_state()
+    {
+        var state = false;
+        detail_ret_qty = parseInt(table.data().count());
+        detail_ret_cart = parseInt(table2.data().count());
+
+        if(detail_ret_cart !== 0){
+            if(detail_ret_cart < detail_ret_qty){
+                state = true;
+            }
+        }
+        return state;
+    }
     
     //submit transaction
-    function complete_trans(){
+    function complete_trans(status){
         var url = '<?php echo base_url($classname.'/insert'); ?>';
         var type = 'POST';
         
@@ -885,7 +905,8 @@
             ftrans_out : e_trans_out.val(),
             fqty : parseInt($("#ttl_qty").html()),
             ffe_report : e_fe_report.val(),
-            fnotes : e_notes.val()
+            fnotes : e_notes.val(),
+            fstatus : status
         };
         
         $.ajax({
@@ -919,7 +940,7 @@
         
         e_trans_out.on("keyup", function(e) {
             $(this).val($(this).val().toUpperCase());
-	});
+	    });
         
         e_trans_out.on("keydown", function(e){
             if (e.keyCode == 13) {
@@ -941,7 +962,7 @@
         
         e_notes.on("focusout", function(e) {
             $('#btn_close').prop('disabled', false);
-	});
+	    });
         
         $('[name="dstatus"]').on("change", function(e) {
             var val = this.value;
@@ -977,7 +998,7 @@
                 $('[name="dserialno"]').prop('readonly', true);
                 $('[name="dqty"]').prop('readonly', true);
             }
-	});
+	    });
         
         $('[name="dqty"]').on("keydown", function(e) {
             var val = parseInt(this.value);
@@ -985,12 +1006,12 @@
             var status = $('[name="dstatus"]').val();
             
             if (e.keyCode == 9 || e.keyCode == 13) {
-                if(val < oldqty){
+                if(val <= oldqty){
                     var calc = oldqty - val;
                     if(status === "RGP"){
                         $('[name="dnotes"]').val('CONSUMED = '+calc);
                     }
-                }else if(val > oldqty){
+                }else{
                     alert('the amount you enter exceeds the amount you have');
                     $('[name="dqty"]').val('1');
                     $('[name="dqty"]').focus();
@@ -1037,35 +1058,29 @@
             if(ttl_qty === 0){
                 alert('You have not return any parts!');
             }else{
-                if(ttl_qty > total_qty_outgoing){
-                    alert('Your total returns is greater than your request. Please re-check your returns quantity!');
-                    $('#btn_close').prop('disabled', true);
-                }else{
-                    e_notes.val('');
-                    e_notes.prop('disabled', false);
-                    e_notes.focus();
+                if(check_pending_state()){
+                    $('#btn_close').text('Pending');
                     $('#btn_close').prop('disabled', false);
+                }else{
+                    if(ttl_qty > total_qty_outgoing){
+                        alert('Your total returns is greater than your request. Please re-check your returns quantity!');
+                        $('#btn_close').text('Complete');
+                        $('#btn_close').prop('disabled', true);
+                    }else{
+                        e_notes.val('');
+                        e_notes.prop('disabled', false);
+                        e_notes.focus();
+                        $('#btn_close').text('Complete');
+                        $('#btn_close').prop('disabled', false);
+                    }
                 }
             }
         });
         
         $("#btn_close").on("click", function(e){
-//            if(!isEmpty(e_notes.val())){
-//                $("#global_confirm .modal-title").html("Confirmation");
-//                $("#global_confirm .modal-body h4").html("It seems that you write some notes, do you want to continue this transaction?");
-//                $('#global_confirm').modal({
-//                    show: true
-//                });
-//                $('#ans_yess').click(function () {
-//                    //continue close transaction
-//                    complete_trans();
-//                });
-//                $('#ans_no').click(function () {
-//                    //hold close transaction
-//                    e_notes.focus();
-//                });
-//            }
-            complete_trans();
+            var state = $( this ).text().toLowerCase().trim();
+            // alert("State:"+state);
+            complete_trans(state);
         });
     });
 </script>

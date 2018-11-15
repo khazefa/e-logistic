@@ -356,67 +356,78 @@ class CReturnParts extends BaseController
         $fqty = $this->input->post('fqty', TRUE);
         $fpurpose = "R";
         $fnotes = $this->input->post('fnotes', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
         $createdby = $this->session->userdata ( 'vendorUR' );
         
-        $cartid = $this->cart_sess.$ftrans_out;
-        $arrParam = array('fparam'=>'IC');
-        $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
-        $transnum = $rs_transnum->status ? $rs_transnum->result : "";
-        
-        if($transnum === ""){
-            $response = $error_response;
+        if($fstatus === "pending"){
+            //update outgoing status by outgoing number
+            $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>$fstatus);
+            $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                    'POST', FALSE);
+            $response = $success_response;
         }else{
-            $data_tmp = array();
-            //get cart list by retnum
-            $data_tmp = $this->get_list_cart($cartid);
-            $dataDetail = array();
-            if(!empty($data_tmp)){
-                $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
-                    'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>'', 'fnotes'=>$fnotes);
-                $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
-                if($main_res->status)
-                {
-                    //update outgoing status by outgoing number
-                    $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>'complete');
-                    $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
-                            'POST', FALSE);
-                    
-                    foreach ($data_tmp as $d){
-                        $partstock = $this->get_stock($fcode, $d['partno']);
-                        $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
-                            'fqty'=>$d['qty'], 'fstatus'=>$d['status'], 'fnotes'=>$d['notes']);
-                        $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
+            $cartid = $this->cart_sess.$ftrans_out;
+            $arrParam = array('fparam'=>'IC');
+            $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+            $transnum = $rs_transnum->status ? $rs_transnum->result : "";
+            
+            if($transnum === ""){
+                $response = $error_response;
+            }else{
+                $data_tmp = array();
+                //get cart list by retnum
+                $data_tmp = $this->get_list_cart($cartid);
+                $dataDetail = array();
+                if(!empty($data_tmp)){
+                    $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
+                        'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>'', 'fnotes'=>$fnotes);
+                    $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
+                    if($main_res->status)
+                    {
+                        //update outgoing status by outgoing number
+                        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>$fstatus);
+                        $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
                                 'POST', FALSE);
-
-                        if($d['status'] === 'RGP'){
-                            $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
-                                'fflag'=>'N');
-                            //update stock by fsl code and part number
-                            $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                        
+                        foreach ($data_tmp as $d){
+                            $partstock = $this->get_stock($fcode, $d['partno']);
+                            $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                                'fqty'=>$d['qty'], 'fstatus'=>$d['status'], 'fnotes'=>$d['notes']);
+                            $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
                                     'POST', FALSE);
+
+                            //Return stock for Return Good Part (RGP)
+                            if($d['status'] === 'RGP'){
+                                $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
+                                    'fflag'=>'N');
+                                //update stock by fsl code and part number
+                                $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                                        'POST', FALSE);
+                            }
+                        }
+                        
+                        //clear cart list data
+                        $arrWhere = array('fcartid'=>$cartid);
+                        $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
+                        if($rem_res->status){
+                            $success_response = array(
+                                'status' => 1,
+                                'message' => $transnum
+                            );
+                            $response = $success_response;
+                        }else{
+                            $response = $error_response;
                         }
                     }
-                    
-                    //clear cart list data
-                    $arrWhere = array('fcartid'=>$cartid);
-                    $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
-                    if($rem_res->status){
-                        $success_response = array(
-                            'status' => 1,
-                            'message' => $transnum
-                        );
-                        $response = $success_response;
-                    }else{
+                    else
+                    {
+                        $this->session->set_flashdata('error', 'Failed to submit transaction data');
                         $response = $error_response;
                     }
                 }
-                else
-                {
-                    $this->session->set_flashdata('error', 'Failed to submit transaction data');
-                    $response = $error_response;
-                }
             }
         }
+
         return $this->output
         ->set_content_type('application/json')
         ->set_output(

@@ -258,7 +258,7 @@ class CRequestParts extends BaseController
                 $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             }
-            if($status === "open"){
+            if($status === "open" || $status === "pending"){
                 $global_response = array(
                     'status' => 1,
                     'purpose' => $purpose,
@@ -540,7 +540,7 @@ class CRequestParts extends BaseController
                     if($this->readonly){
                         $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                     }else{
-                        if($status === "open"){
+                        if($status === "open" || $status === "pending"){
                             $button = '<a href="'.base_url($this->cname_return."/add/").$transnum.'" title="Return Parts"><i class="mdi mdi-keyboard-return mr-2 text-muted font-18 vertical-middle"></i></a>';
                             $button .= ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                         }else{

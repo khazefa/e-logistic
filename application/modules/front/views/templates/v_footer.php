@@ -166,6 +166,13 @@
             function throw_ajax_err(jqXHR, textStatus, errorThrown){
                 console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
             }
+            function inArray(needle, haystack) {
+                var length = haystack.length;
+                for(var i = 0; i < length; i++) {
+                    if(haystack[i] == needle) return true;
+                }
+                return false;
+            }
             $(document).ready(function() {
                 $('form').parsley();
                 $('#tooltip-hover').tooltipster();

@@ -262,7 +262,7 @@ class CTransferToFSL extends BaseController
                 $purpose = filter_var($r->outgoing_purpose, FILTER_SANITIZE_STRING);
                 $status = filter_var($r->outgoing_status, FILTER_SANITIZE_STRING);
             }
-            if($status === "open"){
+            if($status === "open" || $status === "pending"){
                 $global_response = array(
                     'status' => 1,
                     'purpose' => $purpose,
@@ -577,6 +577,71 @@ class CTransferToFSL extends BaseController
             json_encode($response)
         );
     }
+
+    /**
+     * This function is used to update detail outgoing status
+     */
+    public function update_detail_status(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fserialnum = $this->input->post('fserialnum', TRUE);
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fstatus'=>$fstatus);
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+    
+    /**
+     * This function is used to update detail outgoing status
+     */
+    public function update_detail_status_all(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to update detail'
+        );
+        
+        $ftrans_out = $this->input->post('ftrans_out', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fstatus'=>'');
+        $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail_all'), 'POST', FALSE);
+
+        if($rs_data->status)
+        {
+            $response = $success_response;
+        }
+        else
+        {
+            $response = $error_response;
+        }
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
     
     /**
      * This function is used to complete transaction
@@ -622,6 +687,7 @@ class CTransferToFSL extends BaseController
                 //get cart list by retnum
                 $data_tmp = $this->get_list_cart();
 //                var_dump($data_tmp);
+                $dataDetail = array();
                 if(!empty($data_tmp)){
                     if($fqty < 1){
                         $this->session->set_flashdata('error', 'Skip looped submitted data');
@@ -638,22 +704,15 @@ class CTransferToFSL extends BaseController
                             $listdetail = array();
                             $listupdatestock = array();
                             foreach ($data_tmp as $d){
-                                $dataDetail = array();
                                 $partstock = $this->get_stock($fcode, $d['partno']);
 //                                var_dump($partstock);
                                 if($partstock < (int)$d['qty']){
                                     //skip this insert detail for this row
-                                }else{                        
+                                }else{
                                     $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
                                         'fqty'=>$d['qty']);
 //                                    $listdetail[] = $dataDetail;
                                     $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_outgoings_trans_detail'), 
-                                            'POST', FALSE);
-
-                                    $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock-(int)$d['qty'], 'fflag'=>'N');
-//                                    $listupdatestock[] = $dataUpdateStock;
-                                    //update stock by fsl code and part number
-                                    $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
                                             'POST', FALSE);
                                 }
                             }

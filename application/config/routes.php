@@ -417,6 +417,8 @@ $route['supply-fsl-to-fsl/add/(:any)'] = 'front/csupplyfromfsl/add/$1';
 $route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
 $route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
 $route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
+$route['supply-fsl-to-fsl/modify-detail'] = 'front/csupplyfromfsl/update_detail_status';
+$route['supply-fsl-to-fsl/bulk-modify-detail'] = 'front/csupplyfromfsl/update_detail_status_all';
 $route['supply-fsl-to-fsl/insert_close'] = 'front/csupplyfromfsl/submit_trans_close';
 $route['supply-fsl-to-fsl/print/(:any)'] = 'front/csupplyfromfsl/print_transaction/$1';
 // ===========================

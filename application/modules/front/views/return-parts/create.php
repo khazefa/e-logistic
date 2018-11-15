@@ -85,8 +85,8 @@
                                             </tbody>
                                         </table>
                                         <p class="text-danger">
-                                            Jika ada problem pada part yang harus dikembalikan, 
-                                            maka tidak diperkenankan melakukan Return pada part tersebut. 
+                                            <strong>Jika ada problem</strong> pada part yang harus dikembalikan, 
+                                            maka <strong>tidak diperkenankan melakukan Return</strong> pada part tersebut. 
                                             Kemudian buat transaksi ini menjadi <strong>Pending</strong>.
                                         </p>
                                     </div>

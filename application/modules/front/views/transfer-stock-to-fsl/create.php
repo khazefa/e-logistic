@@ -292,6 +292,7 @@
                 { "data": 'stock' },
                 { "data": 'qty' },
             ],
+            order: [[ 0, "asc" ]],
             columnDefs : [
                 {
                     targets   : 0,

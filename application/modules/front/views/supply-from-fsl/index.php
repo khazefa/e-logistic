@@ -47,6 +47,7 @@
                         <select name="fstatus" id="fstatus" class="form-control" placeholder="By Status">
                             <option value="">By Status</option>
                             <option value="open">Open</option>
+                            <option value="pending">Pending</option>
                             <option value="complete">Complete</option>
                         </select>
                     </div>

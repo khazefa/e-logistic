@@ -190,7 +190,7 @@ class CSupplyFromFSL extends BaseController
                     if($this->readonly){
                         $button = ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                     }else{
-                        if($status === "open"){
+                        if($status === "open" || $status === "pending"){
                             $button = '<a href="'.base_url($this->cname."/add/").$transnum.'" title="Receive Parts"><i class="mdi mdi mdi-archive mr-2 text-muted font-18 vertical-middle"></i></a>';
                             $button .= ' <a href="'.base_url($this->cname."/print/").$transnum.'" title="Print Transaction" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>';
                         }else{
@@ -269,6 +269,7 @@ class CSupplyFromFSL extends BaseController
         $data['classname'] = $this->cname;
         $data['classname_transfer'] = $this->cname_transfer;
         $data['cart_postfix'] = $this->cart_postfix;
+        $data['status_option'] = $this->config->config['status']['in_transfer_fsl'];
         if(empty($transnum)){
             $data['transnum'] = "";
         }else{

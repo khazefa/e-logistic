@@ -19,6 +19,7 @@ $config['status']['in_detail'] = array(
     'RBP'=>'Bad Part',
     'RBS'=>'Bad Stock',
     'RGC'=>'Consumed',
+    'NOC'=>'Incomplete',
 );
 $config['status']['in_transfer_fsl'] = array(
     'complete'=>'Complete',

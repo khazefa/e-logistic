@@ -234,10 +234,7 @@
     var dataSet = [];
     var status_checkpart = 0;
     var status_checkticket = 0;
-    var table;
-    var table2;
-    var table3;
-    var table_s;
+    var table, table2, table3, table_s;
         
     //initial form state
     function init_form(){

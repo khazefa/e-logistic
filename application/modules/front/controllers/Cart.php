@@ -243,7 +243,7 @@ class Cart extends BaseController
 /**
      * This function is used to update cart
      */
-    public function update_incoming(){
+    public function update_incoming($postfix){
         $success_response = array(
             'status' => 1
         );
@@ -252,6 +252,8 @@ class Cart extends BaseController
             'message'=> 'Failed to update cart'
         );
         
+        $ftransout = $this->input->post('ftransout', TRUE);
+        $cartid = $this->session->userdata ( 'cart_session' ).$postfix.$ftransout;
         $fid = $this->input->post('fid', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
 

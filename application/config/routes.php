@@ -241,6 +241,20 @@ $route['request-parts/print/(:any)'] = 'front/crequestparts/print_transaction/$1
 // ===========================
 
 // ===========================
+//  Routing Front Return Parts
+// ===========================
+$route['return-parts/view'] = 'front/creturnparts';
+$route['return-parts/add'] = 'front/creturnparts/add';
+$route['return-parts/add/(:any)'] = 'front/creturnparts/add/$1';
+$route['return-parts/list/([a-zA-Z]+)'] = 'front/creturnparts/get_list/$1';
+$route['return-parts/check-ticket'] = 'front/creturnparts/check_ticket';
+$route['return-parts/insert'] = 'front/creturnparts/submit_trans';
+$route['return-parts/print/(:any)'] = 'front/creturnparts/print_transaction/$1';
+// ===========================
+//  End Routing Front Return Parts
+// ===========================
+
+// ===========================
 //  Routing Front Transfer to FSL
 // ===========================
 $route['transfer-stock-to-fsl/view'] = 'front/ctransfertofsl';
@@ -255,6 +269,23 @@ $route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_det
 $route['transfer-stock-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
 // ===========================
 //  End Routing Front Transfer to FSL
+// ===========================
+
+// ===========================
+//  Routing Front Supply from FSL to FSL
+// ===========================
+$route['supply-fsl-to-fsl/view'] = 'front/csupplyfromfsl';
+$route['supply-fsl-to-fsl/add'] = 'front/csupplyfromfsl/add';
+$route['supply-fsl-to-fsl/add/(:any)'] = 'front/csupplyfromfsl/add/$1';
+$route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
+$route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
+$route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
+$route['supply-fsl-to-fsl/modify-detail'] = 'front/csupplyfromfsl/update_detail_status';
+$route['supply-fsl-to-fsl/bulk-modify-detail'] = 'front/csupplyfromfsl/update_detail_status_all';
+$route['supply-fsl-to-fsl/insert_close'] = 'front/csupplyfromfsl/submit_trans_close';
+$route['supply-fsl-to-fsl/print/(:any)'] = 'front/csupplyfromfsl/print_transaction/$1';
+// ===========================
+//  End Routing Front Supply from FSL to FSL
 // ===========================
 
 // ===========================
@@ -392,37 +423,6 @@ $route['print-incoming-supply/(:any)'] = 'front/cincoming/print_trans_supply/$1'
 $route['print-incoming-return/(:any)'] = 'front/cincoming/print_trans_return/$1';
 // ===========================
 //  End Routing Front Incoming Trans
-// ===========================
-
-// ===========================
-//  Routing Front Return Parts
-// ===========================
-$route['return-parts/view'] = 'front/creturnparts';
-$route['return-parts/add'] = 'front/creturnparts/add';
-$route['return-parts/add/(:any)'] = 'front/creturnparts/add/$1';
-$route['return-parts/list/([a-zA-Z]+)'] = 'front/creturnparts/get_list/$1';
-$route['return-parts/check-ticket'] = 'front/creturnparts/check_ticket';
-$route['return-parts/insert'] = 'front/creturnparts/submit_trans';
-$route['return-parts/print/(:any)'] = 'front/creturnparts/print_transaction/$1';
-// ===========================
-//  End Routing Front Return Parts
-// ===========================
-
-// ===========================
-//  Routing Front Supply from FSL to FSL
-// ===========================
-$route['supply-fsl-to-fsl/view'] = 'front/csupplyfromfsl';
-$route['supply-fsl-to-fsl/add'] = 'front/csupplyfromfsl/add';
-$route['supply-fsl-to-fsl/add/(:any)'] = 'front/csupplyfromfsl/add/$1';
-$route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
-$route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
-$route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
-$route['supply-fsl-to-fsl/modify-detail'] = 'front/csupplyfromfsl/update_detail_status';
-$route['supply-fsl-to-fsl/bulk-modify-detail'] = 'front/csupplyfromfsl/update_detail_status_all';
-$route['supply-fsl-to-fsl/insert_close'] = 'front/csupplyfromfsl/submit_trans_close';
-$route['supply-fsl-to-fsl/print/(:any)'] = 'front/csupplyfromfsl/print_transaction/$1';
-// ===========================
-//  End Routing Front Supply from FSL to FSL
 // ===========================
 
 // ===========================

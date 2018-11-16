@@ -676,6 +676,7 @@
                     });
                 }else if(jqXHR.status === 1){
                     //success
+                    arrStatus = [];
                     reload();
                     reload_cart();
                 }
@@ -713,6 +714,7 @@
                     alert(jqXHR.message);
                 }else if(jqXHR.status === 1){
                     //success
+                    arrStatus = [];
                     reload();
                     reload_cart();
                 }
@@ -992,6 +994,7 @@
             }else{
                 //clear carts
                 delete_all_cart(e_trans_out.val());
+                arrStatus = [];
             }
         });
         

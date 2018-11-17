@@ -275,7 +275,8 @@ class CSupplyFromFSL extends BaseController
         }else{
             $data['transnum'] = $transnum;
         }
-        $this->loadViews($this->view_dir.'create', $this->global, $data);
+        // $this->loadViews($this->view_dir.'create', $this->global, $data);
+        $this->loadViews($this->view_dir.'create_verify', $this->global, $data);
     }
 
     /**

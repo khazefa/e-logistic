@@ -656,7 +656,7 @@
                     alert(jqXHR.message);
                     $("#modal_form .close").click();
                 }else if(jqXHR.status === 1){
-                    update_detail_status(ftransout, fpartnum, fserialnum_old, fstatus, fnotes);
+                    update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
                     $("#modal_form .close").click();
                     reload();
                     reload_cart();
@@ -901,7 +901,7 @@
                     });
                 }else if(jqXHR.status === 1){
 //                    print_transaction(jqXHR.message);
-                    window.location.href = "<?php echo base_url('return-parts/view'); ?>";
+                    window.location.href = "<?php echo base_url($classname.'/view'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

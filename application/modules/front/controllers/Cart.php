@@ -142,7 +142,7 @@ class Cart extends BaseController
             'status' => 0,
             'message'=> 'Failed to add data'
         );
-        
+
         $fcode = $this->repo;
         $fuser = $this->vendorUR;
         $fname = $this->name;
@@ -150,7 +150,6 @@ class Cart extends BaseController
         $fpartnum = $this->input->post('fpartnum', TRUE);
         $fpartname = $this->get_part_name($fpartnum);
         $fserialnum = $this->input->post('fserialnum', TRUE);
-        $fserialnum_old = $this->input->post('fserialnum_old', TRUE);
         $fqty = $this->input->post('fqty', TRUE);
         $fstatus = $this->input->post('fstatus', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);

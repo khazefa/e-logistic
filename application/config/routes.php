@@ -265,7 +265,9 @@ $route['transfer-stock-to-fsl/list_detail'] = 'front/ctransfertofsl/get_transfer
 $route['transfer-stock-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
 $route['transfer-stock-to-fsl/check-transaction'] = 'front/ctransfertofsl/check_transaction';
 $route['transfer-stock-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
-$route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
+$route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_status';
+$route['transfer-stock-to-fsl/bulk-modify-detail'] = 'front/ctransfertofsl/update_detail_status_all';
+// $route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
 $route['transfer-stock-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
 // ===========================
 //  End Routing Front Transfer to FSL

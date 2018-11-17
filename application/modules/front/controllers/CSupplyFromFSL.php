@@ -277,9 +277,52 @@ class CSupplyFromFSL extends BaseController
         }
         $this->loadViews($this->view_dir.'create', $this->global, $data);
     }
-    
+
     /**
-     * This function is used to complete close transfer stock transaction
+     * This function is used to get list cart
+     */
+    private function get_list_cart($cartid){
+        $rs = array();
+        
+        //Parameters for cURL
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $arrWhere = array('funiqid'=>$cartid);
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_incomings_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        $partname = "";
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_incoming_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
+            $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $notes = filter_var($r->tmp_notes, FILTER_SANITIZE_STRING);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['qty'] = (int)$qty;
+            $row['status'] = $status;
+            $row['notes'] = $notes;
+ 
+            $data[] = $row;
+        }
+        
+        return $data;
+    }
+
+    /**
+     * This function is used to complete return transaction
      */
     public function submit_trans(){
         $success_response = array(
@@ -289,54 +332,84 @@ class CSupplyFromFSL extends BaseController
             'status' => 0,
             'message'=> 'Failed to submit transaction'
         );
-                    
+        
         $fcode = $this->repo;
+        $fcode_from = $this->input->post('fcode_from', TRUE);
         $date = date('Y-m-d'); 
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
-        $ffe_report = $this->input->post('ffe_report', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $fpurpose = "S";
+        $fnotes = $this->input->post('fnotes', TRUE);
         $fstatus = $this->input->post('fstatus', TRUE);
+        $createdby = $this->session->userdata ( 'vendorUR' );
         
-        //Parameters for cURL
-        $arrWhere = array('ftrans_out'=>$ftrans_out);
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_list_view_detail_outgoings'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-
-        if(!empty($rs)){
-            $total_qty = 0;
-            $partstock = 0;
-            $dataUpdateStock = array();
-            foreach ($rs as $r) {
-                $outgoingnum = filter_var($r->outgoing_num, FILTER_SANITIZE_STRING);
-                $transdate = filter_var($r->created_at, FILTER_SANITIZE_STRING);
-                $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
-                $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
-                $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-                $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
-                $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
-                $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
-                $partstock = $this->get_stock($fcode, $partnum);
-                
-                $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$partnum, 'fqty'=>(int)$partstock+(int)$qty, 'fflag'=>'N');
-                //update stock by fsl code and part number
-                $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
-                        'POST', FALSE);
-            }
-        }
-        
-        //update outgoing status by outgoing number
-        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>$ffe_report, 'fstatus'=>$fstatus);
-        $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
-                'POST', FALSE);
-
-        if($update_status_outgoing->status){
-            $success_response = array(
-                'status' => 1,
-                'message' => $ftrans_out
-            );
+        if($fstatus === "pending"){
+            //update outgoing status by outgoing number
+            $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>'', 'fstatus'=>$fstatus);
+            $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                    'POST', FALSE);
             $response = $success_response;
         }else{
-            $response = $error_response;
+            $cartid = $this->cart_sess.$ftrans_out;
+            $arrParam = array('fparam'=>'IC');
+            $rs_transnum = send_curl($arrParam, $this->config->item('api_get_incoming_num'), 'POST', FALSE);
+            $transnum = $rs_transnum->status ? $rs_transnum->result : "";
+            
+            if($transnum === ""){
+                $response = $error_response;
+            }else{
+                $data_tmp = array();
+                //get cart list by retnum
+                $data_tmp = $this->get_list_cart($cartid);
+                $dataDetail = array();
+                if(!empty($data_tmp)){
+                    $dataTrans = array('ftransno'=>$transnum, 'ftrans_out'=>$ftrans_out, 'fdate'=>$date, 'fpurpose'=>$fpurpose, 
+                        'fqty'=>$fqty, 'fuser'=>$createdby, 'fcode'=>$fcode, 'fcode_from'=>$fcode_from, 'fnotes'=>$fnotes);
+                    $main_res = send_curl($this->security->xss_clean($dataTrans), $this->config->item('api_add_incomings_trans'), 'POST', FALSE);
+                    if($main_res->status)
+                    {
+                        //update outgoing status by outgoing number
+                        $updateOutgoing = array('ftrans_out'=>$ftrans_out, 'ffe_report'=>'', 'fstatus'=>$fstatus);
+                        $update_status_outgoing = send_curl($this->security->xss_clean($updateOutgoing), $this->config->item('api_update_outgoings_trans'), 
+                                'POST', FALSE);
+                        
+                        foreach ($data_tmp as $d){
+                            $partstock = $this->get_stock($fcode, $d['partno']);
+                            $dataDetail = array('ftransno'=>$transnum, 'fpartnum'=>$d['partno'], 'fserialnum'=>$d['serialno'], 
+                                'fqty'=>$d['qty'], 'fstatus'=>$d['status'], 'fnotes'=>$d['notes']);
+                            $sec_res = send_curl($this->security->xss_clean($dataDetail), $this->config->item('api_add_incomings_trans_detail'), 
+                                    'POST', FALSE);
+
+                            //Return stock for Return Good Part (RGP)
+                            if($this->check_part($fcode, $d['partno'])){
+                                $dataUpdateStock = array('fcode'=>$fcode, 'fpartnum'=>$d['partno'], 'fqty'=>(int)$partstock+(int)$d['qty'], 
+                                    'fflag'=>'N');
+                                //update stock by fsl code and part number
+                                $update_stock_res = send_curl($this->security->xss_clean($dataUpdateStock), $this->config->item('api_edit_stock_part_stock'), 
+                                        'POST', FALSE);
+                            }
+                        }
+                        
+                        //clear cart list data
+                        $arrWhere = array('fcartid'=>$cartid);
+                        $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_incomings_cart'), 'POST', FALSE);
+                        if($rem_res->status){
+                            $success_response = array(
+                                'status' => 1,
+                                'message' => $transnum
+                            );
+                            $response = $success_response;
+                        }else{
+                            $response = $error_response;
+                        }
+                    }
+                    else
+                    {
+                        $this->session->set_flashdata('error', 'Failed to submit transaction data');
+                        $response = $error_response;
+                    }
+                }
+            }
         }
 
         return $this->output
@@ -344,6 +417,48 @@ class CSupplyFromFSL extends BaseController
         ->set_output(
             json_encode($response)
         );
+    }
+
+    /**
+     * This function is used to check part
+     */
+    private function check_part($fcode, $fpartnum){
+        $rs = array();
+        $rs2 = array();
+        $arrWhere = array();
+        $arrWhere2 = array();
+        $success_response = array();
+        $error_response = array();
+        $response = array();
+        $isAvailable = false;
+
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+
+        if(empty($rs)){
+            $rs_data2 = send_curl(array('fpartnum'=>$fpartnum), $this->config->item('api_info_parts'), 'POST', FALSE);
+            $rs2 = $rs_data2->status ? $rs_data2->result : array();
+
+            if(empty($rs2)){
+                $isAvailable = false;
+            }else{
+                $dataInfo = array('fcode'=> $fcode, 'fpartnum'=> $fpartnum, 'fminval'=> 3, 'finitval'=> 0, 
+                    'flastval'=> 0, 'fflag'=> 'Y');
+                $rs_data3 = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_part_stock'), 'POST', FALSE);
+
+                if($rs_data3->status)
+                {
+                    $isAvailable = true;
+                }
+            }
+
+        }else{
+            $isAvailable = true;
+        }
+
+        return $isAvailable;
     }
     
     /**

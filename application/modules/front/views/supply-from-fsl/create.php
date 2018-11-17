@@ -78,6 +78,7 @@
                                                 <th>Part Number</th>
                                                 <th>Serial Number</th>
                                                 <th>Qty</th>
+                                                <th>Notes</th>
                                                 <th>Proceed</th>
                                             </tr>
                                             </thead>
@@ -85,9 +86,8 @@
                                             </tbody>
                                         </table>
                                         <p class="text-danger">
-                                            <strong>Jika ada problem</strong> pada part yang diterima, 
-                                            maka <strong>tidak diperkenankan melakukan Receive</strong> pada part tersebut. 
-                                            Kemudian buat transaksi ini menjadi <strong>Pending</strong>.
+                                            <strong>Jika ada problem</strong> pada part yang harus dikembalikan, 
+                                            maka <strong>Pilih Status Incomplete</strong>.
                                         </p>
                                     </div>
                                     <div class="column col-md-6">
@@ -110,6 +110,11 @@
                                             <i class="fa fa-trash-o"></i> Clear Return
                                         </button>
                                         <div class="mb-4"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1 offset-md-11">
+                                        Total: <span id="ttl_qty">0</span>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
@@ -214,7 +219,8 @@
     var e_notes = $('#fnotes');
     var trans_purpose = "";
     var total_qty_outgoing = 0, detail_ret_qty = 0, detail_ret_cart = 0;
-    var table, table2;
+    var table; 
+    var table2;
     var arrStatus = [];
     
     function init_form(){
@@ -267,6 +273,7 @@
                 { "data": 'serialnum' },
                 { "data": 'qty' },
                 { "data": 'notes' },
+                { "data": 'return' },
             ],
             columnDefs : [
                 {
@@ -285,14 +292,14 @@
                     render    : function ( data, type, full, meta ) {
                         var html = '';
                         if(isEmpty(data)){
-                            html = '<a href="javascript:void(0)" title="Proceed Receive" id="btn_edit"><i class="fa fa-angle-double-right"></i> Receive</a>';
+                            html = '<a href="javascript:void(0)" title="Set Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Set Status</a>';
                         }else{
                             if(data === "diff_serialnumber"){
                                 html = 'Different SN';
                             }else if(data === "complete"){
                                 html = 'Complete';
                             }else{
-                                html = '<a href="javascript:void(0)" title="Proceed Receive" id="btn_edit"><i class="fa fa-angle-double-right"></i> Receive</a>';
+                                html = '<a href="javascript:void(0)" title="Set Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Set Status</a>';
                             }
                         }
                         return html;
@@ -303,7 +310,7 @@
 
             // },
             rowCallback: function( row, data, index ) {
-                arrStatus.push(data.notes);
+                arrStatus.push(data.return);
             },
         });
 
@@ -316,27 +323,10 @@
             fpartno = data['partnum'];
             fserialno = data['serialnum'];
             fqty = data['qty'];
+            fnotes = data['notes'];
+            fstatus = data['return'];
             ftransno = e_trans_out.val();
-            edit_detail_status(ftransno, fpartno, fserialno, fqty);
-        });
-        
-        //function for datatables button //not used
-        $('#data_grid tbody').on( 'change', 'select', function (e) {        
-            var data = table.row( $(this).parents('tr') ).data();
-            fpartno = data['partnum'];
-            fserialno = data['serialnum'];
-            ftransno = e_trans_out.val();
-            fstatus = this.value;
-            
-            if(fstatus === "0"){
-                alert('Please choose status!');
-            }else{
-                if(fstatus === "RBP"){
-                    edit_detail_status(ftransno, fpartno, fserialno, fstatus);
-                }else{
-                    update_detail_status(ftransno, fpartno, fserialno, fstatus);
-                }
-            }
+            edit_detail_status(ftransno, fpartno, fserialno, fqty, fnotes, fstatus);
         });
     }
     
@@ -392,34 +382,18 @@
                     }
                 },
                 {
-                    targets   : 3,
-                    orderable : false, //set not orderable
-                    data      : null,
-                    render    : function ( data, type, full, meta ) {
-//                        if(full.status === "R" || full.status === "RG"){
-//                            return data;
-//                        }else{
-//                            return '<input type="number" id="fdqty" min="1" value="'+data+'" class="form-control">';
-//                        }
-                        return data;
-                    }
-                },
-                {
                     targets   : -1,
                     orderable : false, //set not orderable
                     data      : null,
                     render    : function ( data, type, full, meta ) {
                         var html = '';
-                        if(data === "RGP"){
-                            html = 'Return Good';
-                        }else if(data === "RBP"){
-                            html = 'Bad Part';
-                            e_fe_report.prop('readonly', false);
-                        }else if(data === "RBS"){
-                            html = 'Bad Stock';
-                        }else if(data === "RGC"){
-                            html = 'Consumed';
-                        }  
+                        if(data === "incomplete"){
+                            html = 'Incomplete';
+                        }else if(data === "complete"){
+                            html = 'Complete';
+                        }else if(data === "diff_serialnumber"){
+                            html = 'Different Serial Number';
+                        }
                         return html;
                     }
                 }
@@ -439,9 +413,6 @@
                     return intVal(a) + intVal(b);
                 }, 0 );
                 $('#ttl_qty').html(totalQty);
-                if(totalQty === 0){
-                    e_fe_report.prop('readonly', true);
-                }
             },
             initComplete: function( settings, json ) {
 //                $('#ttl_qty').html(table.rows().count());
@@ -462,23 +433,6 @@
             }else{
                 delete_cart(fid);
                 update_detail_status(ftransout, fpartnum, fserialnum, fstatus);
-            }
-        });
-        
-        //function for datatables button
-        $('#cart_grid tbody').on( 'keydown', '#fdqty', function (e) {        
-            var data = table2.row( $(this).parents('tr') ).data();
-            fid = data['id'];
-            fqty = this.value;
-            if (e.keyCode == 13) {
-                if(fqty === 0){
-                    alert('Quantity cannot be empty or zero!');
-                    this.focus;
-                }else{
-                    //update cart by cart id
-                    update_cart(fid, fqty);
-                }
-                return false;
             }
         });
 
@@ -519,6 +473,7 @@
                     e_transdate.html('-');
                     e_notes.val('');
                     init_table();
+                    init_table2();
                 }else if(jqXHR.status === 1){
                     e_trans_out_notes.html('');
                     trans_purpose = jqXHR.purpose;
@@ -527,6 +482,7 @@
                         e_trans_out.prop('readonly', true);
                         get_transfered_detail(e_trans_out.val());
                         init_table();
+                        init_table2();
                     }else{
                         alert('This feature is only working on Transfer Stock Transaction!');
                         init_form();
@@ -574,13 +530,18 @@
         });
     }
     
-    function edit_detail_status(ftransno, fpartno, fserialno, fqty)
+    function edit_detail_status(ftransno, fpartno, fserialno, fqty, fnotes, fstatus)
     {        
         save_method = 'update';
         $('#form')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
         $('.help-block').empty(); // clear error string
 
+        if(!isEmpty(fstatus)){
+            $('[name="dstatus"]').val(fstatus);
+        }else{
+            $('[name="dstatus"]').val('complete');
+        }
 //        $('[name="dnotes"]').prop('disabled', true);
         $('[name="dpartno_old"]').val(fpartno);
         $('[name="dpartno"]').val(fpartno);
@@ -591,8 +552,9 @@
         $('[name="dqty"]').val(fqty);
         $('[name="dqty_old"]').val(fqty);
         $('[name="dqty"]').prop('readonly', true);
+        $('[name="dnotes"]').val(fnotes);
         $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-        $('.modal-title').text('Proceed Return Parts'); // Set title to Bootstrap modal title
+        $('.modal-title').text('Set Status Part'); // Set title to Bootstrap modal title
     }
     
     //add to cart
@@ -630,7 +592,7 @@
                     alert(jqXHR.message);
                     $("#modal_form .close").click();
                 }else if(jqXHR.status === 1){
-                    update_detail_status(ftransout, fpartnum, fserialnum_old, fstatus);
+                    update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
                     $("#modal_form .close").click();
                     reload();
                     reload_cart();
@@ -644,7 +606,7 @@
     }
     
     //update detail outgoing status
-    function update_detail_status(ftrans_out, fpartnum, fserialnum, fstatus){
+    function update_detail_status(ftrans_out, fpartnum, fserialnum, fstatus, fnotes){
         var url = '<?php echo base_url($classname_transfer.'/modify-detail'); ?>';
         var type = 'POST';
         
@@ -657,7 +619,8 @@
             ftrans_out : ftrans_out,
             fpartnum : fpartnum,
             fserialnum : fserialnum,
-            fstatus : fstatus
+            fstatus : fstatus,
+            fnotes : fnotes
         };
         
         $.ajax({
@@ -830,6 +793,11 @@
         if(detail_ret_cart !== 0){
             if(detail_ret_cart < detail_ret_qty){
                 state = true;
+            }else{
+                if(inArray("incomplete", arrStatus)){
+                    // alert("There are incomplete data");
+                    state = true;
+                }
             }
         }
         return state;
@@ -848,7 +816,7 @@
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : e_trans_out.val(),
             fqty : parseInt($("#ttl_qty").html()),
-            ffe_report : e_fe_report.val(),
+            fcode_from : e_fslcode.html(),
             fnotes : e_notes.val(),
             fstatus : status
         };
@@ -869,7 +837,7 @@
                     });
                 }else if(jqXHR.status === 1){
 //                    print_transaction(jqXHR.message);
-                    window.location.href = "<?php echo base_url('return-parts/view'); ?>";
+                    window.location.href = "<?php echo base_url($classname.'/view'); ?>";
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -911,36 +879,29 @@
         $('[name="dstatus"]').on("change", function(e) {
             var val = this.value;
             var sn = $('[name="dserialno"]').val();
-            var oldsn = $('[name="dserialno_old"]').val();
-            var oldqty = parseInt($('[name="dqty_old"]').val());
+            var old_sn = $('[name="dserialno_old"]').val();
             
-            if(val === "RBP"){
-                $('[name="dserialno"]').val(oldsn);
+            if(val === "diff_serialnumber"){
+                $('[name="dnotes"]').val('');
                 if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
-                    $('[name="dqty"]').prop('readonly', true);
+                    //skip
                 }else{
-//                    $('[name="dnotes"]').prop('disabled', false);
-//                    $('[name="dnotes"]').focus();
                     alert("Please change Serial Number.");
                     $('[name="dserialno"]').prop('readonly', false);
                     $('[name="dserialno"]').val('');
                     $('[name="dserialno"]').focus();
-                    $('[name="dqty"]').prop('readonly', true);
+                    $('[name="dserialno"]').prop('required', true);
                 }
-            }else if(val === "RGP"){
-                $('[name="dserialno"]').val(oldsn);
-                if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
-                    alert("Please change Quantity if needed.");
-                    $('[name="dqty"]').prop('readonly', false);
-                    $('[name="dqty"]').focus();
-                    $('[name="dserialno"]').prop('readonly', true);
-                }else{
-                    $('[name="dserialno"]').prop('readonly', true);
-                }
-            }else{
-                $('[name="dserialno"]').val(oldsn);
+            }else if(val === "incomplete"){
+                alert("Please describe the notes for Incomplete part!");
+                $('[name="dnotes"]').val('');
+                $('[name="dnotes"]').focus();
                 $('[name="dserialno"]').prop('readonly', true);
-                $('[name="dqty"]').prop('readonly', true);
+                $('[name="dserialno"]').val(old_sn);
+            }else{
+                $('[name="dnotes"]').val('');
+                $('[name="dserialno"]').prop('readonly', true);
+                $('[name="dserialno"]').val(old_sn);
             }
 	    });
         
@@ -964,29 +925,6 @@
             }
         });
         
-        /**
-        $('[name="dnotes"]').on("change", function(e) {
-            var val = this.value;
-            if(val === "diff_serialnumber"){
-                alert("Please change Serial Number.");
-                $('[name="dserialno"]').prop('readonly', false);
-                $('[name="dserialno"]').val('');
-                $('[name="dserialno"]').focus();
-                $('[name="dqty"]').prop('readonly', true);
-            }else if(val === "diff_pn_and_sn"){
-                alert("Please change Part Number and Serial Number.");
-                $('[name="dpartno"]').prop('readonly', false);
-                $('[name="dpartno"]').val('');
-                $('[name="dpartno"]').focus();
-                
-                $('[name="dserialno"]').prop('readonly', false);
-                $('[name="dserialno"]').val('');
-                $('[name="dserialno"]').focus();
-                $('[name="dqty"]').prop('readonly', true);
-            }
-        });
-        **/
-        
         $('#btn_clear').on("click", function(e){
             var ttl_qty = $('#ttl_qty').html();
             if(ttl_qty === "0"){
@@ -999,12 +937,6 @@
         });
         
         $('#btn_verify').on("click", function(e){
-            if(inArray("incomplete", arrStatus)){
-                alert("There are incomplete data");
-            }else{
-                
-            }
-            /*
             var ttl_qty = parseInt($('#ttl_qty').html());
             if(ttl_qty === 0){
                 alert('You have not return any parts!');
@@ -1026,7 +958,6 @@
                     }
                 }
             }
-            */
         });
 
         $("#btn_close").on("click", function(e){

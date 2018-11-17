@@ -381,7 +381,7 @@ class CTransferToFSL extends BaseController
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
             $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
-            $notes = filter_var($r->dt_notes, FILTER_SANITIZE_STRING);
+            $notes = empty($r->dt_notes) ? "-" : filter_var($r->dt_notes, FILTER_SANITIZE_STRING);
             $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
             $isdeleted = $deleted < 1 ? "N" : "Y";
             
@@ -594,7 +594,10 @@ class CTransferToFSL extends BaseController
         $fpartnum = $this->input->post('fpartnum', TRUE);
         $fserialnum = $this->input->post('fserialnum', TRUE);
         $fstatus = $this->input->post('fstatus', TRUE);
-        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fstatus'=>$fstatus);
+        $fnotes = $this->input->post('fnotes', TRUE);
+
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 
+            'fstatus'=>$fstatus, 'fnotes'=>$fnotes);
         $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail'), 'POST', FALSE);
 
         if($rs_data->status)

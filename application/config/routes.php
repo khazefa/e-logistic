@@ -147,6 +147,7 @@ $route['spareparts-stock/insert'] = 'front/cstockpart/create';
 $route['spareparts-stock/edit/(:any)'] = 'front/cstockpart/edit/$1';
 $route['spareparts-stock/modify'] = 'front/cstockpart/update';
 $route['spareparts-stock/remove/(:any)'] = 'front/cstockpart/delete/$1';
+$route['spareparts-stock/list/([a-zA-Z]+)'] = 'front/cstockpart/get_list/$1';
 $route['spareparts-stock/onhand-list/([a-zA-Z]+)'] = 'front/cstockpart/get_onhand_list/$1';
 $route['spareparts-stock/central-list/([a-zA-Z]+)'] = 'front/cstockpart/get_central_list/$1';
 $route['spareparts-stock/detail-list'] = 'front/cstockpart/get_list_detail';

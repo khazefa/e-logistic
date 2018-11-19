@@ -25,13 +25,19 @@ class CStockPart extends BaseController
     {
         parent::__construct();
         $this->isLoggedIn();
-        if($this->isWebAdmin()){
-            $this->hasHub = TRUE;
-        }elseif($this->isSpv()){
-            $this->hasHub = TRUE;
-            $this->hasCoverage = TRUE;
+        if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
+            if($this->isStaff()){
+                $this->readonly = FALSE;
+            }elseif($this->isSpv()){
+                $this->readonly = TRUE;
+                $this->hasHub = TRUE;
+                $this->hasCoverage = TRUE;
+            }else{
+                $this->readonly = FALSE;
+                $this->hasHub = TRUE;
+            }
         }else{
-            $this->readonly = TRUE;
+            redirect('cl');
         }
     }
     
@@ -48,8 +54,9 @@ class CStockPart extends BaseController
         $this->global ['name'] = $this->name;
         $this->global ['repo'] = $this->repo;
 
-        $data['classname'] = $this->cname;
+        $data['readonly'] = $this->readonly;
         $data['hashub'] = $this->hasHub;
+        $data['classname'] = $this->cname;
         if($this->hasHub){
             $data['list_warehouse'] = $this->get_list_warehouse();
         }
@@ -237,6 +244,84 @@ class CStockPart extends BaseController
                     }else{
                         $row['stock'] = $stock;
                     }
+
+                    $data[] = $row;
+                }
+                $output = $data;
+            break;
+        }
+        return $output;
+    }
+
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list($type){
+        $rs = array();
+        $arrWhere = array();
+        $data = array();
+        $output = null;
+        $isParam = FALSE;
+        
+        $fcode = $this->repo;
+        if ($fcode != "") $arrWhere['fcode'] = $fcode;
+        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_fsl_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        switch($type) {
+            case "json":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+                    
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['minstock'] = $minstock;
+                    $row['initstock'] = $initstock;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+                    $row['initflag'] = $initflag;
+
+                    $data[] = $row;
+                }
+                $output = $this->output
+                        ->set_content_type('application/json')
+                        ->set_output(json_encode(array('data'=>$data)));
+            break;
+            case "array":
+                foreach ($rs as $r) {
+                    $id = filter_var($r->stock_id, FILTER_SANITIZE_NUMBER_INT);
+                    $code = filter_var($r->stock_fsl_code, FILTER_SANITIZE_STRING);
+                    $partno = filter_var($r->stock_part_number, FILTER_SANITIZE_STRING);
+                    $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+                    
+                    $row['code'] = $code;
+                    $row['partno'] = $partno;
+                    $row['partname'] = $partname;
+                    $row['minstock'] = $minstock;
+                    $row['initstock'] = $initstock;
+                    if($initflag === "Y"){
+                        $row['stock'] = $initstock;
+                    }else{
+                        $row['stock'] = $stock;
+                    }
+                    $row['initflag'] = $initflag;
 
                     $data[] = $row;
                 }
@@ -700,7 +785,7 @@ class CStockPart extends BaseController
      */
     function add()
     {
-        if($this->isWebAdmin()){
+        if(!$this->readonly){
             $this->global['pageTitle'] = "Add New Stock Parts - ".APP_NAME;
             $this->global['pageMenu'] = 'Add New Stock Parts';
             $this->global['contentHeader'] = 'Add New Stock Parts';
@@ -709,7 +794,13 @@ class CStockPart extends BaseController
             $this->global ['name'] = $this->name;
             $this->global ['repo'] = $this->repo;
             
-            $data['list_data_wh'] = $this->get_list_warehouse();
+            $data['classname'] = $this->cname;
+            $data['hashub'] = $this->hasHub;
+            if($this->hasHub){
+                $data['list_warehouse'] = $this->get_list_warehouse();
+            }
+            $data['url_list'] = base_url($this->cname.'/list/json');
+            $data['url_check_part'] = base_url('spareparts-stock/check-part');
             $this->loadViews($this->view_dir.'create', $this->global, $data);
         }else{
             redirect($this->cname.'/view-central');

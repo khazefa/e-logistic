@@ -265,9 +265,9 @@ $route['transfer-stock-to-fsl/list_detail'] = 'front/ctransfertofsl/get_transfer
 $route['transfer-stock-to-fsl/check-ticket'] = 'front/ctransfertofsl/check_ticket';
 $route['transfer-stock-to-fsl/check-transaction'] = 'front/ctransfertofsl/check_transaction';
 $route['transfer-stock-to-fsl/insert'] = 'front/ctransfertofsl/submit_trans';
-$route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_status';
+// $route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_status';
 $route['transfer-stock-to-fsl/bulk-modify-detail'] = 'front/ctransfertofsl/update_detail_status_all';
-// $route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
+$route['transfer-stock-to-fsl/modify-detail'] = 'front/ctransfertofsl/update_detail_id';
 $route['transfer-stock-to-fsl/print/(:any)'] = 'front/ctransfertofsl/print_transaction/$1';
 // ===========================
 //  End Routing Front Transfer to FSL
@@ -281,7 +281,8 @@ $route['supply-fsl-to-fsl/add'] = 'front/csupplyfromfsl/add';
 $route['supply-fsl-to-fsl/add/(:any)'] = 'front/csupplyfromfsl/add/$1';
 $route['supply-fsl-to-fsl/list/([a-zA-Z]+)'] = 'front/csupplyfromfsl/get_list/$1';
 $route['supply-fsl-to-fsl/check-ticket'] = 'front/csupplyfromfsl/check_ticket';
-$route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
+// $route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans';
+$route['supply-fsl-to-fsl/insert'] = 'front/csupplyfromfsl/submit_trans_supply';
 $route['supply-fsl-to-fsl/modify-detail'] = 'front/csupplyfromfsl/update_detail_status';
 $route['supply-fsl-to-fsl/bulk-modify-detail'] = 'front/csupplyfromfsl/update_detail_status_all';
 $route['supply-fsl-to-fsl/insert_close'] = 'front/csupplyfromfsl/submit_trans_close';

@@ -301,6 +301,8 @@ class Cart extends BaseController
             $cartid = filter_var($r->tmp_incoming_uniqid, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->tmp_incoming_qty, FILTER_SANITIZE_NUMBER_INT);
             $status = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $get_status = $this->config->config['status']['in_detail'];
+            $status_name = isset($get_status[$status]) ? $get_status[$status] : "-";
             
             $row['id'] = $id;
             $row['partno'] = $partnum;
@@ -308,6 +310,7 @@ class Cart extends BaseController
             $row['serialno'] = $serialnum;
             $row['qty'] = (int)$qty;
             $row['status'] = $status;
+            $row['status_name'] = $status_name;
  
             $data[] = $row;
         }

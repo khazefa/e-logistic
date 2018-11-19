@@ -381,6 +381,8 @@ class CTransferToFSL extends BaseController
             $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
             $qty = filter_var($r->dt_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
             $return = filter_var($r->return_status, FILTER_SANITIZE_STRING);
+            $get_status = $this->config->config['status']['in_transfer_fsl'];
+            $status = isset($get_status[$return]) ? $get_status[$return] : "-";
             $notes = empty($r->dt_notes) ? "-" : filter_var($r->dt_notes, FILTER_SANITIZE_STRING);
             $deleted = filter_var($r->is_deleted, FILTER_SANITIZE_NUMBER_INT);
             $isdeleted = $deleted < 1 ? "N" : "Y";
@@ -394,6 +396,7 @@ class CTransferToFSL extends BaseController
                 $row['serialnum'] = $serialnum;
                 $row['qty'] = $qty;
                 $row['return'] = $return;
+                $row['status'] = $status;
                 $row['notes'] = $notes;
                 $row['deleted'] = $isdeleted;
  
@@ -560,7 +563,9 @@ class CTransferToFSL extends BaseController
         $fpartnum = $this->input->post('fpartnum', TRUE);
         $fserialnum = $this->input->post('fserialnum', TRUE);
         $fnotes = $this->input->post('fnotes', TRUE);
-        $arrWhere = array('fid'=>$fid, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fnotes'=>$fnotes);
+        $fstatus = $this->input->post('fstatus', TRUE);
+
+        $arrWhere = array('fid'=>$fid, 'fpartnum'=>$fpartnum, 'fserialnum'=>$fserialnum, 'fnotes'=>$fnotes, 'fstatus'=>$fstatus);
         $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail_id'), 'POST', FALSE);
 
         if($rs_data->status)
@@ -628,7 +633,8 @@ class CTransferToFSL extends BaseController
         );
         
         $ftrans_out = $this->input->post('ftrans_out', TRUE);
-        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fstatus'=>'');
+        $fstatus = $this->input->post('fstatus', TRUE);
+        $arrWhere = array('ftrans_out'=>$ftrans_out, 'fstatus'=>$fstatus);
         $rs_data = send_curl($arrWhere, $this->config->item('api_update_outgoings_trans_detail_all'), 'POST', FALSE);
 
         if($rs_data->status)

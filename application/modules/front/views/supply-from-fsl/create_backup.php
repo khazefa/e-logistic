@@ -48,22 +48,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="column col-md-6">
+                                    <div class="column col-md-12">
                                         <div class="text-left">
-                                            <p class="font-13"><strong>Purpose :</strong> <span class="m-l-10" id="vpurpose">-</span></p>
-                                            <p class="font-13"><strong>FSL Location :</strong> <span class="m-l-10" id="vfsl">-</span></p>
+                                            <p class="font-13"><strong>From FSL :</strong> <span class="m-l-10" id="vfsl">-</span></p>
                                             <p class="font-13"><strong>FSL Code :</strong> <span class="m-l-10" id="vfsl_code">-</span></p>
-                                            <p class="font-13"><strong>Transaction Date :</strong> <span class="m-l-10" id="vtransdate">-</span></p>
-                                            <p class="font-13"><strong>Service Partner :</strong> <span class="m-l-10" id="vpartner">-</span></p>
-                                            <p class="font-13"><strong>FSE Messenger :</strong> <span class="m-l-10" id="vfse">-</span></p>
-                                        </div>
-                                    </div>
-                                    <div class="column col-md-6">
-                                        <div class="text-left">
-                                            <p class="font-13"><strong>Ticket :</strong> <span class="m-l-10" id="vticket">-</span></p>
-                                            <p class="font-13"><strong>SSB/ID :</strong> <span class="m-l-10" id="vssb">-</span></p>
-                                            <p class="font-13"><strong>Customer :</strong> <span class="m-l-10" id="vcustomer">-</span></p>
-                                            <p class="font-13"><strong>Location :</strong> <span class="m-l-10" id="vlocation">-</span></p>
+                                            <p class="font-13"><strong>Purpose :</strong> <span class="m-l-10" id="vpurpose">-</span></p>
+                                            <p class="font-13"><strong>Transfer Date. :</strong> <span class="m-l-10" id="vtransdate">-</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -81,7 +71,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="column col-md-6">
-                                        <strong class="text-info">Detail Request</strong>
+                                        <strong class="text-info">Detail Transfer</strong>
                                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
@@ -101,7 +91,7 @@
                                         </p>
                                     </div>
                                     <div class="column col-md-6">
-                                        <strong class="text-info">Detail Return</strong>
+                                        <strong class="text-info">Detail Receive</strong>
                                         <table id="cart_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
@@ -123,10 +113,8 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-3 offset-md-9">
-                                        Total Quantity: <span id="ttl_qty">0</span>
-                                        <input type="text" id="ffe_report" name="ffe_report" class="form-control" placeholder="FE Report" 
-                                            data-toggle="tooltip" data-placement="top" title="" data-original-title="Please input FE Report if you have Bad Part in Returns">
+                                    <div class="col-md-1 offset-md-11">
+                                        Total: <span id="ttl_qty">0</span>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
@@ -135,14 +123,6 @@
                                                 data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Verify Return Quantity..">
                                             Verify
                                         </button>
-                                    </div>
-                                </div>
-                                <div class="mt-2"><hr></div>
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <!--<input type="radio" name="ftrigger" id="ftrigger"> is the amount of spare parts returned equal to the requested document?-->
-                                        <label>Notes (<small>Please enter a note if the actual number of parts is different compared to the data request</small>)</label>
-                                        <textarea name="fnotes" id="fnotes" class="form-control"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -167,14 +147,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Proceed Return Parts</h3>
+                <h3 class="modal-title">Proceed Received Parts</h3>
             </div>
             <div class="modal-body form">
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/> 
                     <div class="form-body">
                         <div class="form-group row">
-                            <label class="col-4 col-form-label">Return Status</label>
+                            <label class="col-4 col-form-label">Receive Status</label>
                             <div class="col-6">
                                 <select id="dstatus" name="dstatus" class="form-control" data-style="btn-light">
                                     <option value="0">Select Status</option>
@@ -186,18 +166,6 @@
                                 </select>
                             </div>
                         </div>
-                        <!--
-                        <div class="form-group row">
-                            <label class="col-4 col-form-label">Status Notes</label>
-                            <div class="col-6">
-                                <select id="dnotes" name="dnotes" class="form-control" data-style="btn-light">
-                                    <option value="diff_partnumber">Different Part Number</option>
-                                    <option value="diff_serialnumber">Different Serial Number</option>
-                                    <option value="diff_pn_and_sn">Different Part Number & Serial Number</option>
-                                </select>
-                            </div>
-                        </div>
-                        -->
                         <div class="form-group row">
                             <label class="col-4 col-form-label">Part Number</label>
                             <div class="col-6">
@@ -247,18 +215,12 @@
     var e_fslcode = $('#vfsl_code');
     var e_purpose = $('#vpurpose');
     var e_transdate = $('#vtransdate');
-    var e_partner = $('#vpartner');
-    var e_fse = $('#vfse');
-    var e_ticket = $('#vticket');
-    var e_customer = $('#vcustomer');
-    var e_location = $('#vlocation');
-    var e_ssb = $('#vssb');
-    var e_fe_report = $('#ffe_report');
     var e_trigger = $('#ftrigger');
     var e_notes = $('#fnotes');
     var trans_purpose = "";
     var total_qty_outgoing = 0, detail_ret_qty = 0, detail_ret_cart = 0;
-    var table, table2;
+    var table; 
+    var table2;
     var arrStatus = [];
     
     function init_form(){
@@ -269,20 +231,13 @@
         }else{
             e_trans_out.val(has_transnum);
             e_trans_out.prop('readonly', true);
-            check_trans_out(has_transnum);
+            check_transfer_reff(has_transnum);
         }
         e_trans_out_notes.html('');
         e_fslcode.html('-');
         e_fslname.html('-');
         e_purpose.html('-');
         e_transdate.html('-');
-        e_partner.html('-');
-        e_fse.html('-');
-        e_ticket.html('-');
-        e_customer.html('-');
-        e_location.html('-');
-        e_ssb.html('-');
-        e_fe_report.prop('readonly', true);
         e_trigger.prop('checked', false);
         e_notes.prop('disabled', true);
         e_notes.val('');
@@ -291,8 +246,11 @@
     
     //init table
     function init_table(){
+        ftransout = e_trans_out.val();
+
         table = $('#data_grid').DataTable({
-            searching: false,
+            dom: "<'row'<'col-sm-12'><'col-sm-8'><'col-sm-4'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'><'col-sm-3'>>",
+            searching: true,
             ordering: false,
             info: false,
             paging: false,
@@ -302,7 +260,7 @@
             processing: true,
             lengthChange: false,
             ajax: {
-                url: "<?= base_url($classname_request.'/list_detail'); ?>",
+                url: "<?= base_url($classname_transfer.'/list_detail'); ?>",
                 type: 'GET',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 dataType: 'JSON',
@@ -336,20 +294,34 @@
                     render    : function ( data, type, full, meta ) {
                         var html = '';
                         if(isEmpty(data)){
-                            html = '<a href="javascript:void(0)" title="Proceed Return" id="btn_edit"><i class="fa fa-angle-double-right"></i> Return</a>';
+                            html = '<a href="javascript:void(0)" title="Change Status" id="btn_edit"><i class="fa fa-pencil"></i> Change Status</a>';
                         }else{
-                            if(data === "NOC"){
-                                html = '<a href="javascript:void(0)" title="Proceed Incomplete" id="btn_edit"><i class="fa fa-angle-double-right"></i> Incomplete</a>';
+                            if(data === "diff_serialnumber"){
+                                html = '<a href="javascript:void(0)" title="Change Status" id="btn_edit"><i class="fa fa-pencil"></i> Different SN</a>';
                             }else{
-                                html = full.status;
+                                html = '<a href="javascript:void(0)" title="Change Status" id="btn_edit"><i class="fa fa-pencil"></i> '+data.toUpperCase()+'</a>';
                             }
                         }
                         return html;
                     }
                 }
             ],
+            initComplete: function( settings, json ) {
+                if(table2.rows().count() < 1){
+                    update_detail_status_all(ftransout, "complete");
+                }
+            },
             rowCallback: function( row, data, index ) {
                 arrStatus.push(data.return);
+                fpartnum = data.partnum;
+                fserialnum = data.serialnum;
+                fqty = data.qty;
+                fstatus = data.return;
+                fnotes = data.notes;
+                
+                if(table2.rows().count() < 1){
+                    add_cart_direct(ftransout, fpartnum, fserialnum, fqty, fstatus, fnotes);
+                }
             },
         });
 
@@ -377,7 +349,8 @@
     //init table
     function init_table2(){
         table2 = $('#cart_grid').DataTable({
-            searching: false,
+            dom: "<'row'<'col-sm-12'><'col-sm-8'><'col-sm-4'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'><'col-sm-3'>>",
+            searching: true,
             ordering: false,
             info: false,
             paging: false,
@@ -424,7 +397,14 @@
                     orderable : false, //set not orderable
                     data      : null,
                     render    : function ( data, type, full, meta ) {
-                        var html = full.status_name;
+                        var html = '';
+                        if(data === "incomplete"){
+                            html = 'Incomplete';
+                        }else if(data === "complete"){
+                            html = 'Complete';
+                        }else if(data === "diff_serialnumber"){
+                            html = 'Different Serial Number';
+                        }
                         return html;
                     }
                 }
@@ -444,9 +424,6 @@
                     return intVal(a) + intVal(b);
                 }, 0 );
                 $('#ttl_qty').html(totalQty);
-                if(totalQty === 0){
-                    e_fe_report.prop('readonly', true);
-                }
             },
             initComplete: function( settings, json ) {
 //                $('#ttl_qty').html(table.rows().count());
@@ -462,12 +439,11 @@
             fserialnum = data['serialno'];
             fdstatus = data['status'];
             fstatus = '';
-            fnotes = '';
             if(fdstatus === 'RBP'){
                 //
             }else{
                 delete_cart(fid);
-                update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
+                update_detail_status(ftransout, fpartnum, fserialnum, fstatus);
             }
         });
 
@@ -481,8 +457,8 @@
     }
     
     //check outgoing transaction
-    function check_trans_out(transnum){
-        var url = '<?php echo base_url($classname_request.'/check-transaction'); ?>';
+    function check_transfer_reff(transnum){
+        var url = '<?php echo base_url($classname_transfer.'/check-transaction'); ?>';
         var type = 'GET';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
@@ -506,27 +482,20 @@
                     e_fslname.html('-');
                     e_purpose.html('-');
                     e_transdate.html('-');
-                    e_partner.html('-');
-                    e_fse.html('-');
-                    e_ticket.html('-');
-                    e_customer.html('-');
-                    e_location.html('-');
-                    e_ssb.html('-');
                     e_notes.val('');
-                    e_fe_report.val('');
                     init_table();
                     init_table2();
                 }else if(jqXHR.status === 1){
                     e_trans_out_notes.html('');
                     trans_purpose = jqXHR.purpose;
                     total_qty_outgoing = parseInt(jqXHR.total_qty);
-                    if(trans_purpose !== "RWH"){
+                    if(trans_purpose === "RWH"){
                         e_trans_out.prop('readonly', true);
-                        get_outgoing_info(e_trans_out.val());
+                        get_transfered_detail(e_trans_out.val());
                         init_table();
                         init_table2();
                     }else{
-                        alert('You cannot Return the Transfer Stock Transaction!');
+                        alert('This feature is only working on Transfer Stock Transaction!');
                         init_form();
                         e_trans_out.focus();
                     }
@@ -540,8 +509,8 @@
     }
     
     //get outgoing information
-    function get_outgoing_info(transnum){
-        var url = '<?php echo base_url($classname_request.'/detail'); ?>';
+    function get_transfered_detail(transnum){
+        var url = '<?php echo base_url($classname_transfer.'/detail'); ?>';
         var type = 'GET';
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
@@ -558,18 +527,10 @@
             success: function (jqXHR) {
                 $.each(jqXHR, function(index, element) {
                     $.each(element, function(property, data) {
-                        e_fslname.html(data.fslname);
-                        e_fslcode.html(data.fsl);
-                        e_purpose.html(data.purpose);
-                        e_transdate.html(data.transdate);
-                        e_partner.html(data.partner);
-                        e_fse.html(data.reqby);
-                        e_ticket.html(data.transticket);
-                        e_customer.html(data.customer);
-                        e_location.html(data.location);
-                        e_ssb.html(data.ssbid);
-                        e_fe_report.val(data.fereport);
-                        e_notes.val(data.notes);
+                        $('#vfsl').html(data.fslname);
+                        $('#vfsl_code').html(data.fsl);
+                        $('#vpurpose').html(data.purpose);
+                        $('#vtransdate').html(data.transdate);
                     });
                 });
             },
@@ -589,7 +550,10 @@
 
         if(!isEmpty(fstatus)){
             $('[name="dstatus"]').val(fstatus);
+        }else{
+            $('[name="dstatus"]').val('complete');
         }
+//        $('[name="dnotes"]').prop('disabled', true);
         $('[name="dpartno_old"]').val(fpartno);
         $('[name="dpartno"]').val(fpartno);
         $('[name="dpartno"]').prop('readonly', true);
@@ -601,7 +565,7 @@
         $('[name="dqty"]').prop('readonly', true);
         $('[name="dnotes"]').val(fnotes);
         $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-        $('.modal-title').text('Proceed Return Parts'); // Set title to Bootstrap modal title
+        $('.modal-title').text('Set Status Part'); // Set title to Bootstrap modal title
     }
     
     //add to cart
@@ -639,7 +603,7 @@
                     alert(jqXHR.message);
                     $("#modal_form .close").click();
                 }else if(jqXHR.status === 1){
-                    update_detail_status(ftransout, fpartnum, fserialnum_old, fstatus, fnotes);
+                    update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
                     $("#modal_form .close").click();
                     reload();
                     reload_cart();
@@ -651,10 +615,46 @@
             }
         });
     }
+
+    //add to cart
+    function add_cart_direct(ftransout, fpartnum, fserialnum, fqty, fstatus, fnotes){
+        var url = '<?php echo base_url('cart/incoming/add/'.$cart_postfix); ?>';
+        var type = 'POST';
+
+        var data = {
+            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+            ftransout : ftransout,
+            fpartnum : fpartnum,
+            fserialnum : fserialnum,
+            fqty : fqty,
+            fstatus : fstatus,
+            fnotes : fnotes
+        };
+
+        $.ajax({
+            type: type,
+            url: url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            dataType: 'JSON',
+            contentType:"application/json",
+            data: data,
+            success: function (jqXHR) {
+                if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }else if(jqXHR.status === 1){
+                    // update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+            }
+        });
+    }
     
     //update detail outgoing status
     function update_detail_status(ftrans_out, fpartnum, fserialnum, fstatus, fnotes){
-        var url = '<?php echo base_url($classname_request.'/modify-detail'); ?>';
+        var url = '<?php echo base_url($classname_transfer.'/modify-detail'); ?>';
         var type = 'POST';
         
         if(isEmpty(e_trans_out.val())){
@@ -699,8 +699,8 @@
     }
     
     //update detail outgoing status
-    function update_detail_status_all(ftrans_out){
-        var url = '<?php echo base_url($classname_request.'/bulk-modify-detail'); ?>';
+    function update_detail_status_all(ftrans_out, fstatus){
+        var url = '<?php echo base_url($classname_transfer.'/bulk-modify-detail'); ?>';
         var type = 'POST';
         
         if(isEmpty(e_trans_out.val())){
@@ -709,7 +709,8 @@
         }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftrans_out : ftrans_out
+            ftrans_out : ftrans_out,
+            fstatus : fstatus
         };
         
         $.ajax({
@@ -787,7 +788,7 @@
             success: function (jqXHR) {
                 if(jqXHR.status === 1){
                     //success
-                    update_detail_status_all(e_trans_out.val());
+                    update_detail_status_all(e_trans_out.val(), "");
                 }else if(jqXHR.status === 0){
                     alert(jqXHR.message);
                 }
@@ -841,7 +842,7 @@
             if(detail_ret_cart < detail_ret_qty){
                 state = true;
             }else{
-                if(inArray("NOC", arrStatus)){
+                if(inArray("incomplete", arrStatus)){
                     // alert("There are incomplete data");
                     state = true;
                 }
@@ -863,7 +864,7 @@
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : e_trans_out.val(),
             fqty : parseInt($("#ttl_qty").html()),
-            ffe_report : e_fe_report.val(),
+            fcode_from : e_fslcode.html(),
             fnotes : e_notes.val(),
             fstatus : status
         };
@@ -901,13 +902,13 @@
             $(this).val($(this).val().toUpperCase());
 	    });
         
-        e_trans_out.on("keydown", function(e){
+        e_trans_out.on("keypress", function(e){
             if (e.keyCode == 13) {
                 if(isEmpty(e_trans_out.val())){
-                    alert('Please input Outgoing Number!');
+                    alert('Please input Reff No!');
                     e_trans_out.focus();
                 }else{
-                    check_trans_out(e_trans_out.val());
+                    check_transfer_reff(e_trans_out.val());
                 }
                 return false;
             }
@@ -926,43 +927,29 @@
         $('[name="dstatus"]').on("change", function(e) {
             var val = this.value;
             var sn = $('[name="dserialno"]').val();
-            var oldsn = $('[name="dserialno_old"]').val();
-            var oldqty = parseInt($('[name="dqty_old"]').val());
+            var old_sn = $('[name="dserialno_old"]').val();
             
-            if(val === "RBP"){
+            if(val === "diff_serialnumber"){
                 $('[name="dnotes"]').val('');
-                $('[name="dserialno"]').val(oldsn);
                 if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
-                    $('[name="dqty"]').prop('readonly', true);
+                    //skip
                 }else{
-//                    $('[name="dnotes"]').prop('disabled', false);
-//                    $('[name="dnotes"]').focus();
                     alert("Please change Serial Number.");
                     $('[name="dserialno"]').prop('readonly', false);
                     $('[name="dserialno"]').val('');
                     $('[name="dserialno"]').focus();
-                    $('[name="dqty"]').prop('readonly', true);
+                    $('[name="dserialno"]').prop('required', true);
                 }
-            }else if(val === "RGP"){
-                $('[name="dnotes"]').val('');
-                $('[name="dserialno"]').val(oldsn);
-                if(sn === "nosn".toUpperCase() || sn === "no sn".toUpperCase()){
-                    alert("Please change Quantity if needed.");
-                    $('[name="dqty"]').prop('readonly', false);
-                    $('[name="dqty"]').focus();
-                    $('[name="dserialno"]').prop('readonly', true);
-                }else{
-                    $('[name="dserialno"]').prop('readonly', true);
-                }
-            }else if(val === "NOC"){
+            }else if(val === "incomplete"){
                 alert("Please describe the notes for Incomplete part!");
                 $('[name="dnotes"]').val('');
                 $('[name="dnotes"]').focus();
+                $('[name="dserialno"]').prop('readonly', true);
+                $('[name="dserialno"]').val(old_sn);
             }else{
                 $('[name="dnotes"]').val('');
-                $('[name="dserialno"]').val(oldsn);
                 $('[name="dserialno"]').prop('readonly', true);
-                $('[name="dqty"]').prop('readonly', true);
+                $('[name="dserialno"]').val(old_sn);
             }
 	    });
         
@@ -994,10 +981,6 @@
                 //clear carts
                 delete_all_cart(e_trans_out.val());
                 arrStatus = [];
-                e_notes.val('');
-                e_notes.prop('disabled', true);
-                $('#btn_close').text('Complete');
-                $('#btn_close').prop('disabled', true);
             }
         });
         
@@ -1024,7 +1007,7 @@
                 }
             }
         });
-        
+
         $("#btn_close").on("click", function(e){
             var state = $( this ).text().toLowerCase().trim();
             // alert("State:"+state);

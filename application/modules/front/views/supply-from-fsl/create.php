@@ -49,12 +49,10 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="column col-md-12">
-                                        <div class="text-left">
-                                            <p class="font-13"><strong>From FSL :</strong> <span class="m-l-10" id="vfsl">-</span></p>
-                                            <p class="font-13"><strong>FSL Code :</strong> <span class="m-l-10" id="vfsl_code">-</span></p>
-                                            <p class="font-13"><strong>Purpose :</strong> <span class="m-l-10" id="vpurpose">-</span></p>
-                                            <p class="font-13"><strong>Transfer Date. :</strong> <span class="m-l-10" id="vtransdate">-</span></p>
-                                        </div>
+                                        <p class="font-13"><strong>Transfered By :</strong> <span class="m-l-10" id="vfsl">-</span></p>
+                                        <p class="font-13"><strong>FSL Code :</strong> <span class="m-l-10" id="vfsl_code">-</span></p>
+                                        <p class="font-13"><strong>Purpose :</strong> <span class="m-l-10" id="vpurpose">-</span></p>
+                                        <p class="font-13"><strong>Transfer Date :</strong> <span class="m-l-10" id="vtransdate">-</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -70,16 +68,17 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="column col-md-6">
-                                        <strong class="text-info">Detail Transfer</strong>
+                                    <div class="column col-md-12">
                                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Part Number</th>
+                                                <th>Part Name</th>
                                                 <th>Serial Number</th>
                                                 <th>Qty</th>
                                                 <th>Notes</th>
-                                                <th>Proceed</th>
+                                                <th>Status</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -90,31 +89,10 @@
                                             maka <strong>Pilih Status Incomplete</strong>.
                                         </p>
                                     </div>
-                                    <div class="column col-md-6">
-                                        <strong class="text-info">Detail Receive</strong>
-                                        <table id="cart_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
-                                            <thead>
-                                            <tr>
-                                                <th>&nbsp;</th>
-                                                <th>Part Number</th>
-                                                <th>Serial Number</th>
-                                                <th>Qty</th>
-                                                <th>Status</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                        <button type="button" id="btn_clear" class="btn btn-cancel waves-effect waves-light" 
-                                                data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Repeat the transaction..">
-                                            <i class="fa fa-trash-o"></i> Clear Return
-                                        </button>
-                                        <div class="mb-4"></div>
-                                    </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-1 offset-md-11">
-                                        Total: <span id="ttl_qty">0</span>
+                                    <div class="col-md-2">
+                                        Total Quantity: <span id="ttl_qty">0</span>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
@@ -151,7 +129,7 @@
             </div>
             <div class="modal-body form">
                 <form action="#" id="form" class="form-horizontal">
-                    <input type="hidden" value="" name="id"/> 
+                    <input type="hidden" id="dtid" name="dtid"/> 
                     <div class="form-body">
                         <div class="form-group row">
                             <label class="col-4 col-form-label">Receive Status</label>
@@ -177,15 +155,15 @@
                         <div class="form-group row">
                             <label class="col-4 col-form-label">Serial Number</label>
                             <div class="col-6">
-                                <input name="dserialno" placeholder="Serial Number" class="form-control" type="text" readonly="true" pattern="[a-zA-Z0-9 ]+">
+                                <input name="dserialno" placeholder="Serial Number" class="form-control" type="text" readonly="true" pattern="[a-zA-Z0-9 ]+" 
+                                data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Serial Number and then Press [ENTER]">
                                 <input name="dserialno_old" type="hidden" readonly="true">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-4 col-form-label">Qty</label>
                             <div class="col-4">
-                                <input name="dqty" class="form-control" type="number" min="1" readonly="true" 
-                                data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Qty and then Press [ENTER]">
+                                <input name="dqty" class="form-control" type="number" min="1" readonly="true">
                                 <input name="dqty_old" type="hidden" readonly="true">
                                 <span class="help-block"></span>
                             </div>
@@ -200,7 +178,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="add_cart()" class="btn btn-primary">Save</button>
+                <button type="button" id="btnSave" onclick="update_detail()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div><!-- /.modal-content -->
@@ -218,7 +196,7 @@
     var e_trigger = $('#ftrigger');
     var e_notes = $('#fnotes');
     var trans_purpose = "";
-    var total_qty_outgoing = 0, detail_ret_qty = 0, detail_ret_cart = 0;
+    var total_qty_outgoing = 0, detail_ret_qty = 0;
     var table; 
     var table2;
     var arrStatus = [];
@@ -246,8 +224,10 @@
     
     //init table
     function init_table(){
+        ftransout = e_trans_out.val();
+
         table = $('#data_grid').DataTable({
-            dom: "<'row'<'col-sm-12'><'col-sm-8'><'col-sm-4'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'><'col-sm-3'>>",
+            dom: "<'row'<'col-sm-12'><'col-sm-12'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'><'col-sm-3'>>",
             searching: true,
             ordering: false,
             info: false,
@@ -269,7 +249,9 @@
                 },
             },
             columns: [
+                { "data": 'id' },
                 { "data": 'partnum' },
+                { "data": 'partname' },
                 { "data": 'serialnum' },
                 { "data": 'qty' },
                 { "data": 'notes' },
@@ -277,13 +259,9 @@
             ],
             columnDefs : [
                 {
-                    targets   : 0,
-                    orderable : false, //set not orderable
-                    data      : null,
-                    render    : function ( data, type, full, meta ) {
-                        var html = '<a href="#" title="'+full.partname+'">'+data+'</a>';
-                        return html;
-                    }
+                    targets     : 0,
+                    visible     : false,
+                    searchable  : false
                 },
                 {
                     targets   : -1,
@@ -292,25 +270,50 @@
                     render    : function ( data, type, full, meta ) {
                         var html = '';
                         if(isEmpty(data)){
-                            html = '<a href="javascript:void(0)" title="Set Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Set Status</a>';
+                            html = '<a href="javascript:void(0)" title="Change Status" id="btn_edit"><i class="fa fa-pencil"></i> Change Status</a>';
                         }else{
-                            if(data === "diff_serialnumber"){
-                                html = 'Different SN';
-                            }else if(data === "complete"){
-                                html = 'Complete';
-                            }else{
-                                html = '<a href="javascript:void(0)" title="Set Status" id="btn_edit"><i class="fa fa-angle-double-right"></i> Set Status</a>';
-                            }
+                            var status = full.status.toUpperCase();
+                            html = '<a href="javascript:void(0)" title="Change Status" id="btn_edit"><i class="fa fa-pencil"></i> '+status+'</a>';
                         }
                         return html;
                     }
                 }
             ],
-            // initComplete: function( settings, json ) {
-
-            // },
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ? i : 0;
+                };
+                var totalQty = api
+                .column( 4 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+                $('#ttl_qty').html(totalQty);
+            },
+            initComplete: function( settings, json ) {
+                // if(table2.rows().count() < 1){
+                //     update_detail_status_all(ftransout, "complete");
+                // }
+            },
             rowCallback: function( row, data, index ) {
-                arrStatus.push(data.return);
+                fid = data.id;
+                fpartnum = data.partnum;
+                fserialnum = data.serialnum;
+                fqty = data.qty;
+                fstatus = data.return;
+                fcomplete = "complete";
+                fnotes = data.notes;
+
+                if(isEmpty(fstatus)){
+                    update_detail_status(fid, fpartnum, fserialnum, fcomplete, fnotes);
+                }else if(fstatus == "incomplete"){
+                    arrStatus.push(fstatus);
+                }
+
             },
         });
 
@@ -320,13 +323,14 @@
         //function for datatables button
         $('#data_grid tbody').on( 'click', '#btn_edit', function (e) {        
             var data = table.row( $(this).parents('tr') ).data();
+            fid = data['id'];
             fpartno = data['partnum'];
             fserialno = data['serialnum'];
             fqty = data['qty'];
             fnotes = data['notes'];
             fstatus = data['return'];
             ftransno = e_trans_out.val();
-            edit_detail_status(ftransno, fpartno, fserialno, fqty, fnotes, fstatus);
+            edit_detail_status(fid, fpartno, fserialno, fqty, fnotes, fstatus);
         });
     }
     
@@ -335,203 +339,73 @@
         table.ajax.reload();
     }
     
-    //init table
-    function init_table2(){
-        table2 = $('#cart_grid').DataTable({
-            dom: "<'row'<'col-sm-12'><'col-sm-8'><'col-sm-4'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-9'><'col-sm-3'>>",
-            searching: true,
-            ordering: false,
-            info: false,
-            paging: false,
-            destroy: true,
-            stateSave: false,
-            deferRender: true,
-            processing: true,
-            lengthChange: false,
-            ajax: {
-                url: "<?= base_url('cart/incoming/list/'.$cart_postfix); ?>",
-                type: 'GET',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                dataType: 'JSON',
-                contentType:"application/json",
-                data: function(d){
-                    d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
-                    d.ftrans_out = e_trans_out.val();
-                },
-            },
-            columns: [
-                { "data": 'id' },
-                { "data": 'partno' },
-                { "data": 'serialno' },
-                { "data": 'qty' },
-                { "data": 'status' },
-            ],
-            columnDefs : [
-                {
-                    targets   : 0,
-                    orderable : false, //set not orderable
-                    data      : null,
-                    render    : function ( data, type, full, meta ) {
-                        var html = '<a href="javascript:void(0)" id="btn_delete" title="'+data+'"><i class="fa fa-times"></i></a>'; 
-//                        var html = '<button type="button" class="btn btn-danger" id="btn_delete"><i class="fa fa-times"></i></button>'; 
-                        if(full.status === "RBP"){
-                            return '&nbsp;';
-                        }else{
-                            return html;
-                        }
-                    }
-                },
-                {
-                    targets   : -1,
-                    orderable : false, //set not orderable
-                    data      : null,
-                    render    : function ( data, type, full, meta ) {
-                        var html = '';
-                        if(data === "incomplete"){
-                            html = 'Incomplete';
-                        }else if(data === "complete"){
-                            html = 'Complete';
-                        }else if(data === "diff_serialnumber"){
-                            html = 'Different Serial Number';
-                        }
-                        return html;
-                    }
-                }
-            ],
-            footerCallback: function ( row, data, start, end, display ) {
-                var api = this.api(), data;
-
-                var intVal = function ( i ) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '')*1 :
-                        typeof i === 'number' ? i : 0;
-                };
-                var totalQty = api
-                .column( 3 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-                $('#ttl_qty').html(totalQty);
-            },
-            initComplete: function( settings, json ) {
-//                $('#ttl_qty').html(table.rows().count());
-            }
-        });
-        
-        //function for datatables button
-        $('#cart_grid tbody').on( 'click', '#btn_delete', function (e) {        
-            var data = table2.row( $(this).parents('tr') ).data();
-            ftransout = e_trans_out.val();
-            fid = data['id'];
-            fpartnum = data['partno'];
-            fserialnum = data['serialno'];
-            fdstatus = data['status'];
-            fstatus = '';
-            if(fdstatus === 'RBP'){
-                //
-            }else{
-                delete_cart(fid);
-                update_detail_status(ftransout, fpartnum, fserialnum, fstatus);
-            }
-        });
-
-        table2.buttons().container()
-                .appendTo('#cart_grid_wrapper .col-md-6:eq(0)');
-    }
-    
-    //reload table
-    function reload_cart(){
-        table2.ajax.reload();
-    }
-    
     //check outgoing transaction
     function check_transfer_reff(transnum){
         var url = '<?php echo base_url($classname_transfer.'/check-transaction'); ?>';
         var type = 'GET';
+
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : transnum
         };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 0){
-                    e_trans_out_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
-                    e_trans_out.prop("readonly", false);
-                    e_trans_out.val('');
-                    e_trans_out.focus();
-                    e_fslcode.html('-');
-                    e_fslname.html('-');
-                    e_purpose.html('-');
-                    e_transdate.html('-');
-                    e_notes.val('');
+
+        var throw_ajax_success = function (jqXHR) {
+            if(jqXHR.status === 0){
+                e_trans_out_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                e_trans_out.prop("readonly", false);
+                e_trans_out.val('');
+                e_trans_out.focus();
+                e_fslcode.html('-');
+                e_fslname.html('-');
+                e_purpose.html('-');
+                e_transdate.html('-');
+                e_notes.val('');
+                init_table();
+            }else if(jqXHR.status === 1){
+                e_trans_out_notes.html('');
+                trans_purpose = jqXHR.purpose;
+                total_qty_outgoing = parseInt(jqXHR.total_qty);
+                if(trans_purpose === "RWH"){
+                    e_trans_out.prop('readonly', true);
+                    get_transfered_detail(e_trans_out.val());
                     init_table();
-                    init_table2();
-                }else if(jqXHR.status === 1){
-                    e_trans_out_notes.html('');
-                    trans_purpose = jqXHR.purpose;
-                    total_qty_outgoing = parseInt(jqXHR.total_qty);
-                    if(trans_purpose === "RWH"){
-                        e_trans_out.prop('readonly', true);
-                        get_transfered_detail(e_trans_out.val());
-                        init_table();
-                        init_table2();
-                    }else{
-                        alert('This feature is only working on Transfer Stock Transaction!');
-                        init_form();
-                        e_trans_out.focus();
-                    }
+                }else{
+                    alert('This feature is only working on Transfer Stock Transaction!');
+                    init_form();
+                    e_trans_out.focus();
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
             }
-        });
+        };
+        
+        throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);
     }
     
     //get outgoing information
     function get_transfered_detail(transnum){
         var url = '<?php echo base_url($classname_transfer.'/detail'); ?>';
         var type = 'GET';
+
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
             ftrans_out : transnum
         };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                $.each(jqXHR, function(index, element) {
-                    $.each(element, function(property, data) {
-                        $('#vfsl').html(data.fslname);
-                        $('#vfsl_code').html(data.fsl);
-                        $('#vpurpose').html(data.purpose);
-                        $('#vtransdate').html(data.transdate);
-                    });
+
+        var throw_ajax_success = function (jqXHR) {
+            $.each(jqXHR, function(index, element) {
+                $.each(element, function(property, data) {
+                    $('#vfsl').html(data.fslname);
+                    $('#vfsl_code').html(data.fsl);
+                    $('#vpurpose').html(data.purpose);
+                    $('#vtransdate').html(data.transdate);
                 });
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
+            });
+        };
+        
+        throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);
     }
     
-    function edit_detail_status(ftransno, fpartno, fserialno, fqty, fnotes, fstatus)
-    {        
+    function edit_detail_status(fid, fpartno, fserialno, fqty, fnotes, fstatus)
+    {
         save_method = 'update';
         $('#form')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
@@ -542,7 +416,7 @@
         }else{
             $('[name="dstatus"]').val('complete');
         }
-//        $('[name="dnotes"]').prop('disabled', true);
+        $('[name="dtid"]').val(fid);
         $('[name="dpartno_old"]').val(fpartno);
         $('[name="dpartno"]').val(fpartno);
         $('[name="dpartno"]').prop('readonly', true);
@@ -554,59 +428,45 @@
         $('[name="dqty"]').prop('readonly', true);
         $('[name="dnotes"]').val(fnotes);
         $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-        $('.modal-title').text('Set Status Part'); // Set title to Bootstrap modal title
+        $('.modal-title').text('Change Status'); // Set title to Bootstrap modal title
     }
-    
-    //add to cart
-    function add_cart(){
-        var url = '<?php echo base_url('cart/incoming/add/'.$cart_postfix); ?>';
-        var type = 'POST';
-        var ftransout = e_trans_out.val();
+
+    function update_detail(){
+        var fid = $('[name="dtid"]').val();
         var fpartnum = $('[name="dpartno"]').val();
         var fserialnum = $('[name="dserialno"]').val();
-        var fserialnum_old = $('[name="dserialno_old"]').val();
-        var fqty = $('[name="dqty"]').val();
         var fstatus = $('[name="dstatus"]').val();
         var fnotes = $('[name="dnotes"]').val();
 
+
+        var url = '<?php echo base_url($classname_transfer.'/modify-detail'); ?>';
+        var type = 'POST';
+        
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftransout : ftransout,
+            fid : fid,
             fpartnum : fpartnum,
             fserialnum : fserialnum,
-            fserialnum_old : fserialnum_old,
-            fqty : fqty,
             fstatus : fstatus,
             fnotes : fnotes
         };
 
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 0){
-                    alert(jqXHR.message);
-                    $("#modal_form .close").click();
-                }else if(jqXHR.status === 1){
-                    update_detail_status(ftransout, fpartnum, fserialnum, fstatus, fnotes);
-                    $("#modal_form .close").click();
-                    reload();
-                    reload_cart();
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+        var throw_ajax_success = function (jqXHR) {
+            if(jqXHR.status === 0){
+                alert(jqXHR.message);
+            }else if(jqXHR.status === 1){
+                //success
+                arrStatus = [];
+                reload();
+                $('#modal_form').modal('hide');
             }
-        });
+        };
+
+        throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);        
     }
     
     //update detail outgoing status
-    function update_detail_status(ftrans_out, fpartnum, fserialnum, fstatus, fnotes){
+    function update_detail_status(fid, fpartnum, fserialnum, fstatus, fnotes){
         var url = '<?php echo base_url($classname_transfer.'/modify-detail'); ?>';
         var type = 'POST';
         
@@ -616,43 +476,32 @@
         }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftrans_out : ftrans_out,
+            fid : fid,
             fpartnum : fpartnum,
             fserialnum : fserialnum,
             fstatus : fstatus,
             fnotes : fnotes
         };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 0){
-                    $("#error_modal .modal-title").html("Message");
-                    $("#error_modal .modal-body h4").html(""+jqXHR.message);
-                    $('#error_modal').modal({
-                        show: true
-                    });
-                }else if(jqXHR.status === 1){
-                    //success
-                    arrStatus = [];
-                    reload();
-                    reload_cart();
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
+
+        var throw_ajax_success = function (jqXHR) {
+            if(jqXHR.status === 0){
+                $("#error_modal .modal-title").html("Message");
+                $("#error_modal .modal-body h4").html(""+jqXHR.message);
+                $('#error_modal').modal({
+                    show: true
+                });
+            }else if(jqXHR.status === 1){
+                //success
+                arrStatus = [];
+                // reload();
             }
-        });
+        };
+        
+        throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err); 
     }
     
     //update detail outgoing status
-    function update_detail_status_all(ftrans_out){
+    function update_detail_status_all(ftrans_out, fstatus){
         var url = '<?php echo base_url($classname_transfer.'/bulk-modify-detail'); ?>';
         var type = 'POST';
         
@@ -662,173 +511,52 @@
         }
         var data = {
             <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftrans_out : ftrans_out
+            ftrans_out : ftrans_out,
+            fstatus : fstatus
+        };
+
+        var throw_ajax_success = function (jqXHR) {
+            if(jqXHR.status === 0){
+                alert(jqXHR.message);
+            }else if(jqXHR.status === 1){
+                //success
+                arrStatus = [];
+                reload();
+            }
         };
         
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 0){
-                    alert(jqXHR.message);
-                }else if(jqXHR.status === 1){
-                    //success
-                    arrStatus = [];
-                    reload();
-                    reload_cart();
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    //delete cart
-    function delete_cart(id){        
-        var url = '<?php echo base_url('cart/incoming/delete'); ?>';
-        var type = 'POST';
-        
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fid : id
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 1){
-                    //success
-                }else if(jqXHR.status === 0){
-                    alert(jqXHR.message);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    //delete all cart
-    function delete_all_cart(ftrans_out){
-        var url = '<?php echo base_url('cart/incoming/bulk-delete/'.$cart_postfix); ?>';
-        var type = 'POST';
-        
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",
-            ftrans_out : ftrans_out
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 1){
-                    //success
-                    update_detail_status_all(e_trans_out.val());
-                }else if(jqXHR.status === 0){
-                    alert(jqXHR.message);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
-    }
-    
-    //update cart
-    function update_cart(id, qty){
-        var url = '<?php echo base_url('cart/incoming/update'); ?>';
-        var type = 'POST';
-        
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            fid : id,
-            fqty : qty
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
-                if(jqXHR.status === 1){
-                    reload_cart();
-                }else if(jqXHR.status === 0){
-                    alert(jqXHR.message);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
+        throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err); 
     }
 
     function check_pending_state()
     {
         var state = false;
-        detail_ret_qty = parseInt(table.data().count());
-        detail_ret_cart = parseInt(table2.data().count());
-
-        if(detail_ret_cart !== 0){
-            if(detail_ret_cart < detail_ret_qty){
-                state = true;
-            }else{
-                if(inArray("incomplete", arrStatus)){
-                    // alert("There are incomplete data");
-                    state = true;
-                }
-            }
+        if(inArray("incomplete", arrStatus)){
+            // alert("There are incomplete data");
+            state = true;
         }
+
         return state;
     }
     
     //submit transaction
     function complete_trans(status){
-        var url = '<?php echo base_url($classname.'/insert'); ?>';
-        var type = 'POST';
-        
         if(isEmpty(e_trans_out.val())){
             alert('Please input Outgoing Number!');
             e_trans_out.focus();
-        }
-        var data = {
-            <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
-            ftrans_out : e_trans_out.val(),
-            fqty : parseInt($("#ttl_qty").html()),
-            fcode_from : e_fslcode.html(),
-            fnotes : e_notes.val(),
-            fstatus : status
-        };
-        
-        $.ajax({
-            type: type,
-            url: url,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            dataType: 'JSON',
-            contentType:"application/json",
-            data: data,
-            success: function (jqXHR) {
+        }else{
+            var url = '<?php echo base_url($classname.'/insert'); ?>';
+            var type = 'POST';
+            var data = {
+                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                ftrans_out : e_trans_out.val(),
+                fqty : parseInt($("#ttl_qty").html()),
+                fcode_from : e_fslcode.html(),
+                fnotes : e_notes.val(),
+                fstatus : status
+            };
+
+            var throw_ajax_success = function (jqXHR) {
                 if(jqXHR.status === 0){
                     $("#error_modal .modal-title").html("Message");
                     $("#error_modal .modal-body h4").html(""+jqXHR.message);
@@ -836,15 +564,13 @@
                         show: true
                     });
                 }else if(jqXHR.status === 1){
-//                    print_transaction(jqXHR.message);
+                    // print_transaction(jqXHR.message);
                     window.location.href = "<?php echo base_url($classname.'/view'); ?>";
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );
-            }
-        });
+            };
+
+            throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);
+        }
     }
     
     $(document).ready(function() {
@@ -869,7 +595,6 @@
         $("#btn_reset").on("click", function(e){
             init_form();
             init_table();
-            init_table2();
         });
         
         e_notes.on("focusout", function(e) {
@@ -905,34 +630,16 @@
             }
 	    });
         
-        $('[name="dqty"]').on("keydown", function(e) {
-            var val = parseInt(this.value);
-            var oldqty = parseInt($('[name="dqty_old"]').val());
-            var status = $('[name="dstatus"]').val();
+        $('[name="dserialno"]').on("keydown", function(e) {
+            var val = this.value;
+            var oldsn = $('[name="dserialno_old"]').val();
             
             if (e.keyCode == 9 || e.keyCode == 13) {
-                if(val <= oldqty){
-                    var calc = oldqty - val;
-                    if(status === "RGP"){
-                        $('[name="dnotes"]').val('CONSUMED = '+calc);
-                    }
+                if(isEmpty(val)){
+                    alert("Please input new serial number!");
                 }else{
-                    alert('the amount you enter exceeds the amount you have');
-                    $('[name="dqty"]').val('1');
-                    $('[name="dqty"]').focus();
-                    $('[name="dnotes"]').val('');
+                    $('[name="dnotes"]').val('Old Serial Number = '+oldsn);
                 }
-            }
-        });
-        
-        $('#btn_clear').on("click", function(e){
-            var ttl_qty = $('#ttl_qty').html();
-            if(ttl_qty === "0"){
-                alert('You dont have any parts in return cart!');
-            }else{
-                //clear carts
-                delete_all_cart(e_trans_out.val());
-                arrStatus = [];
             }
         });
         

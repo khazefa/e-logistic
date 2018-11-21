@@ -12,6 +12,10 @@ require APPPATH . '/libraries/BaseController.php';
  */
 class CFsltocwh extends BaseController
 {
+    private $readonly = TRUE;
+    private $hasCoverage = FALSE;
+    private $hasHub = FALSE;
+
     var $apirole = 'fsltocwh';
     private $alias_controller_name = 'fsltocwh';
     private $field_modal = array(
@@ -49,18 +53,35 @@ class CFsltocwh extends BaseController
             'delivery_type' => 'delivery_time_type',
             'eta' => $this->apirole.'_eta'
         );
+        if($this->isWebAdmin() || $this->isSpv() || $this->isStaff()){
+            if($this->isStaff()){
+                $this->readonly = FALSE;
+            }elseif($this->isSpv()){
+                $this->readonly = TRUE;
+                $this->hasHub = TRUE;
+                $this->hasCoverage = TRUE;
+            }else{
+                $this->readonly = TRUE;
+                $this->hasHub = TRUE;
+            }
+        }else{
+            redirect('cl');
+        }
     }
     
     /**
      * This function used to load the first screen of the user
      */
     public function index(){        
-        $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
-        $this->global['pageMenu'] = 'Outgoing FSL to CWH';
-        $this->global['contentHeader'] = 'Outgoing FSL to CWH';
-        $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+        $this->global['pageTitle'] = 'List Transfer Bad Items to Central Warehouse - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Transfer Bad Items to Central Warehouse';
+        $this->global['contentHeader'] = 'List Transfer Bad Items to Central Warehouse';
+        $this->global['contentTitle'] = 'List Transfer Bad Items to Central Warehouse';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
+        
+        $data['readonly'] = $this->readonly;
+        $data['hashub'] = $this->hasHub;
         $data['link_add'] = base_url('new-'.$this->alias_controller_name.'-trans');
         //$data['list_coverage'] = $this->get_list_warehouse("array");
         $data['link_get_data'] = base_url('api-'.$this->alias_controller_name.'-get-datatable');
@@ -73,10 +94,10 @@ class CFsltocwh extends BaseController
     }
 
     public function views() {
-        $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
-        $this->global['pageMenu'] = 'Outgoing FSL to CWH';
-        $this->global['contentHeader'] = 'Outgoing FSL to CWH';
-        $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+        $this->global['pageTitle'] = 'List Transfer Bad Items to Central Warehouse - '.APP_NAME;
+        $this->global['pageMenu'] = 'List Transfer Bad Items to Central Warehouse';
+        $this->global['contentHeader'] = 'List Transfer Bad Items to Central Warehouse';
+        $this->global['contentTitle'] = 'List Transfer Bad Items to Central Warehouse';
         $this->global ['role'] = $this->role;
         $this->global ['name'] = $this->name;
         $data['list_coverage'] = $this->get_list_warehouse("array");
@@ -93,10 +114,10 @@ class CFsltocwh extends BaseController
      * This function is used to load the add new form
      */
     public function closing() {        
-            $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
-            $this->global['pageMenu'] = 'Outgoing FSL to CWH';
-            $this->global['contentHeader'] = 'Outgoing FSL to CWH';
-            $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+            $this->global['pageTitle'] = 'List Transfer Bad Items to Central Warehouse - '.APP_NAME;
+            $this->global['pageMenu'] = 'List Transfer Bad Items to Central Warehouse';
+            $this->global['contentHeader'] = 'List Transfer Bad Items to Central Warehouse';
+            $this->global['contentTitle'] = 'List Transfer Bad Items to Central Warehouse';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             $data['field_modal_popup'] = $this->field_modal;
@@ -113,10 +134,11 @@ class CFsltocwh extends BaseController
      * This function is used to load the add new form
      */
     public function add() {        
-            $this->global['pageTitle'] = 'Outgoing FSL to CWH - '.APP_NAME;
-            $this->global['pageMenu'] = 'Outgoing FSL to CWH';
-            $this->global['contentHeader'] = 'Outgoing FSL to CWH';
-            $this->global['contentTitle'] = 'Outgoing FSL to CWH';
+        if(!$this->readonly){
+            $this->global['pageTitle'] = 'Transfer Bad Items to Central Warehouse - '.APP_NAME;
+            $this->global['pageMenu'] = 'Transfer Bad Items to Central Warehouse';
+            $this->global['contentHeader'] = 'Transfer Bad Items to Central Warehouse';
+            $this->global['contentTitle'] = 'Transfer Bad Items to Central Warehouse';
             $this->global ['role'] = $this->role;
             $this->global ['name'] = $this->name;
             
@@ -125,6 +147,9 @@ class CFsltocwh extends BaseController
             $data['list_part'] = $this->get_list_part();
             
             $this->loadViews('front/fsltocwh/create', $this->global, $data);
+        }else{
+            redirect($this->index());
+        }
     }
 
 

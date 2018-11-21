@@ -52,10 +52,16 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?php echo $link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
-                <i class="fa fa-plus"></i> Add New
-            </button>
-            <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
+            <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
+            <?php 
+                if(!$readonly){
+            ?>
+                <div class="btn-group">
+                    <button type="button" onclick="location.href='<?php echo $link_add;?>'" class="btn btn-sm btn-light waves-effect">
+                        <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
+                    </button>
+                </div>
+            <?php } ?>
             
             <p class="text-success text-center">
                 <?php

@@ -182,6 +182,7 @@ $config['api_list_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynot
 $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
 $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
 $config['api_update_delivery_note_trans_detail'] = constant('urlapi').'api/cpdeliverynote/update_detail/'; //POST
+$config['api_update_delivery_note_qty_trans'] = constant('urlapi').'api/cpdeliverynote/update_qty/'; //POST
 $config['api_get_cart_delivery_note_info'] = constant('urlapi').'api/cpdeliverynote/get_cart_info/'; //POST
 $config['api_get_eta_time'] = constant('urlapi').'api/cpdeliverynote/list_delivery_time/';
 $config['api_add_delivery_note_cart'] = constant('urlapi').'api/cpdeliverynote/create_trans_tmp/'; //POST
@@ -256,6 +257,7 @@ $config['api_list_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/list_tmp/
 $config['api_total_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/total_cart/'; //POST
 $config['api_delete_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_cart/'; //POST
 $config['api_clear_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/delete_multi_cart/'; //POST
+$config['api_update_fsltocwh_cart'] = constant('urlapi').'api/cpfsltocwh/update_cart/'; //POST
 
 // $config['api_list_view_detail_delivery_note'] = constant('urlapi').'api/cpdeliverynote/list_view_detail/'; //POST
 // $config['api_update_delivery_note_trans'] = constant('urlapi').'api/cpdeliverynote/update/'; //POST
@@ -329,6 +331,74 @@ $config['api_clear_supplyfromrepair_cart'] = constant('urlapi').'api/cpsupplyfro
 
 $config['api_list_vendor'] = constant('urlapi').'api/cvendor/list/'; //POST
 
+// ===========================
+//  End Procedure
+// ===========================
+
+
+// ===========================
+//  Begin Procedure
+// ===========================
+//$config['api_list_detail_fsltocwh'] = constant('urlapi').'api/cpfsltocwh/list_detail/'; //POST
+
+//api trans
+$config['api_list_repairorder'] = constant('urlapi').'api/cprepairorder/list/'; //POST
+//$config['api_list_repairorder_close'] = constant('urlapi').'api/cprepairorder/list2/'; //POST
+$config['api_list_view_repairorder'] = constant('urlapi').'api/cprepairorder/list_view/'; //POST
+$config['api_get_repairorder_num'] = constant('urlapi').'api/cprepairorder/grab_ticket_num/'; //POST
+$config['api_add_repairorder_trans'] = constant('urlapi').'api/cprepairorder/create_trans/'; //POST
+$config['api_get_repairorder_get_trans'] = constant('urlapi').'api/cprepairorder/get_trans/'; //POST
+$config['api_get_repairorder_get_trans_detail'] = constant('urlapi').'api/cprepairorder/get_trans_detail/'; //POST
+$config['api_update_repairorder_closing_trans'] = constant('urlapi').'api/cprepairorder/closing_trans/'; //POST
+
+//api detail
+$config['api_add_repairorder_trans_detail'] = constant('urlapi').'api/cprepairorder/create_trans_detail/'; //POST
+$config['api_get_data_detail_repairorder'] = constant('urlapi').'api/cprepairorder/get_data_detail/';//POST
+$config['api_get_repairorder_get_trans_detail'] = constant('urlapi').'api/cprepairorder/get_trans_detail/'; //POST
+$config['api_update_repairorder_different_detail'] = constant('urlapi').'api/cprepairorder/update_different_detail/'; //POST
+$config['api_update_repairorder_trans_detail'] = constant('urlapi').'api/cprepairorder/update_detail/'; //POST
+
+//api cart
+$config['api_verify_repairorder'] = constant('urlapi').'api/cprepairorder/verify_trans_post'; //POST
+$config['api_add_repairorder_cart'] = constant('urlapi').'api/cprepairorder/create_trans_tmp/'; //POST
+$config['api_list_repairorder_cart'] = constant('urlapi').'api/cprepairorder/list_tmp/'; //POST
+$config['api_total_repairorder_cart'] = constant('urlapi').'api/cprepairorder/total_cart/'; //POST
+$config['api_delete_repairorder_cart'] = constant('urlapi').'api/cprepairorder/delete_cart/'; //POST
+$config['api_clear_repairorder_cart'] = constant('urlapi').'api/cprepairorder/delete_multi_cart/'; //POST
+
+// ===========================
+//  End Procedure
+// ===========================
+
+// ===========================
+//  END POINT FOR REPAIR TO CWH
+// ===========================
+
+//api trans
+$config['api_list_supplyrepairtocwh'] = constant('urlapi').'api/cpsupplyrepairtocwh/list/'; //POST
+$config['api_list_view_supplyrepairtocwh'] = constant('urlapi').'api/cpsupplyrepairtocwh/list_view/'; //POST
+$config['api_get_supplyrepairtocwh_num'] = constant('urlapi').'api/cpsupplyrepairtocwh/grab_ticket_num/'; //POST
+$config['api_add_supplyrepairtocwh_trans'] = constant('urlapi').'api/cpsupplyrepairtocwh/create_trans/'; //POST
+$config['api_get_supplyrepairtocwh_get_trans'] = constant('urlapi').'api/cpsupplyrepairtocwh/get_trans/'; //POST
+$config['api_get_supplyrepairtocwh_get_trans_detail'] = constant('urlapi').'api/cpsupplyrepairtocwh/get_trans_detail/'; //POST
+$config['api_update_supplyrepairtocwh_closing_trans'] = constant('urlapi').'api/cpsupplyrepairtocwh/closing_trans/'; //POST
+
+//api detail
+$config['api_check_part_supplyrepairtocwh'] = constant('urlapi').'api/cpsupplyrepairtocwh/check_sn_from/';
+$config['api_add_supplyrepairtocwh_trans_detail'] = constant('urlapi').'api/cpsupplyrepairtocwh/create_trans_detail/'; //POST
+$config['api_get_data_detail_supplyrepairtocwh'] = constant('urlapi').'api/cpsupplyrepairtocwh/get_data_detail/';//POST
+$config['api_get_supplyrepairtocwh_get_trans_detail'] = constant('urlapi').'api/cpsupplyrepairtocwh/get_trans_detail/'; //POST
+$config['api_update_supplyrepairtocwh_different_detail'] = constant('urlapi').'api/cpsupplyrepairtocwh/update_different_detail/'; //POST
+$config['api_update_supplyrepairtocwh_trans_detail'] = constant('urlapi').'api/cpsupplyrepairtocwh/update_detail/'; //POST
+
+//api cart
+//$config['api_verify_supplyrepairtocwh'] = constant('urlapi').'api/cpsupplyrepairtocwh/verify_trans_post'; //POST
+$config['api_incoming_cwh_add_cart']    = constant('urlapi').'api/ccwhincomingcart/create_trans_tmp/'; //POST
+$config['api_incoming_cwh_list_cart']   = constant('urlapi').'api/ccwhincomingcart/list_tmp/'; //POST
+$config['api_incoming_cwh_total_cart']  = constant('urlapi').'api/ccwhincomingcart/total_cart/'; //POST
+$config['api_incoming_cwh_delete_cart'] = constant('urlapi').'api/ccwhincomingcart/delete_cart/'; //POST
+$config['api_incoming_cwh_clear_cart']  = constant('urlapi').'api/ccwhincomingcart/delete_multi_cart/'; //POST
+$config['api_incoming_cwh_update_cart'] = constant('urlapi').'api/ccwhincomingcart/update_cart/'; //POST
 // ===========================
 //  End Procedure
 // ===========================

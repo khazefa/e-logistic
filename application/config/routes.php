@@ -376,7 +376,7 @@ $route['api-supply-repair-to-cwh/submit-trans']   = 'front/csupplyrepairtocwh/su
 $route['api-supply-repair-to-cwh/check-partnum']  = 'front/csupplyrepairtocwh/check_part';
 
 //api cart.php
-$route['api-supply-repair-to-cwh/cart/add']       = 'front/csupplyrepairtocwh/add_cart';
+//$route['api-supply-repair-to-cwh/cart/add']       = 'front/csupplyrepairtocwh/add_cart'; //not use, karena sudah jadi 1 sama check-partnum
 $route['api-supply-repair-to-cwh/cart/delete']    = 'front/csupplyrepairtocwh/delete_cart';
 $route['api-supply-repair-to-cwh/cart/datatable'] = 'front/csupplyrepairtocwh/get_list_cart_datatable';
 

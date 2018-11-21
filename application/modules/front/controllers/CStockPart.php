@@ -812,25 +812,39 @@ class CStockPart extends BaseController
      */
     function create()
     {
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $flocation = $this->input->post('flocation', TRUE);
-        $fcontact = $this->input->post('fcontact', TRUE);
+        $success_response = array();
+        $error_response = array();
 
-        $dataInfo = array('fkey'=>$fkey, 'fname'=>$fname, 'flocation'=>$flocation, 'fcontact'=>$fcontact);
-        
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fqty = (int)$this->input->post('fqty', TRUE);
+
+        $dataInfo = array('fcode'=> $fcode, 'fpartnum'=> $fpartnum, 'fminval'=> 0, 'finitval'=> $fqty, 
+        'flastval'=> 0, 'fflag'=> 'Y');
         $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_part_stock'), 'POST', FALSE);
 
         if($rs_data->status)
         {
-            $this->session->set_flashdata('success', $rs_data->message);
-            redirect($this->cname.'/view-central');
+            $success_response = array(
+                'status' => 1,
+                'message'=> $rs_data->message
+            );
+            $response = $success_response;
         }
         else
         {
-            $this->session->set_flashdata('error', $rs_data->message);
-            redirect($this->cname.'/add');
+            $error_response = array(
+                'status' => 0,
+                'message'=> $rs_data->message
+            );
+            $response = $error_response;
         }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
     }
     
     /**
@@ -865,25 +879,39 @@ class CStockPart extends BaseController
      */
     function update()
     {
-        $fkey = $this->input->post('fkey', TRUE);
-        $fname = $this->input->post('fname', TRUE);
-        $flocation = $this->input->post('flocation', TRUE);
-        $fcontact = $this->input->post('fcontact', TRUE);
+        $success_response = array();
+        $error_response = array();
 
-        $dataInfo = array('fkey'=>$fkey, 'fname'=>$fname, 'flocation'=>$flocation, 'fcontact'=>$fcontact);
-        
-        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_part_stock'), 'POST', FALSE);
+        $fcode = $this->repo;
+        $fpartnum = $this->input->post('fpartnum', TRUE);
+        $fqty = (int)$this->input->post('fqty', TRUE);
+        $partstock = $this->get_stock($fcode, $fpartnum);
+
+        $dataInfo = array('fcode'=> $fcode, 'fpartnum'=> $fpartnum, 'fqty'=> (int)$partstock+$fqty, 'fflag'=> 'N');
+        $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_edit_stock_part_stock'), 'POST', FALSE);
 
         if($rs_data->status)
         {
-            $this->session->set_flashdata('success', $rs_data->message);
-            redirect($this->cname.'/view-central');
+            $success_response = array(
+                'status' => 1,
+                'message'=> $rs_data->message
+            );
+            $response = $success_response;
         }
         else
         {
-            $this->session->set_flashdata('error', $rs_data->message);
-            redirect($this->cname.'/edit/'.$fkey);
+            $error_response = array(
+                'status' => 0,
+                'message'=> $rs_data->message
+            );
+            $response = $error_response;
         }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
     }
     
     /**
@@ -905,6 +933,36 @@ class CStockPart extends BaseController
             $this->session->set_flashdata('error', $rs_data->message);
         }
         redirect($this->cname.'/view-central');
+    }
+
+    /**
+     * This function is used to get list information described by function name
+     */
+    private function get_stock($fcode, $partnum){
+        $rs = array();
+        $arrWhere = array();
+        $val_stock = 0;
+        
+        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$partnum);        
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $data = array();
+        foreach ($rs as $r) {
+            $minval = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+            $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+            $stock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+            $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+            
+            if($initflag === "Y"){
+                $val_stock = $initstock;
+            }else{
+                $val_stock = $stock;
+            }
+        }
+        
+        return $val_stock;
     }
     
     /**
@@ -965,50 +1023,62 @@ class CStockPart extends BaseController
         
         $fcode = $this->repo;
         $fpartnum = $this->input->post('fpartnum', TRUE);
-        
-        $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);        
-        //Parse Data for cURL
-        $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
-        $rs = $rs_data->status ? $rs_data->result : array();
-        
-        if(!empty($rs)){
-            $stock = 0;
-            $minstock = 0;
-            $initstock = 0;
-            $laststock = 0;
-            $initflag = "";
-            foreach ($rs as $r) {
-                $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
-                $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
-                $laststock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
-                $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
-            }
-            if($initflag === "Y"){
-                $stock = $initstock;
-            }else{
-                $stock = $laststock;
-            }
 
-            if($stock > 0){
-                $success_response = array(
-                    'status' => 1,
-                    'stock'=> $stock,
-                    'message'=> 'Stock available = '.$stock
-                );
-                $response = $success_response;
+        //Parse Data for cURL
+        $rs_data = send_curl(array('fpartnum'=>$fpartnum), $this->config->item('api_info_parts'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+
+        if(empty($rs)){
+            $error_response = array(
+                'status' => 2,
+                'message'=> 'Sparepart data is not available in data master, please contact central warehouse!'
+            );
+            $response = $error_response;
+        }else{
+            $arrWhere = array('fcode'=>$fcode, 'fpartnum'=>$fpartnum);        
+            //Parse Data for cURL
+            $rs_data = send_curl($arrWhere, $this->config->item('api_info_part_stock'), 'POST', FALSE);
+            $rs = $rs_data->status ? $rs_data->result : array();
+            
+            if(!empty($rs)){
+                $stock = 0;
+                $minstock = 0;
+                $initstock = 0;
+                $laststock = 0;
+                $initflag = "";
+                foreach ($rs as $r) {
+                    $minstock = filter_var($r->stock_min_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initstock = filter_var($r->stock_init_value, FILTER_SANITIZE_NUMBER_INT);
+                    $laststock = filter_var($r->stock_last_value, FILTER_SANITIZE_NUMBER_INT);
+                    $initflag = filter_var($r->stock_init_flag, FILTER_SANITIZE_STRING);
+                }
+                if($initflag === "Y"){
+                    $stock = $initstock;
+                }else{
+                    $stock = $laststock;
+                }
+
+                if($stock > 0){
+                    $success_response = array(
+                        'status' => 1,
+                        'stock'=> $stock,
+                        'message'=> 'Spartpart data is available, stock = '.$stock
+                    );
+                    $response = $success_response;
+                }else{
+                    $error_response = array(
+                        'status' => 1,
+                        'message'=> 'Spartpart data is available but out of stock!'
+                    );
+                    $response = $error_response;
+                }
             }else{
                 $error_response = array(
                     'status' => 0,
-                    'message'=> 'Out of stock, please choose part number subtitution!'
+                    'message'=> 'Sparepart data is not available, please add this sparepart data'
                 );
                 $response = $error_response;
             }
-        }else{
-            $error_response = array(
-                'status' => 2,
-                'message'=> 'Stock not available'
-            );
-            $response = $error_response;
         }
         
         return $this->output

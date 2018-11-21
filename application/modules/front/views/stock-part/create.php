@@ -52,7 +52,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"> <i class="fa fa-calculator"></i> </span>
                                         </div>
-                                        <input type="number" name="fqty" id="fqty" class="form-control" placeholder="Init Stock" 
+                                        <input type="number" name="fqty" id="fqty" class="form-control" placeholder="Init Stock" min="0"
                                             data-toggle="tooltip" data-placement="top" title="" data-original-title="Input Init Stock and then Press [ENTER]">
                                     </div>
                                     <p id="fpartnum_notes"></p>
@@ -88,11 +88,15 @@
 <script type="text/javascript">
     var e_partnum = $("#fpartnum");
     var e_partnum_notes = $("#fpartnum_notes");
+    var e_qty = $("#fqty");
+    var table;
+    var isExist = false;
 
     function init_form(){
         e_partnum.val('');
         e_partnum.focus();
         e_partnum_notes.html('');
+        e_qty.val('0');
     }
 
     //check part stock
@@ -107,14 +111,16 @@
 
         var throw_ajax_success = function (jqXHR) {
             if(jqXHR.status === 0){
-                //insert stock part
-                alert(jqXHR.message);
+                e_partnum_notes.html('<span class="help-block text-warning">'+jqXHR.message+'</span>');
+                e_qty.focus();
+                isExist = false;
             }else if(jqXHR.status === 1){
-                //insert stock part
-                alert(jqXHR.message);
+                e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
+                e_qty.focus();
+                isExist = true;
             }else if(jqXHR.status === 2){
-                //insert stock part
-                alert(jqXHR.message);
+                e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
+                isExist = false;
             }
         };
         
@@ -154,6 +160,60 @@
                 .appendTo('#data_grid_wrapper .col-md-12:eq(0)');
     }
 
+    //save transaction
+    function save(){
+        if(isEmpty(e_partnum.val())){
+            alert('Please input Part Number!');
+            e_partnum.focus();
+        }else{
+            var url = '<?php echo base_url($classname.'/insert'); ?>';
+            var type = 'POST';
+            var data = {
+                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                fpartnum : e_partnum.val(),
+                fqty : e_qty.val()
+            };
+
+            var throw_ajax_success = function (jqXHR) {
+                if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }else if(jqXHR.status === 1){
+                    table.ajax.reload();
+                    init_form();
+                }
+            };
+
+            throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);
+        }
+    }
+
+    //save transaction
+    function update(){
+        if(isEmpty(e_partnum.val())){
+            alert('Please input Part Number!');
+            e_partnum.focus();
+        }else{
+            var url = '<?php echo base_url($classname.'/modify'); ?>';
+            var type = 'POST';
+            var data = {
+                <?php echo $this->security->get_csrf_token_name(); ?> : "<?php echo $this->security->get_csrf_hash(); ?>",  
+                fpartnum : e_partnum.val(),
+                fqty : e_qty.val()
+            };
+
+            var throw_ajax_success = function (jqXHR) {
+                if(jqXHR.status === 0){
+                    alert(jqXHR.message);
+                }else if(jqXHR.status === 1){
+                    table.ajax.reload();
+                    init_form();
+                }
+            };
+
+            throw_ajax(url, type, data, throw_ajax_success, throw_ajax_err);
+        }
+    }
+
     $(document).ready(function() {
         init_form();
         // Setting datatable defaults
@@ -181,6 +241,27 @@
                     alert("Please input Part Number!");
                 }else{
                     check_part(val);
+                }
+                return false;
+            }
+        });
+
+        e_qty.on("keydown", function (e) {
+            var val = parseInt(this.value);
+            if (e.keyCode == 9 || e.keyCode == 13) {
+                if(isEmpty(val) || val === 0){
+                    alert("Please input Quantity!");
+                }else{
+                    //action insert
+                    if(isExist){
+                        // alert("Data "+e_partnum.val()+" already exist!");
+                        //update
+                        update();
+                    }else{
+                        // alert("Data "+e_partnum.val()+" is not exist!");
+                        //insert
+                        save();
+                    }
                 }
                 return false;
             }

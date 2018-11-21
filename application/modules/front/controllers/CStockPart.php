@@ -1068,6 +1068,7 @@ class CStockPart extends BaseController
                 }else{
                     $error_response = array(
                         'status' => 1,
+                        'stock'=> $stock,
                         'message'=> 'Spartpart data is available but out of stock!'
                     );
                     $response = $error_response;
@@ -1075,7 +1076,7 @@ class CStockPart extends BaseController
             }else{
                 $error_response = array(
                     'status' => 0,
-                    'message'=> 'Sparepart data is not available, please add this sparepart data'
+                    'message'=> 'Sparepart data is not available, please add this sparepart data in data stock'
                 );
                 $response = $error_response;
             }

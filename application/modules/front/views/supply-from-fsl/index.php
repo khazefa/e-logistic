@@ -67,7 +67,6 @@
         <div class="card-box">
             <h4 class="m-t-0 header-title"><?php echo $contentTitle;?></h4>
             <?php 
-                /**
                 if(!$readonly){
             ?>
                 <div class="btn-group">
@@ -75,7 +74,7 @@
                         <i class="mdi mdi-plus-circle font-18 vertical-middle"></i> Add New
                     </button>
                 </div>
-            <?php } */?>
+            <?php } ?>
             
             <p class="text-success text-center">
                 <?php

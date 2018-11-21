@@ -350,6 +350,10 @@
             ],
             rowCallback: function( row, data, index ) {
                 arrStatus.push(data.return);
+                if(data.return === "RBP"){
+                    e_fe_report.prop('readonly', false);
+                    e_fe_report.focus();
+                }
             },
         });
 

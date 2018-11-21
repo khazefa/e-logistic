@@ -801,10 +801,21 @@
                     status_checkpart = 0;
                 }else if(jqXHR.status === 1){
                     e_partnum_notes.html('<span class="help-block text-success">'+jqXHR.message+'</span>');
-                    table2.clear().draw();
-                    table3.clear().draw();
+                    var stock = parseInt(jqXHR.stock);
+                    if(stock > 0){
+                        table2.clear().draw();
+                        table3.clear().draw();
+                        
+                        e_partnum.prop("readonly", true);
+                        //fill serial number
+                        e_serialnum.prop('readonly', false);
+                        e_serialnum.val('');
+                        e_serialnum.focus();
+                    }else{
+                        //load data part replacement
+                        get_part_sub(partno);
+                    }
                     
-                    e_partnum.prop("readonly", true);
                     status_checkpart = 1;
                 }else if(jqXHR.status === 2){
                     e_partnum_notes.html('<span class="help-block text-danger">'+jqXHR.message+'</span>');
@@ -1244,12 +1255,6 @@
                 }else{
                     if (/^[0-9A-Za-z]+$/.test(e_partnum.val())){
                         check_part(e_partnum.val());
-                        if(status_checkpart === 1){
-                            //fill serial number
-                            e_serialnum.prop('readonly', false);
-                            e_serialnum.val('');
-                            e_serialnum.focus();
-                        }
                     }else{
                         alert('Spare part number contained by unknown characters!');
                         e_partnum.val('');
@@ -1269,7 +1274,6 @@
                     alert('Please fill out serial number!');
                     e_serialnum.focus();
                 }else{
-                    check_part(e_partnum.val());
                     if(status_checkpart === 1){
                         if(e_serialnum.val() === "NOSN"){
                             var qty = parseInt(prompt("Enter quantity for NOSN Serial Number"));

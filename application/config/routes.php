@@ -318,6 +318,7 @@ $route['cart/incoming/bulk-delete/([a-zA-Z]+)'] = 'front/cart/delete_all_incomin
 $route['delivery-note-trans'] = 'front/cdeliverynote';
 $route['view-delivery-note-trans'] = 'front/cdeliverynote/views';
 $route['new-delivery-note-trans'] = 'front/cdeliverynote/add';
+$route['edit-delivery-note-trans/(:any)'] = 'front/cdeliverynote/edit/$1';
 $route['print-delivery-note-trans/(:any)'] = 'front/cdeliverynote/print_trans/$1';
 
 //api index.php
@@ -366,7 +367,6 @@ $route['api-supply-from-vendor-submit-trans']   = 'front/csupplyfromvendor/submi
 $route['api-supply-from-vendor-get-trans']  = 'front/csupplyfromvendor/get_trans';
 $route['api-supply-from-vendor-get-trans-detail']  = 'front/csupplyfromvendor/get_trans_detail';
 
-
 //api cart.php
 $route['api-supply-from-vendor-add-cart']       = 'front/csupplyfromvendor/add_cart';
 $route['api-supply-from-vendor-delete-cart']    = 'front/csupplyfromvendor/delete_cart';
@@ -405,6 +405,67 @@ $route['api-supply-from-repair-get-total-cart'] = 'front/csupplyfromrepair/get_t
 
 // ===========================
 //  End Routing Supply From Repair Trans
+// ===========================
+
+// ===========================
+//  Supply To Repair Trans
+// ===========================
+
+//menu
+$route['supply-to-repair-trans']              = 'front/csupplytorepair';
+$route['view-supply-to-repair-trans']         = 'front/csupplytorepair/views';
+$route['new-supply-to-repair-trans']          = 'front/csupplytorepair/add';
+$route['print-supply-to-repair-trans/(:any)'] = 'front/csupplytorepair/print_trans/$1';
+
+//api index.php
+$route['api-supply-to-repair-get-datatable']  = 'front/csupplytorepair/get_list_datatable';
+$route['api-supply-to-repair-get-trans']  = 'front/csupplytorepair/get_trans';
+$route['api-supply-to-repair-get-trans-detail']  = 'front/csupplytorepair/get_trans_detail';
+
+//api create.php
+$route['api-supply-to-repair-submit-trans']   = 'front/csupplytorepair/submit_trans';
+$route['api-verify-supply-to-repair']         = 'front/csupplytorepair/verify_data';
+$route['api-supply-to-repair-get-detail-trans'] = 'front/csupplytorepair/get_trans_detail_verify';
+
+//api cart.php
+$route['api-supply-to-repair-add-cart']       = 'front/csupplytorepair/add_cart';
+$route['api-supply-to-repair-delete-cart']    = 'front/csupplytorepair/delete_cart';
+$route['api-supply-to-repair-get-cart-table'] = 'front/csupplytorepair/get_list_cart_datatable';
+
+$route['api-supply-to-repair-check-partnum']  = 'front/csupplytorepair/checkpartnum';
+$route['api-supply-to-repair-get-total-cart'] = 'front/csupplytorepair/get_total_cart';
+
+// ===========================
+//  End Routing To Repair Trans
+// ===========================
+
+// ===========================
+//  FSL To CWH Trans
+// ===========================
+
+//api menu
+$route['supply-repair-to-cwh']              = 'front/csupplyrepairtocwh';
+$route['supply-repair-to-cwh/view']         = 'front/csupplyrepairtocwh/views';
+$route['supply-repair-to-cwh/new']          = 'front/csupplyrepairtocwh/add';
+$route['supply-repair-to-cwh/print/(:any)'] = 'front/csupplyrepairtocwh/print_trans/$1';
+
+//api index.php
+$route['api-supply-repair-to-cwh/view-datatable']   = 'front/csupplyrepairtocwh/get_list_view_datatable2';
+$route['api-supply-repair-to-cwh/datatable']        = 'front/csupplyrepairtocwh/get_list_view_datatable';
+$route['api-supply-repair-to-cwh/get-trans']        = 'front/csupplyrepairtocwh/get_trans';
+$route['api-supply-repair-to-cwh/get-detail']       = 'front/csupplyrepairtocwh/get_trans_detail';
+
+//api create.php
+$route['api-supply-repair-to-cwh/submit-trans']   = 'front/csupplyrepairtocwh/submit_trans';
+$route['api-supply-repair-to-cwh/check-partnum']  = 'front/csupplyrepairtocwh/check_part';
+
+//api cart.php
+//$route['api-supply-repair-to-cwh/cart/add']       = 'front/csupplyrepairtocwh/add_cart'; //not use, karena sudah jadi 1 sama check-partnum
+$route['api-supply-repair-to-cwh/cart/delete']    = 'front/csupplyrepairtocwh/delete_cart';
+$route['api-supply-repair-to-cwh/cart/datatable'] = 'front/csupplyrepairtocwh/get_list_cart_datatable';
+
+// ===========================
+//  End Routing FSL To CWH Trans
 // ===========================
 
 // ===========================

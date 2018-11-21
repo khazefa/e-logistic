@@ -155,6 +155,7 @@
     var e_transdate = $('#vtransdate');
     var e_trigger = $('#ftrigger');
     var e_notes = $('#fnotes');
+    var e_total_qty = $('#ttl_qty');
 
     var e_detail_id = $('input[name=detail_id]');
     var e_search_part = $('select[name=search_part]');
@@ -210,6 +211,20 @@
         $("#global_confirm .modal-title").html("Confirmation");
         $("#global_confirm .modal-body h4").html(""+message);
         $('#global_confirm').modal("show");
+    }
+
+    function get_total(){
+        var json = table.ajax.json();
+        var is = 0;
+        if(json !== undefined && json.data.length > 0){
+            json.data.forEach(function(v,k){
+                is += parseInt(v.qty);
+            });
+        }else{
+            throw new Error('data table cannot found');
+            
+        }
+        e_total_qty.html(is);
     }
 
 
@@ -304,7 +319,7 @@
             initComplete: function( settings, json ) {
                 //$('#ttl_qty').html(table.rows().count());//menjumlahkan jumlah halaman
                 init_notes();
-                
+                get_total();
             }
             
         });
@@ -341,6 +356,7 @@
     function reload(){
         table.ajax.reload();
         init_notes();
+        get_total();
     }
     
     //check outgoing transaction
@@ -551,13 +567,13 @@
                 alert('Outgoing Number don\'t have a data!');
             }else{
                 if(e_trigger.is(':checked')){
-                    e_notes.val('');
-                    e_notes.prop('disabled', true);
+                    // e_notes.val('');
+                    // e_notes.prop('disabled', true);
                     e_submit_trans.prop('disabled', false);
                 }else{
                     alert('Please enter a note if the actual number of parts is different compared to the data request.');
-                    e_notes.val('');
-                    e_notes.prop('disabled', false);
+                    // e_notes.val('');
+                    // e_notes.prop('disabled', false);
                     e_submit_trans.prop('disabled', true);
                 }
             }
@@ -573,9 +589,9 @@
 
         e_notes.on("keyup", function(e) {
             if(e_notes.val() === '' && !e_trigger.is(':checked')){
-                e_submit_trans.prop('disabled', true);
+                //e_submit_trans.prop('disabled', true);
             }else{
-                e_submit_trans.prop('disabled', false);
+                //e_submit_trans.prop('disabled', false);
             }
 	    });
         

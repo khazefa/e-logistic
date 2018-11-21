@@ -141,6 +141,7 @@
                                 <thead>
                                 <tr>
                                     <th>Part Number</th>
+                                    <th>Serial Number</th>
                                     <th>Part Name</th>
                                     <th>Qty</th>
                                 </tr>
@@ -250,6 +251,7 @@
             },
             columns: [
                 { "data": 'part_number' },
+                { "data": 'serial_number' },
                 { "data": 'part_name' },
                 { "data": 'dt_fsltocwh_qty' },
             ],

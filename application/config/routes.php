@@ -419,7 +419,7 @@ $route['print-supply-to-repair-trans/(:any)'] = 'front/csupplytorepair/print_tra
 
 //api index.php
 $route['api-supply-to-repair-get-datatable']  = 'front/csupplytorepair/get_list_datatable';
-$route['api-supply-to-repair-get-trans']  = 'front/csupplytorepair/get_trans';
+$route['api-supply-to-repair-get-trans']      = 'front/csupplytorepair/get_trans';
 $route['api-supply-to-repair-get-trans-detail']  = 'front/csupplytorepair/get_trans_detail';
 
 //api create.php
@@ -432,6 +432,7 @@ $route['api-supply-to-repair-add-cart']       = 'front/csupplytorepair/add_cart'
 $route['api-supply-to-repair-delete-cart']    = 'front/csupplytorepair/delete_cart';
 $route['api-supply-to-repair-get-cart-table'] = 'front/csupplytorepair/get_list_cart_datatable';
 
+//other
 $route['api-supply-to-repair-check-partnum']  = 'front/csupplytorepair/checkpartnum';
 $route['api-supply-to-repair-get-total-cart'] = 'front/csupplytorepair/get_total_cart';
 

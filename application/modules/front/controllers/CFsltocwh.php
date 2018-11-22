@@ -168,8 +168,7 @@ class CFsltocwh extends BaseController
         $arrWhere = array('fdate1'=>$fdate1,'fdate2'=>$fdate2);
        
         $fpurpose = !empty($_POST['fpurpose']) ? implode(';',$_POST['fpurpose']) : "";
-        
-        
+
 
         if(empty($fpurpose)){
             $e_purpose = array();
@@ -212,8 +211,15 @@ class CFsltocwh extends BaseController
             <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
             ';
  
-            if(($fsl_code == $fcode) AND in_array($lpurpose,$e_purpose)){
-                $data[] = $row;
+            if(($fsl_code == $fcode)){
+                if(count($e_purpose)>0){
+                    if(in_array($lpurpose,$e_purpose)){
+                        $data[] = $row;
+                    }
+                }else{
+                    $data[] = $row;
+                }
+                
             }
         }
         
@@ -648,7 +654,7 @@ class CFsltocwh extends BaseController
         
         if(!empty($rs)){
             foreach ($rs as $r) {
-                $id = filter_var($r->tmp_outgoing_id, FILTER_SANITIZE_NUMBER_INT);
+                $id = filter_var($r->tmp_fsltocwh_id, FILTER_SANITIZE_NUMBER_INT);
                 $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
                 $rs_part = $this->get_info_part($partnum);
                 foreach ($rs_part as $p){
@@ -659,7 +665,7 @@ class CFsltocwh extends BaseController
                     $partstock = (int)$s["stock"];
                 }
                 $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
-                $qty = filter_var($r->tmp_outgoing_qty, FILTER_SANITIZE_NUMBER_INT);
+                $qty = filter_var($r->tmp_fsltocwh_qty, FILTER_SANITIZE_NUMBER_INT);
                 $user = filter_var($r->user, FILTER_SANITIZE_STRING);
                 $fullname = filter_var($r->fullname, FILTER_SANITIZE_STRING);
 
@@ -719,46 +725,27 @@ class CFsltocwh extends BaseController
             
             $rs_cart_info = $this->get_info_cart($fpartnum, $fcode);
             
-            if(!empty($rs_cart_info)){
-                foreach($rs_cart_info as $c){
-                    $cstock = (int)$c['stock'];
-                    $cqty = (int)$c['qty'];
-                    $cuser = $c['user'];
-                    $cname = $c['fullname'];
-                }
-                if($cuser === $fuser){
-                    $error_response = array(
-                        'status' => 2,
-                        'message'=> 'Part stock is limited!'
-                    );
-                }else{
-                    $error_response = array(
-                        'status' => 2,
-                        'message'=> 'Stock is limited and part is already assigned to '.$cname
-                    );
-                }
-                $response = $error_response;
-            }else{
-                $dataInfo = array(
-                    'fpartnum'=>$fpartnum, 
-                    'fpartname'=>$partname, 
-                    'fserialnum'=>$fserialnum, 
-                    'fcartid'=>$cartid, 
-                    'fqty'=>$fqty, 
-                    'fuser'=>$fuser, 
-                    'fname'=>$fname, 
-                    'fcode'=>$fcode
-                );
-                $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_'.$this->apirole.'_cart'), 'POST', FALSE);
-                if($rs_data->status)
-                {
-                    $response = $success_response;
-                }
-                else
-                {
-                    $response = $error_response;
-                }
+            
+            $dataInfo = array(
+                'fpartnum'=>$fpartnum, 
+                'fpartname'=>$partname, 
+                'fserialnum'=>$fserialnum, 
+                'fcartid'=>$cartid, 
+                'fqty'=>$fqty, 
+                'fuser'=>$fuser, 
+                'fname'=>$fname, 
+                'fcode'=>$fcode
+            );
+            $rs_data = send_curl($this->security->xss_clean($dataInfo), $this->config->item('api_add_'.$this->apirole.'_cart'), 'POST', FALSE);
+            if($rs_data->status)
+            {
+                $response = $success_response;
             }
+            else
+            {
+                $response = $error_response;
+            }
+            
         }else{
             $dataInfo = array(
                 'fpartnum'=>$fpartnum, 
@@ -1486,7 +1473,7 @@ class CFsltocwh extends BaseController
     
 ////////////////////////////////////////////////////////////////////////////////    
     
-    //  get ETA
+    // get ETA
     public function get_eta(){
         $rs = array();
         $arrPOST = array();

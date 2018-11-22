@@ -1,9 +1,10 @@
 <div class="row">
     <div class="col-md-3">
         <div class="card-box">
+        
             <div class="card-header bg-primary text-white">
                 <strong class="card-title">Search By</strong>
-            </div>
+            </div>  
             <div class="card-body">
                 <div class="form-group row">
                     <p>Please select the same date to select report on the same day (Daily)</p>
@@ -24,13 +25,28 @@
                         <input type="date" name="fdate2" id="fdate2" class="form-control" placeholder="MM/DD/YYYY" required="required">
                     </div>
                 </div>
+                
                 <div class="form-group row">
                     <div class="input-group col-sm-12">
-                        <select name="fcoverage[]" id="fcoverage" class="selectpicker form-control" multiple data-actions-box="true" 
-                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose FSL" data-style="btn-light">
+                        <select name="fpurpose[]" id="fpurpose" class="selectpicker form-control" multiple data-actions-box="true" 
+                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose Purpose" data-style="btn-light">
                             <?php
-                                foreach($list_coverage as $w){
-                                    echo '<option value="'.$w["code"].'">'.$w["name"].'</option>';
+                                foreach($field_purpose as $k=>$v){
+                                    echo '<option value="'.$k.'">'.$v.'</option>';
+                                }
+                            ?>
+                        </select>
+                        <!--<input type="text" name="fcoverage" id="fcoverage" class="typeahead form-control" data-role="tagsinput">-->
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="input-group col-sm-12">
+                        <select name="fstatus[]" id="fstatus" class="selectpicker form-control" multiple data-actions-box="true" 
+                                data-live-search="true" data-selected-text-format="count > 3" title="Please choose Status" data-style="btn-light">
+                            <?php
+                                foreach($field_status as $k=>$v){
+                                    echo '<option value="'.$k.'">'.$v.'</option>';
                                 }
                             ?>
                         </select>
@@ -50,26 +66,24 @@
     </div>
     <div class="col-md-9">
         <div class="card-box">
-            <button type="button" onclick="location.href='<?=$link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
+            <button type="button" onclick="location.href='<?php echo $link_add;?>'" class="btn btn-custom btn-rounded w-md waves-effect waves-light">
                 <i class="fa fa-plus"></i> Add New
             </button>
             <h4 class="header-title m-b-30 pull-right"><?php echo $contentTitle;?></h4><br><hr>
             
             <p class="text-success text-center">
                 <?php
-                $error = $this->session->flashdata('error');
-                if($error)
-                {
+                    $error = $this->session->flashdata('error');
+                    if($error){
                 ?>
                 <div class="alert alert-danger alert-dismissable" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     <?php echo $error; ?>                    
                 </div>
                 <?php
-                }
-                $success = $this->session->flashdata('success');
-                if($success)
-                {
+                    }
+                    $success = $this->session->flashdata('success');
+                    if($success){
                 ?>
                 <div class="alert alert-success alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -79,27 +93,17 @@
             </p>
             
             <div class="card-body">
-                <div class="row m-b-30">
-                    <div class="col-md-12">
-                        <div class="button-list">
-                            <button type="button" onclick="location.href='<?php echo base_url("search-parts");?>'" class="btn btn-primary btn-rounded w-md waves-effect waves-light">
-                                <i class="fa fa-search"></i> Search Part
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="table-responsive">
                         <table id="data_grid" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
                             <thead>
-                            <tr>
-                                <th>Trans No</th>
-                                <th>Date</th>
-                                <th>Purpose</th>
-                                <th>Qty</th>
-                                <th>Transfer To</th>
-                                <th>Action</th>
-                            </tr>
+                                <tr>
+                                    <th>Trans No</th>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>Qty</th>
+                                    <th>Action</th>
+                                </tr>
                             </thead>
                             <tbody>
                             </tbody>
@@ -113,7 +117,7 @@
 
 <!-- Modal Request Confirmation -->
 <div class="modal fade" id="viewdetail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel">
-    <div class="modal-dialog"  style="max-width:750px;">
+    <div class="modal-dialog" style="max-width:750px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -139,6 +143,8 @@
                                 <tr>
                                     <th>Part Number</th>
                                     <th>Part Name</th>
+                                    <th>Serial Number</th>
+                                    <th>Incoming Number</th>
                                     <th>Qty</th>
                                 </tr>
                                 </thead>
@@ -160,12 +166,13 @@
         </div>
     </div>
 </div>
-<!-- End Modal Request Confirmation -->
+        <!-- End Modal Request Confirmation -->
 
 <script type="text/javascript">
     var e_date1 = $('#fdate1');
     var e_date2 = $('#fdate2');
-    var e_coverage = $('#fcoverage');
+    var e_status = $('#fstatus');
+    var e_purpose = $('#fpurpose');
     var transnum = "";
     var table1;
     
@@ -173,8 +180,8 @@
     function init_form(){
         e_date1.val('');
         e_date2.val('');
-        e_coverage.val('');
-        e_coverage.selectpicker('refresh');
+        e_status.val('');
+        e_status.selectpicker('refresh');
     }
 
     function init_table(){
@@ -247,7 +254,9 @@
             columns: [
                 { "data": 'part_number' },
                 { "data": 'part_name' },
-                { "data": 'dt_delivery_note_qty' },
+                { "data": 'serial_number' },
+                { "data": 'repairorder_num' },
+                { "data": 'dt_repairdelivery_qty' },
             ],
             order: [[ 0, "desc" ]],
             columnDefs: [{ 
@@ -277,10 +286,6 @@
     function error_xhqr(jqXHR, textStatus, errorThrown){
         // Handle errors here
         console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
-    }
-
-    function edit(id){
-        window.location = "<?=base_url('edit-delivery-note-trans');?>/"+id.toString();
     }
 
     function viewdetail(transnum_e){
@@ -390,7 +395,8 @@
                     d.<?php echo $this->security->get_csrf_token_name(); ?> = "<?php echo $this->security->get_csrf_hash(); ?>";
                     d.fdate1 = e_date1.val();
                     d.fdate2 = e_date2.val();
-                    d.fcoverage = e_coverage.val();
+                    d.fstatus = e_status.val();
+                    d.fpurpose = e_purpose.val();
                 }
             },
             columns: [
@@ -398,7 +404,6 @@
                 { "data": 'transdate' },
                 { "data": 'purpose' },
                 { "data": 'qty' },
-                { "data": 'transfer_to' },
                 { "data": 'button' },
             ],
             order: [[ 0, "desc" ]],

@@ -279,6 +279,10 @@
         console.log('ERRORS: ' + textStatus + ' - ' + errorThrown );          
     }
 
+    function edit(id){
+        window.location = "<?=base_url('edit-delivery-note-trans');?>/"+id.toString();
+    }
+
     function viewdetail(transnum_e){
         transnum = transnum_e;
         var url = '<?=$link_modal ?>';

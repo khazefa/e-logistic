@@ -72,6 +72,33 @@ class CDeliveryNote extends BaseController
             
        
     }
+
+    public function edit($transnum){
+        $rsp = array();
+        $arrWhere['ftransnum'] = $transnum;
+        $rs_data = send_curl($arrWhere, $this->config->item('api_get_delivery_note_get_trans'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        //var_dump((array)$rs);
+        if($rs){
+            $this->global['pageTitle'] = 'Delivery Note - '.APP_NAME;
+            $this->global['pageMenu'] = 'Delivery Note';
+            $this->global['contentHeader'] = 'Delivery Note';$data = (array)$rs;
+            $this->global['contentTitle'] = 'Delivery Note';
+            $this->global ['role'] = $this->role;
+            $this->global ['name'] = $this->name;
+            foreach($rs as $r){
+                $rsp = $r;
+            }
+            $data['list_part'] = $this->get_list_part();
+            $data['rs'] = (array)$rsp;
+            $this->loadViews('front/delivery-note/edit', $this->global, $data);
+        }else{
+            echo 'please wait..';
+            redirect(base_url('front/cdeliverynote'));
+        }
+        
+            
+    }
     
     
 /////////////////////////// VIEW DATA //////////////////////////////////////////
@@ -198,11 +225,12 @@ class CDeliveryNote extends BaseController
             $row['purpose'] = $purpose;
             $row['qty'] = $qty;
             $row['user'] = $user;
-            $row['transfer_to'] = $fslname;
+            $row['transfer_to'] = $fslname; 
             $row['notes'] = $notes;
             $row['button'] = '
-            <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle"></i></a>
-            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle"></i></a>
+            <a href="'.base_url("print-delivery-note-trans/").$transnum.'" target="_blank"><i class="mdi mdi-printer mr-2 text-muted font-18 vertical-middle" title="Print"></i></a>
+            <a href="javascript:viewdetail(\''.$transnum.'\');"><i class="mdi mdi-information mr-2 text-muted font-18 vertical-middle" title="View"></i></a>
+            <a href="javascript:edit(\''.$transnum.'\');"><i class="mdi mdi-pencil mr-2 text-muted font-18 vertical-middle" title="Edit"></i></a>
             ';
             
             if(count($e_coverage)!=0){
@@ -446,6 +474,7 @@ class CDeliveryNote extends BaseController
 //        $fcode = $this->repo;
 //        $arrWhere = array('fcode'=>$fcode);
         //Parse Data for cURL
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
@@ -1166,6 +1195,84 @@ class CDeliveryNote extends BaseController
             json_encode(array('data'=>$data))
         );
     }
+
+    /**
+     * This function is used to get list for datatables
+     */
+    public function get_list_cart_datatable_edit(){
+        $data = array();
+        $rs = array();
+        $rs_detail = array();
+        $ftransnum = $this->input->post('ftransnum');
+        //Parameters for cURL
+        $arrWhere_detail = array();
+        $arrWhere = array();
+        
+        $fcode = $this->repo;
+        $cartid = $this->session->userdata( 'cart_session' )."dn";
+        //var_dump("SESSION =".$cartid);
+        
+        $arrWhere_detail = array('ftransnum'=>$ftransnum);
+        //Parse Data for cURL
+        $rs_data_detail = send_curl($arrWhere_detail, $this->config->item('api_get_delivery_note_get_trans_detail'), 'POST', FALSE);
+        $rs_detail = $rs_data_detail->status ? $rs_data_detail->result : array();
+        foreach($rs_detail as $rd){
+            //$id = filter_var($rd->dt_delivery_note_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($rd->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($rd->part_name, FILTER_SANITIZE_STRING);
+            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+            foreach ($rs_stock as $s){
+                $partstock = (int)$s["stock"];
+            }
+            $serialnum = filter_var($rd->serial_number, FILTER_SANITIZE_STRING);
+            //$cartid = filter_var($r->tmp_delivery_note_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($rd->dt_delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
+            
+            $row['id'] = '';
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['stock'] = $partstock;
+            $row['qty'] = (int)$qty;
+            $row['isdetail'] = true;
+ 
+            $data[] = $row;
+        }
+
+        $arrWhere = array('funiqid'=>$cartid);
+        //Parse Data for cURL
+        $rs_data = send_curl($arrWhere, $this->config->item('api_list_delivery_note_cart'), 'POST', FALSE);
+        $rs = $rs_data->status ? $rs_data->result : array();
+        
+        $partstock = "";
+        foreach ($rs as $r) {
+            $id = filter_var($r->tmp_delivery_note_id, FILTER_SANITIZE_NUMBER_INT);
+            $partnum = filter_var($r->part_number, FILTER_SANITIZE_STRING);
+            $partname = filter_var($r->part_name, FILTER_SANITIZE_STRING);
+            $rs_stock = $this->get_info_part_stock($fcode, $partnum);
+            foreach ($rs_stock as $s){
+                $partstock = (int)$s["stock"];
+            }
+            $serialnum = filter_var($r->serial_number, FILTER_SANITIZE_STRING);
+            $cartid = filter_var($r->tmp_delivery_note_uniqid, FILTER_SANITIZE_STRING);
+            $qty = filter_var($r->tmp_delivery_note_qty, FILTER_SANITIZE_NUMBER_INT);
+            
+            $row['id'] = $id;
+            $row['partno'] = $partnum;
+            $row['partname'] = $partname;
+            $row['serialno'] = $serialnum;
+            $row['stock'] = $partstock;
+            $row['qty'] = (int)$qty;
+            $row['isdetail'] = false;
+            $data[] = $row;
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode(array('data'=>$data))
+        );
+    }
     
     /**
      * This function is used to get list for datatables
@@ -1405,16 +1512,16 @@ class CDeliveryNote extends BaseController
                                 'POST', FALSE);
                             $total_qty += (int)$d['qty'];
 
-                        //     $dataUpdateStock = array(
-                        //         'fcode'=>$fcode, 
-                        //         'fpartnum'=>$d['partno'], 
-                        //         'fqty'=>(int)$partstock-(int)$d['qty'], 
-                        //         'fflag'=>'N');
-                        //     //update stock by fsl code and part number
-                        //     $update_stock_res = send_curl(
-                        //         $this->security->xss_clean($dataUpdateStock), 
-                        //         $this->config->item('api_edit_stock_part_stock'), 
-                        //         'POST', FALSE);
+                            $dataUpdateStock = array(
+                                'fcode'=>$fcode, 
+                                'fpartnum'=>$d['partno'], 
+                                'fqty'=>(int)$partstock-(int)$d['qty'], 
+                                'fflag'=>'N');
+                            //update stock by fsl code and part number
+                            $update_stock_res = send_curl(
+                                $this->security->xss_clean($dataUpdateStock), 
+                                $this->config->item('api_edit_stock_part_stock'), 
+                                'POST', FALSE);
                         }
                     }
 
@@ -1465,6 +1572,146 @@ class CDeliveryNote extends BaseController
                     $this->session->set_flashdata('error', 'Failed to submit transaction data');
                     $response = $error_response;
                 }
+            }
+        }
+        
+        return $this->output
+        ->set_content_type('application/json')
+        ->set_output(
+            json_encode($response)
+        );
+    }
+
+    public function update_trans(){
+        $success_response = array(
+            'status' => 1
+        );
+        $error_response = array(
+            'status' => 0,
+            'message'=> 'Failed to submit transaction'
+        );
+        
+        $fcode = $this->repo;
+        $cartid = $this->session->userdata ( 'cart_session' )."dn";
+               
+        $fsl = $this->input->post('fcode', TRUE);
+        
+        $fcode = "WSPS";
+//        if(empty($fsl) || $fsl == ""){
+//            $fcode = $this->repo;
+//        }else{
+//            $fcode = $fsl;
+//        }
+        
+        $date = date('Y-m-d'); 
+        $transnum = $this->input->post('ftransnum', TRUE);
+        $fqty = $this->input->post('fqty', TRUE);
+        $createdby = $this->session->userdata ( 'vendorUR' );
+
+        if(($fqty < 1) || (empty($fqty))){
+            $this->session->set_flashdata('error', 'Failed to submit transaction data');
+            $response = $error_response;
+        }else{  
+            $data_tmp = array();
+            if($transnum === ""){
+                $response = $error_response;
+            }else{
+                //get cart list by retnum
+                $data_tmp = $this->get_list_cart();
+                $dataDetail = array();
+                $total_qty = 0;
+                if(!empty($data_tmp)){
+                    foreach ($data_tmp as $d){
+                        $rs_stock = $this->get_info_part_stock($fcode, $d['partno']);
+                        $partstock = 0;
+                        foreach ($rs_stock as $s){
+                            $partstock = (int)$s["stock"];
+                        }
+
+                        //PERUBAHAN PART STOCK
+                        if($partstock < (int)$d['qty']){
+
+                        }else{                        
+                            $dataDetail = array(
+                                'ftransno'=>$transnum, 
+                                'fpartnum'=>$d['partno'], 
+                                'fserialnum'=>$d['serialno'], 
+                                'fqty'=>$d['qty']);
+                            $sec_res = send_curl(
+                                $this->security->xss_clean($dataDetail), 
+                                $this->config->item('api_add_delivery_note_trans_detail'), 
+                                'POST', FALSE);
+                            $total_qty += (int)$d['qty'];
+
+                        //     $dataUpdateStock = array(
+                        //         'fcode'=>$fcode, 
+                        //         'fpartnum'=>$d['partno'], 
+                        //         'fqty'=>(int)$partstock-(int)$d['qty'], 
+                        //         'fflag'=>'N');
+                        //     //update stock by fsl code and part number
+                        //     $update_stock_res = send_curl(
+                        //         $this->security->xss_clean($dataUpdateStock), 
+                        //         $this->config->item('api_edit_stock_part_stock'), 
+                        //         'POST', FALSE);
+                        }
+                    }
+
+                    // if($total_qty < 1){
+                    //     $this->session->set_flashdata('error', 'Skip looped submit transaction data');
+                    //     $response = $error_response;
+                    // }else{
+                    //     $dataTrans = array(
+                    //         'ftransno'=>$transnum, 
+                    //         'fdate'=>$date, 
+                    //         'fpurpose'=>$fpurpose, 
+                    //         'ftransnotes'=>$ftransnotes, 
+                    //         'fdest_fsl'=>$fdest_fsl,
+                    //         'fairwaybill'=>$fairwaybill,
+                    //         'fairwaybill2'=>$fairwaybill2,
+                    //         'fservice'=>$fservice,
+                    //         'fdeliveryby'=>$fdeliveryby,
+                    //         'feta'=>$feta,
+                    //         'fqty'=>$total_qty, 
+                    //         'fuser'=>$createdby
+                    //     );
+                    //     $main_res = send_curl(
+                    //             $this->security->xss_clean($dataTrans), 
+                    //             $this->config->item('api_add_delivery_note_trans'), 
+                    //             'POST', FALSE);
+                    //     if($main_res->status)
+                    //     {
+                            
+                            //Update qty Trans
+                            $arrWhere = array('ftransnum' => $transnum);
+                            $update_qty_trans = send_curl(
+                                $this->security->xss_clean($arrWhere), 
+                                $this->config->item('api_update_delivery_note_qty_trans'), 
+                                'POST', FALSE);
+                            
+
+                            //clear cart list data
+                            $arrWhere = array('fcartid'=>$cartid);
+                            $rem_res = send_curl($this->security->xss_clean($arrWhere), $this->config->item('api_clear_delivery_note_cart'), 'POST', FALSE);
+                            if($rem_res->status){
+                                $success_response = array(
+                                    'status' => 1,
+                                    'message' => $transnum
+                                );
+                                $response = $success_response;
+                            }else{
+                                $response = $error_response;
+                            }
+                        // }
+                        // else
+                        // {
+                        //     $this->session->set_flashdata('error', 'Failed to submit transaction data');
+                        //     $response = $error_response;
+                        // }
+                    }
+                // }else{
+                //     $this->session->set_flashdata('error', 'Failed to submit transaction data');
+                //     $response = $error_response;
+                // }
             }
         }
         
@@ -1814,11 +2061,5 @@ class CDeliveryNote extends BaseController
                 json_encode($response)
             );
         
-    }
-
-
-    
-
-    
-    
+    }    
 }

@@ -46,6 +46,7 @@ class CSupplyFromFSL extends BaseController
         $rs = array();
         $arrWhere = array();
         //Parse Data for cURL
+        $arrWhere = array('fdeleted'=>0, 'flimit'=>0);
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
         
@@ -367,8 +368,7 @@ class CSupplyFromFSL extends BaseController
         $rs = array();
         $arrWhere = array();
         
-        $arrWhere = array('fcode'=>$fcode);
-        
+        $arrWhere = array('fcode'=>$fcode,'fdeleted'=>0, 'flimit'=>0);
         //Parse Data for cURL
         $rs_data = send_curl($arrWhere, $this->config->item('api_list_warehouse'), 'POST', FALSE);
         $rs = $rs_data->status ? $rs_data->result : array();
